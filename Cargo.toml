@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+
+[workspace]
+
+members = [
+  "common",
+  "common-test",
+  "proto",
+  "dtdl-parser",
+  "in-vehicle-digital-twin",
+  "provider",
+  "samples/simple/consumer",
+  "samples/simple/provider"
+]

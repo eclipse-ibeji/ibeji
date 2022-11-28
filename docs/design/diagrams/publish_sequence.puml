@@ -1,0 +1,8 @@
+@startuml
+
+participant "Provider"
+participant "Consumer"
+
+"Provider" -> "Consumer" : Publish - request (id, value)
+
+@enduml

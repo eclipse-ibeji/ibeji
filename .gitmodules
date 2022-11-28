@@ -1,0 +1,3 @@
+[submodule "opendigitaltwins-dtdl"]
+	path = opendigitaltwins-dtdl
+	url = https://github.com/Azure/opendigitaltwins-dtdl

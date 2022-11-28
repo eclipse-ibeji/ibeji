@@ -1,0 +1,8 @@
+com
+DTDL
+digitaltwins
+dtdl
+github
+https
+js
+sdk

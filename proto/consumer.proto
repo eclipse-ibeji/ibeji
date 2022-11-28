@@ -1,0 +1,18 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+syntax = "proto3";
+
+package consumer;
+
+service Consumer {
+    rpc Publish (PublishRequest) returns (PublishResponse);
+}
+
+message PublishRequest {
+   string id = 1;
+   string value = 2;
+}
+
+message PublishResponse {
+}

@@ -1,0 +1,21 @@
+ {
+    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:org:eclipse:sdv:interface:cabin:AmbientAirTemperature;1",
+    "contents": [
+      {
+        "@type": ["Property", "Temperature", "RemotelyAccessible"],
+        "name": "Cabin_AmbientAirTemperature",
+        "description": "The immediate surroundings air temperature (in Fahrenheit).",
+        "schema": "double",
+        "unit": "degreeFahrenheit",
+        "remote_access": [
+          {
+            "@type": "Endpoint",
+            "uri": "http://[::1]:40010",
+            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
+          }
+        ]
+      }
+    ]
+ }

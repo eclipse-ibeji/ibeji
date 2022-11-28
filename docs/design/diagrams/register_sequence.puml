@@ -1,0 +1,8 @@
+@startuml
+
+participant "Provider"
+participant "In-Vehicle Digital Twin Service"
+
+"Provider" -> "In-Vehicle Digital Twin Service" : Register - request (dtdl)
+
+@enduml
