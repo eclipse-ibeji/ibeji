@@ -22,8 +22,8 @@ through an extensible, open and dynamic architecture that provides access to the
 ## <a name="high-level-design">High-level Design</a>
 
 Ibeji's architecture has a In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities
-and make them available to Ibeji consumers.  Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
-A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service.  Once registered with the
+and make them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
+A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the
 In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes meta data that allow Ibeji consumers to comprehend
 the nature of the capability, how to work with it and how it can be remotely accessed.
 
@@ -31,27 +31,27 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 ### <a name="install-rust">Install Rust</a>
 
-At this point in time, you will need to use the nightly release of Rust from 2022-08-11.  While it is not ideal to rely on a nightly release, we should be able to rely on the
-stable release of Rust sometime in the not too distant future when some of the Rust crates that we use can all rely on it as well.  To install Rust, do the following:
+At this point in time, you will need to use the nightly release of Rust. While it is not ideal to rely on a nightly release, we should be able to rely on the
+stable release of Rust sometime in the not too distant future when some of the Rust crates that we use can all rely on it as well. To install Rust, do the following:
 
 ```shell
 sudo apt update
 sudo apt install -y snapd
 sudo snap install rustup --classic
-rustup toolchain install nightly-2022-08-11
-rustup default nightly-2022-08-11
+rustup toolchain install nightly
+rustup default nightly
 ```
 
-If you have already installed Rust, but you are using another release, then you can switch to the nightly-2022-08-11 release by running the following commands:
+If you have already installed Rust, but you are using another release, then you can switch to the nightly release by running the following commands:
 
 ```shell
-rustup toolchain install nightly-2022-08-11
-rustup default nightly-2022-08-11
+rustup toolchain install nightly
+rustup default nightly
 ```
 
 ### <a name="install-protobuf-compiler">Install Protobuf Compiler</a>
 
-You will need to install the Protobuf Compiler.  This can be done by executing:
+You will need to install the Protobuf Compiler. This can be done by executing:
 
 `sudo apt install -y protobuf-compiler`
 
@@ -69,7 +69,7 @@ To ensure that it is included, please use the following command when cloning Ibe
 Ideally, we should be using the json_ld 0.6.1 crate, which takes its source from [here](https://github.com/timothee-haudebourg/json-ld).
 However, it currently has a build issue that is discussed [here](https://github.com/timothee-haudebourg/json-ld/issues/40).
 To work around this issue you will need to use git clone to obtain the source from [here](https://github.com/blast-hardcheese/json-ld)
-and checkout its "resolve-issue-40" branch.  It should be cloned to a directory that is a sibling to sdv-vdt.
+and checkout its "resolve-issue-40" branch. It should be cloned to a directory that is a sibling to ibeji.
 
 ### <a name="dtdl-parser">DTDL Parser</a>
 
@@ -85,7 +85,7 @@ This should build all of the libraries and executables.
 
 ## <a name="running-the-tests">Running the Tests</a>
 
-After successfully building Ibeji, you can run all of the unit tests.  To do this go to the enlistment's root directory and run:
+After successfully building Ibeji, you can run all of the unit tests. To do this go to the enlistment's root directory and run:
 
 `cargo test`
 
@@ -97,7 +97,7 @@ Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Provider.  The bottom window can be used for a Consumer.<br>
+The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command too set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/simple/dtdl"`<br>
