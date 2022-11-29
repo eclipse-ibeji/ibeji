@@ -11,6 +11,7 @@ github
 hardcheese
 haudebourg
 https
+ibeji
 Ibeji
 Ibeji's
 intellectualproperty
@@ -28,10 +29,8 @@ repo
 Repo
 rustup
 sdk
-sdv
 snapd
 sudo
 timothee
 toolchain
-vdt
 www
