@@ -69,7 +69,7 @@ To ensure that it is included, please use the following command when cloning Ibe
 Ideally, we should be using the json_ld 0.6.1 crate, which takes its source from [here](https://github.com/timothee-haudebourg/json-ld).
 However, it currently has a build issue that is discussed [here](https://github.com/timothee-haudebourg/json-ld/issues/40).
 To work around this issue you will need to use git clone to obtain the source from [here](https://github.com/blast-hardcheese/json-ld)
-and checkout its "resolve-issue-40" branch.  It should be cloned to a directory that is a sibling to sdv-vdt.
+and checkout its "resolve-issue-40" branch.  It should be cloned to a directory that is a sibling to ibeji.
 
 ### <a name="dtdl-parser">DTDL Parser</a>
 
