@@ -1,0 +1,22 @@
+name: Check Spelling
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  notice_generation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install spell
+        run: sudo apt-get install -y spell
+      - name: Check spelling
+        run: |
+          ./tools/check_spelling.sh ./README.md
+          ./tools/check_spelling.sh ./dtdl-parser/README.md
+          ./tools/check_spelling.sh ./docs/design/design_spec.md
+        shell: bash

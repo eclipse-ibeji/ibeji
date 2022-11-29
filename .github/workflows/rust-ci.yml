@@ -1,0 +1,72 @@
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  static_code_analysis:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install protobuf-compiler
+        run: sudo apt-get install -y protobuf-compiler
+      - name: Install nightly Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly-2022-08-11
+          default: true
+          override: true
+          components: clippy, rustfmt
+      - name: Cache Dependencies
+        uses: Swatinem/rust-cache@v1
+      - run: cargo check --workspace
+        # Note: cargo check should use the --locked option
+        #       Excluding it because of this known issue: https://github.com/mozilla/uniffi-rs/issues/1032
+      - run: cargo clippy --all-targets --all-features --workspace --no-deps -- -D warnings
+      - run: cargo fmt --all -- --check
+      - name: Run doctest only
+        # we run doctests here as cargo tarpaulin (our test runner)
+        # requires nightly toolchain to do so
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace --doc
+      - name: Run cargo doc
+        # This step is required to detect possible errors in docs that are not doctests.
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --workspace --no-deps # Warnings are treated as errors due to our .cargo/config file.
+
+  build_and_test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install protobuf-compiler
+        run: sudo apt-get install -y protobuf-compiler
+      - name: Install nightly Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly-2022-08-11
+          default: true
+          override: true
+      - name: Cache Dependencies
+        uses: Swatinem/rust-cache@v1
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
