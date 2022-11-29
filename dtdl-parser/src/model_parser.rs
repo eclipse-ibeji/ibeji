@@ -666,7 +666,7 @@ mod model_parser_tests {
 
         let getproperty_value_result = get_property_result.unwrap().get("@value");
         assert!(getproperty_value_result.is_some());
-        assert!(getproperty_value_result.unwrap() == "http://[::1]:40010");
+        assert!(getproperty_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
         assert!(model.len() == 8);
     }

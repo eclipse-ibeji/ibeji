@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Obtain the DTDL for the ambient air temmpterature.
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for ambient air temperature.");
-    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?;
+    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest {
         id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
     });
@@ -91,7 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ProviderClient::connect(uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
         id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
-        uri: String::from("http://[::1]:60010"),
+        uri: String::from("http://[::1]:60010"), // Devskim: ignore DS137138
     });
     let _response = client.subscribe(request).await?;
     info!("Subscribe request completed.");

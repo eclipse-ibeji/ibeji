@@ -105,9 +105,9 @@ mod provider_impl_tests {
 
         let first_id = String::from("one-id");
         let second_id = String::from("two-id");
-        let first_uri = String::from("http://first.com:9000");
-        let second_uri = String::from("http://second.com:9000");
-        let third_uri = String::from("http://third.com:9000");
+        let first_uri = String::from("http://first.com:9000"); // Devskim: ignore DS137138
+        let second_uri = String::from("http://second.com:9000"); // Devskim: ignore DS137138
+        let third_uri = String::from("http://third.com:9000"); // Devskim: ignore DS137138
 
         let first_request =
             tonic::Request::new(SubscribeRequest { id: first_id.clone(), uri: first_uri.clone() });
