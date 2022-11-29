@@ -107,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 
     info!("Registering the Provider's DTDL with the Digital Twin Service.");
-    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?;
+    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;
     info!("The Provider's DTDL has been registered.");
