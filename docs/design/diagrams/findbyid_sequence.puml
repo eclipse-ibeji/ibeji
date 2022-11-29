@@ -7,4 +7,3 @@ participant "Consumer"
 "In-Vehicle Digital Twin Service" --> "Consumer" : FindById - response (dtdl)
 
 @enduml
-

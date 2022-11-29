@@ -6,4 +6,3 @@ participant "Consumer"
 "Provider" -> "Consumer" : Publish - request (id, value)
 
 @enduml
-
