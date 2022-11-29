@@ -6,3 +6,4 @@ participant "Consumer"
 "Consumer" -> "Provider" : Subscribe - response (id, uri)
 
 @enduml
+
