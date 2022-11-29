@@ -9,7 +9,7 @@
 
 ## <a name="introduction">Introduction</a>
 
-This project delivers an In-Vehicle software component that is a digital representation of vehicle hardware resources.  The representation is usable by other software in the vehicle to read/write/query vehicle hardware resources in a standardized manner.
+This project delivers an In-Vehicle software component that is a digital representation of vehicle hardware resources. The representation is usable by other software in the vehicle to read/write/query vehicle hardware resources in a standardized manner.
 
 Please note that the initial Ibeji implementation is a proof-of-concept. We would like to see it evolve into an enterprise class solution.
 
@@ -23,7 +23,7 @@ Ibeji has three main architectural concepts:
 
 The first Ibeji architectural concept that we will introduce is the Consumer. A Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
 
-Another Ibeji architectural concept is the Provider. A Provider is the access point to some/all of the vehicle's hardware resources.  A Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Consumers. Each resource includes meta data that allow Consumers to understand the semantics of the resource and know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Providers and internally resolves overlapping resources offered by multiple Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths). A Provider must support a Provider interface that enables access to resource data feeds.
+Another Ibeji architectural concept is the Provider. A Provider is the access point to some/all of the vehicle's hardware resources. A Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Consumers. Each resource includes meta data that allow Consumers to understand the semantics of the resource and know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Providers and internally resolves overlapping resources offered by multiple Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths). A Provider must support a Provider interface that enables access to resource data feeds.
 
 In the middle is the In-Vehicle Digital Twin Service. It exports a query interface that enables Consumers to discover the vehicle's resources and provides the details necessary to use those resources. The In-Vehicle Digital Twin Service has an interface that allows Providers to dynamically register and unregister resources.
 
@@ -104,7 +104,7 @@ A Provider supports a gRPC interface for subscribing to resource's data feeds, u
 
 #### Subscribe
 
-Below is the sequence diagram for the Subscribe activity.  The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
+Below is the sequence diagram for the Subscribe activity. The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
 
 ![Sequence Diagram](diagrams/subscribe_sequence.svg)
 
