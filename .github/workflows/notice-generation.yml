@@ -1,0 +1,34 @@
+name: Notice generation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0" # once a week, on sundays at midnight UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  notice_generation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+      - name: Cache Dependencies
+        uses: Swatinem/rust-cache@v1
+      - name: Generate the Notice
+        run: |
+          git config --global user.email "sdv-vdt@example.com"
+          git config --global user.name "Automated Notice Generation Pipeline"
+          ./tools/notice_generation.sh
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
