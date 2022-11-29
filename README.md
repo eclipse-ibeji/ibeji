@@ -60,7 +60,7 @@ You will need to install the Protobuf Compiler.  This can be done by executing:
 The repo has one submodule [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) that provide the DTDL context files and DTDL samples file.
 To ensure that it is included, please use the following command when cloning Ibeji's github repo:
 
-`git clone --recurse-submodules https://github.com/microsoft/sdv-vdt`
+`git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
 
 ## <a name="developer-notes">Developer Notes</a>
 
@@ -100,10 +100,10 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider.  The bottom window can be used for a Consumer.<br>
 1. In each window run the following command too set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/sdv-vdt/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/sdv-vdt/dtdl;{repo-root-dir}/sdv-vdt/samples/simple/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/simple/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/sdv-vdt/target/debug`<br>
+`cd {repo-root-dir}/ibeji/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
