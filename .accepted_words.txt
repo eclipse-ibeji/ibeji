@@ -36,3 +36,4 @@ toolchain
 www
 cargo
 build
+clean
