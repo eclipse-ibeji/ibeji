@@ -234,7 +234,6 @@ impl ModelParser {
     /// Arguments
     /// `node` - The node to gather the undefined properties from.
     fn gather_undefined_properties(
-        &self,
         node: &Node<Value>,
         undefined_properties: &mut HashMap<String, Value>,
     ) {
@@ -244,7 +243,7 @@ impl ModelParser {
                     let j = value.clone().as_json();
                     undefined_properties.insert(the_property.to_string(), j);
                 } else if let Object::Node(n) = &*the_objects[0] {
-                    self.gather_undefined_properties(n, undefined_properties);
+                    Self::gather_undefined_properties(n, undefined_properties);
                 } else if let Object::List(_list) = &*the_objects[0] {
                     warn!("gather_undefiued_properties encountered a list");
                 } else {
@@ -435,7 +434,7 @@ impl ModelParser {
         }
 
         let mut undefined_property_values = HashMap::<String, Value>::new();
-        self.gather_undefined_properties(node, &mut undefined_property_values);
+        Self::gather_undefined_properties(node, &mut undefined_property_values);
 
         let mut entity_info = EntityInfo::new(
             DTDL_VERSION,
