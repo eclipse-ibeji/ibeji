@@ -4,7 +4,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
-- MIT License (71)
+- MIT License (67)
 - Apache License 2.0 (3)
 - BSD 3-Clause "New" or "Revised" License (1)
 - Unicode License Agreement - Data Files and Software (2016) (1)
@@ -204,7 +204,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [ryu]( https://github.com/dtolnay/ryu ) 1.0.11
+- [ryu]( https://github.com/dtolnay/ryu ) 1.0.12
 
 #### License
 
@@ -417,8 +417,8 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [prost]( https://github.com/tokio-rs/prost ) 0.11.2
-- [prost-build]( https://github.com/tokio-rs/prost ) 0.11.2
+- [prost]( https://github.com/tokio-rs/prost ) 0.11.3
+- [prost-build]( https://github.com/tokio-rs/prost ) 0.11.4
 - [prost-derive]( https://github.com/tokio-rs/prost ) 0.11.2
 - [prost-types]( https://github.com/tokio-rs/prost ) 0.11.2
 
@@ -705,51 +705,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #### Used by
 
-- [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.14.0
-
-#### License
-
-```text
-# Contributing
-
-## License
-
-Licensed under either of
-
- * Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
-
-### Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
-additional terms or conditions.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
-- [winapi]( https://github.com/retep998/winapi-rs ) 0.3.9
-
-#### License
-
-```text
-// Licensed under the Apache License, Version 2.0
-// <LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option.
-// All files in the project carrying such notice may not be copied, modified, or distributed
-// except according to those terms.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 
 #### License
@@ -824,10 +779,9 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.77
+- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.78
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.60
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.47
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.7
 - [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.83
 - [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.83
@@ -1011,7 +965,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [libc]( https://github.com/rust-lang/libc ) 0.2.137
+- [libc]( https://github.com/rust-lang/libc ) 0.2.138
 
 #### License
 
@@ -1525,43 +1479,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
-- [quote]( https://github.com/dtolnay/quote ) 1.0.21
-
-#### License
-
-```text
-Copyright (c) 2016 The Rust Project Developers
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
 
 ```
 
@@ -2108,7 +2025,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [axum]( https://github.com/tokio-rs/axum ) 0.5.17
+- [axum]( https://github.com/tokio-rs/axum ) 0.6.1
 
 #### License
 
@@ -2183,7 +2100,6 @@ DEALINGS IN THE SOFTWARE.
 #### Used by
 
 - [async-stream]( https://github.com/tokio-rs/async-stream ) 0.3.3
-- [async-stream-impl]( https://github.com/tokio-rs/async-stream ) 0.3.3
 
 #### License
 
@@ -2436,7 +2352,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [tower-http]( https://github.com/tower-rs/tower-http ) 0.3.4
+- [tower-http]( https://github.com/tower-rs/tower-http ) 0.3.5
 
 #### License
 
@@ -2473,8 +2389,8 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [tonic]( https://github.com/hyperium/tonic ) 0.8.2
-- [tonic-build]( https://github.com/hyperium/tonic ) 0.8.2
+- [tonic]( https://github.com/hyperium/tonic ) 0.8.3
+- [tonic-build]( https://github.com/hyperium/tonic ) 0.8.4
 
 #### License
 
@@ -2505,7 +2421,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.22.0
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.23.0
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.11
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.4
 
@@ -2537,65 +2453,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
-- [tokio-macros]( https://github.com/tokio-rs/tokio ) 1.8.0
-
-#### License
-
-```text
-Copyright (c) 2022 Tokio Contributors
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-The MIT License (MIT)
-
-Copyright (c) 2019 Yoshua Wuyts
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ```
 
@@ -2644,7 +2501,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [axum-core]( https://github.com/tokio-rs/axum ) 0.2.9
+- [axum-core]( https://github.com/tokio-rs/axum ) 0.3.0
 
 #### License
 
@@ -2730,16 +2587,50 @@ SOFTWARE.
 
 #### Used by
 
+- [matchit]( https://github.com/ibraheemdev/matchit ) 0.7.0
+
+#### License
+
+```text
+MIT License
+
+Copyright (c) 2022 Ibraheem Ahmed
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
+- [async-stream-impl]( https://github.com/tokio-rs/async-stream ) 0.3.3
 - [dtdl-parser]( https://crates.io/crates/dtdl-parser ) 0.1.0
-- [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.4
+- [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.5
 - [ibeji-common]( https://crates.io/crates/ibeji-common ) 0.1.0
 - [ibeji-common_test]( https://crates.io/crates/ibeji-common_test ) 0.1.0
 - [in-vehicle-digital-twin]( https://crates.io/crates/in-vehicle-digital-twin ) 0.1.0
-- [matchit]( https://github.com/ibraheemdev/matchit ) 0.5.0
 - [proto]( https://crates.io/crates/proto ) 0.1.0
 - [provider]( https://crates.io/crates/provider ) 0.1.0
 - [simple-consumer]( https://crates.io/crates/simple-consumer ) 0.1.0
 - [simple-provider]( https://crates.io/crates/simple-provider ) 0.1.0
+- [tokio-macros]( https://github.com/tokio-rs/tokio ) 1.8.2
 - [winapi-i686-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
 - [winapi-x86_64-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
 - [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.42.0
@@ -2834,20 +2725,18 @@ SOFTWARE.
 
 #### Used by
 
-- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.66
-- [async-channel]( https://github.com/smol-rs/async-channel ) 1.7.1
+- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.67
+- [async-channel]( https://github.com/smol-rs/async-channel ) 1.8.0
 - [async-executor]( https://github.com/smol-rs/async-executor ) 1.5.0
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.3.1
-- [async-io]( https://github.com/smol-rs/async-io ) 1.11.0
+- [async-io]( https://github.com/smol-rs/async-io ) 1.12.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.6.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.3.0
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.58
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.60
 - [atomic-waker]( https://github.com/stjepang/atomic-waker ) 1.0.0
 - [blocking]( https://github.com/smol-rs/blocking ) 1.3.0
-- [cache-padded]( https://github.com/smol-rs/cache-padded ) 1.2.0
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 0.7.3
-- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 1.2.4
 - [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.0.0
 - [env_logger]( https://github.com/env-logger-rs/env_logger/ ) 0.9.3
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
@@ -2856,23 +2745,25 @@ SOFTWARE.
 - [generic-json]( https://github.com/timothee-haudebourg/generic-json ) 0.7.0
 - [hermit-abi]( https://github.com/hermitcore/libhermit-rs ) 0.1.19
 - [iref]( https://github.com/timothee-haudebourg/iref ) 2.2.0
-- [itoa]( https://github.com/dtolnay/itoa ) 1.0.4
+- [itoa]( https://github.com/dtolnay/itoa ) 1.0.5
 - [json-ld]( https://github.com/timothee-haudebourg/json-ld ) 0.6.1
 - [langtag]( https://github.com/timothee-haudebourg/langtag ) 0.2.0
-- [mown]( https://github.com/timothee-haudebourg/mown ) 0.2.1
+- [mown]( https://github.com/timothee-haudebourg/mown ) 0.2.2
 - [once_cell]( https://github.com/matklad/once_cell ) 1.16.0
 - [parking]( https://github.com/stjepang/parking ) 2.0.0
 - [pct-str]( https://github.com/timothee-haudebourg/pct-str ) 1.1.0
 - [pin-project]( https://github.com/taiki-e/pin-project ) 1.0.12
 - [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.0.12
 - [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.9
-- [polling]( https://github.com/smol-rs/polling ) 2.4.0
-- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.1.21
-- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.9
-- [serde]( https://github.com/serde-rs/serde ) 1.0.147
-- [serde_json]( https://github.com/serde-rs/json ) 1.0.89
-- [syn]( https://github.com/dtolnay/syn ) 1.0.103
-- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.5
+- [polling]( https://github.com/smol-rs/polling ) 2.5.2
+- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.1.22
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.48
+- [quote]( https://github.com/dtolnay/quote ) 1.0.22
+- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.11
+- [serde]( https://github.com/serde-rs/serde ) 1.0.151
+- [serde_json]( https://github.com/serde-rs/json ) 1.0.90
+- [syn]( https://github.com/dtolnay/syn ) 1.0.106
+- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.6
 - [waker-fn]( https://github.com/stjepang/waker-fn ) 1.1.0
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
 
@@ -2919,39 +2810,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
-### MIT (MIT License)
-
-#### Used by
-
-- [tracing-core]( https://github.com/tokio-rs/tracing ) 0.1.30
-
-#### License
-
-```text
-The MIT License (MIT)
-
-Copyright (c) 2014 Mathijs van de Nes
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
 ```
 
 ### MIT (MIT License)
@@ -3198,8 +3056,6 @@ SOFTWARE.
 #### Used by
 
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 0.7.20
-- [memchr]( https://github.com/BurntSushi/memchr ) 2.5.0
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.1.3
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.5
 
 #### License
@@ -3215,33 +3071,57 @@ You may use this code under the terms of either license.
 
 #### Used by
 
-- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.5
+- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.6
 
 #### License
 
 ```text
 UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
 
-Unicode Data Files include all data files under the directories http://www.unicode.org/Public/, http://www.unicode.org/reports/, http://www.unicode.org/cldr/data/, http://source.icu-project.org/repos/icu/, and http://www.unicode.org/utility/trac/browser/.
+See Terms of Use <https://www.unicode.org/copyright.html>
+for definitions of Unicode Inc.’s Data Files and Software.
 
-Unicode Data Files do not include PDF online code charts under the directory http://www.unicode.org/Public/.
-
-Software includes any source code published in the Unicode Standard or under the directories http://www.unicode.org/Public/, http://www.unicode.org/reports/, http://www.unicode.org/cldr/data/, http://source.icu-project.org/repos/icu/, and http://www.unicode.org/utility/trac/browser/.
-
-NOTICE TO USER: Carefully read the following legal agreement. BY DOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING UNICODE INC.'S DATA FILES ("DATA FILES"), AND/OR SOFTWARE ("SOFTWARE"), YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND BY, ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT AGREE, DO NOT DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE THE DATA FILES OR SOFTWARE.
+NOTICE TO USER: Carefully read the following legal agreement.
+BY DOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING UNICODE INC.'S
+DATA FILES ("DATA FILES"), AND/OR SOFTWARE ("SOFTWARE"),
+YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND BY, ALL OF THE
+TERMS AND CONDITIONS OF THIS AGREEMENT.
+IF YOU DO NOT AGREE, DO NOT DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE
+THE DATA FILES OR SOFTWARE.
 
 COPYRIGHT AND PERMISSION NOTICE
 
-Copyright © 1991-2016 Unicode, Inc. All rights reserved. Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
+Copyright © 1991-2022 Unicode, Inc. All rights reserved.
+Distributed under the Terms of Use in https://www.unicode.org/copyright.html.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of the Unicode data files and any associated documentation (the "Data Files") or Unicode software and any associated documentation (the "Software") to deal in the Data Files or Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the Data Files or Software, and to permit persons to whom the Data Files or Software are furnished to do so, provided that either
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Unicode data files and any associated documentation
+(the "Data Files") or Unicode software and any associated documentation
+(the "Software") to deal in the Data Files or Software
+without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, and/or sell copies of
+the Data Files or Software, and to permit persons to whom the Data Files
+or Software are furnished to do so, provided that either
+(a) this copyright and permission notice appear with all copies
+of the Data Files or Software, or
+(b) this copyright and permission notice appear in associated
+Documentation.
 
-     (a) this copyright and permission notice appear with all copies of the Data Files or Software, or
-     (b) this copyright and permission notice appear in associated Documentation.
+THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT OF THIRD PARTY RIGHTS.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS
+NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL
+DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THE DATA FILES OR SOFTWARE.
 
-THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA FILES OR SOFTWARE.
-
-Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to promote the sale, use or other dealings in these Data Files or Software without prior written authorization of the copyright holder.
+Except as contained in this notice, the name of a copyright holder
+shall not be used in advertising or otherwise to promote the sale,
+use or other dealings in these Data Files or Software without prior
+written authorization of the copyright holder.
 
 ```
 
