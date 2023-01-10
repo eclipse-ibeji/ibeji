@@ -1,8 +1,8 @@
 ---
-name: Backlog Item
-about: Backlog Item with acceptance criteria
-title: "[PBI]"
-labels: pbi
+name: Bug Report Item
+about: Bug Report Item with acceptance criteria
+title: "[BUG]"
+labels: bug
 assignees: ''
 
 ---

@@ -1,8 +1,8 @@
 ---
-name: Backlog Item
-about: Backlog Item with acceptance criteria
-title: "[PBI]"
-labels: pbi
+name: Feature Ask Item
+about: Feature Ask Item with acceptance criteria
+title: "[enhancement]"
+labels: enhancement
 assignees: ''
 
 ---
