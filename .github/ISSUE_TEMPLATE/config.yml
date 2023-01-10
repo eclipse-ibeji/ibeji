@@ -1,7 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: Feature Ask with acceptance criteria
-    url: https://github.com/eclipse-ibeji/ibeji/blob/main/.github/ISSUE_TEMPLATE/backlog-item.md
+    url: https://github.com/eclipse-ibeji/ibeji/blob/main/.github/ISSUE_TEMPLATE/Feature_Ask.md
     about: Please ask and answer questions here.
   - name: Bug report to help us improve
     url: https://github.com/eclipse-ibeji/ibeji/blob/main/.github/ISSUE_TEMPLATE/bug-report.md
