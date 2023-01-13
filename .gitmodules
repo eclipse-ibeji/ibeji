@@ -1,3 +1,6 @@
 [submodule "opendigitaltwins-dtdl"]
 	path = opendigitaltwins-dtdl
 	url = https://github.com/Azure/opendigitaltwins-dtdl
+[submodule "iot-plugandplay-models"]
+	path = iot-plugandplay-models
+	url = https://github.com/Azure/iot-plugandplay-models

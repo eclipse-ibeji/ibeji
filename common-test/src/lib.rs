@@ -32,7 +32,7 @@ fn get_repo_dir() -> Option<String> {
 pub fn set_dtdl_path() {
     let repo_dir_result = get_repo_dir();
     if let Some(repo_dir) = repo_dir_result {
-        let value = format!("{}/opendigitaltwins-dtdl/DTDL;{}/dtdl", repo_dir, repo_dir);
+        let value = format!("{}/opendigitaltwins-dtdl/DTDL;{}/iot-plugandplay-models;{}/dtdl", repo_dir, repo_dir, repo_dir);
         env::set_var(DTDL_PATH, &value);
         trace!("{}={}", DTDL_PATH, &value);
     } else {

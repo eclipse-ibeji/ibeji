@@ -57,8 +57,8 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
-The repo has one submodule [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) that provide the DTDL context files and DTDL samples file.
-To ensure that it is included, please use the following command when cloning Ibeji's github repo:
+The repo has two submodule [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
+and DTDL samples file.  To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
 `git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
 

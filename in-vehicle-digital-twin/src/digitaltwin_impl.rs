@@ -220,7 +220,7 @@ mod digitaltwin_impl_tests {
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
         let dtdl_path_result =
-            find_full_path("samples/multiple_remotely_accessible_resources.json");
+            find_full_path("samples/demo_resources.json");
         assert!(dtdl_path_result.is_ok());
         let dtdl_path = dtdl_path_result.unwrap();
         let dtdl_result = retrieve_dtdl(&dtdl_path);
@@ -233,6 +233,6 @@ mod digitaltwin_impl_tests {
 
         // Make sure that we populated the entity map from the contents of the DTDL.
         let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-        assert!(lock.len() == 8);
+        assert!(lock.len() == 14, "expected length was 14, actual length is {}", lock.len());
     }
 }
