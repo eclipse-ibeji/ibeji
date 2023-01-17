@@ -10,7 +10,6 @@ use crate::dtmi::Dtmi;
 use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
 use crate::field_info::FieldInfo;
-use crate::field_info_impl::FieldInfoImpl;
 use crate::object_info::ObjectInfo;
 use crate::schema_info::SchemaInfo;
 

@@ -2,15 +2,14 @@
 # Licensed under the MIT license.
 
 [package]
-name = "simple-provider"
+name = "command-provider"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 async-std = { version = "^1.5", features = ["attributes"] }
-provider = { path = "../../../provider" }
-env_logger= "0.9.1"
+env_logger= "0.10.0"
 ibeji-common = { path = "../../../common" }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 # json-ld  = { git = "https://github.com/timothee-haudebourg/json-ld", tag = "0.9.1-beta" }

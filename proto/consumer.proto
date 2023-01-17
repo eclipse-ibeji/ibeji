@@ -7,6 +7,7 @@ package consumer;
 
 service Consumer {
     rpc Publish (PublishRequest) returns (PublishResponse);
+    rpc Respond (RespondRequest) returns (RespondResponse);
 }
 
 message PublishRequest {
@@ -15,4 +16,12 @@ message PublishRequest {
 }
 
 message PublishResponse {
+}
+
+message RespondRequest {
+    string id = 1;
+    string payload = 2;
+}
+
+message RespondResponse {
 }

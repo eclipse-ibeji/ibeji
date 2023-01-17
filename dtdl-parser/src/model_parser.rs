@@ -275,7 +275,7 @@ impl ModelParser {
     }
 
     fn get_primary_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
-        let mut entity_kind = EntityKind::Object;
+        let entity_kind;
 
         let string_option: Option<&str> = node.as_str();
         if string_option.is_some() {
@@ -291,8 +291,7 @@ impl ModelParser {
             return Err(format!("get_schema encountered an unknown entity kind value"));                            
         }
 
-        let mut id: Option<Dtmi> = None;
-        id = self.generate_id(parent_id, "test");
+        let id: Option<Dtmi> = self.generate_id(parent_id, "test");
         if id.is_none() {
             return Err(String::from("We were not able to generate an id for the schema."));
         }
@@ -326,7 +325,7 @@ impl ModelParser {
                                 }
                             } else if the_property == "dtmi:dtdl:property:schema;2" && the_objects.len() == 1 {
                                 if let Object::Node(node) = &*the_objects[0] {                                   
-                                    let schema = self.get_schema(node, parent_id);
+                                    schema = Some(self.get_schema(node, parent_id)?);
                                 }
                             } else if the_property == "dtmi:dtdl:property:name;2" && the_objects.len() == 1 {
                                 if let Object::Value(value) = &*the_objects[0] {
@@ -338,8 +337,7 @@ impl ModelParser {
                             }
                         }
                         if name_option.is_some() {
-                            let mut id: Option<Dtmi> = None;
-                            id = self.generate_id(parent_id, &name_option.clone().unwrap());
+                            let id: Option<Dtmi> = self.generate_id(parent_id, &name_option.clone().unwrap());
                             if id.is_none() {
                                 return Err(String::from("We were not able to generate an id for the schema."));
                             }
@@ -359,8 +357,7 @@ impl ModelParser {
             }
         }
 
-        let mut id: Option<Dtmi> = None;
-        id = self.generate_id(parent_id, "test");
+        let id: Option<Dtmi> = self.generate_id(parent_id, "test");
         if id.is_none() {
             return Err(String::from("We were not able to generate an id for the schema."));
         }
@@ -397,8 +394,6 @@ impl ModelParser {
     }
 
     fn get_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
-        let mut entity_kind = EntityKind::Object;
-
         for (the_property, the_objects) in node.properties() {
             if the_property == "dtmi:dtdl:property:schema;2" {
                 if the_objects.len() == 1 {
@@ -443,10 +438,10 @@ impl ModelParser {
                     }
 
                     // displayName - required
-                    let display_name = self.get_property_value(node, "dtmi:dtdl:property:displayName;2")?;
+                    let _display_name = self.get_property_value(node, "dtmi:dtdl:property:displayName;2")?;
                     
                     // description - required
-                    let description = self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
+                    let _description = self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
 
                     // schema - required
                     let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, &id)?;
@@ -460,8 +455,7 @@ impl ModelParser {
                         Some(boxed_schema_info)))));
 
                 } else {
-                    warn!("Warning: get_payload encountered an unknown object");
-
+                    return Err(format!("get_payload encountered an unknown object"));
                 }
             }
         }
@@ -510,6 +504,7 @@ impl ModelParser {
     /// # Arguments
     /// `schema` - The id (as a string) for the schema info.
     /// `model` - The model to search.
+    #[allow(dead_code)]
     fn retrieve_schema_info_from_model(
         &mut self,
         schema: &str,

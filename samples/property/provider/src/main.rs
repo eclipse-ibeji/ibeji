@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+mod provider_impl;
+
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{info, LevelFilter};
@@ -9,13 +11,14 @@ use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
-use provider::provider_impl::{ProviderImpl, SubscriptionMap};
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::thread;
 use std::time;
 use tonic::transport::Server;
+
+use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
 /// The id for ambient air tempterature property.
 const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =

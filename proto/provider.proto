@@ -10,6 +10,7 @@ service Provider {
     rpc Unsubscribe (UnsubscribeRequest) returns (UnsubscribeResponse);
     rpc Get (GetRequest) returns (GetResponse);
     rpc Set (SetRequest) returns (SetResponse);
+    rpc Invoke (InvokeRequest) returns (InvokeResponse);
 }
 
 message SubscribeRequest {
@@ -42,4 +43,13 @@ message SetRequest {
 }
 
 message SetResponse {
+}
+
+message InvokeRequest {
+   string id = 1;
+   string uri = 2;
+   string payload = 3;
+}
+
+message InvokeResponse {
 }

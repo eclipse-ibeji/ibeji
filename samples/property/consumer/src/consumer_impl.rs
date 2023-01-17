@@ -3,7 +3,7 @@
 
 use log::info;
 use proto::consumer::consumer_server::Consumer;
-use proto::consumer::{PublishRequest, PublishResponse};
+use proto::consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
@@ -30,6 +30,26 @@ impl Consumer for ConsumerImpl {
 
         Ok(Response::new(response))
     }
+
+    /// Respond implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Respond request.
+    async fn respond(
+        &self,
+        request: Request<RespondRequest>,
+    ) -> Result<Response<RespondResponse>, Status> {
+        let request_inner = request.into_inner();
+
+        info!(
+            "Received a respond for id {} with the value {}",
+            request_inner.id, request_inner.payload
+        );
+
+        let response = RespondResponse {};
+
+        Ok(Response::new(response))
+    }    
 }
 
 #[cfg(test)]

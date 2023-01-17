@@ -9,7 +9,8 @@ members = [
   "proto",
   "dtdl-parser",
   "in-vehicle-digital-twin",
-  "provider",
-  "samples/simple/consumer",
-  "samples/simple/provider"
+  "samples/command/consumer",
+  "samples/command/provider",
+  "samples/property/consumer",
+  "samples/property/provider"
 ]

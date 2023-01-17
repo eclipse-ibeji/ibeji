@@ -5,7 +5,6 @@ use serde_json::Value;
 use std::any::Any;
 use std::collections::HashMap;
 
-use crate::content_info::ContentInfo;
 use crate::dtmi::Dtmi;
 use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
@@ -13,7 +12,6 @@ use crate::field_info::FieldInfo;
 use crate::named_entity_info::NamedEntityInfo;
 use crate::schema_field_info::SchemaFieldInfo;
 use crate::schema_info::SchemaInfo;
-use crate::telemetry_info::TelemetryInfo;
 
 pub struct FieldInfoImpl {
     // EntityInfo

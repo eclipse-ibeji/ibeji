@@ -2,9 +2,10 @@
 // Licensed under the MIT license.
 
 use log::info;
+use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, SetRequest, SetResponse, SubscribeRequest,
-    SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse, SubscribeRequest,
+    SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -91,6 +92,42 @@ impl Provider for ProviderImpl {
 
         Ok(Response::new(response))
     }
+
+    /// Invoke implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Invoke request.
+    async fn invoke(&self, request: Request<InvokeRequest>) -> Result<Response<InvokeResponse>, Status> {
+        info!("Got an invoke request: {:?}", request);
+
+        let request_inner = request.into_inner();
+        let id: String = request_inner.id.clone();
+        let uri: String = request_inner.uri;
+        let payload: String = request_inner.payload;
+
+        info!("Received an invoke request from URI {} for id {} with payload '{}'", &uri, &id, &payload);
+
+        info!("Sending an invoke respose to URI {} for id {}", &uri, &id);
+
+        let client_result = ConsumerClient::connect(uri).await;
+        if client_result.is_err() {
+            return Err(Status::internal(format!("{:?}", client_result.unwrap())));
+        }
+        let mut client = client_result.unwrap();
+
+        let payload: String = String::from("The send_notification response.");
+
+        let respond_request = tonic::Request::new(RespondRequest {
+            id,
+            payload,
+        });
+
+        let _respond_response = client.respond(respond_request).await;
+
+        let response = InvokeResponse {};
+
+        Ok(Response::new(response))
+    }    
 }
 
 #[cfg(test)]

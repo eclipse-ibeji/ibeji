@@ -4,7 +4,7 @@
 use log::info;
 use proto::provider::provider_server::Provider;
 use proto::provider::{
-    GetRequest, GetResponse, SetRequest, SetResponse, SubscribeRequest, SubscribeResponse,
+    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse, SubscribeRequest, SubscribeResponse,
     UnsubscribeRequest, UnsubscribeResponse,
 };
 use tonic::{Request, Response, Status};
@@ -67,4 +67,16 @@ impl Provider for ProviderImpl {
 
         Ok(Response::new(response))
     }
+
+    /// Invoke implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Invoke request.
+    async fn invoke(&self, request: Request<InvokeRequest>) -> Result<Response<InvokeResponse>, Status> {
+        info!("Got an invoke request: {:?}", request);
+        // TODO - provide set functionality
+        let response = InvokeResponse {};
+
+        Ok(Response::new(response))
+    }     
 }

@@ -3,6 +3,7 @@
 - [Introduction](#introduction)
 - [High-level Design](#high-level-design)
 - [Prerequisites](#prerequisites)
+  - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
 - [Cloning the Repo](#cloning-the-repo)
@@ -28,6 +29,14 @@ In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. 
 the nature of the capability, how to work with it and how it can be remotely accessed.
 
 ## <a name="prerequisites">Prerequisites</a>
+
+### <a name="install-gcc">Install gcc</a>
+
+Rust needs gcc's linker, so you will need to intsall it.  To install gcc, do the following:
+
+```
+sudo apt install gcc
+```
 
 ### <a name="install-rust">Install Rust</a>
 
@@ -100,16 +109,16 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command too set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/simple/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/property/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/ibeji/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
-`./simple-provider`<br>
+`./property-provider`<br>
 1. In the bottom window, run:<br><br>
-`./simple-consumer`<br>
+`./property-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## <a name="trademarks">Trademarks</a>
