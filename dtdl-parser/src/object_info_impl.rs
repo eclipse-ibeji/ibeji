@@ -102,19 +102,14 @@ impl ComplexSchemaInfo for ObjectInfoImpl {
 }
 
 impl ObjectInfo for ObjectInfoImpl {
+/*
     fn as_entity_info(&self) -> &dyn EntityInfo {
         self
     }
-
+*/
     fn fields(&self) -> &Vec<Box<dyn FieldInfo>> {
         &self.fields
     }
-
-    /*
-    fn add_field(&mut self, name: String, id: Dtmi, parent_id: Option<Dtmi>, schema: Option<Box<dyn SchemaInfo>>) {
-        self.fields.push(Box::new(FieldInfoImpl::new(name, self.dtdl_version(), id, parent_id, None, schema)));
-    }
-    */
 }
 
 // #[cfg(test)]

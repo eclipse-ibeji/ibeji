@@ -96,9 +96,11 @@ impl SchemaInfo for PrimitiveSchemaInfoImpl {
 }
 
 impl PrimitiveSchemaInfo for PrimitiveSchemaInfoImpl {
+/*
     fn as_entity_info(&self) -> &dyn EntityInfo {
         self
     } 
+*/    
 }
 
 // #[cfg(test)]

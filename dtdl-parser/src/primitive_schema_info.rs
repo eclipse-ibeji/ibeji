@@ -5,5 +5,5 @@ use crate::entity_info::EntityInfo;
 use crate::schema_info::SchemaInfo;
 
 pub trait PrimitiveSchemaInfo : SchemaInfo {
-    fn as_entity_info(&self) -> &dyn EntityInfo;  
+    // fn as_entity_info(&self) -> &dyn EntityInfo;  
 }

@@ -6,10 +6,8 @@ use crate::entity_info::EntityInfo;
 use crate::field_info::FieldInfo;
 
 pub trait ObjectInfo : ComplexSchemaInfo {
-    fn as_entity_info(&self) -> &dyn EntityInfo;
+    // fn as_entity_info(&self) -> &dyn EntityInfo;
 
     // TODO: should this be optional?
     fn fields(&self) -> &Vec<Box<dyn FieldInfo>>;
-
-    // fn add_field(&mut self, name: String, id: Dtmi, parent_id: Option<Dtmi>, schema: Option<Box<dyn SchemaInfo>>);
 }

@@ -274,37 +274,48 @@ impl ModelParser {
         Ok(None)
     }
 
-    fn get_primary_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
-        let entity_kind;
-
+    fn get_primary_or_existing_schema(&self, node: &Node<Value>, model: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
         let string_option: Option<&str> = node.as_str();
         if string_option.is_some() {
-            entity_kind = match EntityKind::from_str(string_option.unwrap()) {
-                Ok(v) => v,
-                Err(e) => return Err(format!("{:?}", e))
+            let schema_name = string_option.unwrap();
+
+            println!("Get the schema {}", &schema_name);
+
+            let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(&schema_name) {
+                Ok(v) => Some(v),
+                Err(_) => None
             };
 
-            if !is_primitive_entity_kind(entity_kind) {
-                return Err(format!("unable to get the schema, as we found an unexpected primitive type."));
+            if entity_kind_option.is_some() {
+                println!("entity_kind_option.is_some");
+                let entity_kind = entity_kind_option.unwrap();
+                if is_primitive_entity_kind(entity_kind) {
+                    println!("entity_kind is_primitive_entity_kind");
+                    let id: Option<Dtmi> = self.generate_id(parent_id, "test");
+                    if id.is_none() {
+                        return Err(String::from("We were not able to generate an id for the schema."));
+                    }
+            
+                    return Ok(Box::new(PrimitiveSchemaInfoImpl::new(
+                        DTDL_VERSION,
+                        id.unwrap(),
+                        parent_id.clone(),
+                        None,
+                        entity_kind)));
+                } else {
+                    println!("entity_kind is_NOT primitive_entity_kind");                  
+                    return Err(format!("Expected a primitive schema, found {}", entity_kind));
+                }
+            } else {
+                println!("entity_kind_option.is_none");
+                return self.retrieve_schema_info_from_model(schema_name, model);
             }
         } else {
             return Err(format!("get_schema encountered an unknown entity kind value"));                            
         }
-
-        let id: Option<Dtmi> = self.generate_id(parent_id, "test");
-        if id.is_none() {
-            return Err(String::from("We were not able to generate an id for the schema."));
-        }
-
-        Ok(Box::new(PrimitiveSchemaInfoImpl::new(
-            DTDL_VERSION,
-            id.unwrap(),
-            parent_id.clone(),
-            None,
-            entity_kind)))
     }
 
-    fn get_object_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_object_schema(&self, node: &Node<Value>, model: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
         let mut fields: Vec<Box<dyn FieldInfo>> = Vec::new();
 
         for (the_property, the_objects) in node.properties() {
@@ -324,8 +335,16 @@ impl ModelParser {
                                     }                                    
                                 }
                             } else if the_property == "dtmi:dtdl:property:schema;2" && the_objects.len() == 1 {
-                                if let Object::Node(node) = &*the_objects[0] {                                   
-                                    schema = Some(self.get_schema(node, parent_id)?);
+                                if let Object::Node(node) = &*the_objects[0] {   
+                                    println!("BEFORE name_option is '{:?}'", name_option);
+                                    if node.properties().len() == 0 {
+                                        println!("BEFORE get_primary_or_existing_schema");
+                                        schema = Some(self.get_primary_or_existing_schema(node, model, parent_id)?);                       
+                                    } else {
+                                        println!("BEFORE get_complex_schema");
+                                        schema = Some(self.get_complex_schema(node, model, parent_id)?);
+                                    }
+                                    println!("AFTER");                                    
                                 }
                             } else if the_property == "dtmi:dtdl:property:name;2" && the_objects.len() == 1 {
                                 if let Object::Value(value) = &*the_objects[0] {
@@ -334,6 +353,7 @@ impl ModelParser {
                                         None => name_option = None,
                                     }                                                                       
                                 }
+                                println!("name_option = {:?}", name_option);
                             }
                         }
                         if name_option.is_some() {
@@ -370,7 +390,7 @@ impl ModelParser {
             fields)))
     }
 
-    fn get_complex_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_complex_schema(&self, node: &Node<Value>, model: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
         let mut entity_kind_option: Option<EntityKind> = None;
         for node_type in node.types() {
             let entity_kind_result = EntityKind::from_str(node_type.as_str());
@@ -381,28 +401,29 @@ impl ModelParser {
         }
 
         if entity_kind_option.is_none() {
+            println!("Complex schema has no associated type.  It must have one."); 
             return Err(format!("Complex schema has no associated type.  It must have one."));
         }
 
         let entity_kind = entity_kind_option.unwrap();
 
         if entity_kind == EntityKind::Object {
-            return self.get_object_schema(node, parent_id);
+            return self.get_object_schema(node, model, parent_id);
         } else {
+            println!("Unsupported complex object: {:?}.", entity_kind);         
             return Err(format!("Unsupported complex object: {:?}.", entity_kind));
         }
     }
 
-    fn get_schema(&self, node: &Node<Value>, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_schema(&self, node: &Node<Value>, model: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
         for (the_property, the_objects) in node.properties() {
             if the_property == "dtmi:dtdl:property:schema;2" {
                 if the_objects.len() == 1 {
                     if let Object::Node(node) = &*the_objects[0] {
                         if node.properties().len() == 0 {
-                            return self.get_primary_schema(node, parent_id);                       
+                            return self.get_primary_or_existing_schema(node, model, parent_id);                       
                         } else {
-                            return self.get_complex_schema(node, parent_id);
-
+                            return self.get_complex_schema(node, model, parent_id);
                         }
                     } else {
                         return Err(format!("The schema property's associated object should be a node.  It is not."));
@@ -416,7 +437,7 @@ impl ModelParser {
         Err(format!("A schema property was not found."))
     }
 
-    fn get_payload(&self, node: &Node<Value>, property_name: &str, parent_id: &Option<Dtmi>) -> Result<Option<Box<dyn CommandPayloadInfo>>, String> {
+    fn get_payload(&self, node: &Node<Value>, model: &mut ModelDict, property_name: &str, parent_id: &Option<Dtmi>) -> Result<Option<Box<dyn CommandPayloadInfo>>, String> {
         for (the_property, the_objects) in node.properties() {
             if the_property == property_name {
                 if let Object::Node(node) = &*the_objects[0] {
@@ -444,7 +465,7 @@ impl ModelParser {
                     let _description = self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
 
                     // schema - required
-                    let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, &id)?;
+                    let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model, &id)?;
                     
                     return Ok(Some(Box::new(CommandPayloadInfoImpl::new(
                         name.unwrap(),
@@ -481,7 +502,7 @@ impl ModelParser {
                 } else if let Object::List(_list) = &*the_objects[0] {
                     warn!("gather_undefiued_properties encountered a list");
                 } else {
-                    warn!("Warning: gather_undefiued_properties encountered an unknonw object");
+                    warn!("Warning: gather_undefiued_properties encountered an unknown object");
                 }
             }
         }
@@ -504,9 +525,8 @@ impl ModelParser {
     /// # Arguments
     /// `schema` - The id (as a string) for the schema info.
     /// `model` - The model to search.
-    #[allow(dead_code)]
     fn retrieve_schema_info_from_model(
-        &mut self,
+        &self,
         schema: &str,
         model: &mut ModelDict,
     ) -> Result<Box<dyn SchemaInfo>, String> {
@@ -659,7 +679,7 @@ impl ModelParser {
         }
 
         // schema - required
-        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, parent_id)?;
+        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -712,7 +732,7 @@ impl ModelParser {
         }
 
         // schema - required
-        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, parent_id)?;
+        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -778,8 +798,8 @@ impl ModelParser {
             }
         }
 
-        let request_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, "dtmi:dtdl:property:request;2", &id)?;
-        let response_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, "dtmi:dtdl:property:response;2", &id)?;
+        let request_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, model, "dtmi:dtdl:property:request;2", &id)?;
+        let response_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, model, "dtmi:dtdl:property:response;2", &id)?;
 
         let mut undefined_property_values = HashMap::<String, Value>::new();
         Self::gather_undefined_properties(node, &mut undefined_property_values);        

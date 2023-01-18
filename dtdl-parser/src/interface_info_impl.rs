@@ -88,9 +88,11 @@ impl EntityInfo for InterfaceInfoImpl {
 }
 
 impl InterfaceInfo for InterfaceInfoImpl {
+/*    
     fn as_entity_info(&self) -> &dyn EntityInfo {
         self
-    } 
+    }
+*/    
 }
 
 // #[cfg(test)]
