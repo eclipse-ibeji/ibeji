@@ -59,6 +59,7 @@ impl FieldInfoImpl {
 }
 
 impl EntityInfo for FieldInfoImpl {
+    /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32 {
         self.dtdl_version
     }
@@ -73,22 +74,22 @@ impl EntityInfo for FieldInfoImpl {
         EntityKind::Telemetry
     }
 
-    // Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the identifier of the parent DTDL element in which this element is defined.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    // Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the identifier of the partition DTDL element in which this element is defined.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    // Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
 
-    // Add an undefined property.
+    /// Add an undefined property.
     /// # Arguments
     /// * `key` - The property's name.
     /// * `value` - The property's value.
@@ -96,6 +97,7 @@ impl EntityInfo for FieldInfoImpl {
         self.undefined_properties.insert(key, value);
     }
 
+    /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
     }     

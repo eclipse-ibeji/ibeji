@@ -30,6 +30,8 @@ pub mod primitive_schema_info;
 pub mod primitive_schema_info_impl;
 pub mod property_info;
 pub mod property_info_impl;
+pub mod relationship_info;
+pub mod relationship_info_impl;
 pub mod schema_field_info;
 pub mod schema_info;
 pub mod telemetry_info;

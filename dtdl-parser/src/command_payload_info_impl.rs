@@ -13,7 +13,6 @@ use crate::named_entity_info::NamedEntityInfo;
 use crate::schema_field_info::SchemaFieldInfo;
 use crate::schema_info::SchemaInfo;
 
-// #[derive(Debug)]
 pub struct CommandPayloadInfoImpl {
     // EntityInfo
     dtdl_version: i32,
@@ -60,6 +59,7 @@ impl CommandPayloadInfoImpl {
 }
 
 impl EntityInfo for CommandPayloadInfoImpl {
+    /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32 {
         self.dtdl_version
     }
@@ -74,22 +74,22 @@ impl EntityInfo for CommandPayloadInfoImpl {
         EntityKind::CommandPayload
     }
 
-    // Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the identifier of the parent DTDL element in which this element is defined.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    // Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the identifier of the partition DTDL element in which this element is defined.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    // Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
 
-    // Add an undefined property.
+    /// Add an undefined property.
     /// # Arguments
     /// * `key` - The property's name.
     /// * `value` - The property's value.
@@ -97,6 +97,7 @@ impl EntityInfo for CommandPayloadInfoImpl {
         self.undefined_properties.insert(key, value);
     }
 
+    /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
     }     

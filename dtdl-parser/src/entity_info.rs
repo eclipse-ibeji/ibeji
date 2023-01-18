@@ -18,20 +18,21 @@ pub trait EntityInfo : Any {
     /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
     fn entity_kind(&self) -> EntityKind;
 
-    // Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the identifier of the parent DTDL element in which this element is defined.
     fn child_of(&self) -> &Option<Dtmi>;
 
-    // Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the identifier of the partition DTDL element in which this element is defined.
     fn defined_in(&self) -> &Option<Dtmi>;
 
-    // Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value>;
 
-    // Add an undefined property.
+    /// Add an undefined property.
     /// # Arguments
     /// * `key` - The property's name.
     /// * `value` - The property's value.
     fn add_undefined_property(&mut self, key: String, value: Value);
 
-    fn as_any(&self) -> &dyn Any;    
+    /// Returns the instance as an Any.
+    fn as_any(&self) -> &dyn Any;
 }

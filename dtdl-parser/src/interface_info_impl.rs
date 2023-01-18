@@ -10,7 +10,7 @@ use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
 use crate::interface_info::InterfaceInfo;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct InterfaceInfoImpl {
     // EntitytInfo
     dtdl_version: i32,
@@ -45,6 +45,7 @@ impl InterfaceInfoImpl {
 }
 
 impl EntityInfo for InterfaceInfoImpl {
+    /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32 {
         self.dtdl_version
     }
@@ -59,22 +60,22 @@ impl EntityInfo for InterfaceInfoImpl {
         EntityKind::Interface
     }
 
-    // Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the identifier of the parent DTDL element in which this element is defined.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    // Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the identifier of the partition DTDL element in which this element is defined.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    // Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
 
-    // Add an undefined property.
+    /// Add an undefined property.
     /// # Arguments
     /// * `key` - The property's name.
     /// * `value` - The property's value.
@@ -82,17 +83,13 @@ impl EntityInfo for InterfaceInfoImpl {
         self.undefined_properties.insert(key, value);
     }
 
+    /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
     }    
 }
 
-impl InterfaceInfo for InterfaceInfoImpl {
-/*    
-    fn as_entity_info(&self) -> &dyn EntityInfo {
-        self
-    }
-*/    
+impl InterfaceInfo for InterfaceInfoImpl {   
 }
 
 // #[cfg(test)]

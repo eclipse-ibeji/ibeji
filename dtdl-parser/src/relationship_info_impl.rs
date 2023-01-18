@@ -10,11 +10,11 @@ use crate::dtmi::Dtmi;
 use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
 use crate::named_entity_info::NamedEntityInfo;
+use crate::relationship_info::RelationshipInfo;
 use crate::schema_info::SchemaInfo;
-use crate::telemetry_info::TelemetryInfo;
 
-pub struct TelemetryInfoImpl {
-    // EntityInfo
+pub struct RelationshipInfoImpl {
+    // EntitytInfo
     dtdl_version: i32,
     id: Dtmi,
     child_of: Option<Dtmi>,
@@ -22,29 +22,32 @@ pub struct TelemetryInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: String,    
+    name: String,
 
-    // TelemetryInfo
+    // RelationshipInfo
     schema: Option<Box<dyn SchemaInfo>>,
+    writable: bool,
 }
 
-impl TelemetryInfoImpl {
-    /// Returns a new TelemetryInfoImpl.
+impl RelationshipInfoImpl {
+    /// Returns a new RelationshipInfoImpl.
     ///
     /// # Arguments
-    /// * `name` - Name of the telemetry.
+    /// * `name` - Name of the relationship.
     /// * `dtdl_version` - Version of DTDL used to define the Entity.
     /// * `id` - Identifier for the Entity.
     /// * `child_of` - Identifier of the parent element in which this Entity is defined.
     /// * `defined_in` - Identifier of the partition in which this Entity is defined.
-    /// * `schema` - The property's schema.
+    /// * `schema` - The relationship's schema.
+    /// * `writable` - Is the relationship writable.
     pub fn new(
         name: String,
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        schema: Option<Box<dyn SchemaInfo>>
+        schema: Option<Box<dyn SchemaInfo>>,
+        writable: bool
     ) -> Self {
         Self {
             name,
@@ -54,12 +57,13 @@ impl TelemetryInfoImpl {
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
             schema,
+            writable
         }
     }
 }
 
-impl EntityInfo for TelemetryInfoImpl {
-    // Returns the DTDL version.
+impl EntityInfo for RelationshipInfoImpl {
+    /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32 {
         self.dtdl_version
     }
@@ -71,7 +75,7 @@ impl EntityInfo for TelemetryInfoImpl {
 
     /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
     fn entity_kind(&self) -> EntityKind {
-        EntityKind::Telemetry
+        EntityKind::Property
     }
 
     /// Returns the identifier of the parent DTDL element in which this element is defined.
@@ -103,25 +107,30 @@ impl EntityInfo for TelemetryInfoImpl {
     }     
 }
 
-impl NamedEntityInfo for TelemetryInfoImpl {  
-    /// Returns the name of the telemetry.
+impl NamedEntityInfo for RelationshipInfoImpl {  
+    /// Returns the name of the property.
     fn name(&self) -> &str {
         &self.name
     }  
 }
 
-impl ContentInfo for TelemetryInfoImpl {    
+impl ContentInfo for RelationshipInfoImpl {    
 }
 
-impl TelemetryInfo for TelemetryInfoImpl {
+impl RelationshipInfo for RelationshipInfoImpl {
     /// Returns the schema.
     fn schema(&self) -> &Option<Box<dyn SchemaInfo>> {
         &self.schema
-    }    
+    }
+
+    /// Returns whether the relationship is writable.
+    fn writable(&self) -> bool {
+        self.writable
+    }
 }
 
 #[cfg(test)]
-mod telemetry_info_impl_tests {
+mod relationship_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
     use crate::model_parser::DTDL_VERSION;
@@ -129,7 +138,7 @@ mod telemetry_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_telemetry_info_impl_test() {
+    fn new_relationship_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -152,35 +161,36 @@ mod telemetry_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));
 
-        let mut telemetry_info = TelemetryInfoImpl::new(
+        let mut relationship_info = RelationshipInfoImpl::new(
             String::from("one"),
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
             Some(boxed_schema_info),
+            false
         );
-        telemetry_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        telemetry_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        relationship_info.add_undefined_property(String::from("first"), first_propery_value.clone());
+        relationship_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(telemetry_info.dtdl_version() == 2);
-        assert!(telemetry_info.id() == &id);
-        assert!(telemetry_info.child_of().is_some());
-        assert!(telemetry_info.child_of().clone().unwrap() == child_of);
-        assert!(telemetry_info.defined_in().is_some());
-        assert!(telemetry_info.defined_in().clone().unwrap() == defined_in);
-        assert!(telemetry_info.entity_kind() == EntityKind::Telemetry);
-        assert!(telemetry_info.undefined_properties().len() == 2);
+        assert!(relationship_info.dtdl_version() == 2);
+        assert!(relationship_info.id() == &id);
+        assert!(relationship_info.child_of().is_some());
+        assert!(relationship_info.child_of().clone().unwrap() == child_of);
+        assert!(relationship_info.defined_in().is_some());
+        assert!(relationship_info.defined_in().clone().unwrap() == defined_in);
+        assert!(relationship_info.entity_kind() == EntityKind::Property);
+        assert!(relationship_info.undefined_properties().len() == 2);
         assert!(
-            telemetry_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            relationship_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
         );
         assert!(
-            telemetry_info.undefined_properties().get("second").unwrap().clone()
+            relationship_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
         );
 
-        assert!(telemetry_info.name() == "one");        
+        assert!(relationship_info.name() == "one");        
     }
 }

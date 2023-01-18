@@ -11,7 +11,7 @@ use crate::entity_kind::EntityKind;
 use crate::primitive_schema_info::PrimitiveSchemaInfo;
 use crate::schema_info::SchemaInfo;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct PrimitiveSchemaInfoImpl {
     // EntitytInfo
     dtdl_version: i32,
@@ -50,6 +50,7 @@ impl PrimitiveSchemaInfoImpl {
 }
 
 impl EntityInfo for PrimitiveSchemaInfoImpl {
+    /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32 {
         self.dtdl_version
     }
@@ -64,22 +65,22 @@ impl EntityInfo for PrimitiveSchemaInfoImpl {
         self.entity_kind
     }
 
-    // Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the identifier of the parent DTDL element in which this element is defined.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    // Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the identifier of the partition DTDL element in which this element is defined.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    // Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
 
-    // Add an undefined property.
+    /// Add an undefined property.
     /// # Arguments
     /// * `key` - The property's name.
     /// * `value` - The property's value.
@@ -87,20 +88,16 @@ impl EntityInfo for PrimitiveSchemaInfoImpl {
         self.undefined_properties.insert(key, value);
     }
 
+    /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }    
+    }
 }
 
 impl SchemaInfo for PrimitiveSchemaInfoImpl {
 }
 
-impl PrimitiveSchemaInfo for PrimitiveSchemaInfoImpl {
-/*
-    fn as_entity_info(&self) -> &dyn EntityInfo {
-        self
-    } 
-*/    
+impl PrimitiveSchemaInfo for PrimitiveSchemaInfoImpl {  
 }
 
 // #[cfg(test)]
