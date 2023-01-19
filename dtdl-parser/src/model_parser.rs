@@ -18,7 +18,7 @@ use crate::command_payload_info_impl::CommandPayloadInfoImpl;
 use crate::component_info_impl::ComponentInfoImpl;
 use crate::dtmi::{create_dtmi, Dtmi};
 use crate::entity_info::EntityInfo;
-use crate::entity_kind::{EntityKind, is_primitive_entity_kind};
+use crate::entity_kind::EntityKind;
 use crate::field_info::FieldInfo;
 use crate::field_info_impl::FieldInfoImpl;
 use crate::interface_info::InterfaceInfo;
@@ -27,6 +27,7 @@ use crate::json_ld::util::AsJson;
 use crate::model_dict::ModelDict;
 use crate::object_info_impl::ObjectInfoImpl;
 use crate::primitive_schema_info_impl::PrimitiveSchemaInfoImpl;
+use crate::primitive_schema_kinds::is_primitive_schema_kind;
 use crate::property_info_impl::PropertyInfoImpl;
 use crate::relationship_info_impl::RelationshipInfoImpl;
 use crate::schema_info::SchemaInfo;
@@ -36,7 +37,7 @@ use crate::telemetry_info_impl::TelemetryInfoImpl;
 pub const DTDL_VERSION: i32 = 2;
 
 /// Instances of the ModelParser class parse models written in the DTDL language.
-/// This class can be used to determine whether one or more DTDL models are valid,
+/// This class can be used to determine: whether one or more DTDL models are valid,
 /// to identify specific modeling errors, and to enable inspection of model contents.
 pub struct ModelParser {}
 
@@ -46,7 +47,7 @@ impl ModelParser {
         Self {}
     }
 
-    /// Parse a list of JSON texts and return the corresponding model dictionary.
+    /// Parse a list of JSON texts and return the resulting model dictionary.
     ///
     /// # Arguments
     /// * `json_texts` - A list of JSON texts.
@@ -59,7 +60,7 @@ impl ModelParser {
 
         // Add the entries to the model dictionaryfor the primitive entity kinds.
         for entity_kind in EntityKind::iter() {
-            if is_primitive_entity_kind(entity_kind) {
+            if is_primitive_schema_kind(entity_kind) {
                 let mut schema_info_id: Option<Dtmi> = None;
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
@@ -114,7 +115,7 @@ impl ModelParser {
     fn add_primitive_schemas_to_model_dict(&mut self, model_dict: &mut ModelDict) -> Result<(), String>
     {
         for entity_kind in EntityKind::iter() {
-            if is_primitive_entity_kind(entity_kind) {
+            if is_primitive_schema_kind(entity_kind) {
                 let mut schema_info_id: Option<Dtmi> = None;
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
@@ -255,7 +256,7 @@ impl ModelParser {
 
     /// Get a property value from a node by name.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the property.
     /// * `property_name` - The name of the property.
     fn get_property_value(&self, node: &Node<Value>, property_name: &str) -> Result<Option<String>, String> {
@@ -278,7 +279,7 @@ impl ModelParser {
     /// Get the schema info for a primary or existing schema.  Both are represented by a schema name that could represent either case.
     /// This function will determine which one it is and return the corresponding schema info.
     /// 
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the schema's name.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
@@ -295,7 +296,7 @@ impl ModelParser {
             if entity_kind_option.is_some() {
                 println!("entity_kind_option.is_some");
                 let entity_kind = entity_kind_option.unwrap();
-                if is_primitive_entity_kind(entity_kind) {
+                if is_primitive_schema_kind(entity_kind) {
                     println!("entity_kind is_primitive_entity_kind");
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
                     if id.is_none() {
@@ -323,7 +324,7 @@ impl ModelParser {
 
     /// Get an object schema info from a node.
     /// 
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the object schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
@@ -399,7 +400,7 @@ impl ModelParser {
 
     /// Get a complex schema info from a node.
     /// 
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the complex schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.    
@@ -430,7 +431,7 @@ impl ModelParser {
 
     /// Get a schema info from a node.
     /// 
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
@@ -458,7 +459,7 @@ impl ModelParser {
 
     /// Get the payload.
     /// 
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that contains the payload's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `property_name` - The property name associated with the payload.
@@ -512,7 +513,7 @@ impl ModelParser {
 
     /// Gather the undefined propeties from a node.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node to gather the undefined properties from.
     /// * `undefined_properties` - The resulting gathered undefined properties.
     fn gather_undefined_properties(
@@ -537,7 +538,7 @@ impl ModelParser {
 
     /// Genrate an id from the associated parent id and the associated property name.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `parent_id` - The associated parent id.
     /// * `name` - The associated property name.
     fn generate_id(&self, parent_id: &Option<Dtmi>, name: &str) -> Option<Dtmi> {
@@ -549,7 +550,7 @@ impl ModelParser {
 
     /// Retrieve a schema info from a dictionary.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `schema` - The id (as a string) for the schema info.
     /// * `model_dict` - The model dictionary to search.
     fn retrieve_schema_info_from_model_dict(
@@ -576,7 +577,7 @@ impl ModelParser {
 
     /// Retrieve an interface info from a model dictionary.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `schema` - The id (as a string) for the interface info.
     /// * `model_dict` - The model dictionary to search.
     fn retrieve_interface_info_from_model_dict(
@@ -603,7 +604,7 @@ impl ModelParser {
 
     /// Parse a node.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node to parse.
     /// * `model_dict` - The model dictionary to add the content to.
     fn parse_node(
@@ -640,7 +641,7 @@ impl ModelParser {
 
     /// Parse an interface.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents an interface.
     /// * `parent_id` - The interface's parent id.
     /// * `model_dict` - The model dictionary to add the content to.
@@ -689,7 +690,7 @@ impl ModelParser {
 
     /// Parse a telemetry.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents a telemetry.
     /// * `parent_id` - The telemetry's parent id.
     /// * `model_dict` - The model dictionary to add the content to.
@@ -742,7 +743,7 @@ impl ModelParser {
 
     /// Parse a property.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents a property.
     /// * `parent_id` - The property's parent id.
     /// * `model_dict` - The model dictionry to add the content to.
@@ -796,7 +797,7 @@ impl ModelParser {
 
     /// Parse a command.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents a command.
     /// * `parent_id` - The command's parent id.
     /// * `model_dict` - The model dictionary to add the content to.
@@ -852,7 +853,7 @@ impl ModelParser {
 
     /// Parse a relationship.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents a relationship.
     /// * `parent_id` - The relationship's parent id.
     /// * `model_dict` - The model dictionary to add the content to.
@@ -897,7 +898,7 @@ impl ModelParser {
 
     // Parse a component.
     ///
-    /// #Arguments
+    /// # Arguments
     /// * `node` - The node that represents a component.
     /// * `parent_id` - The component's parent id.
     /// * `model_dict` - The model dictionary to add the content to.

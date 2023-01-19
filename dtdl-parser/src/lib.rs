@@ -28,6 +28,7 @@ pub mod model_parser;
 pub mod named_entity_info;
 pub mod primitive_schema_info;
 pub mod primitive_schema_info_impl;
+pub mod primitive_schema_kinds;
 pub mod property_info;
 pub mod property_info_impl;
 pub mod relationship_info;

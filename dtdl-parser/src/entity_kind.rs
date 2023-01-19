@@ -107,16 +107,3 @@ pub enum EntityKind {
     #[strum(serialize = "dtmi:dtdl:class:Reference;2")]
     Reference,
 }
-
-pub fn is_primitive_entity_kind(entity_kind: EntityKind) -> bool {
-    entity_kind == EntityKind::Boolean ||
-    entity_kind == EntityKind::Date ||
-    entity_kind == EntityKind::DateTime ||
-    entity_kind == EntityKind::Double ||
-    entity_kind == EntityKind::Duration ||
-    entity_kind == EntityKind::Float ||
-    entity_kind == EntityKind::Integer ||
-    entity_kind == EntityKind::Long ||
-    entity_kind == EntityKind::String ||
-    entity_kind == EntityKind::Time
-}
