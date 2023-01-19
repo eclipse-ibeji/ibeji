@@ -22,8 +22,8 @@ through an extensible, open and dynamic architecture that provides access to the
 
 ## <a name="high-level-design">High-level Design</a>
 
-Ibeji's architecture has a In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities
-and make them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
+Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities
+and makes them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
 A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the
 In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes meta data that allow Ibeji consumers to comprehend
 the nature of the capability, how to work with it and how it can be remotely accessed.
@@ -32,7 +32,7 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 ### <a name="install-gcc">Install gcc</a>
 
-Rust needs gcc's linker, so you will need to intsall it.  To install gcc, do the following:
+Rust needs gcc's linker, so you will need to intsall it. To install gcc, do the following:
 
 ```
 sudo apt install gcc
@@ -67,7 +67,7 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
 The repo has two submodule [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
-and DTDL samples file.  To ensure that these are included, please use the following command when cloning Ibeji's github repo:
+and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
 `git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
 
@@ -82,7 +82,7 @@ and checkout its "resolve-issue-40" branch. It should be cloned to a directory t
 
 ### <a name="dtdl-parser">DTDL Parser</a>
 
-There is no existing DTDL Parser for Rust, so we have provided a minimalistic one that is based on the [JavaScript DTDL Parser](https://github.com/Azure/azure-sdk-for-js/tree/%40azure/dtdl-parser_1.0.0-beta.2/sdk/digitaltwins/dtdl-parser).
+There is no existing DTDL Parser for Rust, so we have provided a minimalistic one for DTDL v2 that is based on the [JavaScript DTDL Parser](https://github.com/Azure/azure-sdk-for-js/tree/%40azure/dtdl-parser_1.0.0-beta.2/sdk/digitaltwins/dtdl-parser).
 
 ## <a name="building">Building</a>
 
@@ -101,6 +101,8 @@ After successfully building Ibeji, you can run all of the unit tests. To do this
 Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-demo">Running the Demo</a>
+
+There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command. The following instructions are for the demo for the use of a property. These instructions can easily be adjusted for the demonstration for the use of a command.
 
 Steps:
 

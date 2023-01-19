@@ -18,7 +18,7 @@ Please note that the initial Ibeji implementation is a proof-of-concept. We woul
 Ibeji has three main architectural concepts:
 
 - Consumer
-- Provider.
+- Provider
 - In-Vehicle Digital Twin Service
 
 The first Ibeji architectural concept that we will introduce is the Consumer. A Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
@@ -70,7 +70,7 @@ The DTDL must use the standard dtmi dtdl context. It must also use the dtmi sdv 
 
 ### In-Vehicle Digital Twin Service Overview
 
-The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api and the ability to subscribe to a provided hardware resource data feed.
+The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api, and the ability to subscribe to a provided hardware resource data feed and to invoke commands on provided hardware resources.
 
 ### Interfaces
 
@@ -94,11 +94,11 @@ Below is the sequence diagram for the Find-By-Id activity.
 
 ### Overview
 
-The initial Provider will provide the functionality needed by the proof-of-concept, implementing one resource - the AmbientAirTemperature property.
+The initial Providers will implement simple resources - the AmbientAirTemperature property and the send_notification command.
 
 ### Interfaces
 
-A Provider supports a gRPC interface for subscribing to resource's data feeds, unsubscribing, request a resource's value and setting a resource's value.
+A Provider supports a gRPC interface for subscribing to resource's data feeds, unsubscribing from a resource's data feed, requesting a resource's value, setting a resource's value and invoking a command.
 
 ### Activities
 
@@ -108,11 +108,17 @@ Below is the sequence diagram for the Subscribe activity. The Provider's endpoin
 
 ![Sequence Diagram](diagrams/subscribe_sequence.svg)
 
+#### Invoke
+
+Below is the sequence diagram for the Invoke activity. The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
+
+![Sequence Diagram](diagrams/invoke_sequence.svg)
+
 ## <a name="consumer">Consumer</a>
 
 ### Overview
 
-The initial Consumer will provide the functionality needed by the proof-of-concept. It will only query and subscribe to one resource - the AmbientAirTemperature property. It will use the resource's endpoint metadata to subscribe.
+The initial Consumers will provide the functionality needed by the proof-of-concept to subscribe to resources data feeds and invoke commands on resources.
 
 Interfaces
 
@@ -125,6 +131,12 @@ Activities
 Below is the sequence diagram for the Publish activity.
 
 ![Sequence Diagram](diagrams/publish_sequence.svg)
+
+#### Respond
+
+Below is the sequence diagram for the Respond activity.
+
+![Sequence Diagram](diagrams/respond_sequence.svg)
 
 ## <a name="appendix-a">Appendix A – Provider gRPC Interface</a>
 
@@ -180,6 +192,20 @@ Set a resource's value to the one provided. This may not cause a change if the r
 
 - No response.
 
+### Invoke
+
+Invoke a resource's command.
+
+#### Request
+
+- id - The resource's id.
+- uri - The uri for the endpoint where the command's response should be delivered.
+- payload - The command's request payload.
+
+#### Response
+
+- No response.
+
 ## <a name="appendix-b">Appendix B – Digital Twin gRPC Interface</a>
 
 ### FindById
@@ -228,6 +254,19 @@ Publish a resource value.
 
 - id - The resource's id.
 - value - The resource's value.
+
+#### Response
+
+- No response.
+
+### Respond
+
+Respond for the execution of a command.
+
+#### Request
+
+- id - The resource's id.
+- payload - The command's response payload.
 
 #### Response
 

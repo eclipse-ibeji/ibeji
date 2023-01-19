@@ -1,0 +1,8 @@
+@startuml
+
+participant "Provider"
+participant "Consumer"
+
+"Consumer" -> "Provider" : Invoke - request (id, url, payload)
+
+@enduml
