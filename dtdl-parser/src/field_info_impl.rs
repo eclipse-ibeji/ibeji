@@ -120,9 +120,8 @@ impl SchemaFieldInfo for FieldInfoImpl {
 impl FieldInfo for FieldInfoImpl {
 }
 
-/*
 #[cfg(test)]
-mod telemetry_info_impl_tests {
+mod field_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
     use crate::model_parser::DTDL_VERSION;
@@ -130,7 +129,7 @@ mod telemetry_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_telemetry_info_impl_test() {
+    fn new_field_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -155,34 +154,35 @@ mod telemetry_info_impl_tests {
 
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
 
-        let mut telemetry_info = TelemetryInfoImpl::new(
-            String::from("one"),
+        let mut field_info = FieldInfoImpl::new(
             2,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
+            Some(String::from("one")),
             Some(boxed_schema_info),
         );
-        telemetry_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        telemetry_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        field_info.add_undefined_property(String::from("first"), first_propery_value.clone());
+        field_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(telemetry_info.dtdl_version() == 2);
-        assert!(telemetry_info.id() == &id);
-        assert!(telemetry_info.child_of().is_some());
-        assert!(telemetry_info.child_of().clone().unwrap() == child_of);
-        assert!(telemetry_info.defined_in().is_some());
-        assert!(telemetry_info.defined_in().clone().unwrap() == defined_in);
-        assert!(telemetry_info.entity_kind() == EntityKind::Telemetry);
-        assert!(telemetry_info.undefined_properties().len() == 2);
+        assert!(field_info.dtdl_version() == 2);
+        assert!(field_info.id() == &id);
+        assert!(field_info.child_of().is_some());
+        assert!(field_info.child_of().clone().unwrap() == child_of);
+        assert!(field_info.defined_in().is_some());
+        assert!(field_info.defined_in().clone().unwrap() == defined_in);
+        assert!(field_info.entity_kind() == EntityKind::Telemetry);
+        assert!(field_info.undefined_properties().len() == 2);
         assert!(
-            telemetry_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            field_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
         );
         assert!(
-            telemetry_info.undefined_properties().get("second").unwrap().clone()
+            field_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
         );
 
-        assert!(telemetry_info.name() == "one");        
+        let retrieved_name = field_info.name().clone(); 
+        assert!(retrieved_name.is_some());
+        assert!(retrieved_name.unwrap() == "one");  
     }
 }
-*/

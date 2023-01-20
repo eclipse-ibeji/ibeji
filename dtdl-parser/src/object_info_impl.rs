@@ -110,15 +110,14 @@ impl ObjectInfo for ObjectInfoImpl {
     }
 }
 
-// #[cfg(test)]
-/*
-mod property_info_impl_tests {
+#[cfg(test)]
+mod object_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
     use serde_json;
 
     #[test]
-    fn new_property_info_impl_test() {
+    fn new_object_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -137,33 +136,32 @@ mod property_info_impl_tests {
         let first_propery_value: Value = serde_json::from_str("{\"first\": \"this\"}").unwrap();
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
-        let mut property_info = PropertyInfoImpl::new(
-            String::from("one"),
+        // Option<Vec<Box<dyn FieldInfo>>>
+
+        let mut object_info = ObjectInfoImpl::new(
             2,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
+            None
         );
-        property_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        property_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        object_info.add_undefined_property(String::from("first"), first_propery_value.clone());
+        object_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(property_info.dtdl_version() == 2);
-        assert!(property_info.id() == &id);
-        assert!(property_info.child_of().is_some());
-        assert!(property_info.child_of().clone().unwrap() == child_of);
-        assert!(property_info.defined_in().is_some());
-        assert!(property_info.defined_in().clone().unwrap() == defined_in);
-        assert!(property_info.entity_kind() == EntityKind::Property);
-        assert!(property_info.undefined_properties().len() == 2);
+        assert!(object_info.dtdl_version() == 2);
+        assert!(object_info.id() == &id);
+        assert!(object_info.child_of().is_some());
+        assert!(object_info.child_of().clone().unwrap() == child_of);
+        assert!(object_info.defined_in().is_some());
+        assert!(object_info.defined_in().clone().unwrap() == defined_in);
+        assert!(object_info.entity_kind() == EntityKind::Object);
+        assert!(object_info.undefined_properties().len() == 2);
         assert!(
-            property_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            object_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
         );
         assert!(
-            property_info.undefined_properties().get("second").unwrap().clone()
+            object_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
-        );
-
-        assert!(property_info.name() == "one");        
+        );      
     }
 }
-*/
