@@ -22,7 +22,7 @@ pub struct FieldInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: String,    
+    name: Option<String>,    
 
     // SchemaFieldInfo
     schema: Option<Box<dyn SchemaInfo>>,
@@ -32,27 +32,27 @@ impl FieldInfoImpl {
     /// Returns a new FieldInfoImpl.
     ///
     /// # Arguments
-    /// * `name` - Name of the telemetry.
-    /// * `dtdl_version` - Version of DTDL used to define the Entity.
-    /// * `id` - Identifier for the Entity.
-    /// * `child_of` - Identifier of the parent element in which this Entity is defined.
-    /// * `defined_in` - Identifier of the partition in which this Entity is defined.
-    /// * `schema` - The property's schema.
+    /// * `dtdl_version` - The DTDL version used to define the field.
+    /// * `id` - The identifier..
+    /// * `child_of` - The identifier of the parent element in which this field is defined.
+    /// * `defined_in` - The identifier of the partition in which this field is defined.
+    /// * `name` - The name.
+    /// * `schema` - The schema.
     pub fn new(
-        name: String,
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
+        name: Option<String>,        
         schema: Option<Box<dyn SchemaInfo>>
     ) -> Self {
         Self {
-            name,
             dtdl_version,
             id,
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
+            name,            
             schema,
         }
     }
@@ -64,27 +64,27 @@ impl EntityInfo for FieldInfoImpl {
         self.dtdl_version
     }
 
-    /// Returns the identifier of the DTDL element that corresponds to this object.
+    /// Returns the identifier.
     fn id(&self) -> &Dtmi {
         &self.id
     }
 
-    /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
+    /// Returns the kind of entity.
     fn entity_kind(&self) -> EntityKind {
         EntityKind::Telemetry
     }
 
-    /// Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the parent's identifier.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    /// Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the enclosing partition's identifier.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    /// Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
@@ -105,7 +105,7 @@ impl EntityInfo for FieldInfoImpl {
 
 impl NamedEntityInfo for FieldInfoImpl {  
     /// Returns the name of the field.
-    fn name(&self) -> &str {
+    fn name(&self) -> &Option<String> {
         &self.name
     }  
 }

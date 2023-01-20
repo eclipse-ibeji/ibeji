@@ -22,7 +22,7 @@ pub struct ComponentInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: String,    
+    name: Option<String>,    
 
     // ComponentInfo
     schema: Option<Box<dyn InterfaceInfo>>,
@@ -32,27 +32,27 @@ impl ComponentInfoImpl {
     /// Returns a new ComponentInfoImpl.
     ///
     /// # Arguments
-    /// * `name` - Name of the component.
-    /// * `dtdl_version` - Version of DTDL used to define the Entity.
-    /// * `id` - Identifier for the Entity.
-    /// * `child_of` - Identifier of the parent element in which this Entity is defined.
-    /// * `defined_in` - Identifier of the partition in which this Entity is defined.
-    /// * `schema` - The component's interface.
+    /// * `dtdl_version` - The DTDL version used to define the component.
+    /// * `id` - The identifier.
+    /// * `child_of` - The identifier of the parent element in which this component is defined.
+    /// * `defined_in` - The identifier of the partition in which this component is defined.
+    /// * `name` - The name.
+    /// * `schema` - The interface.
     pub fn new(
-        name: String,
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
+        name: Option<String>,        
         schema: Option<Box<dyn InterfaceInfo>>
     ) -> Self {
         Self {
-            name,
             dtdl_version,
             id,
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
+            name,
             schema,
         }
     }
@@ -64,27 +64,27 @@ impl EntityInfo for ComponentInfoImpl {
         self.dtdl_version
     }
 
-    /// Returns the identifier of the DTDL element that corresponds to this object.
+    /// Returns the identifier.
     fn id(&self) -> &Dtmi {
         &self.id
     }
 
-    /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
+    /// Returns the kind of entity.
     fn entity_kind(&self) -> EntityKind {
         EntityKind::Component
     }
 
-    /// Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the parent's identifier.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    /// Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the enclosing partition's identifier.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    /// Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
@@ -104,8 +104,8 @@ impl EntityInfo for ComponentInfoImpl {
 }
 
 impl NamedEntityInfo for ComponentInfoImpl {  
-    /// Returns the name of the component.
-    fn name(&self) -> &str {
+    /// Returns the name.
+    fn name(&self) -> &Option<String> {
         &self.name
     }  
 }
@@ -114,7 +114,7 @@ impl ContentInfo for ComponentInfoImpl {
 }
 
 impl ComponentInfo for ComponentInfoImpl {
-    /// Returns the schema.
+    /// Returns the interface.
     fn schema(&self) -> &Option<Box<dyn InterfaceInfo>> {
         &self.schema
     }    
@@ -155,11 +155,11 @@ mod component_info_impl_tests {
         let boxed_interface_info = Box::new(InterfaceInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None));        
 
         let mut component_info = ComponentInfoImpl::new(
-            String::from("one"),
             2,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
+            Some(String::from("one")),            
             Some(boxed_interface_info),
         );
         component_info.add_undefined_property(String::from("first"), first_propery_value.clone());
@@ -181,6 +181,8 @@ mod component_info_impl_tests {
                 == second_propery_value
         );
 
-        assert!(component_info.name() == "one");        
+        let retrieved_name = component_info.name().clone(); 
+        assert!(retrieved_name.is_some());
+        assert!(retrieved_name.unwrap() == "one");        
     }
 }

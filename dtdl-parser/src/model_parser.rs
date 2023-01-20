@@ -371,11 +371,11 @@ impl ModelParser {
                             }
 
                             fields.push(Box::new(FieldInfoImpl::new(
-                                name_option.clone().unwrap(),
                                 DTDL_VERSION,
                                 id.unwrap(),
                                 parent_id.clone(),
                                 None,
+                                name_option,                                
                                 schema
                             )));
                         }
@@ -395,7 +395,7 @@ impl ModelParser {
             id.unwrap(),
             parent_id.clone(),
             None,
-            fields)))
+            Some(fields))))
     }
 
     /// Get a complex schema info from a node.
@@ -468,11 +468,8 @@ impl ModelParser {
         for (the_property, the_objects) in node.properties() {
             if the_property == property_name {
                 if let Object::Node(node) = &*the_objects[0] {
-                    // name - required
+                    // name - optional
                     let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-                    if name.is_none() {
-                        return Err(String::from("Command does not have a name property."));
-                    }
 
                     let mut id: Option<Dtmi> = None;
                     if node.id().is_some() {
@@ -495,11 +492,11 @@ impl ModelParser {
                     let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, &id)?;
                     
                     return Ok(Some(Box::new(CommandPayloadInfoImpl::new(
-                        name.unwrap(),
                         DTDL_VERSION,
                         id.unwrap(),
                         parent_id.clone(),
                         None,
+                        name,                        
                         Some(boxed_schema_info)))));
 
                 } else {
@@ -700,11 +697,8 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
         model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
+        // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-        if name.is_none() {
-            return Err(String::from("Telemetry does not have a name property."));
-        }
 
         // schema - required
         let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, parent_id)?;
@@ -724,11 +718,11 @@ impl ModelParser {
         Self::gather_undefined_properties(node, &mut undefined_property_values);   
 
         let mut rc_entity_info: Box<dyn EntityInfo> = Box::new(TelemetryInfoImpl::new(
-            name.unwrap(),
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
+            name,            
             Some(boxed_schema_info)
         ));
 
@@ -753,11 +747,8 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
         model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
+        // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-        if name.is_none() {
-            return Err(String::from("Property does not have a name property."));
-        }
 
         // schema - required
         let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, parent_id)?;
@@ -777,11 +768,11 @@ impl ModelParser {
         Self::gather_undefined_properties(node, &mut undefined_property_values);
 
         let mut entity_info = Box::new(PropertyInfoImpl::new(
-            name.unwrap(),
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
+            name,          
             Some(boxed_schema_info),
             false,
         ));
@@ -807,11 +798,8 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
         model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
+        // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-        if name.is_none() {
-            return Err(String::from("Command does not have a name property."));
-        }
 
         println!("Command: {}", name.clone().unwrap());
 
@@ -833,11 +821,11 @@ impl ModelParser {
         Self::gather_undefined_properties(node, &mut undefined_property_values);        
 
         let mut entity_info = Box::new(CommandInfoImpl::new(
-            name.unwrap(),
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
+            name,            
             request_payload,
             response_payload,
         ));
@@ -863,11 +851,8 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
         model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
+        // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-        if name.is_none() {
-            return Err(String::from("Relationship does not have a name property."));
-        }
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -883,12 +868,12 @@ impl ModelParser {
         }
 
         let entity_info = Box::new(RelationshipInfoImpl::new(
-            name.unwrap(),
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            None,
+            name,            
+            None,            
             false,
         ));
         model_dict.insert(id.clone().unwrap(), entity_info);
@@ -908,11 +893,8 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
         model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
+        // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-        if name.is_none() {
-            return Err(String::from("Component does not have a name property"));
-        }
 
         // schema - required (note: here the schema property represents an interface)
         let schema = self.get_property_value(node, "dtmi:dtdl:property:schema;2")?;
@@ -932,12 +914,12 @@ impl ModelParser {
             }
         }
 
-        let entity_info = Box::new(ComponentInfoImpl::new(
-            name.unwrap(),            
+        let entity_info = Box::new(ComponentInfoImpl::new(            
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
+            name,
             Some(boxed_interface_info),
         ));
         model_dict.insert(id.clone().unwrap(), entity_info);

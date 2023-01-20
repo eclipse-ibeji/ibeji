@@ -22,37 +22,37 @@ pub struct CommandPayloadInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: String,    
+    name: Option<String>,    
 
     // SchemaFieldInfo
     schema: Option<Box<dyn SchemaInfo>>,
 }
 
 impl CommandPayloadInfoImpl {
-    /// Returns a new TelemetryInfoImpl.
+    /// Returns a new CommandPayloadInfoImpl.
     ///
     /// # Arguments
-    /// * `name` - Name of the telemetry.
-    /// * `dtdl_version` - Version of DTDL used to define the Entity.
-    /// * `id` - Identifier for the Entity.
-    /// * `child_of` - Identifier of the parent element in which this Entity is defined.
-    /// * `defined_in` - Identifier of the partition in which this Entity is defined.
-    /// * `schema` - The property's schema.
+    /// * `dtdl_version` - The DTDL version used to define the command payload.
+    /// * `id` - The identifier.
+    /// * `child_of` - The identifier of the parent element in which this command payload is defined.
+    /// * `defined_in` - The identifier of the partition in which this command payload is defined.
+    /// * `name` - The name.
+    /// * `schema` - The schema.
     pub fn new(
-        name: String,
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
+        name: Option<String>,
         schema: Option<Box<dyn SchemaInfo>>
     ) -> Self {
         Self {
-            name,
             dtdl_version,
             id,
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
+            name,            
             schema,
         }
     }
@@ -64,27 +64,27 @@ impl EntityInfo for CommandPayloadInfoImpl {
         self.dtdl_version
     }
 
-    /// Returns the identifier of the DTDL element that corresponds to this object.
+    /// Returns the identifier.
     fn id(&self) -> &Dtmi {
         &self.id
     }
 
-    /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
+    /// Returns the kind of entity.
     fn entity_kind(&self) -> EntityKind {
         EntityKind::CommandPayload
     }
 
-    /// Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the parent's identifier.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    /// Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the enclosing partition's identifider.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    /// Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
@@ -104,8 +104,8 @@ impl EntityInfo for CommandPayloadInfoImpl {
 }
 
 impl NamedEntityInfo for CommandPayloadInfoImpl {  
-    /// Returns the name of the telemetry.
-    fn name(&self) -> &str {
+    /// Returns the name.
+    fn name(&self) -> &Option<String> {
         &self.name
     }  
 }
@@ -129,7 +129,7 @@ mod command_payload_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_payload_info_impl_test() {
+    fn new_command_payload_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:send_notification:request;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -154,33 +154,35 @@ mod command_payload_info_impl_tests {
 
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
 
-        let mut payload_info = CommandPayloadInfoImpl::new(
-            String::from("one"),
+        let mut command_payload_info = CommandPayloadInfoImpl::new(
             2,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
+            Some(String::from("one")),            
             Some(boxed_schema_info),
         );
-        payload_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        payload_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        command_payload_info.add_undefined_property(String::from("first"), first_propery_value.clone());
+        command_payload_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(payload_info.dtdl_version() == 2);
-        assert!(payload_info.id() == &id);
-        assert!(payload_info.child_of().is_some());
-        assert!(payload_info.child_of().clone().unwrap() == child_of);
-        assert!(payload_info.defined_in().is_some());
-        assert!(payload_info.defined_in().clone().unwrap() == defined_in);
-        assert!(payload_info.entity_kind() == EntityKind::CommandPayload);
-        assert!(payload_info.undefined_properties().len() == 2);
+        assert!(command_payload_info.dtdl_version() == 2);
+        assert!(command_payload_info.id() == &id);
+        assert!(command_payload_info.child_of().is_some());
+        assert!(command_payload_info.child_of().clone().unwrap() == child_of);
+        assert!(command_payload_info.defined_in().is_some());
+        assert!(command_payload_info.defined_in().clone().unwrap() == defined_in);
+        assert!(command_payload_info.entity_kind() == EntityKind::CommandPayload);
+        assert!(command_payload_info.undefined_properties().len() == 2);
         assert!(
-            payload_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            command_payload_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
         );
         assert!(
-            payload_info.undefined_properties().get("second").unwrap().clone()
+            command_payload_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
         );
 
-        assert!(payload_info.name() == "one");        
+        let retrieved_name = command_payload_info.name().clone(); 
+        assert!(retrieved_name.is_some());
+        assert!(retrieved_name.unwrap() == "one");    
     }
 }

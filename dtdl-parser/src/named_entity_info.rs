@@ -5,5 +5,5 @@ use crate::entity_info::EntityInfo;
 
 pub trait NamedEntityInfo : EntityInfo {
     /// Returns the name.
-    fn name(&self) -> &str;
+    fn name(&self) -> &Option<String>;
 }

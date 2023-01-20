@@ -24,10 +24,10 @@ impl InterfaceInfoImpl {
     /// Returns a new InterfaceInfoImpl.
     ///
     /// # Arguments
-    /// * `dtdl_version` - Version of DTDL used to define the Entity.
-    /// * `id` - Identifier for the Entity.
-    /// * `child_of` - Identifier of the parent element in which this Entity is defined.
-    /// * `defined_in` - Identifier of the partition in which this Entity is defined.
+    /// * `dtdl_version` - The DTDL version used to define the interface.
+    /// * `id` - The identifier.
+    /// * `child_of` - The identifier of the parent element in which this interface is defined.
+    /// * `defined_in` - The identifier of the partition in which this interface is defined.
     pub fn new(
         dtdl_version: i32,
         id: Dtmi,
@@ -50,27 +50,27 @@ impl EntityInfo for InterfaceInfoImpl {
         self.dtdl_version
     }
 
-    /// Returns the identifier of the DTDL element that corresponds to this object.
+    /// Returns the identifier.
     fn id(&self) -> &Dtmi {
         &self.id
     }
 
-    /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
+    /// Returns the kind of entity.
     fn entity_kind(&self) -> EntityKind {
         EntityKind::Interface
     }
 
-    /// Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the parent's identifier.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    /// Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the enclosing partition's identifier.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    /// Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }

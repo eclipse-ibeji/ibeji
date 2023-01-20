@@ -22,7 +22,7 @@ pub struct RelationshipInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: String,
+    name: Option<String>,
 
     // RelationshipInfo
     schema: Option<Box<dyn SchemaInfo>>,
@@ -33,29 +33,29 @@ impl RelationshipInfoImpl {
     /// Returns a new RelationshipInfoImpl.
     ///
     /// # Arguments
-    /// * `name` - Name of the relationship.
-    /// * `dtdl_version` - Version of DTDL used to define the Entity.
-    /// * `id` - Identifier for the Entity.
-    /// * `child_of` - Identifier of the parent element in which this Entity is defined.
-    /// * `defined_in` - Identifier of the partition in which this Entity is defined.
-    /// * `schema` - The relationship's schema.
-    /// * `writable` - Is the relationship writable.
+    /// * `dtdl_version` - The DTDL version used to define the relationship.
+    /// * `id` - The identifier.
+    /// * `child_of` - The identifier of the parent element in which this relationship is defined.
+    /// * `defined_in` - The identifier of the partition in which this relationship is defined.
+    /// * `name` - The name.
+    /// * `schema` - The schema.
+    /// * `writable` - Is the relationship writable?
     pub fn new(
-        name: String,
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
+        name: Option<String>,        
         schema: Option<Box<dyn SchemaInfo>>,
         writable: bool
     ) -> Self {
         Self {
-            name,
             dtdl_version,
             id,
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
+            name,            
             schema,
             writable
         }
@@ -68,27 +68,27 @@ impl EntityInfo for RelationshipInfoImpl {
         self.dtdl_version
     }
 
-    /// Returns the identifier of the DTDL element that corresponds to this object.
+    /// Returns the identifier.
     fn id(&self) -> &Dtmi {
         &self.id
     }
 
-    /// Returns the kind of Entity, meaning the concrete DTDL type assigned to the corresponding element in the model.
+    /// Returns the kind of entity.
     fn entity_kind(&self) -> EntityKind {
         EntityKind::Property
     }
 
-    /// Returns the identifier of the parent DTDL element in which this element is defined.
+    /// Returns the parent's identifier.
     fn child_of(&self) -> &Option<Dtmi> {
         &self.child_of
     }
 
-    /// Returns the identifier of the partition DTDL element in which this element is defined.
+    /// Returns the enclosing partition's identifier.
     fn defined_in(&self) -> &Option<Dtmi> {
         &self.defined_in
     }
 
-    /// Returns any undefined properties of the DTDL element that corresponds to this object.
+    /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
     }
@@ -108,8 +108,8 @@ impl EntityInfo for RelationshipInfoImpl {
 }
 
 impl NamedEntityInfo for RelationshipInfoImpl {  
-    /// Returns the name of the property.
-    fn name(&self) -> &str {
+    /// Returns the name.
+    fn name(&self) -> &Option<String> {
         &self.name
     }  
 }
@@ -164,11 +164,11 @@ mod relationship_info_impl_tests {
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));
 
         let mut relationship_info = RelationshipInfoImpl::new(
-            String::from("one"),
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
+            Some(String::from("one")),            
             Some(boxed_schema_info),
             false
         );
@@ -191,6 +191,8 @@ mod relationship_info_impl_tests {
                 == second_propery_value
         );
 
-        assert!(relationship_info.name() == "one");        
+        let retrieved_name = relationship_info.name().clone(); 
+        assert!(retrieved_name.is_some());
+        assert!(retrieved_name.unwrap() == "one");         
     }
 }
