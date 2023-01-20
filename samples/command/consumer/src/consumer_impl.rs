@@ -22,8 +22,8 @@ impl Consumer for ConsumerImpl {
         let request_inner = request.into_inner();
 
         info!(
-            "Received a publish for id {} with the value {}",
-            request_inner.id, request_inner.value
+            "Received a publish for entity id {} with the value '{}'",
+            request_inner.entity_id, request_inner.value
         );
 
         let response = PublishResponse {};
@@ -42,8 +42,8 @@ impl Consumer for ConsumerImpl {
         let request_inner = request.into_inner();
 
         info!(
-            "Received a respond for id {} with the value '{}'",
-            request_inner.id, request_inner.payload
+            "Received a respond for entity id {} with the response id {} and the payload '{}'",
+            request_inner.entity_id, request_inner.response_id, request_inner.payload
         );
 
         let response = RespondResponse {};
@@ -61,10 +61,10 @@ mod consumer_impl_tests {
     fn publish_test() {
         let consumer_impl = ConsumerImpl {};
 
-        let id = String::from("some-id");
+        let entity_id = String::from("some-id");
         let value = String::from("some-value");
 
-        let request = tonic::Request::new(PublishRequest { id, value });
+        let request = tonic::Request::new(PublishRequest { entity_id, value });
         let result = task::block_on(consumer_impl.publish(request));
         assert!(result.is_ok());
     }

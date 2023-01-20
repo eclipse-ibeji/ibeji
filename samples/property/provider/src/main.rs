@@ -59,7 +59,7 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+                    entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
                     value: temperature.to_string(),
                 });
 

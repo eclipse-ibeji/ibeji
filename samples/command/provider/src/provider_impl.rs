@@ -29,22 +29,22 @@ impl Provider for ProviderImpl {
         request: Request<SubscribeRequest>,
     ) -> Result<Response<SubscribeResponse>, Status> {
         let request_inner = request.into_inner();
-        let id: String = request_inner.id.clone();
-        let uri: String = request_inner.uri;
+        let entity_id: String = request_inner.entity_id.clone();
+        let consumer_uri: String = request_inner.consumer_uri;
 
-        info!("Received a subscribe request from URI {} for id {}", &uri, &id);
+        info!("Received a subscribe request from consumer URI {} for entity id {}", &consumer_uri, &entity_id);
 
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
-        let get_result = lock.get(&id);
+        let get_result = lock.get(&entity_id);
         if let Some(get_value) = get_result {
             let mut uris = get_value.clone();
-            uris.insert(uri);
-            lock.insert(id, uris);
+            uris.insert(consumer_uri);
+            lock.insert(entity_id, uris);
         } else {
             let mut uris = HashSet::new();
-            uris.insert(uri);
-            lock.insert(id, uris);
+            uris.insert(consumer_uri);
+            lock.insert(entity_id, uris);
         }
 
         info!("Completed subscription.");
@@ -101,15 +101,16 @@ impl Provider for ProviderImpl {
         info!("Got an invoke request: {:?}", request);
 
         let request_inner = request.into_inner();
-        let id: String = request_inner.id.clone();
-        let uri: String = request_inner.uri;
+        let entity_id: String = request_inner.entity_id.clone();
+        let response_id: String = request_inner.response_id.clone();
+        let consumer_uri: String = request_inner.consumer_uri;
         let payload: String = request_inner.payload;
 
-        info!("Received an invoke request from URI {} for id {} with payload '{}'", &uri, &id, &payload);
+        info!("Received an invoke request from consumer URI {} for entity id {} with payload '{}'", &consumer_uri, &entity_id, &payload);
 
-        info!("Sending an invoke respose to URI {} for id {}", &uri, &id);
+        info!("Sending an invoke respose to consumer URI {} for entity id {}", &consumer_uri, &entity_id);
 
-        let client_result = ConsumerClient::connect(uri).await;
+        let client_result = ConsumerClient::connect(consumer_uri).await;
         if client_result.is_err() {
             return Err(Status::internal(format!("{:?}", client_result.unwrap())));
         }
@@ -118,7 +119,8 @@ impl Provider for ProviderImpl {
         let payload: String = String::from("The send_notification response.");
 
         let respond_request = tonic::Request::new(RespondRequest {
-            id,
+            entity_id,
+            response_id,
             payload,
         });
 
@@ -147,17 +149,17 @@ mod provider_impl_tests {
         let third_uri = String::from("http://third.com:9000"); // Devskim: ignore DS137138
 
         let first_request =
-            tonic::Request::new(SubscribeRequest { id: first_id.clone(), uri: first_uri.clone() });
+            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: first_uri.clone() });
         let first_result = task::block_on(provider_impl.subscribe(first_request));
         assert!(first_result.is_ok());
 
         let second_request =
-            tonic::Request::new(SubscribeRequest { id: first_id.clone(), uri: second_uri.clone() });
+            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: second_uri.clone() });
         let second_result = task::block_on(provider_impl.subscribe(second_request));
         assert!(second_result.is_ok());
 
         let third_request =
-            tonic::Request::new(SubscribeRequest { id: second_id.clone(), uri: third_uri.clone() });
+            tonic::Request::new(SubscribeRequest { entity_id: second_id.clone(), consumer_uri: third_uri.clone() });
         let third_result = task::block_on(provider_impl.subscribe(third_request));
         assert!(third_result.is_ok());
 

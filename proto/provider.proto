@@ -14,31 +14,31 @@ service Provider {
 }
 
 message SubscribeRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message SubscribeResponse {
 }
 
 message UnsubscribeRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message UnsubscribeResponse {
 }
 
 message GetRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message GetResponse {
 }
 
 message SetRequest {
-   string id = 1;
+   string entity_id = 1;
    string value = 2;
 }
 
@@ -46,9 +46,10 @@ message SetResponse {
 }
 
 message InvokeRequest {
-   string id = 1;
-   string uri = 2;
-   string payload = 3;
+   string entity_id = 1;
+   string consumer_uri = 2;
+   string response_id = 3;
+   string payload = 4;
 }
 
 message InvokeResponse {

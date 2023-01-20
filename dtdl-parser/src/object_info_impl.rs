@@ -136,14 +136,15 @@ mod object_info_impl_tests {
         let first_propery_value: Value = serde_json::from_str("{\"first\": \"this\"}").unwrap();
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
-        // Option<Vec<Box<dyn FieldInfo>>>
+        let fields = Vec::new();
+        
 
         let mut object_info = ObjectInfoImpl::new(
             2,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            None
+            Some(fields)
         );
         object_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         object_info.add_undefined_property(String::from("second"), second_propery_value.clone());

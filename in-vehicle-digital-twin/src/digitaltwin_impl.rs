@@ -31,16 +31,16 @@ impl DigitalTwin for DigitalTwinImpl {
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
         let request_inner = request.into_inner();
-        let id = request_inner.id;
+        let entity_id = request_inner.entity_id;
 
-        info!("Received a find_by_id request for id {}", &id);
+        info!("Received a find_by_id request for entity id {}", &entity_id);
 
         let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-        let get_result = lock.get(&id);
+        let get_result = lock.get(&entity_id);
         let val = match get_result {
             Some(v) => v,
             None => {
-                return Err(Status::not_found(format!("Unable to find the DTDL for id {}", &id)))
+                return Err(Status::not_found(format!("Unable to find the DTDL for entity id {}", &entity_id)))
             }
         };
 
@@ -48,15 +48,15 @@ impl DigitalTwin for DigitalTwinImpl {
             Ok(content) => content,
             Err(error) => {
                 return Err(Status::internal(format!(
-                    "Unexpected error with the DTDL for id {}: {:?}",
-                    &id, error
+                    "Unexpected error with the DTDL for entity id {}: {:?}",
+                    &entity_id, error
                 )))
             }
         };
 
         let response = FindByIdResponse { dtdl };
 
-        info!("Responded to the find_by_id request for id {} with the requested DTDL.", &id);
+        info!("Responded to the find_by_id request for entity id {} with the requested DTDL.", &entity_id);
 
         Ok(Response::new(response))
     }
@@ -191,7 +191,7 @@ mod digitaltwin_impl_tests {
         assert!(dtdl_json_result.is_ok());
         let dtdl_json = dtdl_json_result.unwrap();
 
-        let id = String::from("dtmi::some_id");
+        let entity_id = String::from("dtmi::some_id");
 
         let entity_map = Arc::new(Mutex::new(HashMap::new()));
 
@@ -201,10 +201,10 @@ mod digitaltwin_impl_tests {
         //       is released before we attempt the find_by_id operation.
         {
             let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-            lock.insert(id.clone(), dtdl_json);
+            lock.insert(entity_id.clone(), dtdl_json);
         }
 
-        let request = tonic::Request::new(FindByIdRequest { id });
+        let request = tonic::Request::new(FindByIdRequest { entity_id });
         let result = task::block_on(digital_twin_impl.find_by_id(request));
         assert!(result.is_ok());
         let response = result.unwrap();

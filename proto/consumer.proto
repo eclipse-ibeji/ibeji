@@ -11,7 +11,7 @@ service Consumer {
 }
 
 message PublishRequest {
-   string id = 1;
+   string entity_id = 1;
    string value = 2;
 }
 
@@ -19,8 +19,9 @@ message PublishResponse {
 }
 
 message RespondRequest {
-    string id = 1;
-    string payload = 2;
+    string entity_id = 1;
+    string response_id = 2;
+    string payload = 3;
 }
 
 message RespondResponse {

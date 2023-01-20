@@ -16,6 +16,7 @@ use std::net::SocketAddr;
 use std::thread;
 use std::time;
 use tonic::transport::Server;
+use uuid::Uuid;
 
 /// The id for send notification command.
 const SEND_NOTIFICATION_COMMAND_ID: &str = "dtmi:org:eclipse:sdv:command:HVAC:send_notification;1";
@@ -41,11 +42,14 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
             }
             let mut client = client_result.unwrap();
 
+            let response_id = Uuid::new_v4().to_string();
+
             let payload: String = String::from("The send_notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
-                id: String::from(SEND_NOTIFICATION_COMMAND_ID),
-                uri: consumer_uri.clone(),
+                entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
+                consumer_uri: consumer_uri.clone(),
+                response_id,
                 payload
             });
 
@@ -74,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest {
-        id: String::from(SEND_NOTIFICATION_COMMAND_ID),
+        entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();

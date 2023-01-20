@@ -12,7 +12,7 @@ service DigitalTwin {
 }
 
 message FindByIdRequest {
-   string id = 1;
+   string entity_id = 1;
 }
 
 message FindByIdResponse {
@@ -27,7 +27,7 @@ message RegisterResponse {
 }
 
 message UnregisterRequest {
-   string id = 1;
+   string entity_id = 1;
 }
 
 message UnregisterResponse {
