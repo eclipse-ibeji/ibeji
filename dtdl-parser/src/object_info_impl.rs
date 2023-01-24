@@ -114,12 +114,13 @@ impl ObjectInfo for ObjectInfoImpl {
 mod object_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
+    use crate::model_parser::DTDL_VERSION;    
     use serde_json;
 
     #[test]
     fn new_object_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
+        create_dtmi("dtmi:com:example:Object;1.0", &mut id_result);
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
@@ -129,7 +130,7 @@ mod object_info_impl_tests {
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -138,9 +139,8 @@ mod object_info_impl_tests {
 
         let fields = Vec::new();
         
-
         let mut object_info = ObjectInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
@@ -163,6 +163,11 @@ mod object_info_impl_tests {
         assert!(
             object_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
-        );      
+        );
+
+        match object_info.fields() {
+            Some(fields) => assert_eq!(fields.len(), 0),
+            None => assert!(false, "fields has not been set")
+        }  
     }
 }

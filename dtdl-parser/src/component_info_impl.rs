@@ -155,7 +155,7 @@ mod component_info_impl_tests {
         let boxed_interface_info = Box::new(InterfaceInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None));        
 
         let mut component_info = ComponentInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
@@ -181,8 +181,14 @@ mod component_info_impl_tests {
                 == second_propery_value
         );
 
-        let retrieved_name = component_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");        
+        match component_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }
+
+        match component_info.schema() {
+            Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::Interface),
+            None => assert!(false, "schema has not been set")
+        }        
     }
 }

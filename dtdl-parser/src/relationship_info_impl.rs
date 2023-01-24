@@ -140,17 +140,17 @@ mod relationship_info_impl_tests {
     #[test]
     fn new_relationship_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
+        create_dtmi("dtmi:com:example:my_relationship;1.0", &mut id_result);
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
         let mut child_of_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Cabin;1.0", &mut child_of_result);
+        create_dtmi("dtmi:com:example:vehicle;1.0", &mut child_of_result);
         assert!(child_of_result.is_some());
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -191,8 +191,9 @@ mod relationship_info_impl_tests {
                 == second_propery_value
         );
 
-        let retrieved_name = relationship_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");         
+        match relationship_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }     
     }
 }

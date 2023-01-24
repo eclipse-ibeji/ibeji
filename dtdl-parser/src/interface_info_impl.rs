@@ -96,22 +96,23 @@ impl InterfaceInfo for InterfaceInfoImpl {
 mod interface_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
+    use crate::model_parser::DTDL_VERSION;
     use serde_json;
 
     #[test]
     fn new_interface_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
+        create_dtmi("dtmi:com:example:my_interface;1.0", &mut id_result);
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
         let mut child_of_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Cabin;1.0", &mut child_of_result);
+        create_dtmi("dtmi:com:example:vehicle;1.0", &mut child_of_result);
         assert!(child_of_result.is_some());
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -119,7 +120,7 @@ mod interface_info_impl_tests {
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
         let mut interface_info = InterfaceInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),

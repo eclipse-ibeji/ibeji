@@ -149,7 +149,7 @@ mod property_info_impl_tests {
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -169,7 +169,7 @@ mod property_info_impl_tests {
             Some(defined_in.clone()),
             Some(String::from("one")),            
             Some(boxed_schema_info),
-            false
+            true
         );
         property_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         property_info.add_undefined_property(String::from("second"), second_propery_value.clone());
@@ -190,8 +190,16 @@ mod property_info_impl_tests {
                 == second_propery_value
         );
 
-        let retrieved_name = property_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");   
+        match property_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }
+
+        match property_info.schema() {
+            Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
+            None => assert!(false, "schema has not been set")
+        }
+
+        assert_eq!(property_info.writable(), true);
     }
 }

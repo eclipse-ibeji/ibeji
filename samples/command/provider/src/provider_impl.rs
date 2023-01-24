@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::info;
+use log::{info, warn};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse, SubscribeRequest,
@@ -62,11 +62,9 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<UnsubscribeRequest>,
     ) -> Result<Response<UnsubscribeResponse>, Status> {
-        info!("Got an unsubscribe request: {:?}", request);
-        // TODO - provide unsubscribe functionality
-        let response = UnsubscribeResponse {};
+        warn!("Got an unsubscribe request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("unsubscribe has not been implemented"))
     }
 
     /// Get implementation.
@@ -74,11 +72,9 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Get request.
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
-        info!("Got a get request: {:?}", request);
-        // TODO - provide get functionality
-        let response = GetResponse {};
+        warn!("Got a get request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("get has not been implemented"))
     }
 
     /// Set implementation.
@@ -86,11 +82,9 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        info!("Got a set request: {:?}", request);
-        // TODO - provide set functionality
-        let response = SetResponse {};
+        warn!("Got a set request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("set has not been implemented"))
     }
 
     /// Invoke implementation.
@@ -108,23 +102,26 @@ impl Provider for ProviderImpl {
 
         info!("Received an invoke request from consumer URI {} for entity id {} with payload '{}'", &consumer_uri, &entity_id, &payload);
 
-        info!("Sending an invoke respose to consumer URI {} for entity id {}", &consumer_uri, &entity_id);
+        tokio::spawn(async move {
+            info!("Sending an invoke respose to consumer URI {} for entity id {}", &consumer_uri, &entity_id);
 
-        let client_result = ConsumerClient::connect(consumer_uri).await;
-        if client_result.is_err() {
-            return Err(Status::internal(format!("{:?}", client_result.unwrap())));
-        }
-        let mut client = client_result.unwrap();
+            let client_result = ConsumerClient::connect(consumer_uri).await;
+            if client_result.is_err() {
+                return Err(Status::internal(format!("{:?}", client_result.unwrap())));
+            }
+            let mut client = client_result.unwrap();
 
-        let payload: String = String::from("The send_notification response.");
+            let payload: String = String::from("The send_notification response.");
 
-        let respond_request = tonic::Request::new(RespondRequest {
-            entity_id,
-            response_id,
-            payload,
+            let respond_request = tonic::Request::new(RespondRequest {
+                entity_id,
+                response_id,
+                payload,
+            });
+
+            let _respond_response = client.respond(respond_request).await;
+            _respond_response
         });
-
-        let _respond_response = client.respond(respond_request).await;
 
         let response = InvokeResponse {};
 
@@ -136,6 +133,7 @@ impl Provider for ProviderImpl {
 mod provider_impl_tests {
     use super::*;
     use async_std::task;
+    use uuid::Uuid;
 
     #[test]
     fn subscribe_test() {
@@ -178,4 +176,23 @@ mod provider_impl_tests {
         assert!(second_value.len() == 1);
         assert!(second_value.contains(&third_uri));
     }
+
+    #[tokio::test]
+    async fn invoke_test() {
+        let subscription_map = Arc::new(Mutex::new(HashMap::new()));
+        let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
+
+        let entity_id = String::from("one-id");
+        let consumer_uri = String::from("bogus uri");
+
+        let response_id = Uuid::new_v4().to_string();
+        let payload = String::from("some-payload");
+
+        let request =
+            tonic::Request::new(InvokeRequest { entity_id: entity_id, consumer_uri, response_id, payload });
+        let result = task::block_on(provider_impl.invoke(request));
+        assert!(result.is_ok());
+
+        // Note: this test does not check that the response has successfully been sent.
+    }    
 }

@@ -141,7 +141,7 @@ mod command_payload_info_impl_tests {
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:command.send_notification;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -155,23 +155,29 @@ mod command_payload_info_impl_tests {
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
 
         let mut command_payload_info = CommandPayloadInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
             Some(String::from("one")),            
-            Some(boxed_schema_info),
+            Some(boxed_schema_info.clone()),
         );
         command_payload_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         command_payload_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(command_payload_info.dtdl_version() == 2);
+        assert!(command_payload_info.dtdl_version() == DTDL_VERSION);
         assert!(command_payload_info.id() == &id);
         assert!(command_payload_info.child_of().is_some());
         assert!(command_payload_info.child_of().clone().unwrap() == child_of);
         assert!(command_payload_info.defined_in().is_some());
         assert!(command_payload_info.defined_in().clone().unwrap() == defined_in);
         assert!(command_payload_info.entity_kind() == EntityKind::CommandPayload);
+        assert!(command_payload_info.schema().is_some());
+        match command_payload_info.schema() {
+            Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
+            None => assert!(false, "schema has not been set")
+        }
+
         assert!(command_payload_info.undefined_properties().len() == 2);
         assert!(
             command_payload_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
@@ -181,8 +187,9 @@ mod command_payload_info_impl_tests {
                 == second_propery_value
         );
 
-        let retrieved_name = command_payload_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");    
+        match command_payload_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }
     }
 }

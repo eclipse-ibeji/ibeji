@@ -131,7 +131,7 @@ mod field_info_impl_tests {
     #[test]
     fn new_field_info_impl_test() {
         let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.0", &mut id_result);
+        create_dtmi("dtmi:com:example:Field;1.0", &mut id_result);
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
@@ -141,7 +141,7 @@ mod field_info_impl_tests {
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -155,7 +155,7 @@ mod field_info_impl_tests {
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
 
         let mut field_info = FieldInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
@@ -181,8 +181,14 @@ mod field_info_impl_tests {
                 == second_propery_value
         );
 
-        let retrieved_name = field_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");  
+        match field_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }
+
+        match field_info.schema() {
+            Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
+            None => assert!(false, "schema has not been set")
+        }
     }
 }

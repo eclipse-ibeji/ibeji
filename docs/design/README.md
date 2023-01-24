@@ -142,12 +142,12 @@ Below is the sequence diagram for the Respond activity.
 
 ### Subscribe
 
-Subscribe to a resource's data feed and publish the resource's updates to a Consumer using the Publish operation on its Consumer interface.
+Subscribe to an property's data feed.
 
 #### Request
 
-- id - The resource's id.
-- uri - The uri for the endpoint where the data feed will be delivered.
+- entity_id - The property's id.
+- consumer_uri - The uri for the consumer endpoint where the data feed will be delivered.
 
 #### Response
 
@@ -155,12 +155,12 @@ Subscribe to a resource's data feed and publish the resource's updates to a Cons
 
 ### Unsubscribe
 
-Unsubscribe from a resource's data feed.
+Unsubscribe from an entity's data feed.
 
 #### Request
 
-- id - The resource's id.
-- uri - The uri for the endpoint where the data feed should no longer be delivered.
+- entity_id - The property's id.
+- consumer_uri - The uri for the consumer endpoint where the data feed should no longer be delivered.
 
 #### Response
 
@@ -168,12 +168,12 @@ Unsubscribe from a resource's data feed.
 
 ### Get
 
-Get the latest value for a resource and publish it to a Consumer using the Publish operation on its Consumer interface.
+Get the latest value for a property and publish it to a consumer endpoint.
 
 #### Request
 
-- id - The resource's id.
-- uri -  The uri for the endpoint where the value should be delivered.
+- entity_id - The property's id.
+- consumer_uri -  The uri for the consumer endpoint where the value should be delivered.
 
 #### Response
 
@@ -181,12 +181,12 @@ Get the latest value for a resource and publish it to a Consumer using the Publi
 
 ### Set
 
-Set a resource's value to the one provided. This may not cause a change if the resource cannot be updated.
+Set an entity's value to the one provided. This may not cause a change if the entity cannot be updated.
 
 #### Request
 
-- id - The resource's id.
-- value - The resource's new value.
+- entity_id - The entity's id.
+- value - The entity's new value.
 
 #### Response
 
@@ -194,11 +194,11 @@ Set a resource's value to the one provided. This may not cause a change if the r
 
 ### Invoke
 
-Invoke a resource's command.
+Invoke a command.
 
 #### Request
 
-- id - The resource's id.
+- entity_id - The command's id.
 - uri - The uri for the endpoint where the command's response should be delivered.
 - payload - The command's request payload.
 
@@ -210,11 +210,11 @@ Invoke a resource's command.
 
 ### FindById
 
-Find a resource's DTDL.
+Find an entity's DTDL.
 
 #### Request
 
-- id - The resource's id.
+- entity_id - The entity's id.
 
 #### Response
 
@@ -222,11 +222,11 @@ Find a resource's DTDL.
 
 ### Register
 
-Register one or more resources.
+Register one or more entities.
 
 #### Request
 
-- dtdl - The DTDL that represents the resource/s.
+- dtdl - The DTDL that represents the entities.
 
 #### Response
 
@@ -234,7 +234,7 @@ Register one or more resources.
 
 ### Unregister
 
-Unregister a resource.
+Unregister a entity.
 
 #### Request
 
@@ -248,12 +248,12 @@ Unregister a resource.
 
 ### Publish
 
-Publish a resource value.
+Publish a value for a specific entity.
 
 #### Request
 
-- id - The resource's id.
-- value - The resource's value.
+- entity_id - The entity's id.
+- value - The value to publish.
 
 #### Response
 
@@ -265,7 +265,8 @@ Respond for the execution of a command.
 
 #### Request
 
-- id - The resource's id.
+- entity_id - The command's id.
+- response_id - The id that the invoker of the command provided for the reponse.
 - payload - The command's response payload.
 
 #### Response

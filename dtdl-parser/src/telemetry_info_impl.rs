@@ -141,7 +141,7 @@ mod telemetry_info_impl_tests {
         let child_of = child_of_result.unwrap();
 
         let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Something;1.0", &mut defined_in_result);
+        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
@@ -155,7 +155,7 @@ mod telemetry_info_impl_tests {
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
 
         let mut telemetry_info = TelemetryInfoImpl::new(
-            2,
+            DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
@@ -180,9 +180,15 @@ mod telemetry_info_impl_tests {
             telemetry_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
         );
+        
+        match telemetry_info.name() {
+            Some(name) => assert_eq!(name, "one"),
+            None => assert!(false, "name has not been set")
+        }
 
-        let retrieved_name = telemetry_info.name().clone(); 
-        assert!(retrieved_name.is_some());
-        assert!(retrieved_name.unwrap() == "one");         
+        match telemetry_info.schema() {
+            Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
+            None => assert!(false, "schema has not been set")
+        }         
     }
 }

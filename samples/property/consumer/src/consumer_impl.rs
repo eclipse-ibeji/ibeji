@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::info;
+use log::{info, warn};
 use proto::consumer::consumer_server::Consumer;
 use proto::consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
 use tonic::{Request, Response, Status};
@@ -39,16 +39,9 @@ impl Consumer for ConsumerImpl {
         &self,
         request: Request<RespondRequest>,
     ) -> Result<Response<RespondResponse>, Status> {
-        let request_inner = request.into_inner();
+        warn!("Got a respons request: {:?}", request);
 
-        info!(
-            "Received a respond for entity id {} with the response id {} amd the value '{}'",
-            request_inner.entity_id, request_inner.response_id, request_inner.payload
-        );
-
-        let response = RespondResponse {};
-
-        Ok(Response::new(response))
+        Err(Status::unimplemented("set has not been implemented"))
     }    
 }
 
