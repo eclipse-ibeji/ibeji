@@ -34,7 +34,7 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 Rust needs gcc's linker, so you will need to install it. To install gcc, do the following:
 
-```
+```shell
 sudo apt install gcc
 ```
 
