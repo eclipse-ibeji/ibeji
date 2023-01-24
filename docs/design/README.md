@@ -266,7 +266,7 @@ Respond for the execution of a command.
 #### Request
 
 - entity_id - The command's id.
-- response_id - The id that the invoker of the command provided for the reponse.
+- response_id - The id that the invoker of the command provided for the response.
 - payload - The command's response payload.
 
 #### Response

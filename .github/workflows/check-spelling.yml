@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  notice_generation:
+  check_spelling:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository and submodules
