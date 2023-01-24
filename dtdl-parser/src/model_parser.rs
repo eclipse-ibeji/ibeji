@@ -54,9 +54,7 @@ impl ModelParser {
     pub fn parse(&mut self, json_texts: &Vec<String>) -> Result<ModelDict, String> {
         let mut model_dict: ModelDict = ModelDict::new();
 
-        if let Err(message) = self.add_primitive_schemas_to_model_dict(&mut model_dict) {
-            return Err(message);
-        }
+        self.add_primitive_schemas_to_model_dict(&mut model_dict)?;
 
         // Add the entries to the model dictionaryfor the primitive entity kinds.
         for entity_kind in EntityKind::iter() {
@@ -65,8 +63,7 @@ impl ModelParser {
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
                     return Err(format!(
-                        "Cannot form a valid schema id for primitive entity kind '{}.",
-                        entity_kind.to_string()
+                        "Cannot form a valid schema id for primitive entity kind '{entity_kind}."
                     ));
                 }
 
@@ -99,8 +96,7 @@ impl ModelParser {
                 Ok(expanded_doc) => expanded_doc,
                 Err(error) => {
                     return Err(format!(
-                        "Failed to expand one of the JSON texts due to: {:?}",
-                        error
+                        "Failed to expand one of the JSON texts due to: {error:?}"
                     ))
                 }
             };
@@ -130,8 +126,7 @@ impl ModelParser {
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
                     return Err(format!(
-                        "Cannot form a valid schema id for primitive schema '{}.",
-                        entity_kind.to_string()
+                        "Cannot form a valid schema id for primitive schema {entity_kind}."
                     ));
                 }
 
@@ -211,7 +206,7 @@ impl ModelParser {
             } else if let Value::Object(_o) = existing_context_value {
                 // ignore - this one does not have an IRI associated with it.
             } else {
-                return Err(format!("Unexpected context value '{:?}'", existing_context_value));
+                return Err(format!("Unexpected context value '{existing_context_value:?}'"));
             }
         }
         Ok(())
@@ -289,13 +284,13 @@ impl ModelParser {
                     match the_objects[0].as_str() {
                         Some(v) => return Ok(Some(String::from(v))),
                         None => {
-                            return Err(format!(
+                            return Err(String::from(
                                 "get_property_value was unable to convert the value to a str"
                             ))
                         }
                     }
                 } else {
-                    return Err(format!(
+                    return Err(String::from(
                         "get_property_value does not contain the expected number of objects"
                     ));
                 }
@@ -319,17 +314,13 @@ impl ModelParser {
         parent_id: &Option<Dtmi>,
     ) -> Result<Box<dyn SchemaInfo>, String> {
         let string_option: Option<&str> = node.as_str();
-        if string_option.is_some() {
-            let schema_name = string_option.unwrap();
-
+        if let Some(schema_name) = string_option {
             let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(&schema_name) {
                 Ok(v) => Some(v),
                 Err(_) => None,
             };
 
-            if entity_kind_option.is_some() {
-                println!("entity_kind_option.is_some");
-                let entity_kind = entity_kind_option.unwrap();
+            if let Some(entity_kind) = entity_kind_option {
                 if is_primitive_schema_kind(entity_kind) {
                     println!("entity_kind is_primitive_entity_kind");
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
@@ -348,14 +339,13 @@ impl ModelParser {
                     )));
                 } else {
                     println!("entity_kind is_NOT primitive_entity_kind");
-                    return Err(format!("Expected a primitive schema, found {entity_kind}"));
+                    Err(format!("Expected a primitive schema, found {entity_kind}"))
                 }
             } else {
-                println!("entity_kind_option.is_none");
-                return self.retrieve_schema_info_from_model_dict(schema_name, model_dict);
+                self.retrieve_schema_info_from_model_dict(schema_name, model_dict)
             }
         } else {
-            return Err(format!("get_schema encountered an unknown entity kind value"));
+            Err(format!("get_schema encountered an unknown entity kind value"))
         }
     }
 
@@ -397,7 +387,7 @@ impl ModelParser {
                                 && the_objects.len() == 1
                             {
                                 if let Object::Node(node) = &*the_objects[0] {
-                                    if node.properties().len() == 0 {
+                                    if node.properties().is_empty() {
                                         schema = Some(self.get_primary_or_existing_schema(
                                             node, model_dict, parent_id,
                                         )?);
@@ -487,8 +477,8 @@ impl ModelParser {
         if entity_kind == EntityKind::Object {
             return self.get_object_schema(node, model_dict, parent_id);
         } else {
-            println!("Unsupported complex object: {:?}.", entity_kind);
-            return Err(format!("Unsupported complex object: {:?}.", entity_kind));
+            println!("Unsupported complex object: {entity_kind:?}.");
+            return Err(format!("Unsupported complex object: {entity_kind:?}."));
         }
     }
 
@@ -508,14 +498,14 @@ impl ModelParser {
             if the_property == "dtmi:dtdl:property:schema;2" {
                 if the_objects.len() == 1 {
                     if let Object::Node(node) = &*the_objects[0] {
-                        if node.properties().len() == 0 {
+                        if node.properties().is_empty() {
                             return self
                                 .get_primary_or_existing_schema(node, model_dict, parent_id);
                         } else {
                             return self.get_complex_schema(node, model_dict, parent_id);
                         }
                     } else {
-                        return Err(format!(
+                        return Err(String::from(
                             "The schema property's associated object should be a node.  It is not."
                         ));
                     }
@@ -585,7 +575,7 @@ impl ModelParser {
                         Some(boxed_schema_info),
                     ))));
                 } else {
-                    return Err(format!("get_payload encountered an unknown object"));
+                    return Err(String::from("get_payload encountered an unknown object"));
                 }
             }
         }
@@ -612,7 +602,7 @@ impl ModelParser {
                 } else if let Object::List(_list) = &*the_objects[0] {
                     warn!("gather_undefiued_properties encountered a list");
                 } else {
-                    warn!("Warning: gather_undefiued_properties encountered an unknown object");
+                    warn!("gather_undefiued_properties encountered an unknown object");
                 }
             }
         }
