@@ -462,7 +462,7 @@ impl ModelParser {
     /// # Arguments
     /// * `node` - The node that contains the complex schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
-    /// * `parent_id` - The parent id.    
+    /// * `parent_id` - The parent id. 
     fn get_complex_schema(
         &self,
         node: &Node<Value>,

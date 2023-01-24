@@ -12,7 +12,7 @@
           "name": "send_notification",
           "displayName": "send_notification",
           "descriptiption": "Send a notification to the HVAC.",
-          "schema": "string"          
+          "schema": "string"      
         },
         "remote_access": [
           {
