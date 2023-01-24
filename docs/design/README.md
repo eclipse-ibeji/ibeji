@@ -94,7 +94,7 @@ Below is the sequence diagram for the Find-By-Id activity.
 
 ### Overview
 
-The initial Providers will implement simple resources - the AmbientAirTemperature property and the send_notification command.
+The initial Providers will implement basic resources - the AmbientAirTemperature property and the send_notification command.
 
 ### Interfaces
 
