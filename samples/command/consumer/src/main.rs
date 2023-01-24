@@ -124,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = String::from(uri_str_option.unwrap());
     info!("The URI for the send_notification command's provider is {}", &provider_uri);
 
-    let consumer_uri = format!("http://{}", consumer_authority);
+    let consumer_uri = format!("http://{consumer_authority}");
 
     start_send_notification_repeater(provider_uri, consumer_uri);
 

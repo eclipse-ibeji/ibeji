@@ -86,8 +86,7 @@ impl ModelParser {
                 Ok(json) => json,
                 Err(error) => {
                     return Err(format!(
-                        "Failed to parse one of the JSON texts due to: {:?}",
-                        error
+                        "Failed to parse one of the JSON texts due to: {error}"
                     ))
                 }
             };
@@ -349,7 +348,7 @@ impl ModelParser {
                     )));
                 } else {
                     println!("entity_kind is_NOT primitive_entity_kind");
-                    return Err(format!("Expected a primitive schema, found {}", entity_kind));
+                    return Err(format!("Expected a primitive schema, found {entity_kind}"));
                 }
             } else {
                 println!("entity_kind_option.is_none");
@@ -462,7 +461,7 @@ impl ModelParser {
     /// # Arguments
     /// * `node` - The node that contains the complex schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
-    /// * `parent_id` - The parent id. 
+    /// * `parent_id` - The parent id.
     fn get_complex_schema(
         &self,
         node: &Node<Value>,

@@ -31,7 +31,7 @@ impl Dtmi {
     pub fn new(value: &str) -> Result<Self, String> {
         let new_iri_result = Iri::new(value);
         if new_iri_result.is_err() {
-            return Err(format!("The value '{}' does not represent a valid IRI", value));
+            return Err(format!("The value '{value}' does not represent a valid IRI"));
         }
         let iri = new_iri_result.unwrap();
 
@@ -59,13 +59,13 @@ impl Dtmi {
                     minor_version = Some(value)
                 }
             } else {
-                return Err(format!("The value '{}' has an invalid version", value));
+                return Err(format!("The value '{value}' has an invalid version"));
             }
         } else {
-            return Err(format!("The value '{}' represents an invalid DTMI", value));
+            return Err(format!("The value '{value}' represents an invalid DTMI"));
         }
 
-        let versionless: String = format!("dtmi:{}", absolute_path);
+        let versionless: String = format!("dtmi:{absolute_path}");
 
         let labels: Vec<String> = absolute_path.split(':').map(Into::into).collect();
 
@@ -190,13 +190,13 @@ mod dmti_tests {
         assert!(dtmi.labels()[2] == "Thermostat");
         assert!(dtmi.absolute_path == "com:example:Thermostat");
         assert!(dtmi.fragment() == "some-fragment");
-        assert!(format!("{}", dtmi) == "dtmi:com:example:Thermostat;1.234#some-fragment");
+        assert!(format!("{dtmi}") == "dtmi:com:example:Thermostat;1.234#some-fragment");
 
         new_dtmi_result = Dtmi::new("dtmi:com:example:Thermostat;1.234#");
         assert!(new_dtmi_result.is_ok());
         dtmi = new_dtmi_result.unwrap();
         assert!(dtmi.fragment() == "");
-        assert!(format!("{}", dtmi) == "dtmi:com:example:Thermostat;1.234#");
+        assert!(format!("{dtmi}") == "dtmi:com:example:Thermostat;1.234#");
     }
 
     #[test]
