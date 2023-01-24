@@ -32,7 +32,7 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 ### <a name="install-gcc">Install gcc</a>
 
-Rust needs gcc's linker, so you will need to intsall it. To install gcc, do the following:
+Rust needs gcc's linker, so you will need to install it. To install gcc, do the following:
 
 ```
 sudo apt install gcc
