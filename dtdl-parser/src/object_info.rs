@@ -4,7 +4,7 @@
 use crate::complex_schema_info::ComplexSchemaInfo;
 use crate::field_info::FieldInfo;
 
-pub trait ObjectInfo : ComplexSchemaInfo {
+pub trait ObjectInfo: ComplexSchemaInfo {
     /// Returns the fields.
     fn fields(&self) -> &Option<Vec<Box<dyn FieldInfo>>>;
 }

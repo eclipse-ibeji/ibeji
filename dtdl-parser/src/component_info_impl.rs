@@ -22,7 +22,7 @@ pub struct ComponentInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: Option<String>,    
+    name: Option<String>,
 
     // ComponentInfo
     schema: Option<Box<dyn InterfaceInfo>>,
@@ -43,8 +43,8 @@ impl ComponentInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        name: Option<String>,        
-        schema: Option<Box<dyn InterfaceInfo>>
+        name: Option<String>,
+        schema: Option<Box<dyn InterfaceInfo>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -103,29 +103,28 @@ impl EntityInfo for ComponentInfoImpl {
     }
 }
 
-impl NamedEntityInfo for ComponentInfoImpl {  
+impl NamedEntityInfo for ComponentInfoImpl {
     /// Returns the name.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
-impl ContentInfo for ComponentInfoImpl {    
-}
+impl ContentInfo for ComponentInfoImpl {}
 
 impl ComponentInfo for ComponentInfoImpl {
     /// Returns the interface.
     fn schema(&self) -> &Option<Box<dyn InterfaceInfo>> {
         &self.schema
-    }    
+    }
 }
 
 #[cfg(test)]
 mod component_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
-    use crate::model_parser::DTDL_VERSION;
     use crate::interface_info_impl::InterfaceInfoImpl;
+    use crate::model_parser::DTDL_VERSION;
     use serde_json;
 
     #[test]
@@ -152,14 +151,15 @@ mod component_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_interface_info = Box::new(InterfaceInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None));        
+        let boxed_interface_info =
+            Box::new(InterfaceInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None));
 
         let mut component_info = ComponentInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(boxed_interface_info),
         );
         component_info.add_undefined_property(String::from("first"), first_propery_value.clone());
@@ -174,7 +174,8 @@ mod component_info_impl_tests {
         assert!(component_info.entity_kind() == EntityKind::Component);
         assert!(component_info.undefined_properties().len() == 2);
         assert!(
-            component_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            component_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             component_info.undefined_properties().get("second").unwrap().clone()
@@ -183,12 +184,12 @@ mod component_info_impl_tests {
 
         match component_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
 
         match component_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::Interface),
-            None => assert!(false, "schema has not been set")
-        }        
+            None => assert!(false, "schema has not been set"),
+        }
     }
 }

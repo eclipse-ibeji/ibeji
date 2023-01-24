@@ -3,5 +3,4 @@
 
 use crate::named_entity_info::NamedEntityInfo;
 
-pub trait ContentInfo  : NamedEntityInfo {
-}
+pub trait ContentInfo: NamedEntityInfo {}

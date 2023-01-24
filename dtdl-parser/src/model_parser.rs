@@ -53,9 +53,9 @@ impl ModelParser {
     /// * `json_texts` - A list of JSON texts.
     pub fn parse(&mut self, json_texts: &Vec<String>) -> Result<ModelDict, String> {
         let mut model_dict: ModelDict = ModelDict::new();
-        
+
         if let Err(message) = self.add_primitive_schemas_to_model_dict(&mut model_dict) {
-            return Err(message)
+            return Err(message);
         }
 
         // Add the entries to the model dictionaryfor the primitive entity kinds.
@@ -64,10 +64,19 @@ impl ModelParser {
                 let mut schema_info_id: Option<Dtmi> = None;
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
-                    return Err(format!("Cannot form a valid schema id for primitive entity kind '{}.", entity_kind.to_string()));            
+                    return Err(format!(
+                        "Cannot form a valid schema id for primitive entity kind '{}.",
+                        entity_kind.to_string()
+                    ));
                 }
 
-                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.clone().unwrap(), None, None, entity_kind));
+                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(
+                    DTDL_VERSION,
+                    schema_info_id.clone().unwrap(),
+                    None,
+                    None,
+                    entity_kind,
+                ));
                 model_dict.insert(schema_info_id.clone().unwrap(), boxed_entity_info);
             }
         }
@@ -112,17 +121,28 @@ impl ModelParser {
     ///
     /// # Arguments
     /// * `model_dict` - The model dictionary.
-    fn add_primitive_schemas_to_model_dict(&mut self, model_dict: &mut ModelDict) -> Result<(), String>
-    {
+    fn add_primitive_schemas_to_model_dict(
+        &mut self,
+        model_dict: &mut ModelDict,
+    ) -> Result<(), String> {
         for entity_kind in EntityKind::iter() {
             if is_primitive_schema_kind(entity_kind) {
                 let mut schema_info_id: Option<Dtmi> = None;
                 create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
                 if schema_info_id.is_none() {
-                    return Err(format!("Cannot form a valid schema id for primitive schema '{}.", entity_kind.to_string()));            
+                    return Err(format!(
+                        "Cannot form a valid schema id for primitive schema '{}.",
+                        entity_kind.to_string()
+                    ));
                 }
 
-                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.clone().unwrap(), None, None, entity_kind));
+                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(
+                    DTDL_VERSION,
+                    schema_info_id.clone().unwrap(),
+                    None,
+                    None,
+                    entity_kind,
+                ));
                 model_dict.insert(schema_info_id.clone().unwrap(), boxed_entity_info);
             }
         }
@@ -259,16 +279,26 @@ impl ModelParser {
     /// # Arguments
     /// * `node` - The node that contains the property.
     /// * `property_name` - The name of the property.
-    fn get_property_value(&self, node: &Node<Value>, property_name: &str) -> Result<Option<String>, String> {
+    fn get_property_value(
+        &self,
+        node: &Node<Value>,
+        property_name: &str,
+    ) -> Result<Option<String>, String> {
         for (the_property, the_objects) in node.properties() {
             if the_property == property_name {
                 if the_objects.len() == 1 {
                     match the_objects[0].as_str() {
                         Some(v) => return Ok(Some(String::from(v))),
-                        None => return Err(format!("get_property_value was unable to convert the value to a str"))
+                        None => {
+                            return Err(format!(
+                                "get_property_value was unable to convert the value to a str"
+                            ))
+                        }
                     }
                 } else {
-                    return Err(format!("get_property_value does not contain the expected number of objects"));
+                    return Err(format!(
+                        "get_property_value does not contain the expected number of objects"
+                    ));
                 }
             }
         }
@@ -278,19 +308,24 @@ impl ModelParser {
 
     /// Get the schema info for a primary or existing schema.  Both are represented by a schema name that could represent either case.
     /// This function will determine which one it is and return the corresponding schema info.
-    /// 
+    ///
     /// # Arguments
     /// * `node` - The node that contains the schema's name.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
-    fn get_primary_or_existing_schema(&self, node: &Node<Value>, model_dict: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_primary_or_existing_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
         let string_option: Option<&str> = node.as_str();
         if string_option.is_some() {
             let schema_name = string_option.unwrap();
 
             let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(&schema_name) {
                 Ok(v) => Some(v),
-                Err(_) => None
+                Err(_) => None,
             };
 
             if entity_kind_option.is_some() {
@@ -300,17 +335,20 @@ impl ModelParser {
                     println!("entity_kind is_primitive_entity_kind");
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
                     if id.is_none() {
-                        return Err(String::from("We were not able to generate an id for the schema."));
+                        return Err(String::from(
+                            "We were not able to generate an id for the schema.",
+                        ));
                     }
-            
+
                     return Ok(Box::new(PrimitiveSchemaInfoImpl::new(
                         DTDL_VERSION,
                         id.unwrap(),
                         parent_id.clone(),
                         None,
-                        entity_kind)));
+                        entity_kind,
+                    )));
                 } else {
-                    println!("entity_kind is_NOT primitive_entity_kind");                  
+                    println!("entity_kind is_NOT primitive_entity_kind");
                     return Err(format!("Expected a primitive schema, found {}", entity_kind));
                 }
             } else {
@@ -318,17 +356,22 @@ impl ModelParser {
                 return self.retrieve_schema_info_from_model_dict(schema_name, model_dict);
             }
         } else {
-            return Err(format!("get_schema encountered an unknown entity kind value"));                            
+            return Err(format!("get_schema encountered an unknown entity kind value"));
         }
     }
 
     /// Get an object schema info from a node.
-    /// 
+    ///
     /// # Arguments
     /// * `node` - The node that contains the object schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
-    fn get_object_schema(&self, node: &Node<Value>, model_dict: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_object_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
         let mut fields: Vec<Box<dyn FieldInfo>> = Vec::new();
 
         for (the_property, the_objects) in node.properties() {
@@ -340,34 +383,49 @@ impl ModelParser {
                         let mut _display_name_option: Option<String> = None;
                         let mut schema: Option<Box<dyn SchemaInfo>> = None;
                         for (the_property, the_objects) in node.properties() {
-                            if the_property == "dtmi:dtdl:property:displayName;2" && the_objects.len() == 1 {
+                            if the_property == "dtmi:dtdl:property:displayName;2"
+                                && the_objects.len() == 1
+                            {
                                 if let Object::Value(value) = &*the_objects[0] {
                                     match value.as_str() {
-                                        Some(value) => _display_name_option = Some(String::from(value)),
+                                        Some(value) => {
+                                            _display_name_option = Some(String::from(value))
+                                        }
                                         None => _display_name_option = None,
-                                    }                                    
+                                    }
                                 }
-                            } else if the_property == "dtmi:dtdl:property:schema;2" && the_objects.len() == 1 {
-                                if let Object::Node(node) = &*the_objects[0] {   
+                            } else if the_property == "dtmi:dtdl:property:schema;2"
+                                && the_objects.len() == 1
+                            {
+                                if let Object::Node(node) = &*the_objects[0] {
                                     if node.properties().len() == 0 {
-                                        schema = Some(self.get_primary_or_existing_schema(node, model_dict, parent_id)?);                       
+                                        schema = Some(self.get_primary_or_existing_schema(
+                                            node, model_dict, parent_id,
+                                        )?);
                                     } else {
-                                        schema = Some(self.get_complex_schema(node, model_dict, parent_id)?);
-                                    }                                 
+                                        schema = Some(
+                                            self.get_complex_schema(node, model_dict, parent_id)?,
+                                        );
+                                    }
                                 }
-                            } else if the_property == "dtmi:dtdl:property:name;2" && the_objects.len() == 1 {
+                            } else if the_property == "dtmi:dtdl:property:name;2"
+                                && the_objects.len() == 1
+                            {
                                 if let Object::Value(value) = &*the_objects[0] {
                                     match value.as_str() {
                                         Some(value) => name_option = Some(String::from(value)),
                                         None => name_option = None,
-                                    }                                                                       
+                                    }
                                 }
                             }
                         }
                         if name_option.is_some() {
-                            let id: Option<Dtmi> = self.generate_id(parent_id, &name_option.clone().unwrap());
+                            let id: Option<Dtmi> =
+                                self.generate_id(parent_id, &name_option.clone().unwrap());
                             if id.is_none() {
-                                return Err(String::from("We were not able to generate an id for the schema."));
+                                return Err(String::from(
+                                    "We were not able to generate an id for the schema.",
+                                ));
                             }
 
                             fields.push(Box::new(FieldInfoImpl::new(
@@ -375,12 +433,12 @@ impl ModelParser {
                                 id.unwrap(),
                                 parent_id.clone(),
                                 None,
-                                name_option,                                
-                                schema
+                                name_option,
+                                schema,
                             )));
                         }
                     }
-                    i+=1;
+                    i += 1;
                 }
             }
         }
@@ -395,16 +453,22 @@ impl ModelParser {
             id.unwrap(),
             parent_id.clone(),
             None,
-            Some(fields))))
+            Some(fields),
+        )))
     }
 
     /// Get a complex schema info from a node.
-    /// 
+    ///
     /// # Arguments
     /// * `node` - The node that contains the complex schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.    
-    fn get_complex_schema(&self, node: &Node<Value>, model_dict: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_complex_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
         let mut entity_kind_option: Option<EntityKind> = None;
         for node_type in node.types() {
             let entity_kind_result = EntityKind::from_str(node_type.as_str());
@@ -415,7 +479,7 @@ impl ModelParser {
         }
 
         if entity_kind_option.is_none() {
-            println!("Complex schema has no associated type.  It must have one."); 
+            println!("Complex schema has no associated type.  It must have one.");
             return Err(format!("Complex schema has no associated type.  It must have one."));
         }
 
@@ -424,32 +488,43 @@ impl ModelParser {
         if entity_kind == EntityKind::Object {
             return self.get_object_schema(node, model_dict, parent_id);
         } else {
-            println!("Unsupported complex object: {:?}.", entity_kind);         
+            println!("Unsupported complex object: {:?}.", entity_kind);
             return Err(format!("Unsupported complex object: {:?}.", entity_kind));
         }
     }
 
     /// Get a schema info from a node.
-    /// 
+    ///
     /// # Arguments
     /// * `node` - The node that contains the schema's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `parent_id` - The parent id.
-    fn get_schema(&self, node: &Node<Value>, model_dict: &mut ModelDict, parent_id: &Option<Dtmi>) -> Result<Box<dyn SchemaInfo>, String> {
+    fn get_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
         for (the_property, the_objects) in node.properties() {
             if the_property == "dtmi:dtdl:property:schema;2" {
                 if the_objects.len() == 1 {
                     if let Object::Node(node) = &*the_objects[0] {
                         if node.properties().len() == 0 {
-                            return self.get_primary_or_existing_schema(node, model_dict, parent_id);                       
+                            return self
+                                .get_primary_or_existing_schema(node, model_dict, parent_id);
                         } else {
                             return self.get_complex_schema(node, model_dict, parent_id);
                         }
                     } else {
-                        return Err(format!("The schema property's associated object should be a node.  It is not."));
+                        return Err(format!(
+                            "The schema property's associated object should be a node.  It is not."
+                        ));
                     }
                 } else {
-                    return Err(format!("The schema property should only have 1 assoicated object.  It has {}.", the_objects.len()));
+                    return Err(format!(
+                        "The schema property should only have 1 assoicated object.  It has {}.",
+                        the_objects.len()
+                    ));
                 }
             }
         }
@@ -458,13 +533,19 @@ impl ModelParser {
     }
 
     /// Get the payload.
-    /// 
+    ///
     /// # Arguments
     /// * `node` - The node that contains the payload's specification.
     /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
     /// * `property_name` - The property name associated with the payload.
     /// * `parent_id` - The parent id.
-    fn get_payload(&self, node: &Node<Value>, model_dict: &mut ModelDict, property_name: &str, parent_id: &Option<Dtmi>) -> Result<Option<Box<dyn CommandPayloadInfo>>, String> {
+    fn get_payload(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        property_name: &str,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Option<Box<dyn CommandPayloadInfo>>, String> {
         for (the_property, the_objects) in node.properties() {
             if the_property == property_name {
                 if let Object::Node(node) = &*the_objects[0] {
@@ -478,27 +559,32 @@ impl ModelParser {
                     if id.is_none() {
                         id = self.generate_id(parent_id, &name.clone().unwrap());
                         if id.is_none() {
-                            return Err(String::from("We were not able to generate an id for the payload."));
+                            return Err(String::from(
+                                "We were not able to generate an id for the payload.",
+                            ));
                         }
                     }
 
                     // displayName - required
-                    let _display_name = self.get_property_value(node, "dtmi:dtdl:property:displayName;2")?;
-                    
+                    let _display_name =
+                        self.get_property_value(node, "dtmi:dtdl:property:displayName;2")?;
+
                     // description - required
-                    let _description = self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
+                    let _description =
+                        self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
 
                     // schema - required
-                    let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, &id)?;
-                    
+                    let boxed_schema_info: Box<dyn SchemaInfo> =
+                        self.get_schema(node, model_dict, &id)?;
+
                     return Ok(Some(Box::new(CommandPayloadInfoImpl::new(
                         DTDL_VERSION,
                         id.unwrap(),
                         parent_id.clone(),
                         None,
-                        name,                        
-                        Some(boxed_schema_info)))));
-
+                        name,
+                        Some(boxed_schema_info),
+                    ))));
                 } else {
                     return Err(format!("get_payload encountered an unknown object"));
                 }
@@ -558,17 +644,24 @@ impl ModelParser {
         let mut primitive_schema_info_id: Option<Dtmi> = None;
         create_dtmi(schema, &mut primitive_schema_info_id);
         if primitive_schema_info_id.is_none() {
-            return Err(String::from("Primitive schema cannot form a valid schema id."));            
+            return Err(String::from("Primitive schema cannot form a valid schema id."));
         }
-        let primitive_schema_info_model_entry = model_dict.get(&primitive_schema_info_id.clone().unwrap());
+        let primitive_schema_info_model_entry =
+            model_dict.get(&primitive_schema_info_id.clone().unwrap());
         if primitive_schema_info_model_entry.is_none() {
-            return Err(format!("We were not able to find the primitive schema entry for id '{}'.", primitive_schema_info_id.clone().unwrap()));
+            return Err(format!(
+                "We were not able to find the primitive schema entry for id '{}'.",
+                primitive_schema_info_id.clone().unwrap()
+            ));
         }
-        let boxed_primitive_schema_info_ref = primitive_schema_info_model_entry.unwrap().as_any()
+        let boxed_primitive_schema_info_ref = primitive_schema_info_model_entry
+            .unwrap()
+            .as_any()
             .downcast_ref::<PrimitiveSchemaInfoImpl>()
             .expect("Was not a primitive schema info");
-        let boxed_schema_info: Box<dyn SchemaInfo> = Box::new((*boxed_primitive_schema_info_ref).clone());
-        
+        let boxed_schema_info: Box<dyn SchemaInfo> =
+            Box::new((*boxed_primitive_schema_info_ref).clone());
+
         Ok(boxed_schema_info)
     }
 
@@ -585,19 +678,25 @@ impl ModelParser {
         let mut interface_info_id: Option<Dtmi> = None;
         create_dtmi(schema, &mut interface_info_id);
         if interface_info_id.is_none() {
-            return Err(String::from("Schema cannot form a valid schema id."));            
+            return Err(String::from("Schema cannot form a valid schema id."));
         }
         let interface_info_model_entry = model_dict.get(&interface_info_id.clone().unwrap());
         if interface_info_model_entry.is_none() {
-            return Err(format!("We were not able to find the interface entry for id '{}'.", interface_info_id.clone().unwrap()));
+            return Err(format!(
+                "We were not able to find the interface entry for id '{}'.",
+                interface_info_id.clone().unwrap()
+            ));
         }
-        let _boxed_interface_info_ref = interface_info_model_entry.unwrap().as_any()
+        let _boxed_interface_info_ref = interface_info_model_entry
+            .unwrap()
+            .as_any()
             .downcast_ref::<InterfaceInfoImpl>()
             .expect("Was not an ineterface info");
-        let boxed_interface_info: Box<dyn InterfaceInfo> = Box::new((*_boxed_interface_info_ref).clone());
-        
+        let boxed_interface_info: Box<dyn InterfaceInfo> =
+            Box::new((*_boxed_interface_info_ref).clone());
+
         Ok(boxed_interface_info)
-    }    
+    }
 
     /// Parse a node.
     ///
@@ -630,7 +729,7 @@ impl ModelParser {
             EntityKind::Command => self.parse_command(node, parent_id, model_dict)?,
             EntityKind::Relationship => self.parse_relationship(node, parent_id, model_dict)?,
             EntityKind::Component => self.parse_component(node, parent_id, model_dict)?,
-            _ => return Err(String::from("Warning: Unexepcted entity kind found "))
+            _ => return Err(String::from("Warning: Unexepcted entity kind found ")),
         }
 
         Ok(())
@@ -701,7 +800,8 @@ impl ModelParser {
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
         // schema - required
-        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, parent_id)?;
+        let boxed_schema_info: Box<dyn SchemaInfo> =
+            self.get_schema(node, model_dict, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -715,15 +815,15 @@ impl ModelParser {
         }
 
         let mut undefined_property_values = HashMap::<String, Value>::new();
-        Self::gather_undefined_properties(node, &mut undefined_property_values);   
+        Self::gather_undefined_properties(node, &mut undefined_property_values);
 
         let mut rc_entity_info: Box<dyn EntityInfo> = Box::new(TelemetryInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            name,            
-            Some(boxed_schema_info)
+            name,
+            Some(boxed_schema_info),
         ));
 
         for (key, value) in undefined_property_values {
@@ -751,7 +851,8 @@ impl ModelParser {
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
         // schema - required
-        let boxed_schema_info: Box<dyn SchemaInfo> = self.get_schema(node, model_dict, parent_id)?;
+        let boxed_schema_info: Box<dyn SchemaInfo> =
+            self.get_schema(node, model_dict, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -772,7 +873,7 @@ impl ModelParser {
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            name,          
+            name,
             Some(boxed_schema_info),
             false,
         ));
@@ -814,18 +915,20 @@ impl ModelParser {
             }
         }
 
-        let request_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, model_dict, "dtmi:dtdl:property:request;2", &id)?;
-        let response_payload: Option<Box<dyn CommandPayloadInfo>> = self.get_payload(node, model_dict, "dtmi:dtdl:property:response;2", &id)?;
+        let request_payload: Option<Box<dyn CommandPayloadInfo>> =
+            self.get_payload(node, model_dict, "dtmi:dtdl:property:request;2", &id)?;
+        let response_payload: Option<Box<dyn CommandPayloadInfo>> =
+            self.get_payload(node, model_dict, "dtmi:dtdl:property:response;2", &id)?;
 
         let mut undefined_property_values = HashMap::<String, Value>::new();
-        Self::gather_undefined_properties(node, &mut undefined_property_values);        
+        Self::gather_undefined_properties(node, &mut undefined_property_values);
 
         let mut entity_info = Box::new(CommandInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            name,            
+            name,
             request_payload,
             response_payload,
         ));
@@ -833,7 +936,7 @@ impl ModelParser {
         for (key, value) in undefined_property_values {
             entity_info.add_undefined_property(key, value);
         }
-            
+
         model_dict.insert(id.clone().unwrap(), entity_info);
 
         Ok(())
@@ -872,8 +975,8 @@ impl ModelParser {
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            name,            
-            None,            
+            name,
+            None,
             false,
         ));
         model_dict.insert(id.clone().unwrap(), entity_info);
@@ -901,7 +1004,8 @@ impl ModelParser {
         if schema.is_none() {
             return Err(String::from("Component does not have a schema property."));
         }
-        let boxed_interface_info: Box<dyn InterfaceInfo> = self.retrieve_interface_info_from_model_dict(&schema.unwrap(), model_dict)?;
+        let boxed_interface_info: Box<dyn InterfaceInfo> =
+            self.retrieve_interface_info_from_model_dict(&schema.unwrap(), model_dict)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
@@ -914,7 +1018,7 @@ impl ModelParser {
             }
         }
 
-        let entity_info = Box::new(ComponentInfoImpl::new(            
+        let entity_info = Box::new(ComponentInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
@@ -951,17 +1055,19 @@ mod model_parser_tests {
 
         let mut json_texts = Vec::<String>::new();
 
-        let device_information_full_path_result = find_full_path("dtmi/azure/devicemanagement/deviceinformation-1.json");
+        let device_information_full_path_result =
+            find_full_path("dtmi/azure/devicemanagement/deviceinformation-1.json");
         assert!(device_information_full_path_result.is_ok());
-        let device_information_contents_result = retrieve_dtdl(&device_information_full_path_result.unwrap());
+        let device_information_contents_result =
+            retrieve_dtdl(&device_information_full_path_result.unwrap());
         assert!(device_information_contents_result.is_ok());
-        json_texts.push(device_information_contents_result.unwrap());           
+        json_texts.push(device_information_contents_result.unwrap());
 
         let thermostat_full_path_result = find_full_path("v2/samples/Thermostat.json");
         assert!(thermostat_full_path_result.is_ok());
         let thermostat_contents_result = retrieve_dtdl(&thermostat_full_path_result.unwrap());
         assert!(thermostat_contents_result.is_ok());
-        json_texts.push(thermostat_contents_result.unwrap());        
+        json_texts.push(thermostat_contents_result.unwrap());
 
         let temp_controller_full_path_result =
             find_full_path("v2/samples/TemperatureController.json");
@@ -973,9 +1079,17 @@ mod model_parser_tests {
 
         let mut parser = ModelParser::new();
         let model_dict_result = parser.parse(&json_texts);
-        assert!(model_dict_result.is_ok(), "parse failed due to: {}", model_dict_result.err().unwrap());
+        assert!(
+            model_dict_result.is_ok(),
+            "parse failed due to: {}",
+            model_dict_result.err().unwrap()
+        );
         let model_dict = model_dict_result.unwrap();
-        assert!(model_dict.len() == 31, "expected length was 31, actual length is {}", model_dict.len());
+        assert!(
+            model_dict.len() == 31,
+            "expected length was 31, actual length is {}",
+            model_dict.len()
+        );
     }
 
     #[test]
@@ -984,8 +1098,7 @@ mod model_parser_tests {
 
         let mut json_texts = Vec::<String>::new();
 
-        let demo_path_result =
-            find_full_path("samples/demo_resources.json");
+        let demo_path_result = find_full_path("samples/demo_resources.json");
         assert!(demo_path_result.is_ok());
         let demo_contents_result = retrieve_dtdl(&demo_path_result.unwrap());
         assert!(demo_contents_result.is_ok());
@@ -993,9 +1106,17 @@ mod model_parser_tests {
 
         let mut parser = ModelParser::new();
         let model_dict_result = parser.parse(&json_texts);
-        assert!(model_dict_result.is_ok(), "parse failed due to: {}", model_dict_result.err().unwrap());
+        assert!(
+            model_dict_result.is_ok(),
+            "parse failed due to: {}",
+            model_dict_result.err().unwrap()
+        );
         let model_dict = model_dict_result.unwrap();
-        assert!(model_dict.len() == 14, "expected length was 14, actual length is {}", model_dict.len());        
+        assert!(
+            model_dict.len() == 14,
+            "expected length was 14, actual length is {}",
+            model_dict.len()
+        );
 
         let mut ambient_air_temperature_id: Option<Dtmi> = None;
         create_dtmi(
@@ -1003,11 +1124,16 @@ mod model_parser_tests {
             &mut ambient_air_temperature_id,
         );
         assert!(ambient_air_temperature_id.is_some());
-        let ambient_air_temperature_entity_result = model_dict.get(&ambient_air_temperature_id.unwrap());
+        let ambient_air_temperature_entity_result =
+            model_dict.get(&ambient_air_temperature_id.unwrap());
         assert!(ambient_air_temperature_entity_result.is_some());
-        let ambient_air_temperature_uri_property_result = ambient_air_temperature_entity_result.unwrap().undefined_properties().get("dtmi:sdv:property:uri;1");
+        let ambient_air_temperature_uri_property_result = ambient_air_temperature_entity_result
+            .unwrap()
+            .undefined_properties()
+            .get("dtmi:sdv:property:uri;1");
         assert!(ambient_air_temperature_uri_property_result.is_some());
-        let ambient_air_temperature_uri_property_value_result = ambient_air_temperature_uri_property_result.unwrap().get("@value");
+        let ambient_air_temperature_uri_property_value_result =
+            ambient_air_temperature_uri_property_result.unwrap().get("@value");
         assert!(ambient_air_temperature_uri_property_value_result.is_some());
         assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
@@ -1019,10 +1145,15 @@ mod model_parser_tests {
         assert!(send_notification_id.is_some());
         let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
         assert!(send_notification_entity_result.is_some());
-        let send_notification_uri_property_result = send_notification_entity_result.unwrap().undefined_properties().get("dtmi:sdv:property:uri;1");
+        let send_notification_uri_property_result = send_notification_entity_result
+            .unwrap()
+            .undefined_properties()
+            .get("dtmi:sdv:property:uri;1");
         assert!(send_notification_uri_property_result.is_some());
-        let send_notification_uri_property_value_result = send_notification_uri_property_result.unwrap().get("@value");
+        let send_notification_uri_property_value_result =
+            send_notification_uri_property_result.unwrap().get("@value");
         assert!(send_notification_uri_property_value_result.is_some());
-        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138        
+        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010");
+        // Devskim: ignore DS137138
     }
 }

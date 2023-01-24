@@ -42,7 +42,7 @@ impl Consumer for ConsumerImpl {
         warn!("Got a respons request: {:?}", request);
 
         Err(Status::unimplemented("set has not been implemented"))
-    }    
+    }
 }
 
 #[cfg(test)]

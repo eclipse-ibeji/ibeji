@@ -22,7 +22,7 @@ pub struct TelemetryInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: Option<String>,    
+    name: Option<String>,
 
     // TelemetryInfo
     schema: Option<Box<dyn SchemaInfo>>,
@@ -43,8 +43,8 @@ impl TelemetryInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        name: Option<String>,        
-        schema: Option<Box<dyn SchemaInfo>>
+        name: Option<String>,
+        schema: Option<Box<dyn SchemaInfo>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -52,7 +52,7 @@ impl TelemetryInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            name,            
+            name,
             schema,
         }
     }
@@ -100,24 +100,23 @@ impl EntityInfo for TelemetryInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }     
+    }
 }
 
-impl NamedEntityInfo for TelemetryInfoImpl {  
+impl NamedEntityInfo for TelemetryInfoImpl {
     /// Returns the name.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
-impl ContentInfo for TelemetryInfoImpl {    
-}
+impl ContentInfo for TelemetryInfoImpl {}
 
 impl TelemetryInfo for TelemetryInfoImpl {
     /// Returns the schema.
     fn schema(&self) -> &Option<Box<dyn SchemaInfo>> {
         &self.schema
-    }    
+    }
 }
 
 #[cfg(test)]
@@ -152,14 +151,20 @@ mod telemetry_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut telemetry_info = TelemetryInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(boxed_schema_info),
         );
         telemetry_info.add_undefined_property(String::from("first"), first_propery_value.clone());
@@ -174,21 +179,22 @@ mod telemetry_info_impl_tests {
         assert!(telemetry_info.entity_kind() == EntityKind::Telemetry);
         assert!(telemetry_info.undefined_properties().len() == 2);
         assert!(
-            telemetry_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            telemetry_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             telemetry_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
         );
-        
+
         match telemetry_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
 
         match telemetry_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set")
-        }         
+            None => assert!(false, "schema has not been set"),
+        }
     }
 }

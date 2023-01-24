@@ -40,7 +40,10 @@ impl DigitalTwin for DigitalTwinImpl {
         let val = match get_result {
             Some(v) => v,
             None => {
-                return Err(Status::not_found(format!("Unable to find the DTDL for entity id {}", &entity_id)))
+                return Err(Status::not_found(format!(
+                    "Unable to find the DTDL for entity id {}",
+                    &entity_id
+                )))
             }
         };
 
@@ -56,7 +59,10 @@ impl DigitalTwin for DigitalTwinImpl {
 
         let response = FindByIdResponse { dtdl };
 
-        info!("Responded to the find_by_id request for entity id {} with the requested DTDL.", &entity_id);
+        info!(
+            "Responded to the find_by_id request for entity id {} with the requested DTDL.",
+            &entity_id
+        );
 
         Ok(Response::new(response))
     }
@@ -219,8 +225,7 @@ mod digitaltwin_impl_tests {
         let entity_map = Arc::new(Mutex::new(HashMap::new()));
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
-        let dtdl_path_result =
-            find_full_path("samples/demo_resources.json");
+        let dtdl_path_result = find_full_path("samples/demo_resources.json");
         assert!(dtdl_path_result.is_ok());
         let dtdl_path = dtdl_path_result.unwrap();
         let dtdl_result = retrieve_dtdl(&dtdl_path);

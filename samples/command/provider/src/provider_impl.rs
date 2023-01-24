@@ -4,8 +4,8 @@
 use log::{info, warn};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse, SubscribeRequest,
-    SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse
+    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
+    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -32,7 +32,10 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
-        info!("Received a subscribe request from consumer URI {} for entity id {}", &consumer_uri, &entity_id);
+        info!(
+            "Received a subscribe request from consumer URI {} for entity id {}",
+            &consumer_uri, &entity_id
+        );
 
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
@@ -91,7 +94,10 @@ impl Provider for ProviderImpl {
     ///
     /// # Arguments
     /// * `request` - Invoke request.
-    async fn invoke(&self, request: Request<InvokeRequest>) -> Result<Response<InvokeResponse>, Status> {
+    async fn invoke(
+        &self,
+        request: Request<InvokeRequest>,
+    ) -> Result<Response<InvokeResponse>, Status> {
         info!("Got an invoke request: {:?}", request);
 
         let request_inner = request.into_inner();
@@ -100,10 +106,16 @@ impl Provider for ProviderImpl {
         let consumer_uri: String = request_inner.consumer_uri;
         let payload: String = request_inner.payload;
 
-        info!("Received an invoke request from consumer URI {} for entity id {} with payload '{}'", &consumer_uri, &entity_id, &payload);
+        info!(
+            "Received an invoke request from consumer URI {} for entity id {} with payload '{}'",
+            &consumer_uri, &entity_id, &payload
+        );
 
         tokio::spawn(async move {
-            info!("Sending an invoke respose to consumer URI {} for entity id {}", &consumer_uri, &entity_id);
+            info!(
+                "Sending an invoke respose to consumer URI {} for entity id {}",
+                &consumer_uri, &entity_id
+            );
 
             let client_result = ConsumerClient::connect(consumer_uri).await;
             if client_result.is_err() {
@@ -113,11 +125,8 @@ impl Provider for ProviderImpl {
 
             let payload: String = String::from("The send_notification response.");
 
-            let respond_request = tonic::Request::new(RespondRequest {
-                entity_id,
-                response_id,
-                payload,
-            });
+            let respond_request =
+                tonic::Request::new(RespondRequest { entity_id, response_id, payload });
 
             let _respond_response = client.respond(respond_request).await;
             _respond_response
@@ -126,7 +135,7 @@ impl Provider for ProviderImpl {
         let response = InvokeResponse {};
 
         Ok(Response::new(response))
-    }    
+    }
 }
 
 #[cfg(test)]
@@ -146,18 +155,24 @@ mod provider_impl_tests {
         let second_uri = String::from("http://second.com:9000"); // Devskim: ignore DS137138
         let third_uri = String::from("http://third.com:9000"); // Devskim: ignore DS137138
 
-        let first_request =
-            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: first_uri.clone() });
+        let first_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: first_uri.clone(),
+        });
         let first_result = task::block_on(provider_impl.subscribe(first_request));
         assert!(first_result.is_ok());
 
-        let second_request =
-            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: second_uri.clone() });
+        let second_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: second_uri.clone(),
+        });
         let second_result = task::block_on(provider_impl.subscribe(second_request));
         assert!(second_result.is_ok());
 
-        let third_request =
-            tonic::Request::new(SubscribeRequest { entity_id: second_id.clone(), consumer_uri: third_uri.clone() });
+        let third_request = tonic::Request::new(SubscribeRequest {
+            entity_id: second_id.clone(),
+            consumer_uri: third_uri.clone(),
+        });
         let third_result = task::block_on(provider_impl.subscribe(third_request));
         assert!(third_result.is_ok());
 
@@ -188,11 +203,15 @@ mod provider_impl_tests {
         let response_id = Uuid::new_v4().to_string();
         let payload = String::from("some-payload");
 
-        let request =
-            tonic::Request::new(InvokeRequest { entity_id: entity_id, consumer_uri, response_id, payload });
+        let request = tonic::Request::new(InvokeRequest {
+            entity_id: entity_id,
+            consumer_uri,
+            response_id,
+            payload,
+        });
         let result = task::block_on(provider_impl.invoke(request));
         assert!(result.is_ok());
 
         // Note: this test does not check that the response has successfully been sent.
-    }    
+    }
 }

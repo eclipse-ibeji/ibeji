@@ -3,8 +3,8 @@
 
 use log::{info, warn};
 use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse, SubscribeRequest,
-    SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse
+    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
+    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -90,11 +90,14 @@ impl Provider for ProviderImpl {
     ///
     /// # Arguments
     /// * `request` - Invoke request.
-    async fn invoke(&self, request: Request<InvokeRequest>) -> Result<Response<InvokeResponse>, Status> {
+    async fn invoke(
+        &self,
+        request: Request<InvokeRequest>,
+    ) -> Result<Response<InvokeResponse>, Status> {
         warn!("Got an invoke request: {:?}", request);
 
         Err(Status::unimplemented("invoke has not been implemented"))
-    }    
+    }
 }
 
 #[cfg(test)]
@@ -113,18 +116,24 @@ mod provider_impl_tests {
         let second_uri = String::from("http://second.com:9000"); // Devskim: ignore DS137138
         let third_uri = String::from("http://third.com:9000"); // Devskim: ignore DS137138
 
-        let first_request =
-            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: first_uri.clone() });
+        let first_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: first_uri.clone(),
+        });
         let first_result = task::block_on(provider_impl.subscribe(first_request));
         assert!(first_result.is_ok());
 
-        let second_request =
-            tonic::Request::new(SubscribeRequest { entity_id: first_id.clone(), consumer_uri: second_uri.clone() });
+        let second_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: second_uri.clone(),
+        });
         let second_result = task::block_on(provider_impl.subscribe(second_request));
         assert!(second_result.is_ok());
 
-        let third_request =
-            tonic::Request::new(SubscribeRequest { entity_id: second_id.clone(), consumer_uri: third_uri.clone() });
+        let third_request = tonic::Request::new(SubscribeRequest {
+            entity_id: second_id.clone(),
+            consumer_uri: third_uri.clone(),
+        });
         let third_result = task::block_on(provider_impl.subscribe(third_request));
         assert!(third_result.is_ok());
 

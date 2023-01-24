@@ -39,7 +39,7 @@ impl ObjectInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        fields: Option<Vec<Box<dyn FieldInfo>>>
+        fields: Option<Vec<Box<dyn FieldInfo>>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -47,7 +47,7 @@ impl ObjectInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            fields,        
+            fields,
         }
     }
 }
@@ -97,11 +97,9 @@ impl EntityInfo for ObjectInfoImpl {
     }
 }
 
-impl SchemaInfo for ObjectInfoImpl {
-}
+impl SchemaInfo for ObjectInfoImpl {}
 
-impl ComplexSchemaInfo for ObjectInfoImpl {
-}
+impl ComplexSchemaInfo for ObjectInfoImpl {}
 
 impl ObjectInfo for ObjectInfoImpl {
     // Returns the fields.
@@ -114,7 +112,7 @@ impl ObjectInfo for ObjectInfoImpl {
 mod object_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
-    use crate::model_parser::DTDL_VERSION;    
+    use crate::model_parser::DTDL_VERSION;
     use serde_json;
 
     #[test]
@@ -138,13 +136,13 @@ mod object_info_impl_tests {
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
         let fields = Vec::new();
-        
+
         let mut object_info = ObjectInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(fields)
+            Some(fields),
         );
         object_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         object_info.add_undefined_property(String::from("second"), second_propery_value.clone());
@@ -167,7 +165,7 @@ mod object_info_impl_tests {
 
         match object_info.fields() {
             Some(fields) => assert_eq!(fields.len(), 0),
-            None => assert!(false, "fields has not been set")
-        }  
+            None => assert!(false, "fields has not been set"),
+        }
     }
 }

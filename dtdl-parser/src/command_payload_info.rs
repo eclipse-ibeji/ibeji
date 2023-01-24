@@ -3,5 +3,4 @@
 
 use crate::schema_field_info::SchemaFieldInfo;
 
-pub trait CommandPayloadInfo : SchemaFieldInfo {
-}
+pub trait CommandPayloadInfo: SchemaFieldInfo {}

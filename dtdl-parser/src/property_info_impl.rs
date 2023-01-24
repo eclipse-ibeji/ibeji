@@ -44,9 +44,9 @@ impl PropertyInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        name: Option<String>,        
+        name: Option<String>,
         schema: Option<Box<dyn SchemaInfo>>,
-        writable: bool
+        writable: bool,
     ) -> Self {
         Self {
             dtdl_version,
@@ -54,9 +54,9 @@ impl PropertyInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            name,            
+            name,
             schema,
-            writable
+            writable,
         }
     }
 }
@@ -103,18 +103,17 @@ impl EntityInfo for PropertyInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }     
+    }
 }
 
-impl NamedEntityInfo for PropertyInfoImpl {  
+impl NamedEntityInfo for PropertyInfoImpl {
     /// Returns the name of the property.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
-impl ContentInfo for PropertyInfoImpl {    
-}
+impl ContentInfo for PropertyInfoImpl {}
 
 impl PropertyInfo for PropertyInfoImpl {
     /// Returns the schema.
@@ -160,16 +159,22 @@ mod property_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut property_info = PropertyInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(boxed_schema_info),
-            true
+            true,
         );
         property_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         property_info.add_undefined_property(String::from("second"), second_propery_value.clone());
@@ -183,7 +188,8 @@ mod property_info_impl_tests {
         assert!(property_info.entity_kind() == EntityKind::Property);
         assert!(property_info.undefined_properties().len() == 2);
         assert!(
-            property_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            property_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             property_info.undefined_properties().get("second").unwrap().clone()
@@ -192,12 +198,12 @@ mod property_info_impl_tests {
 
         match property_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
 
         match property_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set")
+            None => assert!(false, "schema has not been set"),
         }
 
         assert_eq!(property_info.writable(), true);

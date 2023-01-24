@@ -22,7 +22,7 @@ pub struct FieldInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: Option<String>,    
+    name: Option<String>,
 
     // SchemaFieldInfo
     schema: Option<Box<dyn SchemaInfo>>,
@@ -43,8 +43,8 @@ impl FieldInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        name: Option<String>,        
-        schema: Option<Box<dyn SchemaInfo>>
+        name: Option<String>,
+        schema: Option<Box<dyn SchemaInfo>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -52,7 +52,7 @@ impl FieldInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            name,            
+            name,
             schema,
         }
     }
@@ -100,14 +100,14 @@ impl EntityInfo for FieldInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }     
+    }
 }
 
-impl NamedEntityInfo for FieldInfoImpl {  
+impl NamedEntityInfo for FieldInfoImpl {
     /// Returns the name of the field.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
 impl SchemaFieldInfo for FieldInfoImpl {
@@ -117,8 +117,7 @@ impl SchemaFieldInfo for FieldInfoImpl {
     }
 }
 
-impl FieldInfo for FieldInfoImpl {
-}
+impl FieldInfo for FieldInfoImpl {}
 
 #[cfg(test)]
 mod field_info_impl_tests {
@@ -152,7 +151,13 @@ mod field_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut field_info = FieldInfoImpl::new(
             DTDL_VERSION,
@@ -183,12 +188,12 @@ mod field_info_impl_tests {
 
         match field_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
 
         match field_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set")
+            None => assert!(false, "schema has not been set"),
         }
     }
 }

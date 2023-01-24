@@ -3,5 +3,4 @@
 
 use crate::schema_info::SchemaInfo;
 
-pub trait ComplexSchemaInfo : SchemaInfo {
-}
+pub trait ComplexSchemaInfo: SchemaInfo {}

@@ -32,14 +32,14 @@ impl InterfaceInfoImpl {
         dtdl_version: i32,
         id: Dtmi,
         child_of: Option<Dtmi>,
-        defined_in: Option<Dtmi>
+        defined_in: Option<Dtmi>,
     ) -> Self {
         Self {
             dtdl_version,
             id,
             child_of,
             defined_in,
-            undefined_properties: HashMap::<String, Value>::new(),            
+            undefined_properties: HashMap::<String, Value>::new(),
         }
     }
 }
@@ -86,11 +86,10 @@ impl EntityInfo for InterfaceInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }    
+    }
 }
 
-impl InterfaceInfo for InterfaceInfoImpl {   
-}
+impl InterfaceInfo for InterfaceInfoImpl {}
 
 #[cfg(test)]
 mod interface_info_impl_tests {
@@ -137,11 +136,12 @@ mod interface_info_impl_tests {
         assert!(interface_info.entity_kind() == EntityKind::Interface);
         assert!(interface_info.undefined_properties().len() == 2);
         assert!(
-            interface_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            interface_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             interface_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
-        );  
+        );
     }
 }

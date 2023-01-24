@@ -4,7 +4,7 @@
 use crate::content_info::ContentInfo;
 use crate::schema_info::SchemaInfo;
 
-pub trait PropertyInfo  : ContentInfo {
+pub trait PropertyInfo: ContentInfo {
     /// Returns the schema.
     fn schema(&self) -> &Option<Box<dyn SchemaInfo>>;
 

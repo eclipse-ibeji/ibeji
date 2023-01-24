@@ -17,7 +17,7 @@ pub enum EntityKind {
     #[strum(serialize = "dtmi:dtdl:class:Command;2")]
     Command,
 
-    #[strum(serialize = "dtmi:dtdl:class:CommandPayload;2")]    
+    #[strum(serialize = "dtmi:dtdl:class:CommandPayload;2")]
     CommandPayload,
 
     #[strum(serialize = "dtmi:dtdl:class:CommandType;2")]
@@ -26,25 +26,25 @@ pub enum EntityKind {
     #[strum(serialize = "dtmi:dtdl:class:Component;2")]
     Component,
 
-    #[strum(serialize = "dtmi:dtdl:instance:Schema:date;2")]    
+    #[strum(serialize = "dtmi:dtdl:instance:Schema:date;2")]
     Date,
 
-    #[strum(serialize = "dtmi:dtdl:instance:Schema:dateTime;2")]    
+    #[strum(serialize = "dtmi:dtdl:instance:Schema:dateTime;2")]
     DateTime,
 
-    #[strum(serialize = "dtmi:dtdl:instance:Schema:double;2")]    
+    #[strum(serialize = "dtmi:dtdl:instance:Schema:double;2")]
     Double,
 
     #[strum(serialize = "dtmi:dtdl:instance:Schema:duration;2")]
     Duration,
 
-    #[strum(serialize = "dtmi:dtdl:class:Enum;2")]    
+    #[strum(serialize = "dtmi:dtdl:class:Enum;2")]
     Enum,
 
-    #[strum(serialize = "dtmi:dtdl:class:EnumValue;2")]    
+    #[strum(serialize = "dtmi:dtdl:class:EnumValue;2")]
     EnumValue,
 
-    #[strum(serialize = "dtmi:dtdl:class:Field;2")]    
+    #[strum(serialize = "dtmi:dtdl:class:Field;2")]
     Field,
 
     #[strum(serialize = "dtmi:dtdl:instance:Schema:float;2")]

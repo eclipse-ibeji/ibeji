@@ -4,7 +4,7 @@
 use crate::named_entity_info::NamedEntityInfo;
 use crate::schema_info::SchemaInfo;
 
-pub trait SchemaFieldInfo  : NamedEntityInfo {
+pub trait SchemaFieldInfo: NamedEntityInfo {
     /// Returns the schema.
     fn schema(&self) -> &Option<Box<dyn SchemaInfo>>;
 }

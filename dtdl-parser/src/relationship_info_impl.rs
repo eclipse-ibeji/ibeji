@@ -45,9 +45,9 @@ impl RelationshipInfoImpl {
         id: Dtmi,
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
-        name: Option<String>,        
+        name: Option<String>,
         schema: Option<Box<dyn SchemaInfo>>,
-        writable: bool
+        writable: bool,
     ) -> Self {
         Self {
             dtdl_version,
@@ -55,9 +55,9 @@ impl RelationshipInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            name,            
+            name,
             schema,
-            writable
+            writable,
         }
     }
 }
@@ -104,18 +104,17 @@ impl EntityInfo for RelationshipInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }     
+    }
 }
 
-impl NamedEntityInfo for RelationshipInfoImpl {  
+impl NamedEntityInfo for RelationshipInfoImpl {
     /// Returns the name.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
-impl ContentInfo for RelationshipInfoImpl {    
-}
+impl ContentInfo for RelationshipInfoImpl {}
 
 impl RelationshipInfo for RelationshipInfoImpl {
     /// Returns the schema.
@@ -161,19 +160,27 @@ mod relationship_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut relationship_info = RelationshipInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(boxed_schema_info),
-            false
+            false,
         );
-        relationship_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        relationship_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        relationship_info
+            .add_undefined_property(String::from("first"), first_propery_value.clone());
+        relationship_info
+            .add_undefined_property(String::from("second"), second_propery_value.clone());
 
         assert!(relationship_info.dtdl_version() == 2);
         assert!(relationship_info.id() == &id);
@@ -184,7 +191,8 @@ mod relationship_info_impl_tests {
         assert!(relationship_info.entity_kind() == EntityKind::Property);
         assert!(relationship_info.undefined_properties().len() == 2);
         assert!(
-            relationship_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            relationship_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             relationship_info.undefined_properties().get("second").unwrap().clone()
@@ -193,7 +201,7 @@ mod relationship_info_impl_tests {
 
         match relationship_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
-        }     
+            None => assert!(false, "name has not been set"),
+        }
     }
 }

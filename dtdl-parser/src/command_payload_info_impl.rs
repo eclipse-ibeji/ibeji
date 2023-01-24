@@ -22,7 +22,7 @@ pub struct CommandPayloadInfoImpl {
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
-    name: Option<String>,    
+    name: Option<String>,
 
     // SchemaFieldInfo
     schema: Option<Box<dyn SchemaInfo>>,
@@ -44,7 +44,7 @@ impl CommandPayloadInfoImpl {
         child_of: Option<Dtmi>,
         defined_in: Option<Dtmi>,
         name: Option<String>,
-        schema: Option<Box<dyn SchemaInfo>>
+        schema: Option<Box<dyn SchemaInfo>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -52,7 +52,7 @@ impl CommandPayloadInfoImpl {
             child_of,
             defined_in,
             undefined_properties: HashMap::<String, Value>::new(),
-            name,            
+            name,
             schema,
         }
     }
@@ -100,25 +100,24 @@ impl EntityInfo for CommandPayloadInfoImpl {
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any {
         self
-    }     
+    }
 }
 
-impl NamedEntityInfo for CommandPayloadInfoImpl {  
+impl NamedEntityInfo for CommandPayloadInfoImpl {
     /// Returns the name.
     fn name(&self) -> &Option<String> {
         &self.name
-    }  
+    }
 }
 
 impl SchemaFieldInfo for CommandPayloadInfoImpl {
     /// Returns the schema.
     fn schema(&self) -> &Option<Box<dyn SchemaInfo>> {
         &self.schema
-    }    
+    }
 }
 
-impl CommandPayloadInfo for CommandPayloadInfoImpl {  
-}
+impl CommandPayloadInfo for CommandPayloadInfoImpl {}
 
 #[cfg(test)]
 mod command_payload_info_impl_tests {
@@ -152,18 +151,26 @@ mod command_payload_info_impl_tests {
         create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
         assert!(schema_info_id.is_some());
 
-        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, schema_info_id.unwrap(), None, None, EntityKind::String));        
+        let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut command_payload_info = CommandPayloadInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(boxed_schema_info.clone()),
         );
-        command_payload_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        command_payload_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        command_payload_info
+            .add_undefined_property(String::from("first"), first_propery_value.clone());
+        command_payload_info
+            .add_undefined_property(String::from("second"), second_propery_value.clone());
 
         assert!(command_payload_info.dtdl_version() == DTDL_VERSION);
         assert!(command_payload_info.id() == &id);
@@ -175,12 +182,13 @@ mod command_payload_info_impl_tests {
         assert!(command_payload_info.schema().is_some());
         match command_payload_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set")
+            None => assert!(false, "schema has not been set"),
         }
 
         assert!(command_payload_info.undefined_properties().len() == 2);
         assert!(
-            command_payload_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            command_payload_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             command_payload_info.undefined_properties().get("second").unwrap().clone()
@@ -189,7 +197,7 @@ mod command_payload_info_impl_tests {
 
         match command_payload_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
     }
 }

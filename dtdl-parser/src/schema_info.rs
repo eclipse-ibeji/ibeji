@@ -3,5 +3,4 @@
 
 use crate::entity_info::EntityInfo;
 
-pub trait SchemaInfo : EntityInfo {
-}
+pub trait SchemaInfo: EntityInfo {}

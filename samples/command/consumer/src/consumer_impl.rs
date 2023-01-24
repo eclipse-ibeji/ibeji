@@ -42,7 +42,7 @@ impl Consumer for ConsumerImpl {
         let response = RespondResponse {};
 
         Ok(Response::new(response))
-    }      
+    }
 }
 
 #[cfg(test)]
@@ -61,6 +61,6 @@ mod consumer_impl_tests {
 
         let request = tonic::Request::new(RespondRequest { entity_id, response_id, payload });
         let result = task::block_on(consumer_impl.respond(request));
-        assert!(result.is_ok());        
+        assert!(result.is_ok());
     }
 }

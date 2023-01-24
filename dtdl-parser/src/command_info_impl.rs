@@ -26,7 +26,7 @@ pub struct CommandInfoImpl {
 
     // CommandInfo
     request: Option<Box<dyn CommandPayloadInfo>>,
-    response: Option<Box<dyn CommandPayloadInfo>>,    
+    response: Option<Box<dyn CommandPayloadInfo>>,
 }
 
 impl CommandInfoImpl {
@@ -47,7 +47,7 @@ impl CommandInfoImpl {
         defined_in: Option<Dtmi>,
         name: Option<String>,
         request: Option<Box<dyn CommandPayloadInfo>>,
-        response: Option<Box<dyn CommandPayloadInfo>>        
+        response: Option<Box<dyn CommandPayloadInfo>>,
     ) -> Self {
         Self {
             dtdl_version,
@@ -57,7 +57,7 @@ impl CommandInfoImpl {
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             request,
-            response
+            response,
         }
     }
 }
@@ -114,9 +114,7 @@ impl NamedEntityInfo for CommandInfoImpl {
     }
 }
 
-impl ContentInfo for CommandInfoImpl {
-
-}
+impl ContentInfo for CommandInfoImpl {}
 
 impl CommandInfo for CommandInfoImpl {
     /// Returns the request.
@@ -162,31 +160,57 @@ mod command_info_impl_tests {
         let mut string_schema_info_id: Option<Dtmi> = None;
         create_dtmi("dtmi:dtdl:class:String;2", &mut string_schema_info_id);
         assert!(string_schema_info_id.is_some());
-        let string_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, string_schema_info_id.unwrap(), None, None, EntityKind::String));
+        let string_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            string_schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::String,
+        ));
 
         let mut integer_schema_info_id: Option<Dtmi> = None;
         create_dtmi("dtmi:dtdl:class:Integer;2", &mut integer_schema_info_id);
         assert!(integer_schema_info_id.is_some());
-        let integer_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(DTDL_VERSION, integer_schema_info_id.unwrap(), None, None, EntityKind::Integer));           
+        let integer_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
+            DTDL_VERSION,
+            integer_schema_info_id.unwrap(),
+            None,
+            None,
+            EntityKind::Integer,
+        ));
 
         let mut request_id: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:send_notification:request:1", &mut request_id);
         assert!(request_id.is_some());
-        let request = Box::new(CommandPayloadInfoImpl::new(DTDL_VERSION, request_id.unwrap(), None, None, None, Some(string_schema_info)));  
+        let request = Box::new(CommandPayloadInfoImpl::new(
+            DTDL_VERSION,
+            request_id.unwrap(),
+            None,
+            None,
+            None,
+            Some(string_schema_info),
+        ));
 
         let mut response_id: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:send_notification:response:1", &mut response_id);
         assert!(response_id.is_some());
-        let response = Box::new(CommandPayloadInfoImpl::new(DTDL_VERSION, response_id.unwrap(), None, None, None, Some(integer_schema_info)));
+        let response = Box::new(CommandPayloadInfoImpl::new(
+            DTDL_VERSION,
+            response_id.unwrap(),
+            None,
+            None,
+            None,
+            Some(integer_schema_info),
+        ));
 
         let mut command_info = CommandInfoImpl::new(
             DTDL_VERSION,
             id.clone(),
             Some(child_of.clone()),
             Some(defined_in.clone()),
-            Some(String::from("one")),            
+            Some(String::from("one")),
             Some(request),
-            Some(response)
+            Some(response),
         );
         command_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         command_info.add_undefined_property(String::from("second"), second_propery_value.clone());
@@ -200,7 +224,8 @@ mod command_info_impl_tests {
         assert!(command_info.entity_kind() == EntityKind::Command);
         assert!(command_info.undefined_properties().len() == 2);
         assert!(
-            command_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            command_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             command_info.undefined_properties().get("second").unwrap().clone()
@@ -209,18 +234,18 @@ mod command_info_impl_tests {
 
         match command_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set")
+            None => assert!(false, "name has not been set"),
         }
-        
+
         match command_info.request() {
             Some(request) => {
                 assert_eq!(request.entity_kind(), EntityKind::CommandPayload);
                 match request.schema() {
                     Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-                    None => assert!(false, "request's schema has not been set")
+                    None => assert!(false, "request's schema has not been set"),
                 }
-            },
-            None => assert!(false, "request has not been set")            
+            }
+            None => assert!(false, "request has not been set"),
         }
 
         match command_info.response() {
@@ -228,10 +253,10 @@ mod command_info_impl_tests {
                 assert_eq!(response.entity_kind(), EntityKind::CommandPayload);
                 match response.schema() {
                     Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::Integer),
-                    None => assert!(false, "response's schema has not been set")
+                    None => assert!(false, "response's schema has not been set"),
                 }
-            },      
-            None => assert!(false, "request has not been set")            
-        }        
+            }
+            None => assert!(false, "request has not been set"),
+        }
     }
 }

@@ -44,7 +44,7 @@ impl PrimitiveSchemaInfoImpl {
             child_of,
             defined_in,
             entity_kind,
-            undefined_properties: HashMap::<String, Value>::new(),            
+            undefined_properties: HashMap::<String, Value>::new(),
         }
     }
 }
@@ -94,17 +94,15 @@ impl EntityInfo for PrimitiveSchemaInfoImpl {
     }
 }
 
-impl SchemaInfo for PrimitiveSchemaInfoImpl {
-}
+impl SchemaInfo for PrimitiveSchemaInfoImpl {}
 
-impl PrimitiveSchemaInfo for PrimitiveSchemaInfoImpl {  
-}
+impl PrimitiveSchemaInfo for PrimitiveSchemaInfoImpl {}
 
 #[cfg(test)]
 mod primitive_schema_info_impl_tests {
     use super::*;
     use crate::dtmi::{create_dtmi, Dtmi};
-    use crate::model_parser::DTDL_VERSION;    
+    use crate::model_parser::DTDL_VERSION;
     use serde_json;
 
     #[test]
@@ -117,15 +115,12 @@ mod primitive_schema_info_impl_tests {
         let first_propery_value: Value = serde_json::from_str("{\"first\": \"this\"}").unwrap();
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
-        let mut primitive_schema_info = PrimitiveSchemaInfoImpl::new(
-            DTDL_VERSION,
-            id.clone(),
-            None,
-            None,
-            EntityKind::String,
-        );
-        primitive_schema_info.add_undefined_property(String::from("first"), first_propery_value.clone());
-        primitive_schema_info.add_undefined_property(String::from("second"), second_propery_value.clone());
+        let mut primitive_schema_info =
+            PrimitiveSchemaInfoImpl::new(DTDL_VERSION, id.clone(), None, None, EntityKind::String);
+        primitive_schema_info
+            .add_undefined_property(String::from("first"), first_propery_value.clone());
+        primitive_schema_info
+            .add_undefined_property(String::from("second"), second_propery_value.clone());
 
         assert!(primitive_schema_info.dtdl_version() == 2);
         assert!(primitive_schema_info.id() == &id);
@@ -134,11 +129,12 @@ mod primitive_schema_info_impl_tests {
         assert!(primitive_schema_info.entity_kind() == EntityKind::String);
         assert!(primitive_schema_info.undefined_properties().len() == 2);
         assert!(
-            primitive_schema_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+            primitive_schema_info.undefined_properties().get("first").unwrap().clone()
+                == first_propery_value
         );
         assert!(
             primitive_schema_info.undefined_properties().get("second").unwrap().clone()
                 == second_propery_value
-        );    
+        );
     }
 }

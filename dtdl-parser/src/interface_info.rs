@@ -3,5 +3,4 @@
 
 use crate::entity_info::EntityInfo;
 
-pub trait InterfaceInfo : EntityInfo {
-}
+pub trait InterfaceInfo: EntityInfo {}

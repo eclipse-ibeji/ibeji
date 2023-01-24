@@ -10,8 +10,8 @@ use log::{info, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
-use proto::provider::InvokeRequest;
 use proto::provider::provider_client::ProviderClient;
+use proto::provider::InvokeRequest;
 use std::net::SocketAddr;
 use std::thread;
 use std::time;
@@ -33,7 +33,6 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
     info!("Starting the Consumer's send notification repeater.");
     tokio::spawn(async move {
         loop {
-
             info!("Invoking the send_notification command on endpoint {}", &provider_uri);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
@@ -50,7 +49,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
                 entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
-                payload
+                payload,
             });
 
             let _response = client.invoke(request).await;

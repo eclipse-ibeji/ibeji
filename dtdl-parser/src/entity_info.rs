@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use crate::dtmi::Dtmi;
 use crate::entity_kind::EntityKind;
 
-pub trait EntityInfo : Any {
+pub trait EntityInfo: Any {
     /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32;
 
