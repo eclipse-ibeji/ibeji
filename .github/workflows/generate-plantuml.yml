@@ -8,7 +8,7 @@ jobs:
     name: plantuml
     steps:
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: plantuml
       id: plantuml
       uses: grassedge/generate-plantuml-action@v1.5
