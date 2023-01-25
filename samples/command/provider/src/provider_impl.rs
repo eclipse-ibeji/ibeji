@@ -128,8 +128,7 @@ impl Provider for ProviderImpl {
             let respond_request =
                 tonic::Request::new(RespondRequest { entity_id, response_id, payload });
 
-            let _respond_response = client.respond(respond_request).await;
-            _respond_response
+            client.respond(respond_request).await
         });
 
         let response = InvokeResponse {};

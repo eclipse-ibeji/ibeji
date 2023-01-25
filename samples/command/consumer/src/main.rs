@@ -88,7 +88,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let json_texts = vec![dtdl];
     let model_dict_result = parser.parse(&json_texts);
     if let Err(error) = model_dict_result {
-        panic!("Failed to parse the DTDL: {}", error);
+        panic!("Failed to parse the DTDL: {error}");
     }
     let model_dict = model_dict_result.unwrap();
     info!("The DTDL parser has successfully parsed the DTDL.");
