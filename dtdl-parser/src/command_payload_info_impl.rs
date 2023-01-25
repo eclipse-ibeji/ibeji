@@ -128,7 +128,7 @@ mod command_payload_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_command_payload_info_impl_test() {
+    fn new_command_payload_info_impl_test() -> Result<(), String> {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:send_notification:request;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -165,7 +165,7 @@ mod command_payload_info_impl_tests {
             Some(child_of.clone()),
             Some(defined_in.clone()),
             Some(String::from("one")),
-            Some(boxed_schema_info.clone()),
+            Some(boxed_schema_info),
         );
         command_payload_info
             .add_undefined_property(String::from("first"), first_propery_value.clone());
@@ -182,7 +182,7 @@ mod command_payload_info_impl_tests {
         assert!(command_payload_info.schema().is_some());
         match command_payload_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set"),
+            None => return Err(String::from("schema has not been set")),
         }
 
         assert!(command_payload_info.undefined_properties().len() == 2);
@@ -197,7 +197,9 @@ mod command_payload_info_impl_tests {
 
         match command_payload_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set"),
+            None => return Err(String::from("name has not been set")),
         }
+
+        Ok(())
     }
 }

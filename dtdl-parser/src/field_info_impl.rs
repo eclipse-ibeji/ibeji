@@ -128,7 +128,7 @@ mod field_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_field_info_impl_test() {
+    fn new_field_info_impl_test() -> Result<(), String> {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:Field;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -188,12 +188,14 @@ mod field_info_impl_tests {
 
         match field_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set"),
+            None => return Err(String::from("name has not been set")),
         }
 
         match field_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-            None => assert!(false, "schema has not been set"),
+            None => return Err(String::from("schema has not been set")),
         }
+
+        Ok(())
     }
 }

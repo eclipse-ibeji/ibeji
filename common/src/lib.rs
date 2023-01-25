@@ -26,7 +26,7 @@ pub fn find_full_path(relative_path: &str) -> Result<String, String> {
         }
         Err(_) => {
             return Err(String::from(
-                "Unable to get the environment variable DTDL_PATH. Please set it."
+                "Unable to get the environment variable DTDL_PATH. Please set it.",
             ))
         }
     }

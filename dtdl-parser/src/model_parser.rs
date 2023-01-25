@@ -88,9 +88,7 @@ impl ModelParser {
             let mut doc: Value = match serde_json::from_str(json_text) {
                 Ok(json) => json,
                 Err(error) => {
-                    return Err(format!(
-                        "Failed to parse one of the JSON texts due to: {error}"
-                    ))
+                    return Err(format!("Failed to parse one of the JSON texts due to: {error}"))
                 }
             };
 
@@ -101,9 +99,7 @@ impl ModelParser {
             {
                 Ok(expanded_doc) => expanded_doc,
                 Err(error) => {
-                    return Err(format!(
-                        "Failed to expand one of the JSON texts due to: {error:?}"
-                    ))
+                    return Err(format!("Failed to expand one of the JSON texts due to: {error:?}"))
                 }
             };
 
@@ -291,13 +287,13 @@ impl ModelParser {
                         Some(v) => return Ok(Some(String::from(v))),
                         None => {
                             return Err(String::from(
-                                "get_property_value was unable to convert the value to a str"
+                                "get_property_value was unable to convert the value to a str",
                             ))
                         }
                     }
                 } else {
                     return Err(String::from(
-                        "get_property_value does not contain the expected number of objects"
+                        "get_property_value does not contain the expected number of objects",
                     ));
                 }
             }
@@ -512,7 +508,7 @@ impl ModelParser {
                         }
                     } else {
                         return Err(String::from(
-                            "The schema property's associated object should be a node.  It is not."
+                            "The schema property's associated object should be a node.  It is not.",
                         ));
                     }
                 } else {
@@ -1040,7 +1036,7 @@ mod model_parser_tests {
         let read_result = fs::read_to_string(path);
         match read_result {
             Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {:?}", error)),
+            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
         }
     }
 

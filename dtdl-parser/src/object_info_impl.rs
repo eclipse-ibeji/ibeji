@@ -116,7 +116,7 @@ mod object_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_object_info_impl_test() {
+    fn new_object_info_impl_test() -> Result<(), String> {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com:example:Object;1.0", &mut id_result);
         assert!(id_result.is_some());
@@ -165,7 +165,9 @@ mod object_info_impl_tests {
 
         match object_info.fields() {
             Some(fields) => assert_eq!(fields.len(), 0),
-            None => assert!(false, "fields has not been set"),
+            None => return Err(String::from("fields has not been set")),
         }
+
+        Ok(())
     }
 }

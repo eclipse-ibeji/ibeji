@@ -138,7 +138,7 @@ mod command_info_impl_tests {
     use serde_json;
 
     #[test]
-    fn new_command_info_impl_test() {
+    fn new_command_info_impl_test() -> Result<(), String> {
         let mut id_result: Option<Dtmi> = None;
         create_dtmi("dtmi:com.example:command:HVAC:send_notification;1", &mut id_result);
         assert!(id_result.is_some());
@@ -234,7 +234,7 @@ mod command_info_impl_tests {
 
         match command_info.name() {
             Some(name) => assert_eq!(name, "one"),
-            None => assert!(false, "name has not been set"),
+            None => return Err(String::from("name has not been set")),
         }
 
         match command_info.request() {
@@ -242,10 +242,10 @@ mod command_info_impl_tests {
                 assert_eq!(request.entity_kind(), EntityKind::CommandPayload);
                 match request.schema() {
                     Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
-                    None => assert!(false, "request's schema has not been set"),
+                    None => return Err(String::from("request's schema has not been set")),
                 }
             }
-            None => assert!(false, "request has not been set"),
+            None => return Err(String::from("request has not been set")),
         }
 
         match command_info.response() {
@@ -253,10 +253,12 @@ mod command_info_impl_tests {
                 assert_eq!(response.entity_kind(), EntityKind::CommandPayload);
                 match response.schema() {
                     Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::Integer),
-                    None => assert!(false, "response's schema has not been set"),
+                    None => return Err(String::from("response's schema has not been set")),
                 }
             }
-            None => assert!(false, "request has not been set"),
+            None => return Err(String::from("request has not been set")),
         }
+
+        Ok(())
     }
 }

@@ -102,7 +102,7 @@ Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-demo">Running the Demo</a>
 
-There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command. The following instructions are for the demo for the use of a property. These instructions can easily be adjusted for the demonstration for the use of a command.
+There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command. The following instructions are for the demo for the use of a property.
 
 Steps:
 
