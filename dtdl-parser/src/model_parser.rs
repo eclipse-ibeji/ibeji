@@ -1144,7 +1144,7 @@ mod model_parser_tests {
         let send_notification_uri_property_value_result =
             send_notification_uri_property_result.unwrap().get("@value");
         assert!(send_notification_uri_property_value_result.is_some());
-        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010");
+        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
         // Devskim: ignore DS137138
     }
 }
