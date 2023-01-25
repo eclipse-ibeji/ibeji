@@ -117,7 +117,7 @@ impl DigitalTwinImpl {
     fn register_each_one(&self, dtdl: String) -> Result<(), String> {
         let doc: Value = match serde_json::from_str(&dtdl) {
             Ok(json) => json,
-            Err(error) => return Err(format!("Failed to parse the DTDL due to: {:?}", error)),
+            Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),
         };
 
         match doc {
@@ -140,7 +140,7 @@ impl DigitalTwinImpl {
         let dtdl = match serde_json::to_string_pretty(&doc) {
             Ok(content) => content,
             Err(error) => {
-                return Err(format!("Failed to make the DTDL pretty due to: : {:?}", error))
+                return Err(format!("Failed to make the DTDL pretty due to: : {error:?}"))
             }
         };
 
@@ -149,7 +149,7 @@ impl DigitalTwinImpl {
 
         let model_dict_result = parser.parse(&json_texts);
         if let Err(error) = model_dict_result {
-            return Err(format!("Failed to parse the DTDL due to: {:?}", error));
+            return Err(format!("Failed to parse the DTDL due to: {error:?}"));
         }
         let model_dict = model_dict_result.unwrap();
 
@@ -177,7 +177,7 @@ mod digitaltwin_impl_tests {
         let read_result = fs::read_to_string(path);
         match read_result {
             Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {:?}", error)),
+            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
         }
     }
 
