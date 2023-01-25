@@ -194,7 +194,7 @@ mod provider_impl_tests {
     #[tokio::test]
     async fn invoke_test() {
         let subscription_map = Arc::new(Mutex::new(HashMap::new()));
-        let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
+        let provider_impl = ProviderImpl { subscription_map };
 
         let entity_id = String::from("one-id");
         let consumer_uri = String::from("bogus uri");
@@ -203,7 +203,7 @@ mod provider_impl_tests {
         let payload = String::from("some-payload");
 
         let request = tonic::Request::new(InvokeRequest {
-            entity_id: entity_id,
+            entity_id,
             consumer_uri,
             response_id,
             payload,
