@@ -41,6 +41,12 @@ pub const DTDL_VERSION: i32 = 2;
 /// to identify specific modeling errors, and to enable inspection of model contents.
 pub struct ModelParser {}
 
+impl Default for ModelParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ModelParser {
     /// Returns a new ModelParser instance.
     pub fn new() -> Self {
@@ -315,7 +321,7 @@ impl ModelParser {
     ) -> Result<Box<dyn SchemaInfo>, String> {
         let string_option: Option<&str> = node.as_str();
         if let Some(schema_name) = string_option {
-            let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(&schema_name) {
+            let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(schema_name) {
                 Ok(v) => Some(v),
                 Err(_) => None,
             };
@@ -326,26 +332,26 @@ impl ModelParser {
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
                     if id.is_none() {
                         return Err(String::from(
-                            "We were not able to generate an id for the schema.",
+                            "we were not able to generate an id for the schema",
                         ));
                     }
 
-                    return Ok(Box::new(PrimitiveSchemaInfoImpl::new(
+                    Ok(Box::new(PrimitiveSchemaInfoImpl::new(
                         DTDL_VERSION,
                         id.unwrap(),
                         parent_id.clone(),
                         None,
                         entity_kind,
-                    )));
+                    )))
                 } else {
                     println!("entity_kind is_NOT primitive_entity_kind");
-                    Err(format!("Expected a primitive schema, found {entity_kind}"))
+                    Err(format!("expected a primitive schema, found {entity_kind}"))
                 }
             } else {
                 self.retrieve_schema_info_from_model_dict(schema_name, model_dict)
             }
         } else {
-            Err(format!("get_schema encountered an unknown entity kind value"))
+            Err(String::from("get_schema encountered an unknown entity kind value"))
         }
     }
 
@@ -469,16 +475,16 @@ impl ModelParser {
 
         if entity_kind_option.is_none() {
             println!("Complex schema has no associated type.  It must have one.");
-            return Err(format!("Complex schema has no associated type.  It must have one."));
+            return Err(String::from("Complex schema has no associated type.  It must have one."));
         }
 
         let entity_kind = entity_kind_option.unwrap();
 
         if entity_kind == EntityKind::Object {
-            return self.get_object_schema(node, model_dict, parent_id);
+            self.get_object_schema(node, model_dict, parent_id)
         } else {
             println!("Unsupported complex object: {entity_kind:?}.");
-            return Err(format!("Unsupported complex object: {entity_kind:?}."));
+            Err(format!("Unsupported complex object: {entity_kind:?}."))
         }
     }
 
@@ -518,7 +524,7 @@ impl ModelParser {
             }
         }
 
-        Err(format!("A schema property was not found."))
+        Err(String::from("A schema property was not found."))
     }
 
     /// Get the payload.
