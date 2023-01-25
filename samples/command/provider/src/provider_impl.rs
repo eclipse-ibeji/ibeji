@@ -202,12 +202,8 @@ mod provider_impl_tests {
         let response_id = Uuid::new_v4().to_string();
         let payload = String::from("some-payload");
 
-        let request = tonic::Request::new(InvokeRequest {
-            entity_id,
-            consumer_uri,
-            response_id,
-            payload,
-        });
+        let request =
+            tonic::Request::new(InvokeRequest { entity_id, consumer_uri, response_id, payload });
         let result = task::block_on(provider_impl.invoke(request));
         assert!(result.is_ok());
 
