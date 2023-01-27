@@ -107,8 +107,7 @@ mod primitive_schema_info_impl_tests {
 
     #[test]
     fn new_primitive_schema_info_impl_test() {
-        let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:String;1.0", &mut id_result);
+        let id_result: Option<Dtmi> = create_dtmi("dtmi:com:example:String;1.0");
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 

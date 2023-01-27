@@ -100,18 +100,15 @@ mod interface_info_impl_tests {
 
     #[test]
     fn new_interface_info_impl_test() {
-        let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:my_interface;1.0", &mut id_result);
+        let id_result: Option<Dtmi> = create_dtmi("dtmi:com:example:my_interface;1.0");
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
-        let mut child_of_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:vehicle;1.0", &mut child_of_result);
+        let child_of_result: Option<Dtmi> = create_dtmi("dtmi:com:example:vehicle;1.0");
         assert!(child_of_result.is_some());
         let child_of = child_of_result.unwrap();
 
-        let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
+        let defined_in_result: Option<Dtmi> = create_dtmi("dtmi:com:example;1.0");
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 

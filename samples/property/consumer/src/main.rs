@@ -56,8 +56,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the ambient air temperature property.
-    let mut ambient_air_temperature_property_id: Option<Dtmi> = None;
-    create_dtmi(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID, &mut ambient_air_temperature_property_id);
+    let ambient_air_temperature_property_id: Option<Dtmi> =
+        create_dtmi(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID);
     if ambient_air_temperature_property_id.is_none() {
         panic!("Unable to create the dtmi");
     }

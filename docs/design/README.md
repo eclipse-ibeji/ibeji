@@ -142,7 +142,7 @@ Below is the sequence diagram for the Respond activity.
 
 ### Subscribe
 
-Subscribe to an property's data feed.
+Subscribe to a property's data feed.
 
 #### Request
 
@@ -155,7 +155,7 @@ Subscribe to an property's data feed.
 
 ### Unsubscribe
 
-Unsubscribe from an entity's data feed.
+Unsubscribe from a property's data feed.
 
 #### Request
 

@@ -13,8 +13,7 @@ use proto::digitaltwin::FindByIdRequest;
 use proto::provider::provider_client::ProviderClient;
 use proto::provider::InvokeRequest;
 use std::net::SocketAddr;
-use std::thread;
-use std::time;
+use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
@@ -54,7 +53,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
 
             let _response = client.invoke(request).await;
 
-            thread::sleep(time::Duration::from_millis(1000));
+            sleep(Duration::from_millis(1000)).await;
         }
     });
 }
@@ -94,8 +93,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the send_notification command.
-    let mut send_notification_command_id: Option<Dtmi> = None;
-    create_dtmi(SEND_NOTIFICATION_COMMAND_ID, &mut send_notification_command_id);
+    let send_notification_command_id: Option<Dtmi> = create_dtmi(SEND_NOTIFICATION_COMMAND_ID);
     if send_notification_command_id.is_none() {
         panic!("Unable to create the dtmi");
     }

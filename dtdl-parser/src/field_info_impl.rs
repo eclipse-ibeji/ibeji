@@ -129,26 +129,22 @@ mod field_info_impl_tests {
 
     #[test]
     fn new_field_info_impl_test() -> Result<(), String> {
-        let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Field;1.0", &mut id_result);
+        let id_result: Option<Dtmi> = create_dtmi("dtmi:com:example:Field;1.0");
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
-        let mut child_of_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Cabin;1.0", &mut child_of_result);
+        let child_of_result: Option<Dtmi> = create_dtmi("dtmi:com:example:Cabin;1.0");
         assert!(child_of_result.is_some());
         let child_of = child_of_result.unwrap();
 
-        let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
+        let defined_in_result: Option<Dtmi> = create_dtmi("dtmi:com:example;1.0");
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
         let first_propery_value: Value = serde_json::from_str("{\"first\": \"this\"}").unwrap();
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
-        let mut schema_info_id: Option<Dtmi> = None;
-        create_dtmi("dtmi:dtdl:class:String;2", &mut schema_info_id);
+        let schema_info_id: Option<Dtmi> = create_dtmi("dtmi:dtdl:class:String;2");
         assert!(schema_info_id.is_some());
 
         let boxed_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(

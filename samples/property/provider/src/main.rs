@@ -14,8 +14,7 @@ use proto::provider::provider_server::ProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex, MutexGuard};
-use std::thread;
-use std::time;
+use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
@@ -84,7 +83,7 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
                 }
             }
 
-            thread::sleep(time::Duration::from_millis(1000));
+            sleep(Duration::from_millis(1000)).await;
         }
     });
 }

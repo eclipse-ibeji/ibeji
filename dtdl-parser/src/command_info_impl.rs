@@ -139,26 +139,23 @@ mod command_info_impl_tests {
 
     #[test]
     fn new_command_info_impl_test() -> Result<(), String> {
-        let mut id_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com.example:command:HVAC:send_notification;1", &mut id_result);
+        let id_result: Option<Dtmi> =
+            create_dtmi("dtmi:com.example:command:HVAC:send_notification;1");
         assert!(id_result.is_some());
         let id = id_result.unwrap();
 
-        let mut child_of_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:HVAC;1.0", &mut child_of_result);
+        let child_of_result: Option<Dtmi> = create_dtmi("dtmi:com:example:HVAC;1.0");
         assert!(child_of_result.is_some());
         let child_of = child_of_result.unwrap();
 
-        let mut defined_in_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example;1.0", &mut defined_in_result);
+        let defined_in_result: Option<Dtmi> = create_dtmi("dtmi:com:example;1.0");
         assert!(defined_in_result.is_some());
         let defined_in = defined_in_result.unwrap();
 
         let first_propery_value: Value = serde_json::from_str("{\"first\": \"this\"}").unwrap();
         let second_propery_value: Value = serde_json::from_str("{\"second\": \"that\"}").unwrap();
 
-        let mut string_schema_info_id: Option<Dtmi> = None;
-        create_dtmi("dtmi:dtdl:class:String;2", &mut string_schema_info_id);
+        let string_schema_info_id: Option<Dtmi> = create_dtmi("dtmi:dtdl:class:String;2");
         assert!(string_schema_info_id.is_some());
         let string_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
             DTDL_VERSION,
@@ -168,8 +165,7 @@ mod command_info_impl_tests {
             EntityKind::String,
         ));
 
-        let mut integer_schema_info_id: Option<Dtmi> = None;
-        create_dtmi("dtmi:dtdl:class:Integer;2", &mut integer_schema_info_id);
+        let integer_schema_info_id: Option<Dtmi> = create_dtmi("dtmi:dtdl:class:Integer;2");
         assert!(integer_schema_info_id.is_some());
         let integer_schema_info = Box::new(PrimitiveSchemaInfoImpl::new(
             DTDL_VERSION,
@@ -179,8 +175,7 @@ mod command_info_impl_tests {
             EntityKind::Integer,
         ));
 
-        let mut request_id: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:send_notification:request:1", &mut request_id);
+        let request_id: Option<Dtmi> = create_dtmi("dtmi:com:example:send_notification:request:1");
         assert!(request_id.is_some());
         let request = Box::new(CommandPayloadInfoImpl::new(
             DTDL_VERSION,
@@ -191,8 +186,8 @@ mod command_info_impl_tests {
             Some(string_schema_info),
         ));
 
-        let mut response_id: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:send_notification:response:1", &mut response_id);
+        let response_id: Option<Dtmi> =
+            create_dtmi("dtmi:com:example:send_notification:response:1");
         assert!(response_id.is_some());
         let response = Box::new(CommandPayloadInfoImpl::new(
             DTDL_VERSION,

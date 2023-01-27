@@ -65,8 +65,7 @@ impl ModelParser {
         // Add the entries to the model dictionaryfor the primitive entity kinds.
         for entity_kind in EntityKind::iter() {
             if is_primitive_schema_kind(entity_kind) {
-                let mut schema_info_id: Option<Dtmi> = None;
-                create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
+                let schema_info_id: Option<Dtmi> = create_dtmi(&entity_kind.to_string());
                 if schema_info_id.is_none() {
                     return Err(format!(
                         "Cannot form a valid schema id for primitive entity kind '{entity_kind}."
@@ -124,8 +123,7 @@ impl ModelParser {
     ) -> Result<(), String> {
         for entity_kind in EntityKind::iter() {
             if is_primitive_schema_kind(entity_kind) {
-                let mut schema_info_id: Option<Dtmi> = None;
-                create_dtmi(&entity_kind.to_string(), &mut schema_info_id);
+                let schema_info_id: Option<Dtmi> = create_dtmi(&entity_kind.to_string());
                 if schema_info_id.is_none() {
                     return Err(format!(
                         "Cannot form a valid schema id for primitive schema {entity_kind}."
@@ -545,7 +543,7 @@ impl ModelParser {
 
                     let mut id: Option<Dtmi> = None;
                     if node.id().is_some() {
-                        create_dtmi(node.id().unwrap().as_str(), &mut id);
+                        id = create_dtmi(node.id().unwrap().as_str());
                     }
                     if id.is_none() {
                         id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -617,9 +615,7 @@ impl ModelParser {
     /// * `name` - The associated property name.
     fn generate_id(&self, parent_id: &Option<Dtmi>, name: &str) -> Option<Dtmi> {
         let generated_id_value = format!("{}:{}", parent_id.clone().unwrap().versionless(), name);
-        let mut generated_id: Option<Dtmi> = None;
-        create_dtmi(&generated_id_value, &mut generated_id);
-        generated_id
+        create_dtmi(&generated_id_value)
     }
 
     /// Retrieve a schema info from a dictionary.
@@ -632,8 +628,7 @@ impl ModelParser {
         schema: &str,
         model_dict: &mut ModelDict,
     ) -> Result<Box<dyn SchemaInfo>, String> {
-        let mut primitive_schema_info_id: Option<Dtmi> = None;
-        create_dtmi(schema, &mut primitive_schema_info_id);
+        let primitive_schema_info_id: Option<Dtmi> = create_dtmi(schema);
         if primitive_schema_info_id.is_none() {
             return Err(String::from("Primitive schema cannot form a valid schema id."));
         }
@@ -666,8 +661,7 @@ impl ModelParser {
         schema: &str,
         model_dict: &mut ModelDict,
     ) -> Result<Box<dyn InterfaceInfo>, String> {
-        let mut interface_info_id: Option<Dtmi> = None;
-        create_dtmi(schema, &mut interface_info_id);
+        let interface_info_id: Option<Dtmi> = create_dtmi(schema);
         if interface_info_id.is_none() {
             return Err(String::from("Schema cannot form a valid schema id."));
         }
@@ -741,7 +735,7 @@ impl ModelParser {
         // @id - required
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             return Err(format!(
@@ -796,7 +790,7 @@ impl ModelParser {
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -847,7 +841,7 @@ impl ModelParser {
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -897,7 +891,7 @@ impl ModelParser {
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -950,7 +944,7 @@ impl ModelParser {
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -1000,7 +994,7 @@ impl ModelParser {
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             id = self.generate_id(parent_id, &name.clone().unwrap());
@@ -1110,11 +1104,7 @@ mod model_parser_tests {
             model_dict.len()
         );
 
-        let mut ambient_air_temperature_id: Option<Dtmi> = None;
-        create_dtmi(
-            "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1",
-            &mut ambient_air_temperature_id,
-        );
+        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1");
         assert!(ambient_air_temperature_id.is_some());
         let ambient_air_temperature_entity_result =
             model_dict.get(&ambient_air_temperature_id.unwrap());
@@ -1129,11 +1119,7 @@ mod model_parser_tests {
         assert!(ambient_air_temperature_uri_property_value_result.is_some());
         assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
-        let mut send_notification_id: Option<Dtmi> = None;
-        create_dtmi(
-            "dtmi:org:eclipse:sdv:command:HVAC:send_notification;1",
-            &mut send_notification_id,
-        );
+        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:command:HVAC:send_notification;1");
         assert!(send_notification_id.is_some());
         let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
         assert!(send_notification_entity_result.is_some());

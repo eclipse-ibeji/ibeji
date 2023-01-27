@@ -150,23 +150,19 @@ impl fmt::Display for Dtmi {
 ///
 /// # Arguments
 /// * `value` - The IRI to copy from.
-/// * `dtmi` - Out parameter to receive the newly created DTMI. Set to None if we were unable to create a DTMI.
-#[allow(unused_variables)]
-pub fn create_dtmi(value: &str, dtmi: &mut Option<Dtmi>) {
-    *dtmi = None;
-
+pub fn create_dtmi(value: &str) -> Option<Dtmi> {
     if !DTMI_REGEX.is_match(value) {
         warn!("The value '{}' does not represent a valid DTMI", value);
-        return;
+        return None;
     }
 
     let new_dtmi_result = Dtmi::new(value);
     if let Err(error) = new_dtmi_result {
         warn!("{}", error);
-        return;
+        return None;
     }
 
-    *dtmi = Some(new_dtmi_result.unwrap());
+    Some(new_dtmi_result.unwrap())
 }
 
 #[cfg(test)]
@@ -201,8 +197,7 @@ mod dmti_tests {
 
     #[test]
     fn create_dtmi_test() {
-        let mut create_dtmi_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.234567", &mut create_dtmi_result);
+        let create_dtmi_result: Option<Dtmi> = create_dtmi("dtmi:com:example:Thermostat;1.234567");
         assert!(create_dtmi_result.is_some());
         let dtmi = create_dtmi_result.unwrap();
         assert!(dtmi.major_version().is_some());
@@ -220,32 +215,31 @@ mod dmti_tests {
 
     #[test]
     fn bad_create_dtmi_test() {
-        let mut create_dtmi_result: Option<Dtmi> = None;
-
-        create_dtmi("whatever:com:example:Thermostat;1.234567", &mut create_dtmi_result);
+        let mut create_dtmi_result: Option<Dtmi> =
+            create_dtmi("whatever:com:example:Thermostat;1.234567");
         assert!(create_dtmi_result.is_none());
 
-        create_dtmi("dtmi:com:example:Thermostat;1.2.3", &mut create_dtmi_result);
+        create_dtmi_result = create_dtmi("dtmi:com:example:Thermostat;1.2.3");
         assert!(create_dtmi_result.is_none());
 
-        create_dtmi("dtmi:;1.2", &mut create_dtmi_result);
+        create_dtmi_result = create_dtmi("dtmi:;1.2");
         assert!(create_dtmi_result.is_none());
     }
 
     #[test]
     fn eq_dtmi_test() {
-        let mut first_create_dtmi_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.234567", &mut first_create_dtmi_result);
+        let first_create_dtmi_result: Option<Dtmi> =
+            create_dtmi("dtmi:com:example:Thermostat;1.234567");
         assert!(first_create_dtmi_result.is_some());
         let first_dtmi = first_create_dtmi_result.unwrap();
 
-        let mut second_create_dtmi_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Thermostat;1.234567", &mut second_create_dtmi_result);
+        let second_create_dtmi_result: Option<Dtmi> =
+            create_dtmi("dtmi:com:example:Thermostat;1.234567");
         assert!(second_create_dtmi_result.is_some());
         let second_dtmi = second_create_dtmi_result.unwrap();
 
-        let mut third_create_dtmi_result: Option<Dtmi> = None;
-        create_dtmi("dtmi:com:example:Barometer;2.987", &mut third_create_dtmi_result);
+        let third_create_dtmi_result: Option<Dtmi> =
+            create_dtmi("dtmi:com:example:Barometer;2.987");
         assert!(third_create_dtmi_result.is_some());
         let third_dtmi = third_create_dtmi_result.unwrap();
 
