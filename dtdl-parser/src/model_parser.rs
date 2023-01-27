@@ -637,7 +637,7 @@ impl ModelParser {
         if primitive_schema_info_model_entry.is_none() {
             return Err(format!(
                 "We were not able to find the primitive schema entry for id '{}'.",
-                primitive_schema_info_id.clone().unwrap()
+                primitive_schema_info_id.unwrap()
             ));
         }
         let boxed_primitive_schema_info_ref = primitive_schema_info_model_entry
@@ -669,7 +669,7 @@ impl ModelParser {
         if interface_info_model_entry.is_none() {
             return Err(format!(
                 "We were not able to find the interface entry for id '{}'.",
-                interface_info_id.clone().unwrap()
+                interface_info_id.unwrap()
             ));
         }
         let _boxed_interface_info_ref = interface_info_model_entry
@@ -815,7 +815,7 @@ impl ModelParser {
             rc_entity_info.add_undefined_property(key, value);
         }
 
-        model_dict.insert(id.clone().unwrap(), rc_entity_info);
+        model_dict.insert(id.unwrap(), rc_entity_info);
 
         Ok(())
     }
@@ -867,7 +867,7 @@ impl ModelParser {
             entity_info.add_undefined_property(key, value);
         }
 
-        model_dict.insert(id.clone().unwrap(), entity_info);
+        model_dict.insert(id.unwrap(), entity_info);
 
         Ok(())
     }
@@ -964,7 +964,7 @@ impl ModelParser {
             None,
             false,
         ));
-        model_dict.insert(id.clone().unwrap(), entity_info);
+        model_dict.insert(id.unwrap(), entity_info);
 
         Ok(())
     }
@@ -1011,7 +1011,7 @@ impl ModelParser {
             name,
             Some(boxed_interface_info),
         ));
-        model_dict.insert(id.clone().unwrap(), entity_info);
+        model_dict.insert(id.unwrap(), entity_info);
 
         Ok(())
     }
