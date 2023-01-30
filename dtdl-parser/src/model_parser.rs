@@ -17,7 +17,6 @@ use crate::command_payload_info::CommandPayloadInfo;
 use crate::command_payload_info_impl::CommandPayloadInfoImpl;
 use crate::component_info_impl::ComponentInfoImpl;
 use crate::dtmi::{create_dtmi, Dtmi};
-use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
 use crate::field_info::FieldInfo;
 use crate::field_info_impl::FieldInfoImpl;
@@ -62,7 +61,7 @@ impl ModelParser {
 
         self.add_primitive_schemas_to_model_dict(&mut model_dict)?;
 
-        // Add the entries to the model dictionaryfor the primitive entity kinds.
+        // Add the entries to the model dictionary for the primitive entity kinds.
         for entity_kind in EntityKind::iter() {
             if is_primitive_schema_kind(entity_kind) {
                 let schema_info_id: Option<Dtmi> = create_dtmi(&entity_kind.to_string());
@@ -369,7 +368,7 @@ impl ModelParser {
                 while i < the_objects.len() {
                     if let Object::Node(node) = &*the_objects[i] {
                         let mut name_option: Option<String> = None;
-                        let mut _display_name_option: Option<String> = None;
+                        let mut display_name_option: Option<String> = None;
                         let mut schema: Option<Box<dyn SchemaInfo>> = None;
                         for (the_property, the_objects) in node.properties() {
                             if the_property == "dtmi:dtdl:property:displayName;2"
@@ -378,9 +377,9 @@ impl ModelParser {
                                 if let Object::Value(value) = &*the_objects[0] {
                                     match value.as_str() {
                                         Some(value) => {
-                                            _display_name_option = Some(String::from(value))
+                                            display_name_option = Some(String::from(value))
                                         }
-                                        None => _display_name_option = None,
+                                        None => display_name_option = None,
                                     }
                                 }
                             } else if the_property == "dtmi:dtdl:property:schema;2"
@@ -417,14 +416,18 @@ impl ModelParser {
                                 ));
                             }
 
-                            fields.push(Box::new(FieldInfoImpl::new(
+                            let mut field_info = FieldInfoImpl::new(
                                 DTDL_VERSION,
                                 id.unwrap(),
                                 parent_id.clone(),
                                 None,
                                 name_option,
                                 schema,
-                            )));
+                            );
+                            
+                            field_info.set_display_name(display_name_option);
+
+                            fields.push(Box::new(field_info));                         
                         }
                     }
                     i += 1;
@@ -802,20 +805,19 @@ impl ModelParser {
         let mut undefined_property_values = HashMap::<String, Value>::new();
         Self::gather_undefined_properties(node, &mut undefined_property_values);
 
-        let mut rc_entity_info: Box<dyn EntityInfo> = Box::new(TelemetryInfoImpl::new(
+        let mut telemetry_info = TelemetryInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
             name,
-            Some(boxed_schema_info),
-        ));
+            Some(boxed_schema_info));
 
         for (key, value) in undefined_property_values {
-            rc_entity_info.add_undefined_property(key, value);
+            telemetry_info.add_undefined_property(key, value);
         }
 
-        model_dict.insert(id.unwrap(), rc_entity_info);
+        model_dict.insert(id.unwrap(), Box::new(telemetry_info));
 
         Ok(())
     }
@@ -853,7 +855,7 @@ impl ModelParser {
         let mut undefined_property_values = HashMap::<String, Value>::new();
         Self::gather_undefined_properties(node, &mut undefined_property_values);
 
-        let mut entity_info = Box::new(PropertyInfoImpl::new(
+        let mut property_info = PropertyInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
@@ -861,13 +863,13 @@ impl ModelParser {
             name,
             Some(boxed_schema_info),
             false,
-        ));
+        );
 
         for (key, value) in undefined_property_values {
-            entity_info.add_undefined_property(key, value);
+            property_info.add_undefined_property(key, value);
         }
 
-        model_dict.insert(id.unwrap(), entity_info);
+        model_dict.insert(id.unwrap(), Box::new(property_info));
 
         Ok(())
     }
@@ -908,7 +910,7 @@ impl ModelParser {
         let mut undefined_property_values = HashMap::<String, Value>::new();
         Self::gather_undefined_properties(node, &mut undefined_property_values);
 
-        let mut entity_info = Box::new(CommandInfoImpl::new(
+        let mut command_info = CommandInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
@@ -916,13 +918,13 @@ impl ModelParser {
             name,
             request_payload,
             response_payload,
-        ));
+        );
 
         for (key, value) in undefined_property_values {
-            entity_info.add_undefined_property(key, value);
+            command_info.add_undefined_property(key, value);
         }
 
-        model_dict.insert(id.clone().unwrap(), entity_info);
+        model_dict.insert(id.clone().unwrap(), Box::new(command_info));
 
         Ok(())
     }

@@ -19,6 +19,8 @@ pub struct FieldInfoImpl {
     id: Dtmi,
     child_of: Option<Dtmi>,
     defined_in: Option<Dtmi>,
+    description: Option<String>,
+    display_name: Option<String>,    
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
@@ -51,11 +53,29 @@ impl FieldInfoImpl {
             id,
             child_of,
             defined_in,
+            description: None,
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             schema,
         }
     }
+
+    /// Set the display name.
+    ///
+    /// # Arguments
+    /// `display_name` - The new display name.
+    pub fn set_display_name(&mut self, display_name: Option<String>) {
+        self.display_name = display_name;
+    }
+
+    /// Add an undefined property.
+    /// # Arguments
+    /// * `key` - The property's name.
+    /// * `value` - The property's value.
+    pub fn add_undefined_property(&mut self, key: String, value: Value) {
+        self.undefined_properties.insert(key, value);
+    }    
 }
 
 impl EntityInfo for FieldInfoImpl {
@@ -84,17 +104,19 @@ impl EntityInfo for FieldInfoImpl {
         &self.defined_in
     }
 
+    // Returns the description for this entity.
+    fn description(&self) -> &Option<String> {
+        &self.description
+    }
+
+    // Returns the display name for this entity.
+    fn display_name(&self) -> &Option<String> {
+        &self.display_name
+    }
+    
     /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
-    }
-
-    /// Add an undefined property.
-    /// # Arguments
-    /// * `key` - The property's name.
-    /// * `value` - The property's value.
-    fn add_undefined_property(&mut self, key: String, value: Value) {
-        self.undefined_properties.insert(key, value);
     }
 
     /// Returns the instance as an Any.

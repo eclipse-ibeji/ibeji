@@ -19,6 +19,8 @@ pub struct ObjectInfoImpl {
     id: Dtmi,
     child_of: Option<Dtmi>,
     defined_in: Option<Dtmi>,
+    description: Option<String>,
+    display_name: Option<String>,
     undefined_properties: HashMap<String, Value>,
 
     // ObjectInfo
@@ -46,10 +48,20 @@ impl ObjectInfoImpl {
             id,
             child_of,
             defined_in,
+            description: None,
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             fields,
         }
     }
+
+    /// Add an undefined property.
+    /// # Arguments
+    /// * `key` - The property's name.
+    /// * `value` - The property's value.
+    pub fn add_undefined_property(&mut self, key: String, value: Value) {
+        self.undefined_properties.insert(key, value);
+    }    
 }
 
 impl EntityInfo for ObjectInfoImpl {
@@ -78,17 +90,19 @@ impl EntityInfo for ObjectInfoImpl {
         &self.defined_in
     }
 
+    // Returns the description for this entity.
+    fn description(&self) -> &Option<String> {
+        &self.description
+    }
+
+    // Returns the display name for this entity.
+    fn display_name(&self) -> &Option<String> {
+        &self.display_name
+    }
+
     /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
-    }
-
-    /// Add an undefined property.
-    /// # Arguments
-    /// * `key` - The property's name.
-    /// * `value` - The property's value.
-    fn add_undefined_property(&mut self, key: String, value: Value) {
-        self.undefined_properties.insert(key, value);
     }
 
     /// Returns the instance as an Any.
