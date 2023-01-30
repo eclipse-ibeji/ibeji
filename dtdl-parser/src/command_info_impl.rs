@@ -71,7 +71,7 @@ impl CommandInfoImpl {
     /// * `value` - The property's value.
     pub fn add_undefined_property(&mut self, key: String, value: Value) {
         self.undefined_properties.insert(key, value);
-    }    
+    }
 }
 
 impl EntityInfo for CommandInfoImpl {

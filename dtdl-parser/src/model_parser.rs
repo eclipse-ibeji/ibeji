@@ -364,8 +364,7 @@ impl ModelParser {
 
         for (the_property, the_objects) in node.properties() {
             if the_property == "dtmi:dtdl:property:fields;2" {
-                let mut i = 0;
-                while i < the_objects.len() {
+                for i in 0..the_objects.len() {
                     if let Object::Node(node) = &*the_objects[i] {
                         let mut name_option: Option<String> = None;
                         let mut display_name_option: Option<String> = None;
@@ -375,12 +374,7 @@ impl ModelParser {
                                 && the_objects.len() == 1
                             {
                                 if let Object::Value(value) = &*the_objects[0] {
-                                    match value.as_str() {
-                                        Some(value) => {
-                                            display_name_option = Some(String::from(value))
-                                        }
-                                        None => display_name_option = None,
-                                    }
+                                    display_name_option = value.as_str().map(String::from)
                                 }
                             } else if the_property == "dtmi:dtdl:property:schema;2"
                                 && the_objects.len() == 1
@@ -400,10 +394,7 @@ impl ModelParser {
                                 && the_objects.len() == 1
                             {
                                 if let Object::Value(value) = &*the_objects[0] {
-                                    match value.as_str() {
-                                        Some(value) => name_option = Some(String::from(value)),
-                                        None => name_option = None,
-                                    }
+                                    name_option = value.as_str().map(String::from)
                                 }
                             }
                         }
@@ -424,13 +415,12 @@ impl ModelParser {
                                 name_option,
                                 schema,
                             );
-                            
+
                             field_info.set_display_name(display_name_option);
 
-                            fields.push(Box::new(field_info));                         
+                            fields.push(Box::new(field_info));
                         }
                     }
-                    i += 1;
                 }
             }
         }
@@ -643,13 +633,16 @@ impl ModelParser {
                 primitive_schema_info_id.unwrap()
             ));
         }
-        let boxed_primitive_schema_info_ref = primitive_schema_info_model_entry
+        let boxed_primitive_schema_info_ref_result = primitive_schema_info_model_entry
             .unwrap()
             .as_any()
-            .downcast_ref::<PrimitiveSchemaInfoImpl>()
-            .expect("Was not a primitive schema info");
-        let boxed_schema_info: Box<dyn SchemaInfo> =
-            Box::new((*boxed_primitive_schema_info_ref).clone());
+            .downcast_ref::<PrimitiveSchemaInfoImpl>();
+        let boxed_schema_info: Box<dyn SchemaInfo> = match boxed_primitive_schema_info_ref_result {
+            Some(boxed_primitive_schema_info_ref) => {
+                Box::new((*boxed_primitive_schema_info_ref).clone())
+            }
+            None => return Err(format!("Was not a primitive schema info")),
+        };
 
         Ok(boxed_schema_info)
     }
@@ -675,13 +668,15 @@ impl ModelParser {
                 interface_info_id.unwrap()
             ));
         }
-        let _boxed_interface_info_ref = interface_info_model_entry
-            .unwrap()
-            .as_any()
-            .downcast_ref::<InterfaceInfoImpl>()
-            .expect("Was not an ineterface info");
+        let boxed_interface_schema_info_ref_result =
+            interface_info_model_entry.unwrap().as_any().downcast_ref::<InterfaceInfoImpl>();
         let boxed_interface_info: Box<dyn InterfaceInfo> =
-            Box::new((*_boxed_interface_info_ref).clone());
+            match boxed_interface_schema_info_ref_result {
+                Some(boxed_interface_schema_info_ref) => {
+                    Box::new((*boxed_interface_schema_info_ref).clone())
+                }
+                None => return Err(format!("Was not an interface info")),
+            };
 
         Ok(boxed_interface_info)
     }
@@ -811,7 +806,8 @@ impl ModelParser {
             parent_id.clone(),
             None,
             name,
-            Some(boxed_schema_info));
+            Some(boxed_schema_info),
+        );
 
         for (key, value) in undefined_property_values {
             telemetry_info.add_undefined_property(key, value);

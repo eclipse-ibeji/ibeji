@@ -56,7 +56,7 @@ impl PropertyInfoImpl {
             child_of,
             defined_in,
             description: None,
-            display_name: None,            
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             schema,
@@ -70,7 +70,7 @@ impl PropertyInfoImpl {
     /// * `value` - The property's value.
     pub fn add_undefined_property(&mut self, key: String, value: Value) {
         self.undefined_properties.insert(key, value);
-    }    
+    }
 }
 
 impl EntityInfo for PropertyInfoImpl {
@@ -108,7 +108,7 @@ impl EntityInfo for PropertyInfoImpl {
     fn display_name(&self) -> &Option<String> {
         &self.display_name
     }
-    
+
     /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties

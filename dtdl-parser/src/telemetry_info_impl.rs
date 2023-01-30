@@ -20,7 +20,7 @@ pub struct TelemetryInfoImpl {
     child_of: Option<Dtmi>,
     defined_in: Option<Dtmi>,
     description: Option<String>,
-    display_name: Option<String>,    
+    display_name: Option<String>,
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
@@ -54,7 +54,7 @@ impl TelemetryInfoImpl {
             child_of,
             defined_in,
             description: None,
-            display_name: None,            
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             schema,
@@ -67,7 +67,7 @@ impl TelemetryInfoImpl {
     /// * `value` - The property's value.
     pub fn add_undefined_property(&mut self, key: String, value: Value) {
         self.undefined_properties.insert(key, value);
-    }    
+    }
 }
 
 impl EntityInfo for TelemetryInfoImpl {

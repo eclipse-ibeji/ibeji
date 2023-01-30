@@ -36,8 +36,7 @@ impl DigitalTwin for DigitalTwinImpl {
         info!("Received a find_by_id request for entity id {}", &entity_id);
 
         let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-        let get_result = lock.get(&entity_id);
-        let val = match get_result {
+        let val = match lock.get(&entity_id) {
             Some(v) => v,
             None => {
                 return Err(Status::not_found(format!(

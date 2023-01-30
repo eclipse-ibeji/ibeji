@@ -33,12 +33,6 @@ pub trait EntityInfo: Any {
     /// Returns any undefined properties of the DTDL element that corresponds to this object.
     fn undefined_properties(&self) -> &HashMap<String, Value>;
 
-    /// Add an undefined property.
-    /// # Arguments
-    /// * `key` - The property's name.
-    /// * `value` - The property's value.
-    // fn add_undefined_property(&mut self, key: String, value: Value);
-
     /// Returns the instance as an Any.
     fn as_any(&self) -> &dyn Any;
 }

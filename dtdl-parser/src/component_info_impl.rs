@@ -20,7 +20,7 @@ pub struct ComponentInfoImpl {
     child_of: Option<Dtmi>,
     defined_in: Option<Dtmi>,
     description: Option<String>,
-    display_name: Option<String>, 
+    display_name: Option<String>,
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
@@ -54,7 +54,7 @@ impl ComponentInfoImpl {
             child_of,
             defined_in,
             description: None,
-            display_name: None,            
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             schema,
@@ -105,7 +105,7 @@ impl EntityInfo for ComponentInfoImpl {
     fn display_name(&self) -> &Option<String> {
         &self.display_name
     }
-    
+
     /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties

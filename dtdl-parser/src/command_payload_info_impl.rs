@@ -54,7 +54,7 @@ impl CommandPayloadInfoImpl {
             child_of,
             defined_in,
             description: None,
-            display_name: None,            
+            display_name: None,
             undefined_properties: HashMap::<String, Value>::new(),
             name,
             schema,

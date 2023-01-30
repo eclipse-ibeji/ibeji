@@ -39,16 +39,12 @@ impl Provider for ProviderImpl {
 
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
-        let get_result = lock.get(&entity_id);
-        if let Some(get_value) = get_result {
-            let mut uris = get_value.clone();
-            uris.insert(consumer_uri);
-            lock.insert(entity_id, uris);
-        } else {
-            let mut uris = HashSet::new();
-            uris.insert(consumer_uri);
-            lock.insert(entity_id, uris);
-        }
+        let mut uris = match lock.get(&entity_id) {
+            Some(get_value) => get_value.clone(),
+            None => HashSet::new(),
+        };
+        uris.insert(consumer_uri);
+        lock.insert(entity_id, uris);
 
         info!("Completed subscription.");
 

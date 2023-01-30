@@ -20,7 +20,7 @@ pub struct FieldInfoImpl {
     child_of: Option<Dtmi>,
     defined_in: Option<Dtmi>,
     description: Option<String>,
-    display_name: Option<String>,    
+    display_name: Option<String>,
     undefined_properties: HashMap<String, Value>,
 
     // NamedEntityInfo
@@ -75,7 +75,7 @@ impl FieldInfoImpl {
     /// * `value` - The property's value.
     pub fn add_undefined_property(&mut self, key: String, value: Value) {
         self.undefined_properties.insert(key, value);
-    }    
+    }
 }
 
 impl EntityInfo for FieldInfoImpl {
@@ -113,7 +113,7 @@ impl EntityInfo for FieldInfoImpl {
     fn display_name(&self) -> &Option<String> {
         &self.display_name
     }
-    
+
     /// Returns all undefined properties.
     fn undefined_properties(&self) -> &HashMap<String, Value> {
         &self.undefined_properties
