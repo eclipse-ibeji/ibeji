@@ -102,7 +102,9 @@ Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-demo">Running the Demo</a>
 
-There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command. The following instructions are for the demo for the use of a property.
+There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command.
+
+The following instructions are for the demo for the use of a property.
 
 Steps:
 
@@ -121,6 +123,27 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./property-provider`<br>
 1. In the bottom window, run:<br><br>
 `./property-consumer`<br>
+1. Use control-c in each of the windows when you wish to stop the demo.
+
+The following instructions are for the demo for the use of a command.
+
+Steps:
+
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
+The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+1. In each window run the following command too set the DTDL_PATH environment variable.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/command/dtdl"`<br>
+1. In each window change directory to the directory containing the build artifacts.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`cd {repo-root-dir}/ibeji/target/debug`<br>
+1. In the top window, run:<br><br>
+`./in-vehicle-digital-twin`<br>
+1. In the middle window, run:<br><br>
+`./command-provider`<br>
+1. In the bottom window, run:<br><br>
+`./command-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## <a name="trademarks">Trademarks</a>

@@ -234,7 +234,7 @@ Register one or more entities.
 
 ### Unregister
 
-Unregister a entity.
+Unregister an entity.
 
 #### Request
 

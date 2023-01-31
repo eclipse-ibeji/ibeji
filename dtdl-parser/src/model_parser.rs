@@ -454,8 +454,8 @@ impl ModelParser {
         let mut entity_kind_option: Option<EntityKind> = None;
         for node_type in node.types() {
             let entity_kind_result = EntityKind::from_str(node_type.as_str());
-            if let Ok(_entity_kind) = entity_kind_result {
-                entity_kind_option = Some(entity_kind_result.unwrap());
+            if let Ok(entity_kind) = entity_kind_result {
+                entity_kind_option = Some(entity_kind);
                 break;
             }
         }
@@ -539,10 +539,15 @@ impl ModelParser {
                         id = create_dtmi(node.id().unwrap().as_str());
                     }
                     if id.is_none() {
+                        if name.is_none() {
+                            return Err(String::from(
+                                "We cannot generate an id for the payload when we do not have a name.",
+                            ));
+                        }
                         id = self.generate_id(parent_id, &name.clone().unwrap());
                         if id.is_none() {
                             return Err(String::from(
-                                "We were not able to generate an id for the payload.",
+                                "We were unable to generate an id for the payload.",
                             ));
                         }
                     }
@@ -587,15 +592,17 @@ impl ModelParser {
     ) {
         for (the_property, the_objects) in node.properties() {
             if the_objects.len() == 1 {
-                if let Object::Value(value) = &*the_objects[0] {
-                    let j = value.clone().as_json();
-                    undefined_properties.insert(the_property.to_string(), j);
-                } else if let Object::Node(n) = &*the_objects[0] {
-                    Self::gather_undefined_properties(n, undefined_properties);
-                } else if let Object::List(_list) = &*the_objects[0] {
-                    warn!("gather_undefiued_properties encountered a list");
-                } else {
-                    warn!("gather_undefiued_properties encountered an unknown object");
+                match &*the_objects[0] {
+                    Object::Value(value) => {
+                        let j = value.clone().as_json();
+                        undefined_properties.insert(the_property.to_string(), j);
+                    }
+                    Object::Node(n) => {
+                        Self::gather_undefined_properties(n, undefined_properties);
+                    }
+                    Object::List(_list) => {
+                        warn!("gather_undefined_properties encountered a list");
+                    }
                 }
             }
         }
@@ -695,8 +702,8 @@ impl ModelParser {
         let mut entity_kind_option: Option<EntityKind> = None;
         for node_type in node.types() {
             let entity_kind_result = EntityKind::from_str(node_type.as_str());
-            if let Ok(_entity_kind) = entity_kind_result {
-                entity_kind_option = Some(entity_kind_result.unwrap());
+            if let Ok(entity_kind) = entity_kind_result {
+                entity_kind_option = Some(entity_kind);
                 break;
             }
         }
@@ -791,6 +798,11 @@ impl ModelParser {
             id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the telemtry when we do not have a name.",
+                ));
+            }
             id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the telemetry."));
@@ -823,7 +835,7 @@ impl ModelParser {
     /// # Arguments
     /// * `node` - The node that represents a property.
     /// * `parent_id` - The property's parent id.
-    /// * `model_dict` - The model dictionry to add the content to.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_property(
         &mut self,
         node: &Node<Value>,
@@ -842,6 +854,11 @@ impl ModelParser {
             id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the property when we do not have a name.",
+                ));
+            }
             id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the property."));
@@ -892,6 +909,11 @@ impl ModelParser {
             id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the command when we do not have a name.",
+                ));
+            }
             id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the command."));
@@ -945,6 +967,11 @@ impl ModelParser {
             id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the relationship when we do not have a name.",
+                ));
+            }
             id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from(
@@ -995,6 +1022,11 @@ impl ModelParser {
             id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the component when we do not have a name.",
+                ));
+            }
             id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the component."));
