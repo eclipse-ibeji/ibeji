@@ -195,13 +195,13 @@ impl ModelParser {
                 }
             } else if let Value::Array(a) = existing_context_value {
                 for i in 0..a.len() {
-                    if let Value::String(_s) = &a[i] {
+                    if let Value::String(_) = &a[i] {
                         if a[i] == context_name {
                             a[i] = context_value.clone();
                             break;
                         }
                     }
-                }
+                }      
             } else if let Value::Object(_o) = existing_context_value {
                 // ignore - this one does not have an IRI associated with it.
             } else {
