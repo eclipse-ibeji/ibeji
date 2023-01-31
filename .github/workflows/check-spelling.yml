@@ -5,11 +5,11 @@ on:
       - main
 
 jobs:
-  notice_generation:
+  check_spelling:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Install spell
@@ -18,5 +18,5 @@ jobs:
         run: |
           ./tools/check_spelling.sh ./README.md
           ./tools/check_spelling.sh ./dtdl-parser/README.md
-          ./tools/check_spelling.sh ./docs/design/design_spec.md
+          ./tools/check_spelling.sh ./docs/design/README.md
         shell: bash

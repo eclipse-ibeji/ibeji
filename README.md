@@ -3,6 +3,7 @@
 - [Introduction](#introduction)
 - [High-level Design](#high-level-design)
 - [Prerequisites](#prerequisites)
+  - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
 - [Cloning the Repo](#cloning-the-repo)
@@ -21,13 +22,21 @@ through an extensible, open and dynamic architecture that provides access to the
 
 ## <a name="high-level-design">High-level Design</a>
 
-Ibeji's architecture has a In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities
-and make them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
+Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities
+and makes them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers.
 A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the
 In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes meta data that allow Ibeji consumers to comprehend
 the nature of the capability, how to work with it and how it can be remotely accessed.
 
 ## <a name="prerequisites">Prerequisites</a>
+
+### <a name="install-gcc">Install gcc</a>
+
+Rust needs gcc's linker, so you will need to install it. To install gcc, do the following:
+
+```shell
+sudo apt install gcc
+```
 
 ### <a name="install-rust">Install Rust</a>
 
@@ -57,8 +66,8 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
-The repo has one submodule [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) that provide the DTDL context files and DTDL samples file.
-To ensure that it is included, please use the following command when cloning Ibeji's github repo:
+The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
+and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
 `git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
 
@@ -73,7 +82,7 @@ and checkout its "resolve-issue-40" branch. It should be cloned to a directory t
 
 ### <a name="dtdl-parser">DTDL Parser</a>
 
-There is no existing DTDL Parser for Rust, so we have provided a minimalistic one that is based on the [JavaScript DTDL Parser](https://github.com/Azure/azure-sdk-for-js/tree/%40azure/dtdl-parser_1.0.0-beta.2/sdk/digitaltwins/dtdl-parser).
+There is no existing DTDL Parser for Rust, so we have provided a minimalistic one for DTDL v2 that is based on the [JavaScript DTDL Parser](https://github.com/Azure/azure-sdk-for-js/tree/%40azure/dtdl-parser_1.0.0-beta.2/sdk/digitaltwins/dtdl-parser).
 
 ## <a name="building">Building</a>
 
@@ -93,6 +102,10 @@ Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-demo">Running the Demo</a>
 
+There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command.
+
+The following instructions are for the demo for the use of a property.
+
 Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
@@ -100,16 +113,37 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command too set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/simple/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/property/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/ibeji/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
-`./simple-provider`<br>
+`./property-provider`<br>
 1. In the bottom window, run:<br><br>
-`./simple-consumer`<br>
+`./property-consumer`<br>
+1. Use control-c in each of the windows when you wish to stop the demo.
+
+The following instructions are for the demo for the use of a command.
+
+Steps:
+
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
+The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+1. In each window run the following command too set the DTDL_PATH environment variable.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/command/dtdl"`<br>
+1. In each window change directory to the directory containing the build artifacts.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`cd {repo-root-dir}/ibeji/target/debug`<br>
+1. In the top window, run:<br><br>
+`./in-vehicle-digital-twin`<br>
+1. In the middle window, run:<br><br>
+`./command-provider`<br>
+1. In the bottom window, run:<br><br>
+`./command-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## <a name="trademarks">Trademarks</a>

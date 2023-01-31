@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::info;
+use log::{info, warn};
 use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, SetRequest, SetResponse, SubscribeRequest,
-    SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
+    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -28,23 +28,19 @@ impl Provider for ProviderImpl {
         request: Request<SubscribeRequest>,
     ) -> Result<Response<SubscribeResponse>, Status> {
         let request_inner = request.into_inner();
-        let id: String = request_inner.id.clone();
-        let uri: String = request_inner.uri;
+        let entity_id: String = request_inner.entity_id.clone();
+        let consumer_uri: String = request_inner.consumer_uri;
 
-        info!("Received a subscribe request from URI {} for id {}", &uri, &id);
+        info!("Received a subscribe request from URI {} for id {}", &consumer_uri, &entity_id);
 
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
-        let get_result = lock.get(&id);
-        if let Some(get_value) = get_result {
-            let mut uris = get_value.clone();
-            uris.insert(uri);
-            lock.insert(id, uris);
-        } else {
-            let mut uris = HashSet::new();
-            uris.insert(uri);
-            lock.insert(id, uris);
-        }
+        let mut uris = match lock.get(&entity_id) {
+            Some(get_value) => get_value.clone(),
+            None => HashSet::new(),
+        };
+        uris.insert(consumer_uri);
+        lock.insert(entity_id, uris);
 
         info!("Completed subscription.");
 
@@ -61,11 +57,9 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<UnsubscribeRequest>,
     ) -> Result<Response<UnsubscribeResponse>, Status> {
-        info!("Got an unsubscribe request: {:?}", request);
-        // TODO - provide unsubscribe functionality
-        let response = UnsubscribeResponse {};
+        warn!("Got an unsubscribe request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("unsubscribe has not been implemented"))
     }
 
     /// Get implementation.
@@ -73,11 +67,9 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Get request.
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
-        info!("Got a get request: {:?}", request);
-        // TODO - provide get functionality
-        let response = GetResponse {};
+        warn!("Got a get request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("get has not been implemented"))
     }
 
     /// Set implementation.
@@ -85,11 +77,22 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        info!("Got a set request: {:?}", request);
-        // TODO - provide set functionality
-        let response = SetResponse {};
+        warn!("Got a set request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("set has not been implemented"))
+    }
+
+    /// Invoke implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Invoke request.
+    async fn invoke(
+        &self,
+        request: Request<InvokeRequest>,
+    ) -> Result<Response<InvokeResponse>, Status> {
+        warn!("Got an invoke request: {:?}", request);
+
+        Err(Status::unimplemented("invoke has not been implemented"))
     }
 }
 
@@ -109,18 +112,24 @@ mod provider_impl_tests {
         let second_uri = String::from("http://second.com:9000"); // Devskim: ignore DS137138
         let third_uri = String::from("http://third.com:9000"); // Devskim: ignore DS137138
 
-        let first_request =
-            tonic::Request::new(SubscribeRequest { id: first_id.clone(), uri: first_uri.clone() });
+        let first_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: first_uri.clone(),
+        });
         let first_result = task::block_on(provider_impl.subscribe(first_request));
         assert!(first_result.is_ok());
 
-        let second_request =
-            tonic::Request::new(SubscribeRequest { id: first_id.clone(), uri: second_uri.clone() });
+        let second_request = tonic::Request::new(SubscribeRequest {
+            entity_id: first_id.clone(),
+            consumer_uri: second_uri.clone(),
+        });
         let second_result = task::block_on(provider_impl.subscribe(second_request));
         assert!(second_result.is_ok());
 
-        let third_request =
-            tonic::Request::new(SubscribeRequest { id: second_id.clone(), uri: third_uri.clone() });
+        let third_request = tonic::Request::new(SubscribeRequest {
+            entity_id: second_id.clone(),
+            consumer_uri: third_uri.clone(),
+        });
         let third_result = task::block_on(provider_impl.subscribe(third_request));
         assert!(third_result.is_ok());
 

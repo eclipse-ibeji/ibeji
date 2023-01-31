@@ -1,0 +1,49 @@
+[
+  {
+    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:org:eclipse:sdv:interface:cabin:AmbientAirTemperature;1",
+    "contents": [
+      {
+        "@type": ["Property", "Temperature", "RemotelyAccessible"],
+        "@id": "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1",
+        "name": "Cabin_AmbientAirTemperature",
+        "description": "The immediate surroundings air temperature (in Fahrenheit).",
+        "schema": "double",
+        "unit": "degreeFahrenheit",
+        "remote_access": [
+          {
+            "@type": "Endpoint",
+            "uri": "http://[::1]:40010",
+            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:org:eclipse:sdv:interface:HVAC:send_notification;1",
+    "contents": [
+      {
+        "@type": ["Command", "RemotelyAccessible"],
+        "@id": "dtmi:org:eclipse:sdv:command:HVAC:send_notification;1",
+        "name": "HVAC_send_notification",
+        "request": {
+          "name": "send_notification",
+          "displayName": "send_notification",
+          "description": "Send a notification to the HVAC.",
+          "schema": "string"
+        },
+        "remote_access": [
+          {
+            "@type": "Endpoint",
+            "uri": "http://[::1]:40010",
+            "operations": [ "Invoke" ]
+          }
+        ]
+      }
+    ]
+  }
+]

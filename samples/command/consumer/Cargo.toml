@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 
 [package]
-name = "simple-consumer"
+name = "command-consumer"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -10,7 +10,7 @@ license = "MIT"
 [dependencies]
 async-std = { version = "^1.5", features = ["attributes"] }
 dtdl-parser = { path = "../../../dtdl-parser" }
-env_logger= "0.9.1"
+env_logger= "0.10.0"
 iref = "^2.0.3"
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 # json-ld  = { git = "https://github.com/timothee-haudebourg/json-ld", tag = "0.9.1-beta" }
@@ -21,6 +21,14 @@ proto = { path = "../../../proto" }
 serde_json = "1.0.88"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 tonic = "0.8.2"
+
+[dependencies.uuid]
+version = "1.2.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
 
 [build-dependencies]
 tonic-build = "0.8.2"

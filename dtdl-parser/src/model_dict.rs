@@ -6,4 +6,4 @@ use crate::entity_info::EntityInfo;
 
 use std::collections::HashMap;
 
-pub type ModelDict = HashMap<Dtmi, EntityInfo>;
+pub type ModelDict = HashMap<Dtmi, Box<dyn EntityInfo>>;

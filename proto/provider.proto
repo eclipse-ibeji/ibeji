@@ -10,36 +10,47 @@ service Provider {
     rpc Unsubscribe (UnsubscribeRequest) returns (UnsubscribeResponse);
     rpc Get (GetRequest) returns (GetResponse);
     rpc Set (SetRequest) returns (SetResponse);
+    rpc Invoke (InvokeRequest) returns (InvokeResponse);
 }
 
 message SubscribeRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message SubscribeResponse {
 }
 
 message UnsubscribeRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message UnsubscribeResponse {
 }
 
 message GetRequest {
-   string id = 1;
-   string uri = 2;
+   string entity_id = 1;
+   string consumer_uri = 2;
 }
 
 message GetResponse {
 }
 
 message SetRequest {
-   string id = 1;
+   string entity_id = 1;
    string value = 2;
 }
 
 message SetResponse {
+}
+
+message InvokeRequest {
+   string entity_id = 1;
+   string consumer_uri = 2;
+   string response_id = 3;
+   string payload = 4;
+}
+
+message InvokeResponse {
 }

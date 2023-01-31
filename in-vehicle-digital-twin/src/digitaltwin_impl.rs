@@ -31,16 +31,18 @@ impl DigitalTwin for DigitalTwinImpl {
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
         let request_inner = request.into_inner();
-        let id = request_inner.id;
+        let entity_id = request_inner.entity_id;
 
-        info!("Received a find_by_id request for id {}", &id);
+        info!("Received a find_by_id request for entity id {}", &entity_id);
 
         let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-        let get_result = lock.get(&id);
-        let val = match get_result {
+        let val = match lock.get(&entity_id) {
             Some(v) => v,
             None => {
-                return Err(Status::not_found(format!("Unable to find the DTDL for id {}", &id)))
+                return Err(Status::not_found(format!(
+                    "Unable to find the DTDL for entity id {}",
+                    &entity_id
+                )))
             }
         };
 
@@ -48,15 +50,18 @@ impl DigitalTwin for DigitalTwinImpl {
             Ok(content) => content,
             Err(error) => {
                 return Err(Status::internal(format!(
-                    "Unexpected error with the DTDL for id {}: {:?}",
-                    &id, error
+                    "Unexpected error with the DTDL for entity id {}: {:?}",
+                    &entity_id, error
                 )))
             }
         };
 
         let response = FindByIdResponse { dtdl };
 
-        info!("Responded to the find_by_id request for id {} with the requested DTDL.", &id);
+        info!(
+            "Responded to the find_by_id request for entity id {} with the requested DTDL.",
+            &entity_id
+        );
 
         Ok(Response::new(response))
     }
@@ -111,7 +116,7 @@ impl DigitalTwinImpl {
     fn register_each_one(&self, dtdl: String) -> Result<(), String> {
         let doc: Value = match serde_json::from_str(&dtdl) {
             Ok(json) => json,
-            Err(error) => return Err(format!("Failed to parse the DTDL due to: {:?}", error)),
+            Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),
         };
 
         match doc {
@@ -134,7 +139,7 @@ impl DigitalTwinImpl {
         let dtdl = match serde_json::to_string_pretty(&doc) {
             Ok(content) => content,
             Err(error) => {
-                return Err(format!("Failed to make the DTDL pretty due to: : {:?}", error))
+                return Err(format!("Failed to make the DTDL pretty due to: : {error:?}"))
             }
         };
 
@@ -143,7 +148,7 @@ impl DigitalTwinImpl {
 
         let model_dict_result = parser.parse(&json_texts);
         if let Err(error) = model_dict_result {
-            return Err(format!("Failed to parse the DTDL due to: {:?}", error));
+            return Err(format!("Failed to parse the DTDL due to: {error:?}"));
         }
         let model_dict = model_dict_result.unwrap();
 
@@ -171,7 +176,7 @@ mod digitaltwin_impl_tests {
         let read_result = fs::read_to_string(path);
         match read_result {
             Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {:?}", error)),
+            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
         }
     }
 
@@ -191,7 +196,7 @@ mod digitaltwin_impl_tests {
         assert!(dtdl_json_result.is_ok());
         let dtdl_json = dtdl_json_result.unwrap();
 
-        let id = String::from("dtmi::some_id");
+        let entity_id = String::from("dtmi::some_id");
 
         let entity_map = Arc::new(Mutex::new(HashMap::new()));
 
@@ -201,10 +206,10 @@ mod digitaltwin_impl_tests {
         //       is released before we attempt the find_by_id operation.
         {
             let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-            lock.insert(id.clone(), dtdl_json);
+            lock.insert(entity_id.clone(), dtdl_json);
         }
 
-        let request = tonic::Request::new(FindByIdRequest { id });
+        let request = tonic::Request::new(FindByIdRequest { entity_id });
         let result = task::block_on(digital_twin_impl.find_by_id(request));
         assert!(result.is_ok());
         let response = result.unwrap();
@@ -219,8 +224,7 @@ mod digitaltwin_impl_tests {
         let entity_map = Arc::new(Mutex::new(HashMap::new()));
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
-        let dtdl_path_result =
-            find_full_path("samples/multiple_remotely_accessible_resources.json");
+        let dtdl_path_result = find_full_path("samples/demo_resources.json");
         assert!(dtdl_path_result.is_ok());
         let dtdl_path = dtdl_path_result.unwrap();
         let dtdl_result = retrieve_dtdl(&dtdl_path);
@@ -233,6 +237,6 @@ mod digitaltwin_impl_tests {
 
         // Make sure that we populated the entity map from the contents of the DTDL.
         let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-        assert!(lock.len() == 8);
+        assert!(lock.len() == 14, "expected length was 14, actual length is {}", lock.len());
     }
 }

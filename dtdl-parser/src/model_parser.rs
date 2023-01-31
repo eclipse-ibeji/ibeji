@@ -10,21 +10,41 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
+use strum::IntoEnumIterator;
 
+use crate::command_info_impl::CommandInfoImpl;
+use crate::command_payload_info::CommandPayloadInfo;
+use crate::command_payload_info_impl::CommandPayloadInfoImpl;
+use crate::component_info_impl::ComponentInfoImpl;
 use crate::dtmi::{create_dtmi, Dtmi};
-use crate::entity_info::EntityInfo;
 use crate::entity_kind::EntityKind;
+use crate::field_info::FieldInfo;
+use crate::field_info_impl::FieldInfoImpl;
+use crate::interface_info::InterfaceInfo;
+use crate::interface_info_impl::InterfaceInfoImpl;
 use crate::json_ld::util::AsJson;
 use crate::model_dict::ModelDict;
+use crate::object_info_impl::ObjectInfoImpl;
+use crate::primitive_schema_info_impl::PrimitiveSchemaInfoImpl;
+use crate::primitive_schema_kinds::is_primitive_schema_kind;
+use crate::property_info_impl::PropertyInfoImpl;
+use crate::relationship_info_impl::RelationshipInfoImpl;
+use crate::schema_info::SchemaInfo;
+use crate::telemetry_info_impl::TelemetryInfoImpl;
 
 /// The DTDL Version that the parser supports.
 pub const DTDL_VERSION: i32 = 2;
 
 /// Instances of the ModelParser class parse models written in the DTDL language.
-/// This class can be used to determine whether one or more DTDL models are valid,
+/// This class can be used to determine: whether one or more DTDL models are valid,
 /// to identify specific modeling errors, and to enable inspection of model contents.
-#[derive(Debug, Clone, Default)]
 pub struct ModelParser {}
+
+impl Default for ModelParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl ModelParser {
     /// Returns a new ModelParser instance.
@@ -32,21 +52,41 @@ impl ModelParser {
         Self {}
     }
 
-    /// Parse a list of JSON texts and return the corresponding model.
+    /// Parse a list of JSON texts and return the resulting model dictionary.
     ///
     /// # Arguments
     /// * `json_texts` - A list of JSON texts.
     pub fn parse(&mut self, json_texts: &Vec<String>) -> Result<ModelDict, String> {
-        let mut model: ModelDict = HashMap::<Dtmi, EntityInfo>::new();
+        let mut model_dict: ModelDict = ModelDict::new();
+
+        self.add_primitive_schemas_to_model_dict(&mut model_dict)?;
+
+        // Add the entries to the model dictionary for the primitive entity kinds.
+        for entity_kind in EntityKind::iter() {
+            if is_primitive_schema_kind(entity_kind) {
+                let schema_info_id: Option<Dtmi> = create_dtmi(&entity_kind.to_string());
+                if schema_info_id.is_none() {
+                    return Err(format!(
+                        "Cannot form a valid schema id for primitive entity kind '{entity_kind}."
+                    ));
+                }
+
+                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(
+                    DTDL_VERSION,
+                    schema_info_id.clone().unwrap(),
+                    None,
+                    None,
+                    entity_kind,
+                ));
+                model_dict.insert(schema_info_id.clone().unwrap(), boxed_entity_info);
+            }
+        }
 
         for json_text in json_texts {
             let mut doc: Value = match serde_json::from_str(json_text) {
                 Ok(json) => json,
                 Err(error) => {
-                    return Err(format!(
-                        "Failed to parse one of the JSON texts due to: {:?}",
-                        error
-                    ))
+                    return Err(format!("Failed to parse one of the JSON texts due to: {error}"))
                 }
             };
 
@@ -57,22 +97,50 @@ impl ModelParser {
             {
                 Ok(expanded_doc) => expanded_doc,
                 Err(error) => {
-                    return Err(format!(
-                        "Failed to expand one of the JSON texts due to: {:?}",
-                        error
-                    ))
+                    return Err(format!("Failed to expand one of the JSON texts due to: {error:?}"))
                 }
             };
 
             for item in dtdl_doc.iter() {
                 let object: &Object<serde_json::Value> = item;
                 if let Object::Node(node) = object {
-                    self.parse_node(node, &None, &mut model)?;
+                    self.parse_node(node, &None, &mut model_dict)?;
                 }
             }
         }
 
-        Ok(model)
+        Ok(model_dict)
+    }
+
+    /// Add the entries to the model dictionary for the primitive schemas.
+    ///
+    /// # Arguments
+    /// * `model_dict` - The model dictionary.
+    fn add_primitive_schemas_to_model_dict(
+        &mut self,
+        model_dict: &mut ModelDict,
+    ) -> Result<(), String> {
+        for entity_kind in EntityKind::iter() {
+            if is_primitive_schema_kind(entity_kind) {
+                let schema_info_id: Option<Dtmi> = create_dtmi(&entity_kind.to_string());
+                if schema_info_id.is_none() {
+                    return Err(format!(
+                        "Cannot form a valid schema id for primitive schema {entity_kind}."
+                    ));
+                }
+
+                let boxed_entity_info = Box::new(PrimitiveSchemaInfoImpl::new(
+                    DTDL_VERSION,
+                    schema_info_id.clone().unwrap(),
+                    None,
+                    None,
+                    entity_kind,
+                ));
+                model_dict.insert(schema_info_id.clone().unwrap(), boxed_entity_info);
+            }
+        }
+
+        Ok(())
     }
 
     /// Retrieve a JSON-LD context as a JSON object from the location specified in the filepath.
@@ -109,8 +177,8 @@ impl ModelParser {
     ///
     /// # Arguments
     /// * `obj` - The JSON object represented as a map of names to JSON objects.
-    /// `context_name` - The name of the context that we want to replace.
-    /// 'context_value` - The JSON object that we will replace it with.
+    /// * `context_name` - The name of the context that we want to replace.
+    /// * 'context_value` - The JSON object that we will replace it with.
     #[allow(clippy::needless_range_loop)]
     fn replace_context_inline_in_object(
         &mut self,
@@ -127,7 +195,7 @@ impl ModelParser {
                 }
             } else if let Value::Array(a) = existing_context_value {
                 for i in 0..a.len() {
-                    if let Value::String(_s) = &a[i] {
+                    if let Value::String(_) = &a[i] {
                         if a[i] == context_name {
                             a[i] = context_value.clone();
                             break;
@@ -137,7 +205,7 @@ impl ModelParser {
             } else if let Value::Object(_o) = existing_context_value {
                 // ignore - this one does not have an IRI associated with it.
             } else {
-                return Err(format!("Unexpected context value '{:?}'", existing_context_value));
+                return Err(format!("Unexpected context value '{existing_context_value:?}'"));
             }
         }
         Ok(())
@@ -147,8 +215,8 @@ impl ModelParser {
     ///
     /// # Arguments
     /// * `doc` - The JSON document.
-    /// `context_name` - The name of the context that we want to replace.
-    /// 'context_value` - The JSON object that we will replace it with.
+    /// * `context_name` - The name of the context that we want to replace.
+    /// * 'context_value` - The JSON object that we will replace it with.
     fn replace_context_inline_in_doc(
         &mut self,
         doc: &mut Value,
@@ -172,7 +240,7 @@ impl ModelParser {
     /// Preprocess a JSON-LD document, so that supported dtmi contexts will have their names replaced by their respective JSON.
     ///
     /// # Arguments
-    /// `doc` - The JSON-LD document to preprocess.
+    /// * `doc` - The JSON-LD document to preprocess.
     ///
     /// # Examples of supported context formats:
     ///
@@ -201,53 +269,340 @@ impl ModelParser {
 
     /// Get a property value from a node by name.
     ///
-    /// #Arguments
-    /// `node` - The node that contains the property.
-    /// `property_name` - The name of the property..
-    fn get_property_value(&self, node: &Node<Value>, property_name: &str) -> Option<String> {
-        let mut property_value: Option<String> = None;
+    /// # Arguments
+    /// * `node` - The node that contains the property.
+    /// * `property_name` - The name of the property.
+    fn get_property_value(
+        &self,
+        node: &Node<Value>,
+        property_name: &str,
+    ) -> Result<Option<String>, String> {
         for (the_property, the_objects) in node.properties() {
-            if the_property == property_name && the_objects.len() == 1 {
-                if let Object::Value(value) = &*the_objects[0] {
-                    match value.as_str() {
-                        Some(v) => property_value = Some(String::from(v)),
-                        None => property_value = None,
+            if the_property == property_name {
+                if the_objects.len() == 1 {
+                    match the_objects[0].as_str() {
+                        Some(v) => return Ok(Some(String::from(v))),
+                        None => {
+                            return Err(String::from(
+                                "get_property_value was unable to convert the value to a str",
+                            ))
+                        }
                     }
-                } else if let Object::Node(node) = &*the_objects[0] {
-                    match node.as_str() {
-                        Some(v) => property_value = Some(String::from(v)),
-                        None => property_value = None,
-                    }
-                } else if let Object::List(_list) = &*the_objects[0] {
-                    warn!("get_property_Value encountered a list");
                 } else {
-                    warn!("Warning: get_property_Value encountered an unknown object");
+                    return Err(String::from(
+                        "get_property_value does not contain the expected number of objects",
+                    ));
                 }
             }
         }
 
-        property_value
+        Ok(None)
+    }
+
+    /// Get the schema info for a primary or existing schema.  Both are represented by a schema name that could represent either case.
+    /// This function will determine which one it is and return the corresponding schema info.
+    ///
+    /// # Arguments
+    /// * `node` - The node that contains the schema's name.
+    /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
+    /// * `parent_id` - The parent id.
+    fn get_primary_or_existing_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
+        let string_option: Option<&str> = node.as_str();
+        if let Some(schema_name) = string_option {
+            let entity_kind_option: Option<EntityKind> = match EntityKind::from_str(schema_name) {
+                Ok(v) => Some(v),
+                Err(_) => None,
+            };
+
+            if let Some(entity_kind) = entity_kind_option {
+                if is_primitive_schema_kind(entity_kind) {
+                    println!("entity_kind is_primitive_entity_kind");
+                    let id: Option<Dtmi> = self.generate_id(parent_id, "test");
+                    if id.is_none() {
+                        return Err(String::from(
+                            "we were not able to generate an id for the schema",
+                        ));
+                    }
+
+                    Ok(Box::new(PrimitiveSchemaInfoImpl::new(
+                        DTDL_VERSION,
+                        id.unwrap(),
+                        parent_id.clone(),
+                        None,
+                        entity_kind,
+                    )))
+                } else {
+                    println!("entity_kind is_NOT primitive_entity_kind");
+                    Err(format!("expected a primitive schema, found {entity_kind}"))
+                }
+            } else {
+                self.retrieve_schema_info_from_model_dict(schema_name, model_dict)
+            }
+        } else {
+            Err(String::from("get_schema encountered an unknown entity kind value"))
+        }
+    }
+
+    /// Get an object schema info from a node.
+    ///
+    /// # Arguments
+    /// * `node` - The node that contains the object schema's specification.
+    /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
+    /// * `parent_id` - The parent id.
+    fn get_object_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
+        let mut fields: Vec<Box<dyn FieldInfo>> = Vec::new();
+
+        for (the_property, the_objects) in node.properties() {
+            if the_property == "dtmi:dtdl:property:fields;2" {
+                for i in 0..the_objects.len() {
+                    if let Object::Node(node) = &*the_objects[i] {
+                        let mut name_option: Option<String> = None;
+                        let mut display_name_option: Option<String> = None;
+                        let mut schema: Option<Box<dyn SchemaInfo>> = None;
+                        for (the_property, the_objects) in node.properties() {
+                            if the_property == "dtmi:dtdl:property:displayName;2"
+                                && the_objects.len() == 1
+                            {
+                                if let Object::Value(value) = &*the_objects[0] {
+                                    display_name_option = value.as_str().map(String::from)
+                                }
+                            } else if the_property == "dtmi:dtdl:property:schema;2"
+                                && the_objects.len() == 1
+                            {
+                                if let Object::Node(node) = &*the_objects[0] {
+                                    if node.properties().is_empty() {
+                                        schema = Some(self.get_primary_or_existing_schema(
+                                            node, model_dict, parent_id,
+                                        )?);
+                                    } else {
+                                        schema = Some(
+                                            self.get_complex_schema(node, model_dict, parent_id)?,
+                                        );
+                                    }
+                                }
+                            } else if the_property == "dtmi:dtdl:property:name;2"
+                                && the_objects.len() == 1
+                            {
+                                if let Object::Value(value) = &*the_objects[0] {
+                                    name_option = value.as_str().map(String::from)
+                                }
+                            }
+                        }
+                        if name_option.is_some() {
+                            let id: Option<Dtmi> =
+                                self.generate_id(parent_id, &name_option.clone().unwrap());
+                            if id.is_none() {
+                                return Err(String::from(
+                                    "We were not able to generate an id for the schema.",
+                                ));
+                            }
+
+                            let mut field_info = FieldInfoImpl::new(
+                                DTDL_VERSION,
+                                id.unwrap(),
+                                parent_id.clone(),
+                                None,
+                                name_option,
+                                schema,
+                            );
+
+                            field_info.set_display_name(display_name_option);
+
+                            fields.push(Box::new(field_info));
+                        }
+                    }
+                }
+            }
+        }
+
+        let id: Option<Dtmi> = self.generate_id(parent_id, "test");
+        if id.is_none() {
+            return Err(String::from("We were not able to generate an id for the schema."));
+        }
+
+        Ok(Box::new(ObjectInfoImpl::new(
+            DTDL_VERSION,
+            id.unwrap(),
+            parent_id.clone(),
+            None,
+            Some(fields),
+        )))
+    }
+
+    /// Get a complex schema info from a node.
+    ///
+    /// # Arguments
+    /// * `node` - The node that contains the complex schema's specification.
+    /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
+    /// * `parent_id` - The parent id.
+    fn get_complex_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
+        let mut entity_kind_option: Option<EntityKind> = None;
+        for node_type in node.types() {
+            let entity_kind_result = EntityKind::from_str(node_type.as_str());
+            if let Ok(entity_kind) = entity_kind_result {
+                entity_kind_option = Some(entity_kind);
+                break;
+            }
+        }
+
+        if entity_kind_option.is_none() {
+            println!("Complex schema has no associated type.  It must have one.");
+            return Err(String::from("Complex schema has no associated type.  It must have one."));
+        }
+
+        let entity_kind = entity_kind_option.unwrap();
+
+        if entity_kind == EntityKind::Object {
+            self.get_object_schema(node, model_dict, parent_id)
+        } else {
+            println!("Unsupported complex object: {entity_kind:?}.");
+            Err(format!("Unsupported complex object: {entity_kind:?}."))
+        }
+    }
+
+    /// Get a schema info from a node.
+    ///
+    /// # Arguments
+    /// * `node` - The node that contains the schema's specification.
+    /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
+    /// * `parent_id` - The parent id.
+    fn get_schema(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
+        for (the_property, the_objects) in node.properties() {
+            if the_property == "dtmi:dtdl:property:schema;2" {
+                if the_objects.len() == 1 {
+                    if let Object::Node(node) = &*the_objects[0] {
+                        if node.properties().is_empty() {
+                            return self
+                                .get_primary_or_existing_schema(node, model_dict, parent_id);
+                        } else {
+                            return self.get_complex_schema(node, model_dict, parent_id);
+                        }
+                    } else {
+                        return Err(String::from(
+                            "The schema property's associated object should be a node.  It is not.",
+                        ));
+                    }
+                } else {
+                    return Err(format!(
+                        "The schema property should only have 1 assoicated object.  It has {}.",
+                        the_objects.len()
+                    ));
+                }
+            }
+        }
+
+        Err(String::from("A schema property was not found."))
+    }
+
+    /// Get the payload.
+    ///
+    /// # Arguments
+    /// * `node` - The node that contains the payload's specification.
+    /// * `model_dict` - The model dictionary, containing the schema infos that have already been captured.
+    /// * `property_name` - The property name associated with the payload.
+    /// * `parent_id` - The parent id.
+    fn get_payload(
+        &self,
+        node: &Node<Value>,
+        model_dict: &mut ModelDict,
+        property_name: &str,
+        parent_id: &Option<Dtmi>,
+    ) -> Result<Option<Box<dyn CommandPayloadInfo>>, String> {
+        for (the_property, the_objects) in node.properties() {
+            if the_property == property_name {
+                if let Object::Node(node) = &*the_objects[0] {
+                    // name - optional
+                    let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
+
+                    let mut id: Option<Dtmi> = None;
+                    if node.id().is_some() {
+                        id = create_dtmi(node.id().unwrap().as_str());
+                    }
+                    if id.is_none() {
+                        if name.is_none() {
+                            return Err(String::from(
+                                "We cannot generate an id for the payload when we do not have a name.",
+                            ));
+                        }
+                        id = self.generate_id(parent_id, &name.clone().unwrap());
+                        if id.is_none() {
+                            return Err(String::from(
+                                "We were unable to generate an id for the payload.",
+                            ));
+                        }
+                    }
+
+                    // displayName - required
+                    let _display_name =
+                        self.get_property_value(node, "dtmi:dtdl:property:displayName;2")?;
+
+                    // description - required
+                    let _description =
+                        self.get_property_value(node, "dtmi:dtdl:property:description;2")?;
+
+                    // schema - required
+                    let boxed_schema_info: Box<dyn SchemaInfo> =
+                        self.get_schema(node, model_dict, &id)?;
+
+                    return Ok(Some(Box::new(CommandPayloadInfoImpl::new(
+                        DTDL_VERSION,
+                        id.unwrap(),
+                        parent_id.clone(),
+                        None,
+                        name,
+                        Some(boxed_schema_info),
+                    ))));
+                } else {
+                    return Err(String::from("get_payload encountered an unknown object"));
+                }
+            }
+        }
+
+        Ok(None)
     }
 
     /// Gather the undefined propeties from a node.
     ///
-    /// Arguments
-    /// `node` - The node to gather the undefined properties from.
+    /// # Arguments
+    /// * `node` - The node to gather the undefined properties from.
+    /// * `undefined_properties` - The resulting gathered undefined properties.
     fn gather_undefined_properties(
         node: &Node<Value>,
         undefined_properties: &mut HashMap<String, Value>,
     ) {
         for (the_property, the_objects) in node.properties() {
             if the_objects.len() == 1 {
-                if let Object::Value(value) = &*the_objects[0] {
-                    let j = value.clone().as_json();
-                    undefined_properties.insert(the_property.to_string(), j);
-                } else if let Object::Node(n) = &*the_objects[0] {
-                    Self::gather_undefined_properties(n, undefined_properties);
-                } else if let Object::List(_list) = &*the_objects[0] {
-                    warn!("gather_undefiued_properties encountered a list");
-                } else {
-                    warn!("Warning: gather_undefiued_properties encountered an unknonw object");
+                match &*the_objects[0] {
+                    Object::Value(value) => {
+                        let j = value.clone().as_json();
+                        undefined_properties.insert(the_property.to_string(), j);
+                    }
+                    Object::Node(n) => {
+                        Self::gather_undefined_properties(n, undefined_properties);
+                    }
+                    Object::List(_list) => {
+                        warn!("gather_undefined_properties encountered a list");
+                    }
                 }
             }
         }
@@ -256,31 +611,99 @@ impl ModelParser {
     /// Genrate an id from the associated parent id and the associated property name.
     ///
     /// # Arguments
-    /// `parent_id` - The associated parent id.
-    /// `name` - The associated property name.
+    /// * `parent_id` - The associated parent id.
+    /// * `name` - The associated property name.
     fn generate_id(&self, parent_id: &Option<Dtmi>, name: &str) -> Option<Dtmi> {
         let generated_id_value = format!("{}:{}", parent_id.clone().unwrap().versionless(), name);
-        let mut generated_id: Option<Dtmi> = None;
-        create_dtmi(&generated_id_value, &mut generated_id);
-        generated_id
+        create_dtmi(&generated_id_value)
+    }
+
+    /// Retrieve a schema info from a dictionary.
+    ///
+    /// # Arguments
+    /// * `schema` - The id (as a string) for the schema info.
+    /// * `model_dict` - The model dictionary to search.
+    fn retrieve_schema_info_from_model_dict(
+        &self,
+        schema: &str,
+        model_dict: &mut ModelDict,
+    ) -> Result<Box<dyn SchemaInfo>, String> {
+        let primitive_schema_info_id: Option<Dtmi> = create_dtmi(schema);
+        if primitive_schema_info_id.is_none() {
+            return Err(String::from("Primitive schema cannot form a valid schema id."));
+        }
+        let primitive_schema_info_model_entry =
+            model_dict.get(&primitive_schema_info_id.clone().unwrap());
+        if primitive_schema_info_model_entry.is_none() {
+            return Err(format!(
+                "We were not able to find the primitive schema entry for id '{}'.",
+                primitive_schema_info_id.unwrap()
+            ));
+        }
+        let boxed_primitive_schema_info_ref_result = primitive_schema_info_model_entry
+            .unwrap()
+            .as_any()
+            .downcast_ref::<PrimitiveSchemaInfoImpl>();
+        let boxed_schema_info: Box<dyn SchemaInfo> = match boxed_primitive_schema_info_ref_result {
+            Some(boxed_primitive_schema_info_ref) => {
+                Box::new((*boxed_primitive_schema_info_ref).clone())
+            }
+            None => return Err(String::from("Was not a primitive schema info")),
+        };
+
+        Ok(boxed_schema_info)
+    }
+
+    /// Retrieve an interface info from a model dictionary.
+    ///
+    /// # Arguments
+    /// * `schema` - The id (as a string) for the interface info.
+    /// * `model_dict` - The model dictionary to search.
+    fn retrieve_interface_info_from_model_dict(
+        &mut self,
+        schema: &str,
+        model_dict: &mut ModelDict,
+    ) -> Result<Box<dyn InterfaceInfo>, String> {
+        let interface_info_id: Option<Dtmi> = create_dtmi(schema);
+        if interface_info_id.is_none() {
+            return Err(String::from("Schema cannot form a valid schema id."));
+        }
+        let interface_info_model_entry = model_dict.get(&interface_info_id.clone().unwrap());
+        if interface_info_model_entry.is_none() {
+            return Err(format!(
+                "We were not able to find the interface entry for id '{}'.",
+                interface_info_id.unwrap()
+            ));
+        }
+        let boxed_interface_schema_info_ref_result =
+            interface_info_model_entry.unwrap().as_any().downcast_ref::<InterfaceInfoImpl>();
+        let boxed_interface_info: Box<dyn InterfaceInfo> =
+            match boxed_interface_schema_info_ref_result {
+                Some(boxed_interface_schema_info_ref) => {
+                    Box::new((*boxed_interface_schema_info_ref).clone())
+                }
+                None => return Err(String::from("Was not an interface info")),
+            };
+
+        Ok(boxed_interface_info)
     }
 
     /// Parse a node.
     ///
     /// # Arguments
-    /// `node` - The node to parse.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node to parse.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_node(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
         let mut entity_kind_option: Option<EntityKind> = None;
         for node_type in node.types() {
             let entity_kind_result = EntityKind::from_str(node_type.as_str());
-            if let Ok(_entity_kind) = entity_kind_result {
-                entity_kind_option = Some(entity_kind_result.unwrap());
+            if let Ok(entity_kind) = entity_kind_result {
+                entity_kind_option = Some(entity_kind);
                 break;
             }
         }
@@ -290,12 +713,13 @@ impl ModelParser {
         }
 
         match entity_kind_option.unwrap() {
-            EntityKind::Interface => self.parse_interface(node, parent_id, model)?,
-            EntityKind::Telemetry => self.parse_telemetry(node, parent_id, model)?,
-            EntityKind::Property => self.parse_property(node, parent_id, model)?,
-            EntityKind::Command => self.parse_command(node, parent_id, model)?,
-            EntityKind::Relationship => self.parse_relationship(node, parent_id, model)?,
-            EntityKind::Component => self.parse_component(node, parent_id, model)?,
+            EntityKind::Interface => self.parse_interface(node, parent_id, model_dict)?,
+            EntityKind::Telemetry => self.parse_telemetry(node, parent_id, model_dict)?,
+            EntityKind::Property => self.parse_property(node, parent_id, model_dict)?,
+            EntityKind::Command => self.parse_command(node, parent_id, model_dict)?,
+            EntityKind::Relationship => self.parse_relationship(node, parent_id, model_dict)?,
+            EntityKind::Component => self.parse_component(node, parent_id, model_dict)?,
+            _ => return Err(String::from("Warning: Unexepcted entity kind found ")),
         }
 
         Ok(())
@@ -304,19 +728,19 @@ impl ModelParser {
     /// Parse an interface.
     ///
     /// # Arguments
-    /// `node` - The node that represents an interface.
-    /// `parent_id` - The interface's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents an interface.
+    /// * `parent_id` - The interface's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_interface(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
         // @id - required
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
             return Err(format!(
@@ -333,20 +757,19 @@ impl ModelParser {
             for the_object in the_objects {
                 let object: &Object<serde_json::Value> = the_object;
                 if let Object::Node(node) = object {
-                    self.parse_node(node, &id, model)?;
+                    self.parse_node(node, &id, model_dict)?;
                 }
             }
         }
 
-        // Add the interface to the object model.
-        let entity_info = EntityInfo::new(
+        // Add the interface to the model dictionary.
+        let entity_info = Box::new(InterfaceInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Interface,
-        );
-        model.insert(id.clone().unwrap(), entity_info);
+        ));
+        model_dict.insert(id.clone().unwrap(), entity_info);
 
         Ok(())
     }
@@ -354,46 +777,55 @@ impl ModelParser {
     /// Parse a telemetry.
     ///
     /// # Arguments
-    /// `node` - The node that represents a telemetry.
-    /// `parent_id` - The telemetry's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents a telemetry.
+    /// * `parent_id` - The telemetry's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_telemetry(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
-        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2");
-        if name.is_none() {
-            return Err(String::from("Telemetry does not have a name property."));
-        }
+        // name - optional
+        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
         // schema - required
-        let schema = self.get_property_value(node, "dtmi:dtdl:property:schema;2");
-        if schema.is_none() {
-            return Err(String::from("Telemetry does not have a schema property."));
-        }
+        let boxed_schema_info: Box<dyn SchemaInfo> =
+            self.get_schema(node, model_dict, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
-            id = self.generate_id(parent_id, &name.unwrap());
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the telemtry when we do not have a name.",
+                ));
+            }
+            id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the telemetry."));
             }
         }
 
-        let entity_info = EntityInfo::new(
+        let mut undefined_property_values = HashMap::<String, Value>::new();
+        Self::gather_undefined_properties(node, &mut undefined_property_values);
+
+        let mut telemetry_info = TelemetryInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Telemetry,
+            name,
+            Some(boxed_schema_info),
         );
-        model.insert(id.clone().unwrap(), entity_info);
+
+        for (key, value) in undefined_property_values {
+            telemetry_info.add_undefined_property(key, value);
+        }
+
+        model_dict.insert(id.unwrap(), Box::new(telemetry_info));
 
         Ok(())
     }
@@ -401,33 +833,33 @@ impl ModelParser {
     /// Parse a property.
     ///
     /// # Arguments
-    /// `node` - The node that represents a property.
-    /// `parent_id` - The property's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents a property.
+    /// * `parent_id` - The property's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_property(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
-        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2");
-        if name.is_none() {
-            return Err(String::from("Property does not have a name property."));
-        }
+        // name - optional
+        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
         // schema - required
-        let schema = self.get_property_value(node, "dtmi:dtdl:property:schema;2");
-        if schema.is_none() {
-            return Err(String::from("Property does not have a schema property."));
-        }
+        let boxed_schema_info: Box<dyn SchemaInfo> =
+            self.get_schema(node, model_dict, parent_id)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
-            id = self.generate_id(parent_id, &name.unwrap());
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the property when we do not have a name.",
+                ));
+            }
+            id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the property."));
             }
@@ -436,19 +868,21 @@ impl ModelParser {
         let mut undefined_property_values = HashMap::<String, Value>::new();
         Self::gather_undefined_properties(node, &mut undefined_property_values);
 
-        let mut entity_info = EntityInfo::new(
+        let mut property_info = PropertyInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Property,
+            name,
+            Some(boxed_schema_info),
+            false,
         );
 
         for (key, value) in undefined_property_values {
-            entity_info.add_undefined_property(key, value);
+            property_info.add_undefined_property(key, value);
         }
 
-        model.insert(id.clone().unwrap(), entity_info);
+        model_dict.insert(id.unwrap(), Box::new(property_info));
 
         Ok(())
     }
@@ -456,40 +890,59 @@ impl ModelParser {
     /// Parse a command.
     ///
     /// # Arguments
-    /// `node` - The node that represents a command.
-    /// `parent_id` - The command's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents a command.
+    /// * `parent_id` - The command's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_command(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
-        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2");
-        if name.is_none() {
-            return Err(String::from("Command does not have a name property."));
-        }
+        // name - optional
+        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
+
+        println!("Command: {}", name.clone().unwrap());
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
-            id = self.generate_id(parent_id, &name.unwrap());
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the command when we do not have a name.",
+                ));
+            }
+            id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the command."));
             }
         }
 
-        let entity_info = EntityInfo::new(
+        let request_payload: Option<Box<dyn CommandPayloadInfo>> =
+            self.get_payload(node, model_dict, "dtmi:dtdl:property:request;2", &id)?;
+        let response_payload: Option<Box<dyn CommandPayloadInfo>> =
+            self.get_payload(node, model_dict, "dtmi:dtdl:property:response;2", &id)?;
+
+        let mut undefined_property_values = HashMap::<String, Value>::new();
+        Self::gather_undefined_properties(node, &mut undefined_property_values);
+
+        let mut command_info = CommandInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Command,
+            name,
+            request_payload,
+            response_payload,
         );
-        model.insert(id.clone().unwrap(), entity_info);
+
+        for (key, value) in undefined_property_values {
+            command_info.add_undefined_property(key, value);
+        }
+
+        model_dict.insert(id.clone().unwrap(), Box::new(command_info));
 
         Ok(())
     }
@@ -497,27 +950,29 @@ impl ModelParser {
     /// Parse a relationship.
     ///
     /// # Arguments
-    /// `node` - The node that represents a relationship.
-    /// `parent_id` - The relationship's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents a relationship.
+    /// * `parent_id` - The relationship's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_relationship(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // name - required
-        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2");
-        if name.is_none() {
-            return Err(String::from("Relationship does not have a name property."));
-        }
+        // name - optional
+        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
-            id = self.generate_id(parent_id, &name.unwrap());
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the relationship when we do not have a name.",
+                ));
+            }
+            id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from(
                     "We were not able to generate an id for the relationship.",
@@ -525,14 +980,16 @@ impl ModelParser {
             }
         }
 
-        let entity_info = EntityInfo::new(
+        let entity_info = Box::new(RelationshipInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Relationship,
-        );
-        model.insert(id.clone().unwrap(), entity_info);
+            name,
+            None,
+            false,
+        ));
+        model_dict.insert(id.unwrap(), entity_info);
 
         Ok(())
     }
@@ -540,46 +997,51 @@ impl ModelParser {
     // Parse a component.
     ///
     /// # Arguments
-    /// `node` - The node that represents a component.
-    /// `parent_id` - The component's parent id.
-    /// `model` - The model to add the content to.
+    /// * `node` - The node that represents a component.
+    /// * `parent_id` - The component's parent id.
+    /// * `model_dict` - The model dictionary to add the content to.
     fn parse_component(
         &mut self,
         node: &Node<Value>,
         parent_id: &Option<Dtmi>,
-        model: &mut ModelDict,
+        model_dict: &mut ModelDict,
     ) -> Result<(), String> {
-        // Required: name
-        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2");
-        if name.is_none() {
-            return Err(String::from("Component does not have a name property"));
-        }
+        // name - optional
+        let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
-        // Required: schema
-        let schema = self.get_property_value(node, "dtmi:dtdl:property:schema;2");
+        // schema - required (note: here the schema property represents an interface)
+        let schema = self.get_property_value(node, "dtmi:dtdl:property:schema;2")?;
         if schema.is_none() {
             return Err(String::from("Component does not have a schema property."));
         }
+        let boxed_interface_info: Box<dyn InterfaceInfo> =
+            self.retrieve_interface_info_from_model_dict(&schema.unwrap(), model_dict)?;
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
-            create_dtmi(node.id().unwrap().as_str(), &mut id);
+            id = create_dtmi(node.id().unwrap().as_str());
         }
         if id.is_none() {
-            id = self.generate_id(parent_id, &name.unwrap());
+            if name.is_none() {
+                return Err(String::from(
+                    "We cannot generate an id for the component when we do not have a name.",
+                ));
+            }
+            id = self.generate_id(parent_id, &name.clone().unwrap());
             if id.is_none() {
                 return Err(String::from("We were not able to generate an id for the component."));
             }
         }
 
-        let entity_info = EntityInfo::new(
+        let entity_info = Box::new(ComponentInfoImpl::new(
             DTDL_VERSION,
             id.clone().unwrap(),
             parent_id.clone(),
             None,
-            EntityKind::Component,
-        );
-        model.insert(id.clone().unwrap(), entity_info);
+            name,
+            Some(boxed_interface_info),
+        ));
+        model_dict.insert(id.unwrap(), entity_info);
 
         Ok(())
     }
@@ -598,7 +1060,7 @@ mod model_parser_tests {
         let read_result = fs::read_to_string(path);
         match read_result {
             Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {:?}", error)),
+            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
         }
     }
 
@@ -608,6 +1070,20 @@ mod model_parser_tests {
 
         let mut json_texts = Vec::<String>::new();
 
+        let device_information_full_path_result =
+            find_full_path("dtmi/azure/devicemanagement/deviceinformation-1.json");
+        assert!(device_information_full_path_result.is_ok());
+        let device_information_contents_result =
+            retrieve_dtdl(&device_information_full_path_result.unwrap());
+        assert!(device_information_contents_result.is_ok());
+        json_texts.push(device_information_contents_result.unwrap());
+
+        let thermostat_full_path_result = find_full_path("v2/samples/Thermostat.json");
+        assert!(thermostat_full_path_result.is_ok());
+        let thermostat_contents_result = retrieve_dtdl(&thermostat_full_path_result.unwrap());
+        assert!(thermostat_contents_result.is_ok());
+        json_texts.push(thermostat_contents_result.unwrap());
+
         let temp_controller_full_path_result =
             find_full_path("v2/samples/TemperatureController.json");
         assert!(temp_controller_full_path_result.is_ok());
@@ -616,57 +1092,75 @@ mod model_parser_tests {
         assert!(temp_controller_contents_result.is_ok());
         json_texts.push(temp_controller_contents_result.unwrap());
 
-        let thermostat_full_path_result = find_full_path("v2/samples/Thermostat.json");
-        assert!(thermostat_full_path_result.is_ok());
-        let thermostat_contents_result = retrieve_dtdl(&thermostat_full_path_result.unwrap());
-        assert!(thermostat_contents_result.is_ok());
-        json_texts.push(thermostat_contents_result.unwrap());
-
         let mut parser = ModelParser::new();
-        let model_result = parser.parse(&json_texts);
-        assert!(model_result.is_ok());
-        let model = model_result.unwrap();
-
-        assert!(model.len() == 12);
+        let model_dict_result = parser.parse(&json_texts);
+        assert!(
+            model_dict_result.is_ok(),
+            "parse failed due to: {}",
+            model_dict_result.err().unwrap()
+        );
+        let model_dict = model_dict_result.unwrap();
+        assert!(
+            model_dict.len() == 31,
+            "expected length was 31, actual length is {}",
+            model_dict.len()
+        );
     }
 
     #[test]
+    # [rustfmt::skip]
     fn demo_validation_test() {
         set_dtdl_path();
 
         let mut json_texts = Vec::<String>::new();
 
-        let demo_path_result =
-            find_full_path("samples/multiple_remotely_accessible_resources.json");
+        let demo_path_result = find_full_path("samples/demo_resources.json");
         assert!(demo_path_result.is_ok());
         let demo_contents_result = retrieve_dtdl(&demo_path_result.unwrap());
         assert!(demo_contents_result.is_ok());
         json_texts.push(demo_contents_result.unwrap());
 
         let mut parser = ModelParser::new();
-        let model_result = parser.parse(&json_texts);
-        assert!(model_result.is_ok());
-        let model = model_result.unwrap();
-
-        let mut generated_id: Option<Dtmi> = None;
-        create_dtmi(
-            "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1",
-            &mut generated_id,
+        let model_dict_result = parser.parse(&json_texts);
+        assert!(
+            model_dict_result.is_ok(),
+            "parse failed due to: {}",
+            model_dict_result.err().unwrap()
         );
-        assert!(generated_id.is_some());
+        let model_dict = model_dict_result.unwrap();
+        assert!(
+            model_dict.len() == 14,
+            "expected length was 14, actual length is {}",
+            model_dict.len()
+        );
 
-        let get_entity_result = model.get(&generated_id.unwrap());
-        assert!(get_entity_result.is_some());
+        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1");
+        assert!(ambient_air_temperature_id.is_some());
+        let ambient_air_temperature_entity_result =
+            model_dict.get(&ambient_air_temperature_id.unwrap());
+        assert!(ambient_air_temperature_entity_result.is_some());
+        let ambient_air_temperature_uri_property_result = ambient_air_temperature_entity_result
+            .unwrap()
+            .undefined_properties()
+            .get("dtmi:sdv:property:uri;1");
+        assert!(ambient_air_temperature_uri_property_result.is_some());
+        let ambient_air_temperature_uri_property_value_result =
+            ambient_air_temperature_uri_property_result.unwrap().get("@value");
+        assert!(ambient_air_temperature_uri_property_value_result.is_some());
+        assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
-        let entity = get_entity_result.unwrap();
-
-        let get_property_result = entity.undefined_properties().get("dtmi:sdv:property:uri;1");
-        assert!(get_property_result.is_some());
-
-        let getproperty_value_result = get_property_result.unwrap().get("@value");
-        assert!(getproperty_value_result.is_some());
-        assert!(getproperty_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
-
-        assert!(model.len() == 8);
+        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:command:HVAC:send_notification;1");
+        assert!(send_notification_id.is_some());
+        let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
+        assert!(send_notification_entity_result.is_some());
+        let send_notification_uri_property_result = send_notification_entity_result
+            .unwrap()
+            .undefined_properties()
+            .get("dtmi:sdv:property:uri;1");
+        assert!(send_notification_uri_property_result.is_some());
+        let send_notification_uri_property_value_result =
+            send_notification_uri_property_result.unwrap().get("@value");
+        assert!(send_notification_uri_property_value_result.is_some());
+        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
     }
 }

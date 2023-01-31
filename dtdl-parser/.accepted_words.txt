@@ -1,8 +1,12 @@
+api
 com
 DTDL
 digitaltwins
 dtdl
+en
 github
 https
+javascript
 js
+microsoft
 sdk

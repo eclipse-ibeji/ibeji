@@ -1,4 +1,6 @@
 br
+build
+cargo
 cd
 com
 digitaltwins
@@ -7,6 +9,8 @@ dt
 dtdl
 DTDL
 en
+gcc
+gcc's
 github
 hardcheese
 haudebourg
@@ -15,6 +19,7 @@ ibeji
 Ibeji
 Ibeji's
 intellectualproperty
+iot
 js
 json
 JSON
@@ -23,6 +28,7 @@ LD
 microsoft
 minimalistic
 opendigitaltwins
+plugandplay
 protobuf
 Protobuf
 repo
@@ -34,5 +40,3 @@ sudo
 timothee
 toolchain
 www
-cargo
-build

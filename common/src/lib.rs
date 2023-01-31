@@ -25,9 +25,8 @@ pub fn find_full_path(relative_path: &str) -> Result<String, String> {
             }
         }
         Err(_) => {
-            return Err(format!(
-                "Unable to get the environment variable {}. Please set it.",
-                DTDL_PATH
+            return Err(String::from(
+                "Unable to get the environment variable DTDL_PATH. Please set it.",
             ))
         }
     }
@@ -43,7 +42,7 @@ pub fn retrieve_dtdl(file_path: &str) -> Result<String, String> {
     let read_result = fs::read_to_string(path);
     match read_result {
         Ok(contents) => Ok(contents),
-        Err(error) => Err(format!("Unable to retrieve the DTDL due to: {:?}", error)),
+        Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error}")),
     }
 }
 

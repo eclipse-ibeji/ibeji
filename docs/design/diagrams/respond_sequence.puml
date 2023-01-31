@@ -1,0 +1,8 @@
+@startuml
+
+participant "Provider"
+participant "Consumer"
+
+"Provider" -> "Consumer" : Respond - request (id, payload)
+
+@enduml

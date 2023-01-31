@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+mod provider_impl;
+
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{info, LevelFilter};
@@ -9,13 +11,13 @@ use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
-use provider::provider_impl::{ProviderImpl, SubscriptionMap};
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex, MutexGuard};
-use std::thread;
-use std::time;
+use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
+
+use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
 /// The id for ambient air tempterature property.
 const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
@@ -56,7 +58,7 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+                    entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
                     value: temperature.to_string(),
                 });
 
@@ -81,7 +83,7 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
                 }
             }
 
-            thread::sleep(time::Duration::from_millis(1000));
+            sleep(Duration::from_millis(1000)).await;
         }
     });
 }

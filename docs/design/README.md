@@ -18,7 +18,7 @@ Please note that the initial Ibeji implementation is a proof-of-concept. We woul
 Ibeji has three main architectural concepts:
 
 - Consumer
-- Provider.
+- Provider
 - In-Vehicle Digital Twin Service
 
 The first Ibeji architectural concept that we will introduce is the Consumer. A Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
@@ -70,7 +70,7 @@ The DTDL must use the standard dtmi dtdl context. It must also use the dtmi sdv 
 
 ### In-Vehicle Digital Twin Service Overview
 
-The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api and the ability to subscribe to a provided hardware resource data feed.
+The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api, and the ability to subscribe to a provided hardware resource data feed and to invoke commands on provided hardware resources.
 
 ### Interfaces
 
@@ -94,11 +94,11 @@ Below is the sequence diagram for the Find-By-Id activity.
 
 ### Overview
 
-The initial Provider will provide the functionality needed by the proof-of-concept, implementing one resource - the AmbientAirTemperature property.
+The initial Providers will implement basic resources - the AmbientAirTemperature property and the send_notification command.
 
 ### Interfaces
 
-A Provider supports a gRPC interface for subscribing to resource's data feeds, unsubscribing, request a resource's value and setting a resource's value.
+A Provider supports a gRPC interface for subscribing to resource's data feeds, unsubscribing from a resource's data feed, requesting a resource's value, setting a resource's value and invoking a command.
 
 ### Activities
 
@@ -108,11 +108,17 @@ Below is the sequence diagram for the Subscribe activity. The Provider's endpoin
 
 ![Sequence Diagram](diagrams/subscribe_sequence.svg)
 
+#### Invoke
+
+Below is the sequence diagram for the Invoke activity. The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
+
+![Sequence Diagram](diagrams/invoke_sequence.svg)
+
 ## <a name="consumer">Consumer</a>
 
 ### Overview
 
-The initial Consumer will provide the functionality needed by the proof-of-concept. It will only query and subscribe to one resource - the AmbientAirTemperature property. It will use the resource's endpoint metadata to subscribe.
+The initial Consumers will provide the functionality needed by the proof-of-concept to subscribe to resources data feeds and invoke commands on resources.
 
 Interfaces
 
@@ -126,16 +132,22 @@ Below is the sequence diagram for the Publish activity.
 
 ![Sequence Diagram](diagrams/publish_sequence.svg)
 
+#### Respond
+
+Below is the sequence diagram for the Respond activity.
+
+![Sequence Diagram](diagrams/respond_sequence.svg)
+
 ## <a name="appendix-a">Appendix A – Provider gRPC Interface</a>
 
 ### Subscribe
 
-Subscribe to a resource's data feed and publish the resource's updates to a Consumer using the Publish operation on its Consumer interface.
+Subscribe to a property's data feed.
 
 #### Request
 
-- id - The resource's id.
-- uri - The uri for the endpoint where the data feed will be delivered.
+- entity_id - The property's id.
+- consumer_uri - The uri for the consumer endpoint where the data feed will be delivered.
 
 #### Response
 
@@ -143,12 +155,12 @@ Subscribe to a resource's data feed and publish the resource's updates to a Cons
 
 ### Unsubscribe
 
-Unsubscribe from a resource's data feed.
+Unsubscribe from a property's data feed.
 
 #### Request
 
-- id - The resource's id.
-- uri - The uri for the endpoint where the data feed should no longer be delivered.
+- entity_id - The property's id.
+- consumer_uri - The uri for the consumer endpoint where the data feed should no longer be delivered.
 
 #### Response
 
@@ -156,12 +168,12 @@ Unsubscribe from a resource's data feed.
 
 ### Get
 
-Get the latest value for a resource and publish it to a Consumer using the Publish operation on its Consumer interface.
+Get the latest value for a property and publish it to a consumer endpoint.
 
 #### Request
 
-- id - The resource's id.
-- uri -  The uri for the endpoint where the value should be delivered.
+- entity_id - The property's id.
+- consumer_uri -  The uri for the consumer endpoint where the value should be delivered.
 
 #### Response
 
@@ -169,12 +181,26 @@ Get the latest value for a resource and publish it to a Consumer using the Publi
 
 ### Set
 
-Set a resource's value to the one provided. This may not cause a change if the resource cannot be updated.
+Set an entity's value to the one provided. This may not cause a change if the entity cannot be updated.
 
 #### Request
 
-- id - The resource's id.
-- value - The resource's new value.
+- entity_id - The entity's id.
+- value - The entity's new value.
+
+#### Response
+
+- No response.
+
+### Invoke
+
+Invoke a command.
+
+#### Request
+
+- entity_id - The command's id.
+- uri - The uri for the endpoint where the command's response should be delivered.
+- payload - The command's request payload.
 
 #### Response
 
@@ -184,11 +210,11 @@ Set a resource's value to the one provided. This may not cause a change if the r
 
 ### FindById
 
-Find a resource's DTDL.
+Find an entity's DTDL.
 
 #### Request
 
-- id - The resource's id.
+- entity_id - The entity's id.
 
 #### Response
 
@@ -196,11 +222,11 @@ Find a resource's DTDL.
 
 ### Register
 
-Register one or more resources.
+Register one or more entities.
 
 #### Request
 
-- dtdl - The DTDL that represents the resource/s.
+- dtdl - The DTDL that represents the entities.
 
 #### Response
 
@@ -208,7 +234,7 @@ Register one or more resources.
 
 ### Unregister
 
-Unregister a resource.
+Unregister an entity.
 
 #### Request
 
@@ -222,12 +248,26 @@ Unregister a resource.
 
 ### Publish
 
-Publish a resource value.
+Publish a value for a specific entity.
 
 #### Request
 
-- id - The resource's id.
-- value - The resource's value.
+- entity_id - The entity's id.
+- value - The value to publish.
+
+#### Response
+
+- No response.
+
+### Respond
+
+Respond for the execution of a command.
+
+#### Request
+
+- entity_id - The command's id.
+- response_id - The id that the invoker of the command provided for the response.
+- payload - The command's response payload.
 
 #### Response
 

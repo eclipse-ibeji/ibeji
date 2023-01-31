@@ -1,0 +1,27 @@
+[
+  {
+    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:org:eclipse:sdv:interface:HVAC:send_notification;1",
+    "contents": [
+      {
+        "@type": ["Command", "RemotelyAccessible"],
+        "@id": "dtmi:org:eclipse:sdv:command:HVAC:send_notification;1",
+        "name": "HVAC_send_notification",
+        "request": {
+          "name": "send_notification",
+          "displayName": "send_notification",
+          "descriptiption": "Send a notification to the HVAC.",
+          "schema": "string"
+        },
+        "remote_access": [
+          {
+            "@type": "Endpoint",
+            "uri": "http://[::1]:40010",
+            "operations": [ "Invoke" ]
+          }
+        ]
+      }
+    ]
+  }
+]

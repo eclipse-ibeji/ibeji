@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::info;
+use log::{info, warn};
 use proto::consumer::consumer_server::Consumer;
-use proto::consumer::{PublishRequest, PublishResponse};
+use proto::consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
@@ -22,13 +22,26 @@ impl Consumer for ConsumerImpl {
         let request_inner = request.into_inner();
 
         info!(
-            "Received a publish for id {} with the value {}",
-            request_inner.id, request_inner.value
+            "Received a publish for entity id {} with the value {}",
+            request_inner.entity_id, request_inner.value
         );
 
         let response = PublishResponse {};
 
         Ok(Response::new(response))
+    }
+
+    /// Respond implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Respond request.
+    async fn respond(
+        &self,
+        request: Request<RespondRequest>,
+    ) -> Result<Response<RespondResponse>, Status> {
+        warn!("Got a respons request: {:?}", request);
+
+        Err(Status::unimplemented("set has not been implemented"))
     }
 }
 
@@ -41,10 +54,10 @@ mod consumer_impl_tests {
     fn publish_test() {
         let consumer_impl = ConsumerImpl {};
 
-        let id = String::from("some-id");
+        let entity_id = String::from("some-id");
         let value = String::from("some-value");
 
-        let request = tonic::Request::new(PublishRequest { id, value });
+        let request = tonic::Request::new(PublishRequest { entity_id, value });
         let result = task::block_on(consumer_impl.publish(request));
         assert!(result.is_ok());
     }
