@@ -201,7 +201,7 @@ impl ModelParser {
                             break;
                         }
                     }
-                }      
+                }
             } else if let Value::Object(_o) = existing_context_value {
                 // ignore - this one does not have an IRI associated with it.
             } else {
