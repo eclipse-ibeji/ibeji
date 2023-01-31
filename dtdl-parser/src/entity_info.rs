@@ -8,6 +8,8 @@ use std::collections::HashMap;
 use crate::dtmi::Dtmi;
 use crate::entity_kind::EntityKind;
 
+/// A digital twin model consists of building blocks known as entities.
+/// EntityInfo is the base trait for all of the digital twin model building blocks.
 pub trait EntityInfo: Any {
     /// Returns the DTDL version.
     fn dtdl_version(&self) -> i32;

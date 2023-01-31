@@ -3,4 +3,5 @@
 
 use crate::schema_field_info::SchemaFieldInfo;
 
+/// A command payload specifies the inputs and outputs for a command.
 pub trait CommandPayloadInfo: SchemaFieldInfo {}
