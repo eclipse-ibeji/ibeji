@@ -641,7 +641,7 @@ impl ModelParser {
             Some(boxed_primitive_schema_info_ref) => {
                 Box::new((*boxed_primitive_schema_info_ref).clone())
             }
-            None => return Err(format!("Was not a primitive schema info")),
+            None => return Err(String::from("Was not a primitive schema info")),
         };
 
         Ok(boxed_schema_info)
@@ -675,7 +675,7 @@ impl ModelParser {
                 Some(boxed_interface_schema_info_ref) => {
                     Box::new((*boxed_interface_schema_info_ref).clone())
                 }
-                None => return Err(format!("Was not an interface info")),
+                None => return Err(String::from("Was not an interface info")),
             };
 
         Ok(boxed_interface_info)
