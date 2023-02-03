@@ -4,7 +4,7 @@
 extern crate iref;
 
 use dtdl_parser::model_parser::ModelParser;
-use log::info;
+use log::{debug, info};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
@@ -74,7 +74,7 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<RegisterRequest>,
     ) -> Result<Response<RegisterResponse>, Status> {
-        info!("Received a register request.");
+        // info!("Received a register request.");
 
         let request_inner = request.into_inner();
         let dtdl = request_inner.dtdl;
@@ -86,7 +86,7 @@ impl DigitalTwin for DigitalTwinImpl {
 
         let response = RegisterResponse {};
 
-        info!("Completed registration.");
+        // info!("Completed registration.");
 
         Ok(Response::new(response))
     }
@@ -155,7 +155,7 @@ impl DigitalTwinImpl {
         for (id, _entity) in model_dict {
             let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
             lock.insert(id.to_string(), doc.clone());
-            info!("Registered DTDL for id {}", &id);
+            debug!("Registered DTDL for id {}", &id);
         }
 
         Ok(())

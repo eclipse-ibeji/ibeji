@@ -28,8 +28,8 @@ const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
 /// # Arguments
 /// `id_to_subscribers_map` - The id to subscribers map.
 #[allow(clippy::collapsible_else_if)]
-fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
-    info!("Starting the Provider's ambient air termperature data stream.");
+fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
+    info!("Starting the Provider's ambient air temperature data stream.");
     tokio::spawn(async move {
         let mut temperature: u32 = 75;
         let mut is_temperature_increasing: bool = true;
@@ -114,7 +114,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _response = client.register(request).await?;
     info!("The Provider's DTDL has been registered.");
 
-    start_ambient_air_temperatire_data_stream(subscription_map.clone());
+    start_ambient_air_temperature_data_stream(subscription_map.clone());
 
     server_future.await?;
 

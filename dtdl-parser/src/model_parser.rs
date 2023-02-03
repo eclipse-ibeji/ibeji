@@ -321,7 +321,6 @@ impl ModelParser {
 
             if let Some(entity_kind) = entity_kind_option {
                 if is_primitive_schema_kind(entity_kind) {
-                    println!("entity_kind is_primitive_entity_kind");
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
                     if id.is_none() {
                         return Err(String::from(
@@ -337,7 +336,6 @@ impl ModelParser {
                         entity_kind,
                     )))
                 } else {
-                    println!("entity_kind is_NOT primitive_entity_kind");
                     Err(format!("expected a primitive schema, found {entity_kind}"))
                 }
             } else {
@@ -461,7 +459,6 @@ impl ModelParser {
         }
 
         if entity_kind_option.is_none() {
-            println!("Complex schema has no associated type.  It must have one.");
             return Err(String::from("Complex schema has no associated type.  It must have one."));
         }
 
@@ -470,7 +467,6 @@ impl ModelParser {
         if entity_kind == EntityKind::Object {
             self.get_object_schema(node, model_dict, parent_id)
         } else {
-            println!("Unsupported complex object: {entity_kind:?}.");
             Err(format!("Unsupported complex object: {entity_kind:?}."))
         }
     }
@@ -901,8 +897,6 @@ impl ModelParser {
     ) -> Result<(), String> {
         // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
-
-        println!("Command: {}", name.clone().unwrap());
 
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
