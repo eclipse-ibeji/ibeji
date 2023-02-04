@@ -41,7 +41,7 @@ impl Vehicle {
 
         // Update the A/C's use of the battery.
         if self.is_air_conditioning_active && self.hybrid_battery_remaining > 0.0 {
-            self.hybrid_battery_remaining-=0.10;
+            self.hybrid_battery_remaining -= 0.10;
         }
     }
 }

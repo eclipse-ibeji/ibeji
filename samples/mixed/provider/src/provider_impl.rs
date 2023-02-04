@@ -19,10 +19,8 @@ pub type SubscriptionMap = HashMap<String, HashSet<String>>;
 /// The ids for commands.
 const ACTIVATE_AIR_CONDITIOING: &str =
     "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1";
-const SEND_NOTIFICATION: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
-const SET_UI_MESSAGE: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1";
+const SEND_NOTIFICATION: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
+const SET_UI_MESSAGE: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1";
 
 #[derive(Debug, Default)]
 pub struct ProviderImpl {
@@ -31,14 +29,17 @@ pub struct ProviderImpl {
 }
 
 impl ProviderImpl {
-    fn activate_air_conditioning(vehicle: Arc<Mutex<Vehicle>>, payload: &str) -> Result<(), String> {
+    fn activate_air_conditioning(
+        vehicle: Arc<Mutex<Vehicle>>,
+        payload: &str,
+    ) -> Result<(), String> {
         let value: bool = match FromStr::from_str(payload) {
             Ok(v) => v,
-            Err(error) => return Err(format!("{error:?}"))
+            Err(error) => return Err(format!("{error:?}")),
         };
 
-        let mut lock: MutexGuard<Vehicle>  = vehicle.lock().unwrap();
-    
+        let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
+
         lock.is_air_conditioning_active = value;
 
         Ok(())
@@ -49,10 +50,10 @@ impl ProviderImpl {
     }
 
     fn set_ui_message(vehicle: Arc<Mutex<Vehicle>>, payload: &str) {
-        let mut lock: MutexGuard<Vehicle>  = vehicle.lock().unwrap();
-    
+        let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
+
         lock.ui_message = String::from(payload);
-    }    
+    }
 }
 
 #[tonic::async_trait]
@@ -74,7 +75,8 @@ impl Provider for ProviderImpl {
             &consumer_uri, &entity_id
         );
 
-        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> = self.subscription_map.lock().unwrap();
+        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
+            self.subscription_map.lock().unwrap();
         let mut uris = match lock.get(&entity_id) {
             Some(get_value) => get_value.clone(),
             None => HashSet::new(),
@@ -120,7 +122,7 @@ impl Provider for ProviderImpl {
         warn!("Got a set request: {:?}", request);
 
         Err(Status::unimplemented("set has not been implemented"))
-    }  
+    }
 
     /// Invoke implementation.
     ///
@@ -153,7 +155,8 @@ impl Provider for ProviderImpl {
             if entity_id == ACTIVATE_AIR_CONDITIOING {
                 let result = ProviderImpl::activate_air_conditioning(vehicle.clone(), &payload);
                 if result.is_err() {
-                    response_payload = format!("Failed to invoke {} due to: {}", entity_id, result.err().unwrap());
+                    response_payload =
+                        format!("Failed to invoke {} due to: {}", entity_id, result.err().unwrap());
                 }
             } else if entity_id == SEND_NOTIFICATION {
                 ProviderImpl::send_notification(&payload);
@@ -176,8 +179,11 @@ impl Provider for ProviderImpl {
             }
             let mut client = client_result.unwrap();
 
-            let respond_request =
-                tonic::Request::new(RespondRequest { entity_id, response_id, payload: response_payload });
+            let respond_request = tonic::Request::new(RespondRequest {
+                entity_id,
+                response_id,
+                payload: response_payload,
+            });
 
             client.respond(respond_request).await
         });
@@ -198,7 +204,7 @@ mod provider_impl_tests {
     fn subscribe_test() {
         let subscription_map = Arc::new(Mutex::new(HashMap::new()));
         let vehicle = Arc::new(Mutex::new(Vehicle::new()));
-        let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() , vehicle };
+        let provider_impl = ProviderImpl { subscription_map: subscription_map.clone(), vehicle };
 
         let first_id = String::from("one-id");
         let second_id = String::from("two-id");

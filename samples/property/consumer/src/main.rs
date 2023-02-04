@@ -17,7 +17,7 @@ mod consumer_impl;
 
 /// The id for ambient air tempterature property.
 const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1";
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
 
 /// The id for the URI property.
 const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";

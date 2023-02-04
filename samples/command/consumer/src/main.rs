@@ -18,7 +18,8 @@ use tonic::transport::Server;
 use uuid::Uuid;
 
 /// The id for send notification command.
-const SEND_NOTIFICATION_COMMAND_ID: &str = "dtmi:org:eclipse:sdv:command:HVAC:send_notification;1";
+const SEND_NOTIFICATION_COMMAND_ID: &str =
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
 
 /// The id for the URI property.
 const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";

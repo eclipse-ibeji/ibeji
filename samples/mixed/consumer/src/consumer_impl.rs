@@ -31,7 +31,6 @@ impl Consumer for ConsumerImpl {
         Ok(Response::new(response))
     }
 
-
     /// Respond implementation.
     ///
     /// # Arguments

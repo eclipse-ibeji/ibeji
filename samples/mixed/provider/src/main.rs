@@ -29,11 +29,10 @@ const IS_AIR_CONDITIONING_ACTIVE: &str =
 const HYBRID_BATTERY_REMAINING: &str =
     "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1";
 
-async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str)
-{
+async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
     let urls;
     {
-        let lock: MutexGuard<SubscriptionMap> = subscription_map.lock().unwrap();        
+        let lock: MutexGuard<SubscriptionMap> = subscription_map.lock().unwrap();
         let get_result = lock.get(entity_id);
         urls = match get_result {
             Some(val) => val.clone(),
@@ -56,10 +55,13 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
         });
 
         let _response = client.publish(request).await;
-    }                
+    }
 }
 
-async fn start_vehicle_simulator(subscription_map: Arc<Mutex<SubscriptionMap>>, vehicle: Arc<Mutex<Vehicle>>) {
+async fn start_vehicle_simulator(
+    subscription_map: Arc<Mutex<SubscriptionMap>>,
+    vehicle: Arc<Mutex<Vehicle>>,
+) {
     info!("Starting the Provider's veicle simulator.");
     tokio::spawn(async move {
         loop {
@@ -69,8 +71,8 @@ async fn start_vehicle_simulator(subscription_map: Arc<Mutex<SubscriptionMap>>, 
             let ui_message: String;
 
             {
-                let mut lock: MutexGuard<Vehicle>  = vehicle.lock().unwrap();
-            
+                let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
+
                 lock.execute_epoch();
 
                 // Make a copy of the peoprtes values that we will publish after the lock is released.
@@ -81,14 +83,29 @@ async fn start_vehicle_simulator(subscription_map: Arc<Mutex<SubscriptionMap>>, 
             }
 
             info!("Ambient air temperature is {}; Is air conditioning active is {}; Hybrid battery remaining is {}; UI message is '{}'", ambient_air_temperature, is_air_conditioning_active, hybrid_battery_remaining, ui_message);
-            publish(subscription_map.clone(), AMBIENT_AIR_TEMPERATURE_PROPERTY_ID, &ambient_air_temperature.to_string()).await;
-            publish(subscription_map.clone(), IS_AIR_CONDITIONING_ACTIVE, &is_air_conditioning_active.to_string()).await;           
-            publish(subscription_map.clone(), HYBRID_BATTERY_REMAINING, &hybrid_battery_remaining.to_string()).await;
+            publish(
+                subscription_map.clone(),
+                AMBIENT_AIR_TEMPERATURE_PROPERTY_ID,
+                &ambient_air_temperature.to_string(),
+            )
+            .await;
+            publish(
+                subscription_map.clone(),
+                IS_AIR_CONDITIONING_ACTIVE,
+                &is_air_conditioning_active.to_string(),
+            )
+            .await;
+            publish(
+                subscription_map.clone(),
+                HYBRID_BATTERY_REMAINING,
+                &hybrid_battery_remaining.to_string(),
+            )
+            .await;
 
             sleep(Duration::from_millis(1000)).await;
-        }      
+        }
     });
-}            
+}
 
 #[tokio::main]
 #[allow(clippy::collapsible_else_if)]
@@ -107,7 +124,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr: SocketAddr = "[::1]:40010".parse()?;
     let subscription_map = Arc::new(Mutex::new(SubscriptionMap::new()));
     let vehicle = Arc::new(Mutex::new(Vehicle::new()));
-    let provider_impl = ProviderImpl { subscription_map: subscription_map.clone(), vehicle: vehicle.clone() };
+    let provider_impl =
+        ProviderImpl { subscription_map: subscription_map.clone(), vehicle: vehicle.clone() };
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 

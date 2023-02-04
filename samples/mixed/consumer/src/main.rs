@@ -18,15 +18,19 @@ use tonic::transport::Server;
 use uuid::Uuid;
 
 /// The ids commands.
-const ACTIVATE_AIR_CONDITIOING_COMMAND_ID : &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1";
-const SEND_NOTIFICATION_COMMAND_ID: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
+const ACTIVATE_AIR_CONDITIOING_COMMAND_ID: &str =
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1";
+const SEND_NOTIFICATION_COMMAND_ID: &str =
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
 const SET_UI_MESSAGE_COMMAND_ID: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1";
 
 /// The ids for the properties.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
-const IS_AIR_CONDITIONING_ACTIVE: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:is_air_conditioning_active;1";
-const HYBRID_BATTERY_REMAINING: &str = "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1";
-
+const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
+const IS_AIR_CONDITIONING_ACTIVE: &str =
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:is_air_conditioning_active;1";
+const HYBRID_BATTERY_REMAINING: &str =
+    "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1";
 
 /// The id for the URI property.
 const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";
@@ -74,7 +78,8 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
 fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
     info!("Starting the Consumer's send notification repeater.");
     tokio::spawn(async move {
-        let array: [&str; 10] = [ "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" ];
+        let array: [&str; 10] =
+            ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
         let mut index: usize = 0;
         loop {
             // info!("Invoking the set_ui_message command on endpoint {}", &provider_uri);
@@ -145,13 +150,10 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, Box<dyn std::error:
     // Obtain the DTDL for the send_notification command.
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
-    let request = tonic::Request::new(FindByIdRequest {
-        entity_id: String::from(entity_id),
-    });
+    let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
     info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
-
 
     info!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -192,11 +194,15 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, Box<dyn std::error:
     let uri_str_option = uri_property_value.as_str();
     let provider_uri = String::from(uri_str_option.unwrap());
     info!("The URI for the send_notification command's provider is {}", &provider_uri);
-    
+
     Ok(provider_uri)
 }
 
-async fn send_subscribe_request(provider_uri: &str, entity_id: &str, consumer_uri: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn send_subscribe_request(
+    provider_uri: &str,
+    entity_id: &str,
+    consumer_uri: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a subscribe request for {}.", entity_id);
     let mut client = ProviderClient::connect(provider_uri.to_string()).await?;
     let request = tonic::Request::new(SubscribeRequest {
@@ -222,25 +228,50 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
-    let activate_air_conditioing_command_provider_uri = get_provider_uri(ACTIVATE_AIR_CONDITIOING_COMMAND_ID).await?;
-    let send_notification_command_provider_uri = get_provider_uri(SEND_NOTIFICATION_COMMAND_ID).await?;
+    let activate_air_conditioing_command_provider_uri =
+        get_provider_uri(ACTIVATE_AIR_CONDITIOING_COMMAND_ID).await?;
+    let send_notification_command_provider_uri =
+        get_provider_uri(SEND_NOTIFICATION_COMMAND_ID).await?;
     let set_ui_message_command_provider_uri = get_provider_uri(SET_UI_MESSAGE_COMMAND_ID).await?;
 
-    let ambient_air_temperature_property_provider_uri = get_provider_uri(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID).await?;
-    let is_air_conditioning_active_property_uri = get_provider_uri(IS_AIR_CONDITIONING_ACTIVE).await?;
-    let hybrid_battery_remaining_property_uri = get_provider_uri(HYBRID_BATTERY_REMAINING).await?;            
+    let ambient_air_temperature_property_provider_uri =
+        get_provider_uri(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID).await?;
+    let is_air_conditioning_active_property_uri =
+        get_provider_uri(IS_AIR_CONDITIONING_ACTIVE).await?;
+    let hybrid_battery_remaining_property_uri = get_provider_uri(HYBRID_BATTERY_REMAINING).await?;
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 
-    send_subscribe_request(&ambient_air_temperature_property_provider_uri, AMBIENT_AIR_TEMPERATURE_PROPERTY_ID, &consumer_uri).await?;
+    send_subscribe_request(
+        &ambient_air_temperature_property_provider_uri,
+        AMBIENT_AIR_TEMPERATURE_PROPERTY_ID,
+        &consumer_uri,
+    )
+    .await?;
 
-    send_subscribe_request(&is_air_conditioning_active_property_uri, IS_AIR_CONDITIONING_ACTIVE, &consumer_uri).await?;
+    send_subscribe_request(
+        &is_air_conditioning_active_property_uri,
+        IS_AIR_CONDITIONING_ACTIVE,
+        &consumer_uri,
+    )
+    .await?;
 
-    send_subscribe_request(&hybrid_battery_remaining_property_uri, HYBRID_BATTERY_REMAINING, &consumer_uri).await?;
+    send_subscribe_request(
+        &hybrid_battery_remaining_property_uri,
+        HYBRID_BATTERY_REMAINING,
+        &consumer_uri,
+    )
+    .await?;
 
-    start_activate_air_conditioning_repeater(activate_air_conditioing_command_provider_uri, consumer_uri.clone());
-    
-    start_send_notification_repeater(send_notification_command_provider_uri.clone(), consumer_uri.clone());
+    start_activate_air_conditioning_repeater(
+        activate_air_conditioing_command_provider_uri,
+        consumer_uri.clone(),
+    );
+
+    start_send_notification_repeater(
+        send_notification_command_provider_uri.clone(),
+        consumer_uri.clone(),
+    );
 
     start_set_ui_message_repeater(set_ui_message_command_provider_uri.clone(), consumer_uri);
 

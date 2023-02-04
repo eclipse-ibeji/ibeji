@@ -21,7 +21,7 @@ use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
 /// The id for ambient air tempterature property.
 const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1";
+    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
 
 /// Start the ambient air temperature data stream.
 ///
