@@ -58,7 +58,7 @@
             "operations": [ "Invoke" ]
           }
         ]
-      },     
+      },
       {
           "@type": ["Property", "Temperature", "RemotelyAccessible"],
           "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1",
