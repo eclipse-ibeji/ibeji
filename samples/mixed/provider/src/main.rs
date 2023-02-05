@@ -82,7 +82,7 @@ async fn start_vehicle_simulator(
                 ui_message = lock.ui_message.clone();
             }
 
-            info!("Ambient air temperature is {}; Is air conditioning active is {}; Hybrid battery remaining is {}; UI message is '{}'", ambient_air_temperature, is_air_conditioning_active, hybrid_battery_remaining, ui_message);
+            info!("Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}; UI message is '{ui_message}'");
             publish(
                 subscription_map.clone(),
                 AMBIENT_AIR_TEMPERATURE_PROPERTY_ID,
