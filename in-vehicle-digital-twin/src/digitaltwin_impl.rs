@@ -74,7 +74,7 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<RegisterRequest>,
     ) -> Result<Response<RegisterResponse>, Status> {
-        // info!("Received a register request.");
+        debug!("Received a register request.");
 
         let request_inner = request.into_inner();
         let dtdl = request_inner.dtdl;
@@ -86,7 +86,7 @@ impl DigitalTwin for DigitalTwinImpl {
 
         let response = RegisterResponse {};
 
-        // info!("Completed registration.");
+        debug!("Completed registration.");
 
         Ok(Response::new(response))
     }

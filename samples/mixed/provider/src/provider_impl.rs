@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::{info, warn};
+use log::{debug, info, warn};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
@@ -140,12 +140,10 @@ impl Provider for ProviderImpl {
         let consumer_uri: String = request_inner.consumer_uri;
         let payload: String = request_inner.payload;
 
-        /*
-        info!(
+        debug!(
             "Received an invoke request from consumer URI {} for entity id {} with payload '{}'",
             &consumer_uri, &entity_id, &payload
         );
-        */
 
         let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
 
@@ -166,12 +164,10 @@ impl Provider for ProviderImpl {
                 response_payload = format!("Error: The entity id {entity_id} is not recognized.");
             }
 
-            /*
-            info!(
+            debug!(
                 "Sending an invoke respose to consumer URI {} for entity id {}",
                 &consumer_uri, &entity_id
             );
-            */
 
             let client_result = ConsumerClient::connect(consumer_uri).await;
             if client_result.is_err() {
