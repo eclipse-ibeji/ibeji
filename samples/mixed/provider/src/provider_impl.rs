@@ -150,7 +150,7 @@ impl Provider for ProviderImpl {
         let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
 
         tokio::spawn(async move {
-            let mut response_payload: String = format!("Successfully invoked {}", entity_id);
+            let mut response_payload: String = format!("Successfully invoked {entity_id}");
 
             if entity_id == ACTIVATE_AIR_CONDITIOING {
                 let result = ProviderImpl::activate_air_conditioning(vehicle.clone(), &payload);
@@ -163,7 +163,7 @@ impl Provider for ProviderImpl {
             } else if entity_id == SET_UI_MESSAGE {
                 ProviderImpl::set_ui_message(vehicle.clone(), &payload);
             } else {
-                response_payload = format!("Error: The entity id {} is not recognized.", entity_id);
+                response_payload = format!("Error: The entity id {entity_id} is not recognized.");
             }
 
             /*

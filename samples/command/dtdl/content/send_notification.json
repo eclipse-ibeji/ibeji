@@ -21,7 +21,7 @@
             "uri": "http://[::1]:40010",
             "operations": [ "Invoke" ]
           }
-        ] 
+        ]
       }
     ]
   }

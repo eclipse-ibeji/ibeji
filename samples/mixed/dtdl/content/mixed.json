@@ -3,7 +3,7 @@
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
     "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac;1",
-    "description": "Heat, Ventilation and Air Conditioning",    
+    "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
         "@type": ["Command", "RemotelyAccessible"],
@@ -39,7 +39,7 @@
             "uri": "http://[::1]:40010",
             "operations": [ "Invoke" ]
           }
-        ] 
+        ]
       },
       {
         "@type": ["Command", "RemotelyAccessible"],
@@ -57,8 +57,8 @@
             "uri": "http://[::1]:40010",
             "operations": [ "Invoke" ]
           }
-        ] 
-      },      
+        ]
+      },     
       {
           "@type": ["Property", "Temperature", "RemotelyAccessible"],
           "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1",
@@ -110,7 +110,7 @@
               "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
             }
           ]
-        }                
+        }
       ]
     }
 ]

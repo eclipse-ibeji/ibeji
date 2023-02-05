@@ -4,7 +4,7 @@
     "@type": "Interface",
     "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac;1",
     "description": "Heat, Ventilation and Air Conditioning",
-    "contents": [    
+    "contents": [
       {
         "@type": ["Property", "Temperature", "RemotelyAccessible"],
         "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1",

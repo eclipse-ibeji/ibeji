@@ -33,10 +33,8 @@ impl Vehicle {
             if self.ambient_air_temperature > MIN_HVAC_TEMPERATURE {
                 self.ambient_air_temperature -= 1;
             }
-        } else {
-            if self.ambient_air_temperature < MAX_HVAC_TEMPERATURE {
-                self.ambient_air_temperature += 1;
-            }
+        } else if self.ambient_air_temperature < MAX_HVAC_TEMPERATURE {
+            self.ambient_air_temperature += 1;
         }
 
         // Update the A/C's use of the battery.

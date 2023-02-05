@@ -128,7 +128,7 @@ fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: 
 
             let response_id = Uuid::new_v4().to_string();
 
-            let payload: String = format!("{}", is_active);
+            let payload: String = format!("{is_active}");
 
             let request = tonic::Request::new(InvokeRequest {
                 entity_id: String::from(ACTIVATE_AIR_CONDITIOING_COMMAND_ID),
@@ -152,7 +152,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, Box<dyn std::error:
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
     let response = client.find_by_id(request).await?;
-    let dtdl = response.into_inner().dtdl.clone();
+    let dtdl = response.into_inner().dtdl;
     info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
 
     info!("Parsing the DTDL.");
