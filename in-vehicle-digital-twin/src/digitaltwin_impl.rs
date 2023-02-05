@@ -4,7 +4,7 @@
 extern crate iref;
 
 use dtdl_parser::model_parser::ModelParser;
-use log::{debug, info};
+use log::{debug, info, warn};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
@@ -99,11 +99,9 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<UnregisterRequest>,
     ) -> Result<Response<UnregisterResponse>, Status> {
-        info!("Received an unregister request: {:?}", request);
-        // TODO - provide unregister functionality
-        let response = UnregisterResponse {};
+        warn!("Got an unregister request: {:?}", request);
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("unregister has not been implemented"))
     }
 }
 
