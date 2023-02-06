@@ -29,6 +29,10 @@ impl Vehicle {
         }
 
         // Adjust the ambient air temperature based on whether the A/C is being used.
+        // When the A/C is being used, then the temperature should decrease until it reaches the lower limit and
+        // remain at the lower limit once it reaches it.
+        // When the A/C is not being used, then the temperature should increase until it reaches the upper limit and
+        // remain at the upper limit once it reaches it.
         if self.is_air_conditioning_active {
             if self.ambient_air_temperature > MIN_HVAC_TEMPERATURE {
                 self.ambient_air_temperature -= 1;
