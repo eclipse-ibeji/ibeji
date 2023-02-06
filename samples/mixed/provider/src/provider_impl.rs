@@ -33,10 +33,7 @@ impl ProviderImpl {
         vehicle: Arc<Mutex<Vehicle>>,
         payload: &str,
     ) -> Result<(), String> {
-        let value: bool = match FromStr::from_str(payload) {
-            Ok(v) => v,
-            Err(error) => return Err(format!("{error:?}")),
-        };
+        let value: bool = FromStr::from_str(payload).map_err(|error| format!("{error:?}"))?;
 
         let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
 
@@ -165,7 +162,7 @@ impl Provider for ProviderImpl {
             }
 
             debug!(
-                "Sending an invoke respose to consumer URI {} for entity id {}",
+                "Sending an invoke response to consumer URI {} for entity id {}",
                 &consumer_uri, &entity_id
             );
 

@@ -89,7 +89,7 @@ impl Provider for ProviderImpl {
 
         tokio::spawn(async move {
             info!(
-                "Sending an invoke respose to consumer URI {} for entity id {}",
+                "Sending an invoke response to consumer URI {} for entity id {}",
                 &consumer_uri, &entity_id
             );
 
