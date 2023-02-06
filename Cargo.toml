@@ -16,3 +16,20 @@ members = [
   "samples/property/consumer",
   "samples/property/provider"
 ]
+
+[workspace.dependencies]
+async-std = "^1.5"
+env_logger= "0.10.0"
+generic-json = "^0.7"
+iref = "^2.0.3"
+lazy_static = "1.4.0"
+log = "^0.4"
+prost = "0.11"
+regex = " 1.7.1"
+tokio = "1.0"
+tonic = "0.8.2"
+tonic-build = "0.8.2"
+serde_json = "^1.0"
+strum = "0.24"
+strum_macros = "0.24"
+uuid = "1.2.2"

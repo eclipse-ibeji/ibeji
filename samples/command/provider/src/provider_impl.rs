@@ -28,7 +28,7 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<SubscribeRequest>,
     ) -> Result<Response<SubscribeResponse>, Status> {
-        warn!("Got a subscribe request: {:?}", request);
+        warn!("Got a subscribe request: {request:?}");
 
         Err(Status::unimplemented("subscribe has not been implemented"))
     }
@@ -41,7 +41,7 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<UnsubscribeRequest>,
     ) -> Result<Response<UnsubscribeResponse>, Status> {
-        warn!("Got an unsubscribe request: {:?}", request);
+        warn!("Got an unsubscribe request: {request:?}");
 
         Err(Status::unimplemented("unsubscribe has not been implemented"))
     }
@@ -51,7 +51,7 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Get request.
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
-        warn!("Got a get request: {:?}", request);
+        warn!("Got a get request: {request:?}");
 
         Err(Status::unimplemented("get has not been implemented"))
     }
@@ -61,7 +61,7 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        warn!("Got a set request: {:?}", request);
+        warn!("Got a set request: {request:?}");
 
         Err(Status::unimplemented("set has not been implemented"))
     }
@@ -74,7 +74,7 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        info!("Got an invoke request: {:?}", request);
+        info!("Got an invoke request: {request:?}");
 
         let request_inner = request.into_inner();
         let entity_id: String = request_inner.entity_id.clone();
@@ -95,7 +95,7 @@ impl Provider for ProviderImpl {
 
             let client_result = ConsumerClient::connect(consumer_uri).await;
             if client_result.is_err() {
-                return Err(Status::internal(format!("{:?}", client_result.unwrap())));
+                return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
             }
             let mut client = client_result.unwrap();
 

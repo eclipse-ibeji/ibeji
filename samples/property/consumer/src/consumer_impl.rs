@@ -19,12 +19,9 @@ impl Consumer for ConsumerImpl {
         &self,
         request: Request<PublishRequest>,
     ) -> Result<Response<PublishResponse>, Status> {
-        let request_inner = request.into_inner();
+        let PublishRequest { entity_id, value } = request.into_inner();
 
-        info!(
-            "Received a publish for entity id {} with the value {}",
-            request_inner.entity_id, request_inner.value
-        );
+        info!("Received a publish for entity id {entity_id} with the value {value}");
 
         let response = PublishResponse {};
 
@@ -39,9 +36,9 @@ impl Consumer for ConsumerImpl {
         &self,
         request: Request<RespondRequest>,
     ) -> Result<Response<RespondResponse>, Status> {
-        warn!("Got a respons request: {:?}", request);
+        warn!("Got a response request: {request:?}");
 
-        Err(Status::unimplemented("set has not been implemented"))
+        Err(Status::unimplemented("respond has not been implemented"))
     }
 }
 

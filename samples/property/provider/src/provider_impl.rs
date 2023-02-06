@@ -57,7 +57,7 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<UnsubscribeRequest>,
     ) -> Result<Response<UnsubscribeResponse>, Status> {
-        warn!("Got an unsubscribe request: {:?}", request);
+        warn!("Got an unsubscribe request: {request:?}");
 
         Err(Status::unimplemented("unsubscribe has not been implemented"))
     }
@@ -67,7 +67,7 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Get request.
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
-        warn!("Got a get request: {:?}", request);
+        warn!("Got a get request: {request:?}");
 
         Err(Status::unimplemented("get has not been implemented"))
     }
@@ -77,7 +77,7 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        warn!("Got a set request: {:?}", request);
+        warn!("Got a set request: {request:?}");
 
         Err(Status::unimplemented("set has not been implemented"))
     }
@@ -90,7 +90,7 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        warn!("Got an invoke request: {:?}", request);
+        warn!("Got an invoke request: {request:?}");
 
         Err(Status::unimplemented("invoke has not been implemented"))
     }

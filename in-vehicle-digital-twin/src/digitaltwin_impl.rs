@@ -99,7 +99,7 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<UnregisterRequest>,
     ) -> Result<Response<UnregisterResponse>, Status> {
-        warn!("Got an unregister request: {:?}", request);
+        warn!("Got an unregister request: {request:?}");
 
         Err(Status::unimplemented("unregister has not been implemented"))
     }

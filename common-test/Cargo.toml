@@ -8,4 +8,4 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-log = "0.4.17"
+log = { workspace = true}

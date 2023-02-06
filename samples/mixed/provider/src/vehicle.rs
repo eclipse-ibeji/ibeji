@@ -17,7 +17,7 @@ impl Vehicle {
         Self {
             ambient_air_temperature: 75,
             is_air_conditioning_active: false,
-            ui_message: String::from(""),
+            ui_message: String::new(),
             hybrid_battery_remaining: 100.0,
         }
     }

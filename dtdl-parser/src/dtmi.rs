@@ -71,7 +71,7 @@ impl Dtmi {
 
         let fragment = match iri.fragment() {
             Some(fragment) => String::from(fragment.as_str()),
-            None => String::from(""),
+            None => String::new(),
         };
 
         Ok(Self {
