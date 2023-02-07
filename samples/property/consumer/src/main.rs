@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+use dt_model_identifiers::sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
@@ -14,13 +15,6 @@ use std::net::SocketAddr;
 use tonic::transport::Server;
 
 mod consumer_impl;
-
-/// The id for ambient air tempterature property.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
-
-/// The id for the URI property.
-const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -39,7 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for ambient air temperature.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest {
-        entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+        entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
@@ -57,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create the id (as a DTMI) for the ambient air temperature property.
     let ambient_air_temperature_property_id: Option<Dtmi> =
-        create_dtmi(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID);
+        create_dtmi(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
     if ambient_air_temperature_property_id.is_none() {
         panic!("Unable to create the dtmi");
     }
@@ -70,7 +64,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let entity = entity_result.unwrap();
 
     // Get the URI property from the entity.
-    let uri_property_result = entity.undefined_properties().get(URI_PROPERTY_ID);
+    let uri_property_result = entity.undefined_properties().get(sdv::property::uri::ID);
     if uri_property_result.is_none() {
         panic!("Unable to find the URI property");
     }
@@ -90,7 +84,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a subscribe request for ambient air temperature.");
     let mut client = ProviderClient::connect(uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
-        entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+        entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
         consumer_uri: String::from("http://[::1]:60010"), // Devskim: ignore DS137138
     });
     let _response = client.subscribe(request).await?;
@@ -98,7 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Consumer has conmpleted.");
+    info!("The Consumer has conpleted.");
 
     Ok(())
 }

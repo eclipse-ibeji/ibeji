@@ -235,6 +235,6 @@ mod digitaltwin_impl_tests {
 
         // Make sure that we populated the entity map from the contents of the DTDL.
         let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-        assert!(lock.len() == 14, "expected length was 14, actual length is {}", lock.len());
+        assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
     }
 }

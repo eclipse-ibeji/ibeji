@@ -1123,12 +1123,12 @@ mod model_parser_tests {
         );
         let model_dict = model_dict_result.unwrap();
         assert!(
-            model_dict.len() == 14,
-            "expected length was 14, actual length is {}",
+            model_dict.len() == 13,
+            "expected length was 13, actual length is {}",
             model_dict.len()
         );
 
-        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1");
+        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");
         assert!(ambient_air_temperature_id.is_some());
         let ambient_air_temperature_entity_result =
             model_dict.get(&ambient_air_temperature_id.unwrap());
@@ -1143,7 +1143,7 @@ mod model_parser_tests {
         assert!(ambient_air_temperature_uri_property_value_result.is_some());
         assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
-        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:command:HVAC:send_notification;1");
+        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1");
         assert!(send_notification_id.is_some());
         let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
         assert!(send_notification_entity_result.is_some());

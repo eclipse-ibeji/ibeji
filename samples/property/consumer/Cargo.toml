@@ -10,6 +10,7 @@ license = "MIT"
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
 dtdl-parser = { path = "../../../dtdl-parser" }
+dt-model-identifiers = { path = "../../../dt-model/dt-model-identifiers" }
 env_logger= { workspace = true }
 iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }

@@ -3,10 +3,11 @@
 
 mod consumer_impl;
 
+use dt_model_identifiers::sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
@@ -17,24 +18,6 @@ use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
-/// The ids commands.
-const ACTIVATE_AIR_CONDITIOING_COMMAND_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1";
-const SEND_NOTIFICATION_COMMAND_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
-const SET_UI_MESSAGE_COMMAND_ID: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1";
-
-/// The ids for the properties.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
-const IS_AIR_CONDITIONING_ACTIVE: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:is_air_conditioning_active;1";
-const HYBRID_BATTERY_REMAINING: &str =
-    "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1";
-
-/// The id for the URI property.
-const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";
-
 /// Start the send notification repeater.
 ///
 /// # Arguments
@@ -44,7 +27,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
     info!("Starting the Consumer's send notification repeater.");
     tokio::spawn(async move {
         loop {
-            // info!("Invoking the send_notification command on endpoint {}", &provider_uri);
+            debug!("Invoking the send_notification command on endpoint {}", &provider_uri);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -57,7 +40,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
             let payload: String = String::from("The send_notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
+                entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload,
@@ -93,7 +76,7 @@ fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
             let response_id = Uuid::new_v4().to_string();
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(SET_UI_MESSAGE_COMMAND_ID),
+                entity_id: String::from(sdv::vehicle::cabin::hvac::set_ui_message::ID),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload: array[index].to_string(),
@@ -131,7 +114,7 @@ fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: 
             let payload: String = format!("{is_active}");
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(ACTIVATE_AIR_CONDITIOING_COMMAND_ID),
+                entity_id: String::from(sdv::vehicle::cabin::hvac::activate_air_conditioning::ID),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload,
@@ -179,7 +162,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, Box<dyn std::error:
     let entity = entity_result.unwrap();
 
     // Get the URI property from the entity.
-    let uri_property_result = entity.undefined_properties().get(URI_PROPERTY_ID);
+    let uri_property_result = entity.undefined_properties().get(sdv::property::uri::ID);
     if uri_property_result.is_none() {
         panic!("Unable to find the URI property");
     }
@@ -229,36 +212,38 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
     let activate_air_conditioing_command_provider_uri =
-        get_provider_uri(ACTIVATE_AIR_CONDITIOING_COMMAND_ID).await?;
+        get_provider_uri(sdv::vehicle::cabin::hvac::activate_air_conditioning::ID).await?;
     let send_notification_command_provider_uri =
-        get_provider_uri(SEND_NOTIFICATION_COMMAND_ID).await?;
-    let set_ui_message_command_provider_uri = get_provider_uri(SET_UI_MESSAGE_COMMAND_ID).await?;
+        get_provider_uri(sdv::vehicle::cabin::hvac::send_notification::ID).await?;
+    let set_ui_message_command_provider_uri =
+        get_provider_uri(sdv::vehicle::cabin::hvac::set_ui_message::ID).await?;
 
     let ambient_air_temperature_property_provider_uri =
-        get_provider_uri(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID).await?;
+        get_provider_uri(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID).await?;
     let is_air_conditioning_active_property_uri =
-        get_provider_uri(IS_AIR_CONDITIONING_ACTIVE).await?;
-    let hybrid_battery_remaining_property_uri = get_provider_uri(HYBRID_BATTERY_REMAINING).await?;
+        get_provider_uri(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID).await?;
+    let hybrid_battery_remaining_property_uri =
+        get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await?;
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 
     send_subscribe_request(
         &ambient_air_temperature_property_provider_uri,
-        AMBIENT_AIR_TEMPERATURE_PROPERTY_ID,
+        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
         &consumer_uri,
     )
     .await?;
 
     send_subscribe_request(
         &is_air_conditioning_active_property_uri,
-        IS_AIR_CONDITIONING_ACTIVE,
+        sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
         &consumer_uri,
     )
     .await?;
 
     send_subscribe_request(
         &hybrid_battery_remaining_property_uri,
-        HYBRID_BATTERY_REMAINING,
+        sdv::vehicle::obd::hybrid_battery_remaining::ID,
         &consumer_uri,
     )
     .await?;
@@ -277,7 +262,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Consumer has conmpleted.");
+    info!("The Consumer has conpleted.");
 
     Ok(())
 }

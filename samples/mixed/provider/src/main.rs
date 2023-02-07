@@ -4,6 +4,7 @@
 mod provider_impl;
 mod vehicle;
 
+use dt_model_identifiers::sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, LevelFilter};
@@ -20,14 +21,6 @@ use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 use crate::vehicle::Vehicle;
-
-/// The ids for the properties.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
-const IS_AIR_CONDITIONING_ACTIVE: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:is_air_conditioning_active;1";
-const HYBRID_BATTERY_REMAINING: &str =
-    "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1";
 
 async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
     let urls;
@@ -65,9 +58,9 @@ async fn start_vehicle_simulator(
     info!("Starting the Provider's veicle simulator.");
     tokio::spawn(async move {
         loop {
-            let ambient_air_temperature: u32;
+            let ambient_air_temperature: i32;
             let is_air_conditioning_active: bool;
-            let hybrid_battery_remaining: f32;
+            let hybrid_battery_remaining: i32;
             let ui_message: String;
 
             {
@@ -85,19 +78,19 @@ async fn start_vehicle_simulator(
             info!("Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}; UI message is '{ui_message}'");
             publish(
                 subscription_map.clone(),
-                AMBIENT_AIR_TEMPERATURE_PROPERTY_ID,
+                sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
                 &ambient_air_temperature.to_string(),
             )
             .await;
             publish(
                 subscription_map.clone(),
-                IS_AIR_CONDITIONING_ACTIVE,
+                sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
                 &is_air_conditioning_active.to_string(),
             )
             .await;
             publish(
                 subscription_map.clone(),
-                HYBRID_BATTERY_REMAINING,
+                sdv::vehicle::obd::hybrid_battery_remaining::ID,
                 &hybrid_battery_remaining.to_string(),
             )
             .await;

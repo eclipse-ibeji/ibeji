@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+use dt_model_identifiers::sdv;
 use log::{debug, info, warn};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
@@ -15,12 +16,6 @@ use tonic::{Request, Response, Status};
 use crate::vehicle::Vehicle;
 
 pub type SubscriptionMap = HashMap<String, HashSet<String>>;
-
-/// The ids for commands.
-const ACTIVATE_AIR_CONDITIOING: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1";
-const SEND_NOTIFICATION: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
-const SET_UI_MESSAGE: &str = "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1";
 
 #[derive(Debug, Default)]
 pub struct ProviderImpl {
@@ -147,15 +142,15 @@ impl Provider for ProviderImpl {
         tokio::spawn(async move {
             let mut response_payload: String = format!("Successfully invoked {entity_id}");
 
-            if entity_id == ACTIVATE_AIR_CONDITIOING {
+            if entity_id == sdv::vehicle::cabin::hvac::activate_air_conditioning::ID {
                 let result = ProviderImpl::activate_air_conditioning(vehicle.clone(), &payload);
                 if result.is_err() {
                     response_payload =
                         format!("Failed to invoke {} due to: {}", entity_id, result.unwrap_err());
                 }
-            } else if entity_id == SEND_NOTIFICATION {
+            } else if entity_id == sdv::vehicle::cabin::hvac::send_notification::ID {
                 ProviderImpl::send_notification(&payload);
-            } else if entity_id == SET_UI_MESSAGE {
+            } else if entity_id == sdv::vehicle::cabin::hvac::set_ui_message::ID {
                 ProviderImpl::set_ui_message(vehicle.clone(), &payload);
             } else {
                 response_payload = format!("Error: The entity id {entity_id} is not recognized.");

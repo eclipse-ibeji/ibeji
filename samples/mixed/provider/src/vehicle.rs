@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-const MAX_HVAC_TEMPERATURE: u32 = 100;
-const MIN_HVAC_TEMPERATURE: u32 = 65;
+const MAX_HVAC_TEMPERATURE: i32 = 100;
+const MIN_HVAC_TEMPERATURE: i32 = 65;
 
 #[derive(Debug, Default)]
 pub struct Vehicle {
-    pub ambient_air_temperature: u32,
+    pub ambient_air_temperature: i32,
     pub is_air_conditioning_active: bool,
     pub ui_message: String,
-    pub hybrid_battery_remaining: f32,
+    pub hybrid_battery_remaining: i32,
 }
 
 impl Vehicle {
@@ -18,13 +18,13 @@ impl Vehicle {
             ambient_air_temperature: 75,
             is_air_conditioning_active: false,
             ui_message: String::new(),
-            hybrid_battery_remaining: 100.0,
+            hybrid_battery_remaining: 100,
         }
     }
 
     pub fn execute_epoch(&mut self) {
         // A/C will not be active without power.
-        if self.hybrid_battery_remaining == 0.0 {
+        if self.hybrid_battery_remaining == 0 {
             self.is_air_conditioning_active = false;
         }
 
@@ -42,12 +42,8 @@ impl Vehicle {
         }
 
         // Update the A/C's use of the battery.
-        if self.is_air_conditioning_active && self.hybrid_battery_remaining > 0.0 {
-            self.hybrid_battery_remaining -= 0.10;
-            // To deal with rounding errors, once we are below 0.10, we will set hybrid_battery_remaining to 0.0
-            if self.hybrid_battery_remaining < 0.10 {
-                self.hybrid_battery_remaining = 0.0
-            }
+        if self.is_air_conditioning_active && self.hybrid_battery_remaining > 0 {
+            self.hybrid_battery_remaining -= 1;
         }
     }
 }

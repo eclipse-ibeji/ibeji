@@ -2,15 +2,15 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac;1",
+    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
     "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
         "@type": ["Property", "Temperature", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1",
         "name": "ambient_air_temperature",
         "description": "The immediate surroundings air temperature (in Fahrenheit).",
-        "schema": "double",
+        "schema": "integer",
         "unit": "degreeFahrenheit",
         "remote_access": [
           {

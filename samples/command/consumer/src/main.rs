@@ -3,6 +3,7 @@
 
 mod consumer_impl;
 
+use dt_model_identifiers::sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
@@ -16,13 +17,6 @@ use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
-
-/// The id for send notification command.
-const SEND_NOTIFICATION_COMMAND_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1";
-
-/// The id for the URI property.
-const URI_PROPERTY_ID: &str = "dtmi:sdv:property:uri;1";
 
 /// Start the ambient air temperature data stream.
 ///
@@ -46,7 +40,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
             let payload: String = String::from("The send_notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
+                entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload,
@@ -77,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest {
-        entity_id: String::from(SEND_NOTIFICATION_COMMAND_ID),
+        entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
@@ -94,7 +88,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the send_notification command.
-    let send_notification_command_id: Option<Dtmi> = create_dtmi(SEND_NOTIFICATION_COMMAND_ID);
+    let send_notification_command_id: Option<Dtmi> =
+        create_dtmi(sdv::vehicle::cabin::hvac::send_notification::ID);
     if send_notification_command_id.is_none() {
         panic!("Unable to create the dtmi");
     }
@@ -107,7 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let entity = entity_result.unwrap();
 
     // Get the URI property from the entity.
-    let uri_property_result = entity.undefined_properties().get(URI_PROPERTY_ID);
+    let uri_property_result = entity.undefined_properties().get(sdv::property::uri::ID);
     if uri_property_result.is_none() {
         panic!("Unable to find the URI property");
     }
@@ -129,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Consumer has conmpleted.");
+    info!("The Consumer has conpleted.");
 
     Ok(())
 }

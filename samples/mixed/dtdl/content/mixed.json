@@ -2,16 +2,16 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac;1",
+    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
     "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
         "@type": ["Command", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:activate_air_conditioning;1",
-        "name": "activate_air_conditioning",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:ActivateAirConditioning;1",
+        "name": "ActivateAirConditioning",
         "request": {
-          "name": "activate_air_conditioning",
-          "displayName": "activate_air_conditioning",
+          "name": "ActivateAirConditioning",
+          "displayName": "Activate Air Conditioning",
           "descriptiption": "Activate the air conditioning.",
           "schema": "boolean"
         },
@@ -25,11 +25,11 @@
       },
       {
         "@type": ["Command", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1",
-        "name": "send_notification",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1",
+        "name": "SendNotification",
         "request": {
-          "name": "send_notification",
-          "displayName": "send_notification",
+          "name": "SendNotification",
+          "displayName": "Send Notification",
           "descriptiption": "Send a notification to the HVAC.",
           "schema": "string"
         },
@@ -43,11 +43,11 @@
       },
       {
         "@type": ["Command", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:set_ui_message;1",
-        "name": "set_ui_message",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:SetUiMessage;1",
+        "name": "SetUiMessage",
         "request": {
-          "name": "set_ui_message",
-          "displayName": "set_ui_message",
+          "name": "SetUiMessage",
+          "displayName": "Set UI Message",
           "descriptiption": "Set a UI message on the HVAC.",
           "schema": "string"
         },
@@ -61,10 +61,10 @@
       },
       {
           "@type": ["Property", "Temperature", "RemotelyAccessible"],
-          "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1",
-          "name": "ambient_air_temperature",
+          "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1",
+          "name": "AmbientAirTemperature",
           "description": "The immediate surroundings air temperature (in Fahrenheit).",
-          "schema": "double",
+          "schema": "integer",
           "unit": "degreeFahrenheit",
           "remote_access": [
             {
@@ -76,8 +76,8 @@
         },
         {
           "@type": ["Property", "Temperature", "RemotelyAccessible"],
-          "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:is_air_conditioning_active;1",
-          "name": "is_air_conditioning_active",
+          "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1",
+          "name": "IsAirConditioningActive",
           "description": "Is air conditioning active?",
           "schema": "boolean",
           "remote_access": [
@@ -93,15 +93,15 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:vehicle:obd;1",
+    "@id": "dtmi:sdv:Vehicle:OBD;1",
     "description": "On-board Diagnostics Interface",
     "contents": [
       {
           "@type": ["Property", "Temperature", "RemotelyAccessible"],
-          "@id": "dtmi:org:eclipse:sdv:vehcile:obd:hybrid_battery_remaining;1",
-          "name": "hybrid_battery_remaining",
+          "@id": "dtmi:sdv:Vehicle:OBD:HybridBatteryRemaining;1",
+          "name": "HybridBatteryRemaining",
           "description": "The immediate surroundings air temperature (in Fahrenheit).",
-          "schema": "double",
+          "schema": "integer",
           "unit": "percent",
           "remote_access": [
             {

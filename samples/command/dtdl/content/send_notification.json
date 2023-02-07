@@ -2,16 +2,16 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac;1",
+    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
     "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
         "@type": ["Command", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:send_notification;1",
-        "name": "send_notification",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1",
+        "name": "SendNotification",
         "request": {
-          "name": "send_notification",
-          "displayName": "send_notification",
+          "name": "SendNotification",
+          "displayName": "Send Notification",
           "descriptiption": "Send a notification to the HVAC.",
           "schema": "string"
         },

@@ -1,0 +1,11 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+
+[package]
+name = "model-identifiers"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+

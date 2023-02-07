@@ -3,6 +3,7 @@
 
 mod provider_impl;
 
+use dt_model_identifiers::sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{info, LevelFilter};
@@ -18,10 +19,6 @@ use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
-
-/// The id for ambient air tempterature property.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:vehicle:cabin:hvac:ambient_air_temperature;1";
 
 /// Start the ambient air temperature data stream.
 ///
@@ -39,7 +36,7 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
             // This block controls the lifetime of the lock.
             {
                 let lock: MutexGuard<SubscriptionMap> = subscription_map.lock().unwrap();
-                let get_result = lock.get(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID);
+                let get_result = lock.get(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
                 urls = match get_result {
                     Some(val) => val.clone(),
                     None => HashSet::new(),
@@ -58,7 +55,7 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+                    entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
                     value: temperature.to_string(),
                 });
 
