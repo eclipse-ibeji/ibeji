@@ -73,7 +73,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get the value for the URI property.
     let uri_property_value_result = uri_property.get("@value");
     if uri_property_value_result.is_none() {
-        info!("Unable to find the value for the URI for the ambient air temperature's provider.");
+        panic!("Unable to find the value for the URI for ambient air temperature's provider.");
     }
     let uri_property_value = uri_property_value_result.unwrap();
     let uri_str_option = uri_property_value.as_str();
