@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use dt_model_identifiers::sdv;
+use dt_model_identifiers::sdv_v1 as sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};

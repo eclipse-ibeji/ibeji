@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use dt_model_identifiers::sdv;
+use dt_model_identifiers::sdv_v1 as sdv;
 use log::{debug, info, warn};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{

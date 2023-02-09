@@ -3,7 +3,7 @@
 
 mod provider_impl;
 
-use dt_model_identifiers::sdv;
+use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{info, LevelFilter};

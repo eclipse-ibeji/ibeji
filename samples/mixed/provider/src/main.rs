@@ -4,10 +4,10 @@
 mod provider_impl;
 mod vehicle;
 
-use dt_model_identifiers::sdv;
+use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{debug, info, LevelFilter};
+use log::{debug, info, LevelFilter, warn};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -47,7 +47,11 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
             value: String::from(value),
         });
 
-        let _response = client.publish(request).await;
+        let response = client.publish(request).await;
+        match response {
+            Ok(_) => (),
+            Err(status) => warn!("{status:?}")
+        }         
     }
 }
 

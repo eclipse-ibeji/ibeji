@@ -6,7 +6,7 @@
       {
         "@type": ["Property", "Temperature", "RemotelyAccessible"],
         "name": "Cabin_AmbientAirTemperature",
-        "@id": "dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1",        
+        "@id": "dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1",
         "description": "The immediate surroundings air temperature (in Fahrenheit).",
         "schema": "double",
         "unit": "degreeFahrenheit",
