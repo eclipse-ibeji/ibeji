@@ -7,7 +7,7 @@ use dt_model_identifiers::sdv_v1 as sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
-use log::{debug, info, LevelFilter, warn};
+use log::{debug, info, warn, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
@@ -49,8 +49,8 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
             let response = client.invoke(request).await;
             match response {
                 Ok(_) => (),
-                Err(status) => warn!("{status:?}")
-            }            
+                Err(status) => warn!("{status:?}"),
+            }
 
             sleep(Duration::from_secs(5)).await;
         }
@@ -89,7 +89,7 @@ fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
             let response = client.invoke(request).await;
             match response {
                 Ok(_) => index = (index + 1) % array.len(),
-                Err(status) => warn!("{status:?}")
+                Err(status) => warn!("{status:?}"),
             }
 
             sleep(Duration::from_secs(5)).await;
@@ -129,7 +129,7 @@ fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: 
             let response = client.invoke(request).await;
             match response {
                 Ok(_) => is_active = !is_active,
-                Err(status) => warn!("{status:?}")
+                Err(status) => warn!("{status:?}"),
             }
 
             is_active = !is_active;
@@ -144,7 +144,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     debug!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010") // Devskim: ignore DS137138
         .await
-        .map_err(|error| format!("{error}"))?; 
+        .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
     let response = client.find_by_id(request).await.map_err(|error| format!("{error}"))?;
     let dtdl = response.into_inner().dtdl;

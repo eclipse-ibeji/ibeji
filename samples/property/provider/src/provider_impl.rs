@@ -99,10 +99,9 @@ impl Provider for ProviderImpl {
 #[cfg(test)]
 mod provider_impl_tests {
     use super::*;
-    use async_std::task;
 
-    #[test]
-    fn subscribe_test() {
+    #[tokio::test]
+    async fn subscribe_test() {
         let subscription_map = Arc::new(Mutex::new(HashMap::new()));
         let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
 
@@ -116,21 +115,21 @@ mod provider_impl_tests {
             entity_id: first_id.clone(),
             consumer_uri: first_uri.clone(),
         });
-        let first_result = task::block_on(provider_impl.subscribe(first_request));
+        let first_result = provider_impl.subscribe(first_request).await;
         assert!(first_result.is_ok());
 
         let second_request = tonic::Request::new(SubscribeRequest {
             entity_id: first_id.clone(),
             consumer_uri: second_uri.clone(),
         });
-        let second_result = task::block_on(provider_impl.subscribe(second_request));
+        let second_result = provider_impl.subscribe(second_request).await;
         assert!(second_result.is_ok());
 
         let third_request = tonic::Request::new(SubscribeRequest {
             entity_id: second_id.clone(),
             consumer_uri: third_uri.clone(),
         });
-        let third_result = task::block_on(provider_impl.subscribe(third_request));
+        let third_result = provider_impl.subscribe(third_request).await;
         assert!(third_result.is_ok());
 
         let lock: MutexGuard<HashMap<String, HashSet<String>>> = subscription_map.lock().unwrap();

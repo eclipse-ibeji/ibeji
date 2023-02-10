@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use async_std::task;
+use futures::executor::block_on;
 use ibeji_common::find_full_path;
 use json_ld::{context, Document, NoLoader, Node, Object};
 use log::warn;
@@ -93,13 +93,10 @@ impl ModelParser {
             self.preprocess(&mut doc)?;
 
             let mut loader = NoLoader::<Value>::new();
-            let dtdl_doc = match task::block_on(doc.expand::<context::Json<Value>, _>(&mut loader))
-            {
-                Ok(expanded_doc) => expanded_doc,
-                Err(error) => {
-                    return Err(format!("Failed to expand one of the JSON texts due to: {error:?}"))
-                }
-            };
+            let dtdl_doc =
+                block_on(doc.expand::<context::Json<Value>, _>(&mut loader)).map_err(|error| {
+                    format!("Failed to expand one of the JSON texts due to: {error:?}")
+                })?;
 
             for item in dtdl_doc.iter() {
                 let object: &Object<serde_json::Value> = item;
@@ -163,7 +160,7 @@ impl ModelParser {
             Ok(json) => json,
             Err(error) => {
                 return Err(format!(
-                    "Unable to pasrse the context located at {} due to: {:?}",
+                    "Unable to parse the context located at {} due to: {:?}",
                     filepath.display(),
                     error
                 ))
@@ -1101,8 +1098,8 @@ mod model_parser_tests {
         );
     }
 
+    #[rustfmt::skip]
     #[test]
-    # [rustfmt::skip]
     fn demo_validation_test() {
         set_dtdl_path();
 

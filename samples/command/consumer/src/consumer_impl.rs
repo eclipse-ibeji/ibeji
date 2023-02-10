@@ -45,11 +45,10 @@ impl Consumer for ConsumerImpl {
 #[cfg(test)]
 mod consumer_impl_tests {
     use super::*;
-    use async_std::task;
     use uuid::Uuid;
 
-    #[test]
-    fn respond_test() {
+    #[tokio::test]
+    async fn respond_test() {
         let consumer_impl = ConsumerImpl {};
 
         let entity_id = String::from("some-id");
@@ -57,7 +56,7 @@ mod consumer_impl_tests {
         let payload = String::from("some-payload");
 
         let request = tonic::Request::new(RespondRequest { entity_id, response_id, payload });
-        let result = task::block_on(consumer_impl.respond(request));
+        let result = consumer_impl.respond(request).await;
         assert!(result.is_ok());
     }
 }

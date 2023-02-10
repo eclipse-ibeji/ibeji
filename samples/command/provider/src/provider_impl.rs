@@ -116,7 +116,6 @@ impl Provider for ProviderImpl {
 #[cfg(test)]
 mod provider_impl_tests {
     use super::*;
-    use async_std::task;
     use uuid::Uuid;
 
     #[tokio::test]
@@ -132,7 +131,7 @@ mod provider_impl_tests {
 
         let request =
             tonic::Request::new(InvokeRequest { entity_id, consumer_uri, response_id, payload });
-        let result = task::block_on(provider_impl.invoke(request));
+        let result = provider_impl.invoke(request).await;
         assert!(result.is_ok());
 
         // Note: this test does not check that the response has successfully been sent.

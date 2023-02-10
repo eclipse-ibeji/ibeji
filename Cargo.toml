@@ -21,6 +21,7 @@ members = [
 [workspace.dependencies]
 async-std = "^1.5"
 env_logger= "0.10.0"
+futures = "0.3"
 generic-json = "^0.7"
 iref = "^2.0.3"
 lazy_static = "1.4.0"

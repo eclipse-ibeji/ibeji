@@ -7,7 +7,7 @@ mod vehicle;
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{debug, info, LevelFilter, warn};
+use log::{debug, info, warn, LevelFilter};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -50,8 +50,8 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
         let response = client.publish(request).await;
         match response {
             Ok(_) => (),
-            Err(status) => warn!("{status:?}")
-        }         
+            Err(status) => warn!("{status:?}"),
+        }
     }
 }
 

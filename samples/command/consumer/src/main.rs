@@ -7,7 +7,7 @@ use dt_model_identifiers::sdv_v1 as sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
-use log::{info, LevelFilter, warn};
+use log::{info, warn, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
@@ -49,8 +49,8 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
             let response = client.invoke(request).await;
             match response {
                 Ok(_) => (),
-                Err(status) => warn!("{status:?}")
-            } 
+                Err(status) => warn!("{status:?}"),
+            }
 
             sleep(Duration::from_millis(1000)).await;
         }

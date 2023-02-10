@@ -150,8 +150,8 @@ impl DigitalTwinImpl {
         }
         let model_dict = model_dict_result.unwrap();
 
+        let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
         for (id, _entity) in model_dict {
-            let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
             lock.insert(id.to_string(), doc.clone());
             debug!("Registered DTDL for id {}", &id);
         }
@@ -163,7 +163,6 @@ impl DigitalTwinImpl {
 #[cfg(test)]
 mod digitaltwin_impl_tests {
     use super::*;
-    use async_std::task;
     use ibeji_common::find_full_path;
     use ibeji_common_test::set_dtdl_path;
     use std::fs;
@@ -178,8 +177,8 @@ mod digitaltwin_impl_tests {
         }
     }
 
-    #[test]
-    fn find_by_id_test() {
+    #[tokio::test]
+    async fn find_by_id_test() {
         set_dtdl_path();
 
         // Note: We can use any valid JSON.  We'll use samples/remotely_accessible_resource.json.
@@ -208,15 +207,15 @@ mod digitaltwin_impl_tests {
         }
 
         let request = tonic::Request::new(FindByIdRequest { entity_id });
-        let result = task::block_on(digital_twin_impl.find_by_id(request));
+        let result = digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
         let dtdl = response.into_inner().dtdl;
         assert!(!dtdl.is_empty());
     }
 
-    #[test]
-    fn register_test() {
+    #[tokio::test]
+    async fn register_test() {
         set_dtdl_path();
 
         let entity_map = Arc::new(Mutex::new(HashMap::new()));
@@ -230,7 +229,7 @@ mod digitaltwin_impl_tests {
         let dtdl = dtdl_result.unwrap();
 
         let request = tonic::Request::new(RegisterRequest { dtdl });
-        let result = task::block_on(digital_twin_impl.register(request));
+        let result = digital_twin_impl.register(request).await;
         assert!(result.is_ok());
 
         // Make sure that we populated the entity map from the contents of the DTDL.
