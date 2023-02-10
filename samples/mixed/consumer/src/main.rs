@@ -24,11 +24,9 @@ use uuid::Uuid;
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
 fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's send notification repeater.");
+    debug!("Starting the Consumer's send_notification repeater.");
     tokio::spawn(async move {
         loop {
-            debug!("Invoking the send_notification command on endpoint {}", &provider_uri);
-
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 continue;
@@ -52,6 +50,8 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
+            info!("Invoked the send_notification command on endpoint {}", &provider_uri);
+
             sleep(Duration::from_secs(5)).await;
         }
     });
@@ -63,14 +63,12 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
 fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's send notification repeater.");
+    debug!("Starting the Consumer's set_ui_message repeater.");
     tokio::spawn(async move {
         let array: [&str; 10] =
             ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
         let mut index: usize = 0;
         loop {
-            debug!("Invoking the set_ui_message command on endpoint {}", &provider_uri);
-
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 continue;
@@ -92,6 +90,8 @@ fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
                 Err(status) => warn!("{status:?}"),
             }
 
+            info!("Invoked the set_ui_message command on endpoint {}", &provider_uri);
+
             sleep(Duration::from_secs(5)).await;
         }
     });
@@ -103,12 +103,10 @@ fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
 fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's send notification repeater.");
+    debug!("Starting the Consumer's activate_air_conditioning repeater.");
     tokio::spawn(async move {
         let mut is_active = true;
         loop {
-            debug!("Invoking the set_ui_message command on endpoint {}", &provider_uri);
-
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 continue;
@@ -131,6 +129,8 @@ fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: 
                 Ok(_) => is_active = !is_active,
                 Err(status) => warn!("{status:?}"),
             }
+
+            info!("Invoked the activate_air_conditioning command on endpoint {}", &provider_uri);
 
             is_active = !is_active;
 
@@ -198,7 +198,7 @@ async fn send_subscribe_request(
     entity_id: &str,
     consumer_uri: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    info!("Sending a subscribe request for {}.", entity_id);
+    debug!("Sending a subscribe request for {}.", entity_id);
     let mut client = ProviderClient::connect(provider_uri.to_string()).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(entity_id),
@@ -291,7 +291,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Consumer has conpleted.");
+    debug!("The Consumer has conpleted.");
 
     Ok(())
 }

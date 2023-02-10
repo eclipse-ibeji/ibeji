@@ -5,7 +5,7 @@ mod provider_impl;
 
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
@@ -23,10 +23,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    info!("Preparing the Provider's DTDL.");
+    debug!("Preparing the Provider's DTDL.");
     let provider_dtdl_path = find_full_path("content/send_notification.json")?;
     let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    info!("Prepared the Provider's DTDL.");
+    debug!("Prepared the Provider's DTDL.");
 
     // Setup the HTTP server.
     let addr: SocketAddr = "[::1]:40010".parse()?;
@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 
-    info!("Registering the Provider's DTDL with the Digital Twin Service.");
+    debug!("Registering the Provider's DTDL with the Digital Twin Service.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;
@@ -43,7 +43,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Provider has completed.");
+    debug!("The Provider has completed.");
 
     Ok(())
 }

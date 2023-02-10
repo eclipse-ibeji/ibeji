@@ -6,7 +6,7 @@ mod provider_impl;
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -26,7 +26,7 @@ use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 /// `id_to_subscribers_map` - The id to subscribers map.
 #[allow(clippy::collapsible_else_if)]
 fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
-    info!("Starting the Provider's ambient air temperature data stream.");
+    debug!("Starting the Provider's ambient air temperature data stream.");
     tokio::spawn(async move {
         let mut temperature: u32 = 75;
         let mut is_temperature_increasing: bool = true;
@@ -42,8 +42,6 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                     None => HashSet::new(),
                 };
             }
-
-            info!("Ambient air temperature is {}", temperature);
 
             for url in urls {
                 info!("Publishing the ambient air temperature as {} to {}", temperature, &url);
@@ -80,7 +78,7 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                 }
             }
 
-            sleep(Duration::from_millis(1000)).await;
+            sleep(Duration::from_secs(5)).await;
         }
     });
 }
@@ -93,10 +91,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    info!("Preparing the Provider's DTDL.");
+    debug!("Preparing the Provider's DTDL.");
     let provider_dtdl_path = find_full_path("content/ambient_air_temperature.json")?;
     let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    info!("Prepared the Provider's DTDL.");
+    debug!("Prepared the Provider's DTDL.");
 
     // Setup the HTTP server.
     let addr: SocketAddr = "[::1]:40010".parse()?;
@@ -105,7 +103,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 
-    info!("Registering the Provider's DTDL with the Digital Twin Service.");
+    debug!("Registering the Provider's DTDL with the Digital Twin Service.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;
@@ -115,7 +113,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Provider has completed.");
+    debug!("The Provider has completed.");
 
     Ok(())
 }

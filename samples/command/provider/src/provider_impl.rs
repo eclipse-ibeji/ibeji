@@ -74,8 +74,6 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        info!("Got an invoke request: {request:?}");
-
         let request_inner = request.into_inner();
         let entity_id: String = request_inner.entity_id.clone();
         let response_id: String = request_inner.response_id.clone();
@@ -88,12 +86,7 @@ impl Provider for ProviderImpl {
         );
 
         tokio::spawn(async move {
-            info!(
-                "Sending an invoke response to consumer URI {} for entity id {}",
-                &consumer_uri, &entity_id
-            );
-
-            let client_result = ConsumerClient::connect(consumer_uri).await;
+            let client_result = ConsumerClient::connect(consumer_uri.clone()).await;
             if client_result.is_err() {
                 return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
             }
@@ -101,10 +94,20 @@ impl Provider for ProviderImpl {
 
             let payload: String = String::from("The send_notification response.");
 
-            let respond_request =
-                tonic::Request::new(RespondRequest { entity_id, response_id, payload });
+            let respond_request = tonic::Request::new(RespondRequest {
+                entity_id: entity_id.clone(),
+                response_id,
+                payload,
+            });
 
-            client.respond(respond_request).await
+            let response_future = client.respond(respond_request).await;
+
+            info!(
+                "Sent an invoke response to consumer URI {} for entity id {}",
+                &consumer_uri, &entity_id
+            );
+
+            response_future
         });
 
         let response = InvokeResponse {};

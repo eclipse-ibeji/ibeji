@@ -59,7 +59,7 @@ async fn start_vehicle_simulator(
     subscription_map: Arc<Mutex<SubscriptionMap>>,
     vehicle: Arc<Mutex<Vehicle>>,
 ) {
-    info!("Starting the Provider's veicle simulator.");
+    debug!("Starting the Provider's vehicle simulator.");
     tokio::spawn(async move {
         loop {
             let ambient_air_temperature: i32;
@@ -99,7 +99,7 @@ async fn start_vehicle_simulator(
             )
             .await;
 
-            sleep(Duration::from_millis(1000)).await;
+            sleep(Duration::from_secs(5)).await;
         }
     });
 }
@@ -112,10 +112,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    info!("Preparing the Provider's DTDL.");
+    debug!("Preparing the Provider's DTDL.");
     let provider_dtdl_path = find_full_path("content/mixed.json")?;
     let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    info!("Prepared the Provider's DTDL.");
+    debug!("Prepared the Provider's DTDL.");
 
     // Setup the HTTP server.
     let addr: SocketAddr = "[::1]:40010".parse()?;
@@ -126,7 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 
-    info!("Registering the Provider's DTDL with the Digital Twin Service.");
+    debug!("Registering the Provider's DTDL with the In-Vehicle Digital Twin Service.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;

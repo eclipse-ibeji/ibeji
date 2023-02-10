@@ -31,18 +31,16 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
-        info!("Received a subscribe request from URI {} for id {}", &consumer_uri, &entity_id);
-
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
         let mut uris = match lock.get(&entity_id) {
             Some(get_value) => get_value.clone(),
             None => HashSet::new(),
         };
-        uris.insert(consumer_uri);
-        lock.insert(entity_id, uris);
+        uris.insert(consumer_uri.clone());
+        lock.insert(entity_id.clone(), uris);
 
-        info!("Completed subscription.");
+        info!("Completed the subscribe request from URI {consumer_uri} for id {entity_id}");
 
         let response = SubscribeResponse {};
 

@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 use env_logger::{Builder, Target};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use proto::digitaltwin::digital_twin_server::DigitalTwinServer;
 use proto::provider::provider_server::ProviderServer;
 use std::collections::HashMap;
@@ -18,7 +18,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
     Builder::new().filter(None, LevelFilter::Info).target(Target::Stdout).init();
 
-    info!("The Digital Twin Service has started.");
+    info!("The In-Vehicle Digital Twin Service has started.");
 
     // Setup the HTTP server.
     let addr: SocketAddr = "[::1]:50010".parse()?;
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Digital Twin Service has completed.");
+    debug!("The Digital Twin Service has completed.");
 
     Ok(())
 }

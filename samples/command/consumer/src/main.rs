@@ -7,7 +7,7 @@ use dt_model_identifiers::sdv_v1 as sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
-use log::{info, warn, LevelFilter};
+use log::{debug, info, warn, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
@@ -24,11 +24,9 @@ use uuid::Uuid;
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
 fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) {
-    info!("Starting the Consumer's send notification repeater.");
+    debug!("Starting the Consumer's send notification repeater.");
     tokio::spawn(async move {
         loop {
-            info!("Invoking the send_notification command on endpoint {}", &provider_uri);
-
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 continue;
@@ -52,7 +50,9 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            sleep(Duration::from_millis(1000)).await;
+            info!("Invoked the send_notification command on endpoint {}", &provider_uri);
+
+            sleep(Duration::from_secs(5)).await;
         }
     });
 }
@@ -81,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dtdl = response.into_inner().dtdl.clone();
     info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
 
-    info!("Parsing the DTDL.");
+    debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
     let json_texts = vec![dtdl];
     let model_dict_result = parser.parse(&json_texts);
@@ -89,7 +89,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         panic!("Failed to parse the DTDL: {error}");
     }
     let model_dict = model_dict_result.unwrap();
-    info!("The DTDL parser has successfully parsed the DTDL.");
+    debug!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the send_notification command.
     let send_notification_command_id: Option<Dtmi> =
@@ -128,7 +128,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    info!("The Consumer has conpleted.");
+    debug!("The Consumer has conpleted.");
 
     Ok(())
 }

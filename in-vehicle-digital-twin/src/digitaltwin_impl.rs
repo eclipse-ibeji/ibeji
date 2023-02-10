@@ -33,7 +33,7 @@ impl DigitalTwin for DigitalTwinImpl {
         let request_inner = request.into_inner();
         let entity_id = request_inner.entity_id;
 
-        info!("Received a find_by_id request for entity id {}", &entity_id);
+        debug!("Received a find_by_id request for entity id {entity_id}");
 
         let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
         let val = match lock.get(&entity_id) {
@@ -74,19 +74,17 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<RegisterRequest>,
     ) -> Result<Response<RegisterResponse>, Status> {
-        debug!("Received a register request.");
-
         let request_inner = request.into_inner();
         let dtdl = request_inner.dtdl;
 
-        let register_each_one_result = self.register_each_one(dtdl);
+        let register_each_one_result = self.register_each_one(&dtdl);
         if let Err(error) = register_each_one_result {
             return Err(Status::internal(error));
         }
 
         let response = RegisterResponse {};
 
-        debug!("Completed registration.");
+        info!("Completed the resgister request.");
 
         Ok(Response::new(response))
     }
@@ -111,7 +109,7 @@ impl DigitalTwinImpl {
     /// # Arguments
     /// * `dtdl` - The DTDL for the array.
     #[allow(unused_variables)]
-    fn register_each_one(&self, dtdl: String) -> Result<(), String> {
+    fn register_each_one(&self, dtdl: &str) -> Result<(), String> {
         let doc: Value = match serde_json::from_str(&dtdl) {
             Ok(json) => json,
             Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),

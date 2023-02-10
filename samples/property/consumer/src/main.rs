@@ -5,7 +5,7 @@ use dt_model_identifiers::sdv_v1 as sdv;
 use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
@@ -39,7 +39,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dtdl = response.into_inner().dtdl.clone();
     info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
 
-    info!("Parsing the DTDL.");
+    debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
     let json_texts = vec![dtdl];
     let model_dict_result = parser.parse(&json_texts);
@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         panic!("Failed to parse the DTDL: {error}");
     }
     let model_dict = model_dict_result.unwrap();
-    info!("The DTDL parser has successfully parsed the DTDL.");
+    debug!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the ambient air temperature property.
     let ambient_air_temperature_property_id: Option<Dtmi> =
@@ -80,19 +80,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let uri = String::from(uri_str_option.unwrap());
     info!("The URI for the ambient air temperature's provider is {}", &uri);
 
-    // Use the URI to subscribe to thr ambient air temperature data feed.
-    info!("Sending a subscribe request for ambient air temperature.");
+    // Use the URI to subscribe to thr ambient air temperature data feed.\
     let mut client = ProviderClient::connect(uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
         consumer_uri: String::from("http://[::1]:60010"), // Devskim: ignore DS137138
     });
     let _response = client.subscribe(request).await?;
-    info!("Subscribe request completed.");
+    info!("Subscribed to ambient air temperature.");
 
     server_future.await?;
 
-    info!("The Consumer has conpleted.");
+    debug!("The Consumer has conpleted.");
 
     Ok(())
 }
