@@ -36,7 +36,8 @@ impl DigitalTwin for DigitalTwinImpl {
         debug!("Received a find_by_id request for entity id {entity_id}");
 
         let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-        let val = match lock.get(&entity_id) {
+        let val_option = lock.get(&entity_id);
+        let val = match val_option {
             Some(v) => v,
             None => {
                 return Err(Status::not_found(format!(
@@ -110,7 +111,7 @@ impl DigitalTwinImpl {
     /// * `dtdl` - The DTDL for the array.
     #[allow(unused_variables)]
     fn register_each_one(&self, dtdl: &str) -> Result<(), String> {
-        let doc: Value = match serde_json::from_str(&dtdl) {
+        let doc: Value = match serde_json::from_str(dtdl) {
             Ok(json) => json,
             Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),
         };
