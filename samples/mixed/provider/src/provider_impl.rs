@@ -64,7 +64,8 @@ impl Provider for ProviderImpl {
 
         let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
             self.subscription_map.lock().unwrap();
-        let mut uris = match lock.get(&entity_id) {
+        let uris_option = lock.get(&entity_id);
+        let mut uris = match uris_option {
             Some(get_value) => get_value.clone(),
             None => HashSet::new(),
         };
