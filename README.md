@@ -40,22 +40,22 @@ sudo apt install gcc
 
 ### <a name="install-rust">Install Rust</a>
 
-At this point in time, you will need to use the nightly release of Rust. While it is not ideal to rely on a nightly release, we should be able to rely on the
+At this point in time, you will need to use a nightly release of Rust. While it is not ideal to rely on a nightly release, we should be able to rely on the
 stable release of Rust sometime in the not too distant future when some of the Rust crates that we use can all rely on it as well. To install Rust, do the following:
 
 ```shell
 sudo apt update
 sudo apt install -y snapd
 sudo snap install rustup --classic
-rustup toolchain install nightly
-rustup default nightly
+rustup toolchain install nightly-2022-08-11
+rustup default nightly-2022-08-11
 ```
 
-If you have already installed Rust, but you are using another release, then you can switch to the nightly release by running the following commands:
+If you have already installed Rust, but you are using another release, then you can switch to the nightly-2022-08-11 release by running the following commands:
 
 ```shell
-rustup toolchain install nightly
-rustup default nightly
+rustup toolchain install nightly-2022-08-11
+rustup default nightly-2022-08-11
 ```
 
 ### <a name="install-protobuf-compiler">Install Protobuf Compiler</a>
