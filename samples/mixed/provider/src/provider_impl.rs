@@ -24,27 +24,20 @@ pub struct ProviderImpl {
 }
 
 impl ProviderImpl {
-    fn activate_air_conditioning(
+    fn set_is_air_conditioning_active(
         vehicle: Arc<Mutex<Vehicle>>,
-        payload: &str,
+        value: &str,
     ) -> Result<(), String> {
-        let value: bool = FromStr::from_str(payload).map_err(|error| format!("{error:?}"))?;
-
         let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
 
-        lock.is_air_conditioning_active = value;
+        lock.is_air_conditioning_active =
+            FromStr::from_str(value).map_err(|error| format!("{error:?}"))?;
 
         Ok(())
     }
 
-    fn send_notification(payload: &str) {
+    fn show_notification(payload: &str) {
         info!("Notification: '{payload}'");
-    }
-
-    fn set_ui_message(vehicle: Arc<Mutex<Vehicle>>, payload: &str) {
-        let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
-
-        lock.ui_message = String::from(payload);
     }
 }
 
@@ -107,9 +100,28 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        warn!("Got a set request: {request:?}");
+        let request_inner = request.into_inner();
+        let entity_id: String = request_inner.entity_id.clone();
+        let value: String = request_inner.value;
 
-        Err(Status::unimplemented("set has not been implemented"))
+        info!("Received a set request for entity id {} with value '{}'", &entity_id, &value);
+
+        let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
+
+        tokio::spawn(async move {
+            if entity_id == sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID {
+                let result = ProviderImpl::set_is_air_conditioning_active(vehicle.clone(), &value);
+                if result.is_err() {
+                    warn!("Failed to set {} due to: {}", entity_id, result.unwrap_err());
+                }
+            } else {
+                warn!("Error: The entity id {entity_id} is not recognized.");
+            }
+        });
+
+        let response = SetResponse {};
+
+        Ok(Response::new(response))
     }
 
     /// Invoke implementation.
@@ -133,21 +145,11 @@ impl Provider for ProviderImpl {
             &consumer_uri, &entity_id, &payload
         );
 
-        let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
-
         tokio::spawn(async move {
             let mut response_payload: String = format!("Successfully invoked {entity_id}");
 
-            if entity_id == sdv::vehicle::cabin::hvac::activate_air_conditioning::ID {
-                let result = ProviderImpl::activate_air_conditioning(vehicle.clone(), &payload);
-                if result.is_err() {
-                    response_payload =
-                        format!("Failed to invoke {} due to: {}", entity_id, result.unwrap_err());
-                }
-            } else if entity_id == sdv::vehicle::cabin::hvac::send_notification::ID {
-                ProviderImpl::send_notification(&payload);
-            } else if entity_id == sdv::vehicle::cabin::hvac::set_ui_message::ID {
-                ProviderImpl::set_ui_message(vehicle.clone(), &payload);
+            if entity_id == sdv::vehicle::cabin::infotainment::hmi::show_notification::ID {
+                ProviderImpl::show_notification(&payload);
             } else {
                 response_payload = format!("Error: The entity id {entity_id} is not recognized.");
             }

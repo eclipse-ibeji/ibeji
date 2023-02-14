@@ -18,13 +18,13 @@ use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
-/// Start the ambient air temperature data stream.
+/// Start the show notification repeater.
 ///
 /// # Arguments
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
-fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's send notification repeater.");
+fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) {
+    debug!("Starting the Consumer's show notification repeater.");
     tokio::spawn(async move {
         loop {
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
@@ -35,10 +35,12 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
 
             let response_id = Uuid::new_v4().to_string();
 
-            let payload: String = String::from("The send_notification request.");
+            let payload: String = String::from("The show-notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
+                entity_id: String::from(
+                    sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
+                ),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload,
@@ -50,7 +52,7 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the send_notification command on endpoint {}", &provider_uri);
+            info!("Invoked the show-notification command on endpoint {}", &provider_uri);
 
             sleep(Duration::from_secs(5)).await;
         }
@@ -75,7 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(FindByIdRequest {
-        entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
+        entity_id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
@@ -91,15 +93,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let model_dict = model_dict_result.unwrap();
     debug!("The DTDL parser has successfully parsed the DTDL.");
 
-    // Create the id (as a DTMI) for the send_notification command.
-    let send_notification_command_id: Option<Dtmi> =
-        create_dtmi(sdv::vehicle::cabin::hvac::send_notification::ID);
-    if send_notification_command_id.is_none() {
+    // Create the id (as a DTMI) for the show-notification command.
+    let show_notification_command_id: Option<Dtmi> =
+        create_dtmi(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
+    if show_notification_command_id.is_none() {
         panic!("Unable to create the dtmi");
     }
 
-    // Get the entity from the DTDL for the send notification command.
-    let entity_result = model_dict.get(&send_notification_command_id.unwrap());
+    // Get the entity from the DTDL for the show-notification command.
+    let entity_result = model_dict.get(&show_notification_command_id.unwrap());
     if entity_result.is_none() {
         panic!("Unable to find the entity");
     }
@@ -115,16 +117,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get the value for the URI property.
     let uri_property_value_result = uri_property.get("@value");
     if uri_property_value_result.is_none() {
-        panic!("Unable to find the value for the URI for the send notification's provider.");
+        panic!("Unable to find the value for the URI for the show-notification's provider.");
     }
     let uri_property_value = uri_property_value_result.unwrap();
     let uri_str_option = uri_property_value.as_str();
     let provider_uri = String::from(uri_str_option.unwrap());
-    info!("The URI for the send_notification command's provider is {}", &provider_uri);
+    info!("The URI for the show-notification command's provider is {}", &provider_uri);
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 
-    start_send_notification_repeater(provider_uri, consumer_uri);
+    start_show_notification_repeater(provider_uri, consumer_uri);
 
     server_future.await?;
 

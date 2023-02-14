@@ -92,7 +92,7 @@ impl Provider for ProviderImpl {
             }
             let mut client = client_result.unwrap();
 
-            let payload: String = String::from("The send_notification response.");
+            let payload: String = String::from("The show-notification response.");
 
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),

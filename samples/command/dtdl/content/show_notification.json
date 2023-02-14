@@ -2,17 +2,17 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
-    "description": "Heat, Ventilation and Air Conditioning",
+    "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI;1",
+    "description": "Human Machine Interface",
     "contents": [
       {
         "@type": ["Command", "RemotelyAccessible"],
-        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1",
-        "name": "SendNotification",
+        "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI:ShowNotification;1",
+        "name": "ShowNotification",
         "request": {
-          "name": "SendNotification",
-          "displayName": "Send Notification",
-          "descriptiption": "Send a notification to the HVAC.",
+          "name": "ShowNotification",
+          "displayName": "Show Notification",
+          "descriptiption": "Show a notification on the HMI.",
           "schema": "string"
         },
         "remote_access": [

@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Provider has started.");
 
     debug!("Preparing the Provider's DTDL.");
-    let provider_dtdl_path = find_full_path("content/send_notification.json")?;
+    let provider_dtdl_path = find_full_path("content/show_notification.json")?;
     let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
     debug!("Prepared the Provider's DTDL.");
 

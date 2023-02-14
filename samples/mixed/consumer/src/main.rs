@@ -12,19 +12,19 @@ use proto::consumer::consumer_server::ConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
 use proto::provider::provider_client::ProviderClient;
-use proto::provider::{InvokeRequest, SubscribeRequest};
+use proto::provider::{InvokeRequest, SetRequest, SubscribeRequest};
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
-/// Start the send notification repeater.
+/// Start the show-notification repeater.
 ///
 /// # Arguments
 /// `provider_uri` - The provider_uri.
 /// `consumer_uri` - The consumer_uri.
-fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's send_notification repeater.");
+fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) {
+    debug!("Starting the Consumer's show-notification repeater.");
     tokio::spawn(async move {
         loop {
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
@@ -35,10 +35,12 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
 
             let response_id = Uuid::new_v4().to_string();
 
-            let payload: String = String::from("The send_notification request.");
+            let payload: String = String::from("The show-notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(sdv::vehicle::cabin::hvac::send_notification::ID),
+                entity_id: String::from(
+                    sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
+                ),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload,
@@ -50,60 +52,19 @@ fn start_send_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the send_notification command on endpoint {}", &provider_uri);
+            info!("Invoked the show-notification command on endpoint {}", &provider_uri);
 
             sleep(Duration::from_secs(5)).await;
         }
     });
 }
 
-/// Start the set ui message repeater.
+/// Start the activate-air-conditioing repeater.
 ///
 /// # Arguments
-/// `provider_uri` - The provider_uri.
-/// `consumer_uri` - The consumer_uri.
-fn start_set_ui_message_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's set_ui_message repeater.");
-    tokio::spawn(async move {
-        let array: [&str; 10] =
-            ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-        let mut index: usize = 0;
-        loop {
-            let client_result = ProviderClient::connect(provider_uri.clone()).await;
-            if client_result.is_err() {
-                continue;
-            }
-            let mut client = client_result.unwrap();
-
-            let response_id = Uuid::new_v4().to_string();
-
-            let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(sdv::vehicle::cabin::hvac::set_ui_message::ID),
-                consumer_uri: consumer_uri.clone(),
-                response_id,
-                payload: array[index].to_string(),
-            });
-
-            let response = client.invoke(request).await;
-            match response {
-                Ok(_) => index = (index + 1) % array.len(),
-                Err(status) => warn!("{status:?}"),
-            }
-
-            info!("Invoked the set_ui_message command on endpoint {}", &provider_uri);
-
-            sleep(Duration::from_secs(5)).await;
-        }
-    });
-}
-
-/// Start the set ui message repeater.
-///
-/// # Arguments
-/// `provider_uri` - The provider_uri.
-/// `consumer_uri` - The consumer_uri.
-fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: String) {
-    debug!("Starting the Consumer's activate_air_conditioning repeater.");
+/// `provider_uri` - The provider_uri..
+fn start_activate_air_conditioning_repeater(provider_uri: String) {
+    debug!("Starting the Consumer's activate-air-conditioning repeater.");
     tokio::spawn(async move {
         let mut is_active = true;
         loop {
@@ -113,26 +74,20 @@ fn start_activate_air_conditioning_repeater(provider_uri: String, consumer_uri: 
             }
             let mut client = client_result.unwrap();
 
-            let response_id = Uuid::new_v4().to_string();
+            let value: String = format!("{is_active}");
 
-            let payload: String = format!("{is_active}");
-
-            let request = tonic::Request::new(InvokeRequest {
-                entity_id: String::from(sdv::vehicle::cabin::hvac::activate_air_conditioning::ID),
-                consumer_uri: consumer_uri.clone(),
-                response_id,
-                payload,
+            let request = tonic::Request::new(SetRequest {
+                entity_id: String::from(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID),
+                value,
             });
 
-            let response = client.invoke(request).await;
+            let response = client.set(request).await;
             match response {
                 Ok(_) => is_active = !is_active,
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the activate_air_conditioning command on endpoint {}", &provider_uri);
-
-            is_active = !is_active;
+            info!("Set the is_activate_air_conditioning property on endpoint {}", &provider_uri);
 
             sleep(Duration::from_secs(20)).await;
         }
@@ -161,13 +116,13 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     debug!("The DTDL parser has successfully parsed the DTDL.");
 
     // Create the id (as a DTMI) for the send_notification command.
-    let send_notification_command_id: Option<Dtmi> = create_dtmi(entity_id);
-    if send_notification_command_id.is_none() {
+    let dtmi_id: Option<Dtmi> = create_dtmi(entity_id);
+    if dtmi_id.is_none() {
         return Err(String::from("Unable to create the dtmi"));
     }
 
-    // Get the entity from the DTDL for the send notification command.
-    let entity_result = model_dict.get(&send_notification_command_id.unwrap());
+    // Get the entity from the DTDL for the dtmi id.
+    let entity_result = model_dict.get(&dtmi_id.unwrap());
     if entity_result.is_none() {
         return Err(String::from("Unable to find the entity"));
     }
@@ -223,18 +178,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
-    let activate_air_conditioing_command_provider_uri =
-        match get_provider_uri(sdv::vehicle::cabin::hvac::activate_air_conditioning::ID).await {
-            Ok(value) => value,
-            Err(error) => panic!("{error}"),
-        };
-    let send_notification_command_provider_uri =
-        match get_provider_uri(sdv::vehicle::cabin::hvac::send_notification::ID).await {
-            Ok(value) => value,
-            Err(error) => panic!("{error}"),
-        };
-    let set_ui_message_command_provider_uri =
-        match get_provider_uri(sdv::vehicle::cabin::hvac::set_ui_message::ID).await {
+    let show_notification_command_provider_uri =
+        match get_provider_uri(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID).await
+        {
             Ok(value) => value,
             Err(error) => panic!("{error}"),
         };
@@ -277,17 +223,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    start_activate_air_conditioning_repeater(
-        activate_air_conditioing_command_provider_uri,
+    start_activate_air_conditioning_repeater(is_air_conditioning_active_property_uri);
+
+    start_show_notification_repeater(
+        show_notification_command_provider_uri.clone(),
         consumer_uri.clone(),
     );
-
-    start_send_notification_repeater(
-        send_notification_command_provider_uri.clone(),
-        consumer_uri.clone(),
-    );
-
-    start_set_ui_message_repeater(set_ui_message_command_provider_uri.clone(), consumer_uri);
 
     server_future.await?;
 

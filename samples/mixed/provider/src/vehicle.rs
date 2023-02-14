@@ -8,7 +8,6 @@ const MIN_HVAC_TEMPERATURE: i32 = 65;
 pub struct Vehicle {
     pub ambient_air_temperature: i32,
     pub is_air_conditioning_active: bool,
-    pub ui_message: String,
     pub hybrid_battery_remaining: i32,
 }
 
@@ -17,7 +16,6 @@ impl Vehicle {
         Self {
             ambient_air_temperature: 75,
             is_air_conditioning_active: false,
-            ui_message: String::new(),
             hybrid_battery_remaining: 100,
         }
     }

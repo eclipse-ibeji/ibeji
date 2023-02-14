@@ -65,21 +65,19 @@ async fn start_vehicle_simulator(
             let ambient_air_temperature: i32;
             let is_air_conditioning_active: bool;
             let hybrid_battery_remaining: i32;
-            let ui_message: String;
 
             {
                 let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
 
                 lock.execute_epoch();
 
-                // Make a copy of the peoprtes values that we will publish after the lock is released.
+                // Make a copy of the property values that we will publish after the lock is released.
                 ambient_air_temperature = lock.ambient_air_temperature;
                 is_air_conditioning_active = lock.is_air_conditioning_active;
                 hybrid_battery_remaining = lock.hybrid_battery_remaining;
-                ui_message = lock.ui_message.clone();
             }
 
-            info!("Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}; UI message is '{ui_message}'");
+            info!("Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}");
             publish(
                 subscription_map.clone(),
                 sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
