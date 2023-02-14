@@ -16,7 +16,7 @@
           {
             "@type": "Endpoint",
             "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
+            "operations": [ "Subscribe", "Unsubscribe" ]
           }
         ]
       }
