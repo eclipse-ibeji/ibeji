@@ -3,7 +3,7 @@
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
     "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI;1",
-    "description": "Human Machine Interface",
+    "description": "The Human Machine Interface.",
     "contents": [
       {
         "@type": ["Command", "RemotelyAccessible"],

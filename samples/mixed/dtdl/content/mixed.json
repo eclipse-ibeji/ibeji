@@ -21,7 +21,7 @@
           ]
         },
         {
-          "@type": ["Property", "Temperature", "RemotelyAccessible"],
+          "@type": ["Property", "RemotelyAccessible"],
           "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1",
           "name": "IsAirConditioningActive",
           "description": "Is air conditioning active?",
@@ -43,10 +43,10 @@
     "description": "On-board Diagnostics Interface",
     "contents": [
       {
-          "@type": ["Property", "Temperature", "RemotelyAccessible"],
+          "@type": ["Property", "RemotelyAccessible"],
           "@id": "dtmi:sdv:Vehicle:OBD:HybridBatteryRemaining;1",
           "name": "HybridBatteryRemaining",
-          "description": "The immediate surroundings air temperature (in Fahrenheit).",
+          "description": "The remaining hybrid battery life.",
           "schema": "integer",
           "unit": "percent",
           "remote_access": [
@@ -63,7 +63,7 @@
       "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
       "@type": "Interface",
       "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI;1",
-      "description": "Human Machine Interface",
+      "description": "The Human Machine Interface.",
       "contents": [
         {
           "@type": ["Command", "RemotelyAccessible"],
