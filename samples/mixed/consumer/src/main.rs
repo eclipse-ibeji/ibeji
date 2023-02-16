@@ -29,6 +29,8 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
         loop {
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
+                warn!("Unable to connect. We will retry in a moment.");
+                sleep(Duration::from_secs(1)).await;
                 continue;
             }
             let mut client = client_result.unwrap();
@@ -52,7 +54,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the show-notification command on endpoint {}", &provider_uri);
+            info!("Invoked the show-notification command on endpoint {provider_uri}");
 
             sleep(Duration::from_secs(5)).await;
         }
@@ -70,6 +72,8 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
         loop {
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
+                warn!("Unable to connect. We will retry in a moment.");
+                sleep(Duration::from_secs(1)).await;
                 continue;
             }
             let mut client = client_result.unwrap();
@@ -87,7 +91,7 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Set the is_activate_air_conditioning property on endpoint {}", &provider_uri);
+            info!("Set the is_activate_air_conditioning property on endpoint {provider_uri}");
 
             sleep(Duration::from_secs(20)).await;
         }
@@ -103,7 +107,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
     let response = client.find_by_id(request).await.map_err(|error| format!("{error}"))?;
     let dtdl = response.into_inner().dtdl;
-    debug!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
+    debug!("Received the response for the find_by_id request. The DTDL is:\n{dtdl}");
 
     debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -153,7 +157,7 @@ async fn send_subscribe_request(
     entity_id: &str,
     consumer_uri: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    debug!("Sending a subscribe request for {}.", entity_id);
+    debug!("Sending a subscribe request for {entity_id}.");
     let mut client = ProviderClient::connect(provider_uri.to_string()).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(entity_id),

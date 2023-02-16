@@ -29,6 +29,8 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
         loop {
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
+                warn!("Unable to connect. We will retry in a moment.");
+                sleep(Duration::from_secs(1)).await;
                 continue;
             }
             let mut client = client_result.unwrap();
@@ -52,7 +54,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the show-notification command on endpoint {}", &provider_uri);
+            info!("Invoked the show-notification command on endpoint {provider_uri}");
 
             sleep(Duration::from_secs(5)).await;
         }
@@ -81,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
-    info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
+    info!("Received the response for the find_by_id request. The DTDL is:\n{dtdl}");
 
     debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -122,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let uri_property_value = uri_property_value_result.unwrap();
     let uri_str_option = uri_property_value.as_str();
     let provider_uri = String::from(uri_str_option.unwrap());
-    info!("The URI for the show-notification command's provider is {}", &provider_uri);
+    info!("The URI for the show-notification command's provider is {provider_uri}");
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 

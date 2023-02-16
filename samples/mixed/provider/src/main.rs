@@ -34,10 +34,12 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
     }
 
     for url in urls {
-        debug!("Publishing {} as {} to {}", entity_id, value, &url);
+        debug!("Publishing {entity_id} as {value} to {url}");
 
         let client_result = ConsumerClient::connect(url).await;
         if client_result.is_err() {
+            warn!("Unable to connect. We will retry in a moment.");
+            sleep(Duration::from_secs(1)).await;
             continue;
         }
         let mut client = client_result.unwrap();

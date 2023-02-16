@@ -104,7 +104,7 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let value: String = request_inner.value;
 
-        info!("Received a set request for entity id {} with value '{}'", &entity_id, &value);
+        info!("Received a set request for entity id {entity_id} with value '{value}'");
 
         let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
 
@@ -141,8 +141,7 @@ impl Provider for ProviderImpl {
         let payload: String = request_inner.payload;
 
         debug!(
-            "Received an invoke request from consumer URI {} for entity id {} with payload '{}'",
-            &consumer_uri, &entity_id, &payload
+            "Received an invoke request from consumer URI {consumer_uri} for entity id {entity_id} with payload '{payload}'"
         );
 
         tokio::spawn(async move {
@@ -155,8 +154,7 @@ impl Provider for ProviderImpl {
             }
 
             debug!(
-                "Sending an invoke response to consumer URI {} for entity id {}",
-                &consumer_uri, &entity_id
+                "Sending an invoke response to consumer URI {consumer_uri} for entity id {entity_id}"
             );
 
             let client_result = ConsumerClient::connect(consumer_uri).await;

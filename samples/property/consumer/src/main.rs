@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     let response = client.find_by_id(request).await?;
     let dtdl = response.into_inner().dtdl.clone();
-    info!("Received the response for the find_by_id request. The DTDL is:\n{}", &dtdl);
+    info!("Received the response for the find_by_id request. The DTDL is:\n{dtdl}");
 
     debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -78,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let uri_property_value = uri_property_value_result.unwrap();
     let uri_str_option = uri_property_value.as_str();
     let uri = String::from(uri_str_option.unwrap());
-    info!("The URI for the ambient air temperature's provider is {}", &uri);
+    info!("The URI for the ambient air temperature's provider is {uri}");
 
     // Use the URI to subscribe to thr ambient air temperature data feed.\
     let mut client = ProviderClient::connect(uri).await?;

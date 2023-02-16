@@ -6,7 +6,7 @@ mod provider_impl;
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{debug, info, LevelFilter};
+use log::{debug, info, warn, LevelFilter};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -44,10 +44,12 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
             }
 
             for url in urls {
-                info!("Publishing the ambient air temperature as {} to {}", temperature, &url);
+                info!("Publishing the ambient air temperature as {temperature} to {url}");
 
                 let client_result = ConsumerClient::connect(url).await;
                 if client_result.is_err() {
+                    warn!("Unable to connect. We will retry in a moment.");
+                    sleep(Duration::from_secs(1)).await;
                     continue;
                 }
                 let mut client = client_result.unwrap();

@@ -41,8 +41,7 @@ impl DigitalTwin for DigitalTwinImpl {
             Some(v) => v,
             None => {
                 return Err(Status::not_found(format!(
-                    "Unable to find the DTDL for entity id {}",
-                    &entity_id
+                    "Unable to find the DTDL for entity id {entity_id}"
                 )))
             }
         };
@@ -51,8 +50,7 @@ impl DigitalTwin for DigitalTwinImpl {
             Ok(content) => content,
             Err(error) => {
                 return Err(Status::internal(format!(
-                    "Unexpected error with the DTDL for entity id {}: {:?}",
-                    &entity_id, error
+                    "Unexpected error with the DTDL for entity id {entity_id}: {error:?}"
                 )))
             }
         };
@@ -60,8 +58,7 @@ impl DigitalTwin for DigitalTwinImpl {
         let response = FindByIdResponse { dtdl };
 
         info!(
-            "Responded to the find_by_id request for entity id {} with the requested DTDL.",
-            &entity_id
+            "Responded to the find_by_id request for entity id {entity_id} with the requested DTDL."
         );
 
         Ok(Response::new(response))
@@ -152,7 +149,7 @@ impl DigitalTwinImpl {
         let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
         for (id, _entity) in model_dict {
             lock.insert(id.to_string(), doc.clone());
-            debug!("Registered DTDL for id {}", &id);
+            debug!("Registered DTDL for id {id}");
         }
 
         Ok(())
