@@ -183,14 +183,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
     let show_notification_command_provider_uri =
-        get_provider_uri(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID).await.unwrap();
+        get_provider_uri(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
+            .await
+            .unwrap();
 
     let ambient_air_temperature_property_provider_uri =
         get_provider_uri(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID).await.unwrap();
 
-    let is_air_conditioning_active_property_uri = get_provider_uri(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID).await.unwrap();
+    let is_air_conditioning_active_property_uri =
+        get_provider_uri(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID).await.unwrap();
 
-    let hybrid_battery_remaining_property_uri = get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await.unwrap();
+    let hybrid_battery_remaining_property_uri =
+        get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await.unwrap();
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 
