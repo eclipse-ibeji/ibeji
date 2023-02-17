@@ -7,6 +7,7 @@ use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, warn, LevelFilter};
+use parking_lot::{Mutex, MutexGuard};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -14,7 +15,7 @@ use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 
@@ -35,7 +36,7 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
 
             // This block controls the lifetime of the lock.
             {
-                let lock: MutexGuard<SubscriptionMap> = subscription_map.lock().unwrap();
+                let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
                 let get_result = lock.get(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
                 urls = match get_result {
                     Some(val) => val.clone(),

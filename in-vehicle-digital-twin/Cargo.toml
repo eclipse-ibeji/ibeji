@@ -16,6 +16,7 @@ dtdl-parser = { path = "../dtdl-parser" }
 iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 log = { workspace = true }
+parking_lot = { workspace = true }
 prost = { workspace = true }
 proto = { path = "../proto" }
 serde_json = { workspace = true }

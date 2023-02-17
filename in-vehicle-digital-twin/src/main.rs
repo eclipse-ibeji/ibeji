@@ -3,11 +3,12 @@
 
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
+use parking_lot::Mutex;
 use proto::digitaltwin::digital_twin_server::DigitalTwinServer;
 use proto::provider::provider_server::ProviderServer;
 use std::collections::HashMap;
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use tonic::transport::Server;
 
 mod digitaltwin_impl;

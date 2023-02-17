@@ -2,13 +2,14 @@
 // Licensed under the MIT license.
 
 use log::{info, warn};
+use parking_lot::Mutex;
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
     SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 pub type SubscriptionMap = HashMap<String, HashSet<String>>;

@@ -5,6 +5,7 @@ extern crate iref;
 
 use dtdl_parser::model_parser::ModelParser;
 use log::{debug, info, warn};
+use parking_lot::{Mutex, MutexGuard};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
@@ -12,7 +13,7 @@ use proto::digitaltwin::{
 };
 use serde_json::Value;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
@@ -35,7 +36,7 @@ impl DigitalTwin for DigitalTwinImpl {
 
         debug!("Received a find_by_id request for entity id {entity_id}");
 
-        let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
+        let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock();
         let val_option = lock.get(&entity_id);
         let val = match val_option {
             Some(v) => v,
@@ -146,7 +147,7 @@ impl DigitalTwinImpl {
         }
         let model_dict = model_dict_result.unwrap();
 
-        let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
+        let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock();
         for (id, _entity) in model_dict {
             lock.insert(id.to_string(), doc.clone());
             debug!("Registered DTDL for id {id}");
@@ -195,10 +196,9 @@ mod digitaltwin_impl_tests {
 
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
-        // Note: We need to place this code in its own block to ensure that the lock
-        //       is released before we attempt the find_by_id operation.
+        // This block controls the lifetime of the lock.
         {
-            let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
+            let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock();
             lock.insert(entity_id.clone(), dtdl_json);
         }
 
@@ -229,7 +229,7 @@ mod digitaltwin_impl_tests {
         assert!(result.is_ok());
 
         // Make sure that we populated the entity map from the contents of the DTDL.
-        let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
+        let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock();
         assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
     }
 }

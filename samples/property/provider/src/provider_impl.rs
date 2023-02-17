@@ -2,12 +2,13 @@
 // Licensed under the MIT license.
 
 use log::{info, warn};
+use parking_lot::{Mutex, MutexGuard};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
     SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 pub type SubscriptionMap = HashMap<String, HashSet<String>>;
@@ -31,15 +32,18 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
-        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
-            self.subscription_map.lock().unwrap();
-        let uris_option = lock.get(&entity_id);
-        let mut uris = match uris_option {
-            Some(get_value) => get_value.clone(),
-            None => HashSet::new(),
-        };
-        uris.insert(consumer_uri.clone());
-        lock.insert(entity_id.clone(), uris);
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
+                self.subscription_map.lock();
+            let uris_option = lock.get(&entity_id);
+            let mut uris = match uris_option {
+                Some(get_value) => get_value.clone(),
+                None => HashSet::new(),
+            };
+            uris.insert(consumer_uri.clone());
+            lock.insert(entity_id.clone(), uris);
+        }
 
         info!("Completed the subscribe request from URI {consumer_uri} for id {entity_id}");
 
@@ -131,19 +135,22 @@ mod provider_impl_tests {
         let third_result = provider_impl.subscribe(third_request).await;
         assert!(third_result.is_ok());
 
-        let lock: MutexGuard<HashMap<String, HashSet<String>>> = subscription_map.lock().unwrap();
+        // This block controls the lifetime of the lock.
+        {
+            let lock: MutexGuard<HashMap<String, HashSet<String>>> = subscription_map.lock();
 
-        let first_get_result = lock.get(&first_id);
-        assert!(first_get_result.is_some());
-        let first_value = first_get_result.unwrap();
-        assert!(first_value.len() == 2);
-        assert!(first_value.contains(&first_uri));
-        assert!(first_value.contains(&second_uri));
+            let first_get_result = lock.get(&first_id);
+            assert!(first_get_result.is_some());
+            let first_value = first_get_result.unwrap();
+            assert!(first_value.len() == 2);
+            assert!(first_value.contains(&first_uri));
+            assert!(first_value.contains(&second_uri));
 
-        let second_get_result = lock.get(&second_id);
-        assert!(second_get_result.is_some());
-        let second_value = second_get_result.unwrap();
-        assert!(second_value.len() == 1);
-        assert!(second_value.contains(&third_uri));
+            let second_get_result = lock.get(&second_id);
+            assert!(second_get_result.is_some());
+            let second_value = second_get_result.unwrap();
+            assert!(second_value.len() == 1);
+            assert!(second_value.contains(&third_uri));
+        }
     }
 }

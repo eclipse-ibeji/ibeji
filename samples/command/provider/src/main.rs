@@ -6,11 +6,12 @@ mod provider_impl;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, LevelFilter};
+use parking_lot::Mutex;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};

@@ -3,6 +3,7 @@
 
 use dt_model_identifiers::sdv_v1 as sdv;
 use log::{debug, info, warn};
+use parking_lot::{Mutex, MutexGuard};
 use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
@@ -10,7 +11,7 @@ use proto::provider::{
 };
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 use crate::vehicle::Vehicle;
@@ -28,7 +29,7 @@ impl ProviderImpl {
         vehicle: Arc<Mutex<Vehicle>>,
         value: &str,
     ) -> Result<(), String> {
-        let mut lock: MutexGuard<Vehicle> = vehicle.lock().unwrap();
+        let mut lock: MutexGuard<Vehicle> = vehicle.lock();
 
         lock.is_air_conditioning_active =
             FromStr::from_str(value).map_err(|error| format!("{error:?}"))?;
@@ -55,8 +56,7 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
-        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
-            self.subscription_map.lock().unwrap();
+        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> = self.subscription_map.lock();
         let uris_option = lock.get(&entity_id);
         let mut uris = match uris_option {
             Some(get_value) => get_value.clone(),
@@ -216,20 +216,23 @@ mod provider_impl_tests {
         let third_result = provider_impl.subscribe(third_request).await;
         assert!(third_result.is_ok());
 
-        let lock: MutexGuard<HashMap<String, HashSet<String>>> = subscription_map.lock().unwrap();
+        // This block controls the lifetime of the lock.
+        {
+            let lock: MutexGuard<HashMap<String, HashSet<String>>> = subscription_map.lock();
 
-        let first_get_result = lock.get(&first_id);
-        assert!(first_get_result.is_some());
-        let first_value = first_get_result.unwrap();
-        assert!(first_value.len() == 2);
-        assert!(first_value.contains(&first_uri));
-        assert!(first_value.contains(&second_uri));
+            let first_get_result = lock.get(&first_id);
+            assert!(first_get_result.is_some());
+            let first_value = first_get_result.unwrap();
+            assert!(first_value.len() == 2);
+            assert!(first_value.contains(&first_uri));
+            assert!(first_value.contains(&second_uri));
 
-        let second_get_result = lock.get(&second_id);
-        assert!(second_get_result.is_some());
-        let second_value = second_get_result.unwrap();
-        assert!(second_value.len() == 1);
-        assert!(second_value.contains(&third_uri));
+            let second_get_result = lock.get(&second_id);
+            assert!(second_get_result.is_some());
+            let second_value = second_get_result.unwrap();
+            assert!(second_value.len() == 1);
+            assert!(second_value.contains(&third_uri));
+        }
     }
 
     #[tokio::test]
