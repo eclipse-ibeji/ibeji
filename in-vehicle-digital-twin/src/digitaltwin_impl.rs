@@ -156,13 +156,13 @@ impl DigitalTwinImpl {
         // This block controls the lifetime of the lock.
         {
             let mut lock: RwLockWriteGuard<HashMap<String, Value>> = self.entity_map.write();
-            for (id, _entity) in &model_dict {
+            for id in model_dict.keys() {
                 lock.insert(id.to_string(), doc.clone());
             }
         }
 
         if log_enabled!(Debug) {
-            for (id, _entity) in model_dict {
+            for id in model_dict.keys() {
                 debug!("Registered DTDL for id {id}");
             }
         }
