@@ -103,7 +103,7 @@ Currently, we have no integration tests or end-to-end tests.
 ## <a name="running-the-demo">Running the Demo</a>
 
 There are currently three demos: one that demonstrates the use of a property, one that demonstrates the use of a command and one that
-demonstrates the mixed use of properties and command.
+demonstrates the mixed use of properties and commands.
 
 The following instructions are for the demo for the use of a property.
 
