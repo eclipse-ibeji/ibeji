@@ -132,7 +132,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server_future.await?;
 
-    debug!("The Consumer has conpleted.");
+    debug!("The Consumer has completed.");
 
     Ok(())
 }
