@@ -29,10 +29,13 @@ impl ProviderImpl {
         vehicle: Arc<Mutex<Vehicle>>,
         value: &str,
     ) -> Result<(), String> {
-        let mut lock: MutexGuard<Vehicle> = vehicle.lock();
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: MutexGuard<Vehicle> = vehicle.lock();
 
-        lock.is_air_conditioning_active =
-            FromStr::from_str(value).map_err(|error| format!("{error:?}"))?;
+            lock.is_air_conditioning_active =
+                FromStr::from_str(value).map_err(|error| format!("{error:?}"))?;
+        }
 
         Ok(())
     }
@@ -56,14 +59,19 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
-        let mut lock: MutexGuard<HashMap<String, HashSet<String>>> = self.subscription_map.lock();
-        let uris_option = lock.get(&entity_id);
-        let mut uris = match uris_option {
-            Some(get_value) => get_value.clone(),
-            None => HashSet::new(),
-        };
-        uris.insert(consumer_uri.clone());
-        lock.insert(entity_id.clone(), uris);
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
+                self.subscription_map.lock();
+
+            let uris_option = lock.get(&entity_id);
+            let mut uris = match uris_option {
+                Some(get_value) => get_value.clone(),
+                None => HashSet::new(),
+            };
+            uris.insert(consumer_uri.clone());
+            lock.insert(entity_id.clone(), uris);
+        }
 
         info!("Completed the subscribe request from URI {consumer_uri} for id {entity_id}");
 

@@ -4,8 +4,9 @@
 extern crate iref;
 
 use dtdl_parser::model_parser::ModelParser;
-use log::{debug, info, warn};
-use parking_lot::{Mutex, MutexGuard};
+use log::Level::Debug;
+use log::{debug, info, log_enabled, warn};
+use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
@@ -18,7 +19,7 @@ use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinImpl {
-    pub entity_map: Arc<Mutex<HashMap<String, Value>>>,
+    pub entity_map: Arc<RwLock<HashMap<String, Value>>>,
 }
 
 #[tonic::async_trait]
@@ -36,25 +37,30 @@ impl DigitalTwin for DigitalTwinImpl {
 
         debug!("Received a find_by_id request for entity id {entity_id}");
 
-        let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock();
-        let val_option = lock.get(&entity_id);
-        let val = match val_option {
-            Some(v) => v,
-            None => {
-                return Err(Status::not_found(format!(
-                    "Unable to find the DTDL for entity id {entity_id}"
-                )))
-            }
-        };
+        let dtdl;
 
-        let dtdl = match serde_json::to_string_pretty(&val) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(Status::internal(format!(
-                    "Unexpected error with the DTDL for entity id {entity_id}: {error:?}"
-                )))
-            }
-        };
+        // This block controls the lifetime of the lock.
+        {
+            let lock: RwLockReadGuard<HashMap<String, Value>> = self.entity_map.read();
+            let val_option = lock.get(&entity_id);
+            let val = match val_option {
+                Some(v) => v,
+                None => {
+                    return Err(Status::not_found(format!(
+                        "Unable to find the DTDL for entity id {entity_id}"
+                    )))
+                }
+            };
+
+            dtdl = match serde_json::to_string_pretty(&val) {
+                Ok(content) => content,
+                Err(error) => {
+                    return Err(Status::internal(format!(
+                        "Unexpected error with the DTDL for entity id {entity_id}: {error:?}"
+                    )))
+                }
+            };
+        }
 
         let response = FindByIdResponse { dtdl };
 
@@ -147,10 +153,18 @@ impl DigitalTwinImpl {
         }
         let model_dict = model_dict_result.unwrap();
 
-        let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock();
-        for (id, _entity) in model_dict {
-            lock.insert(id.to_string(), doc.clone());
-            debug!("Registered DTDL for id {id}");
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = self.entity_map.write();
+            for (id, _entity) in &model_dict {
+                lock.insert(id.to_string(), doc.clone());
+            }
+        }
+
+        if log_enabled!(Debug) {
+            for (id, _entity) in model_dict {
+                debug!("Registered DTDL for id {id}");
+            }
         }
 
         Ok(())
@@ -192,13 +206,13 @@ mod digitaltwin_impl_tests {
 
         let entity_id = String::from("dtmi::some_id");
 
-        let entity_map = Arc::new(Mutex::new(HashMap::new()));
+        let entity_map = Arc::new(RwLock::new(HashMap::new()));
 
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock();
+            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = entity_map.write();
             lock.insert(entity_id.clone(), dtdl_json);
         }
 
@@ -214,7 +228,7 @@ mod digitaltwin_impl_tests {
     async fn register_test() {
         set_dtdl_path();
 
-        let entity_map = Arc::new(Mutex::new(HashMap::new()));
+        let entity_map = Arc::new(RwLock::new(HashMap::new()));
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
         let dtdl_path_result = find_full_path("samples/demo_resources.json");
@@ -228,8 +242,11 @@ mod digitaltwin_impl_tests {
         let result = digital_twin_impl.register(request).await;
         assert!(result.is_ok());
 
-        // Make sure that we populated the entity map from the contents of the DTDL.
-        let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock();
-        assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
+        // This block controls the lifetime of the lock.
+        {
+            let lock: RwLockReadGuard<HashMap<String, Value>> = entity_map.read();
+            // Make sure that we populated the entity map from the contents of the DTDL.
+            assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
+        }
     }
 }
