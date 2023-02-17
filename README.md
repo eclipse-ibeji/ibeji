@@ -40,22 +40,22 @@ sudo apt install gcc
 
 ### <a name="install-rust">Install Rust</a>
 
-At this point in time, you will need to use the nightly release of Rust. While it is not ideal to rely on a nightly release, we should be able to rely on the
+At this point in time, you will need to use a nightly release of Rust. While it is not ideal to rely on a nightly release, we should be able to rely on the
 stable release of Rust sometime in the not too distant future when some of the Rust crates that we use can all rely on it as well. To install Rust, do the following:
 
 ```shell
 sudo apt update
 sudo apt install -y snapd
 sudo snap install rustup --classic
-rustup toolchain install nightly
-rustup default nightly
+rustup toolchain install nightly-2022-08-11
+rustup default nightly-2022-08-11
 ```
 
-If you have already installed Rust, but you are using another release, then you can switch to the nightly release by running the following commands:
+If you have already installed Rust, but you are using another release, then you can switch to the nightly-2022-08-11 release by running the following commands:
 
 ```shell
-rustup toolchain install nightly
-rustup default nightly
+rustup toolchain install nightly-2022-08-11
+rustup default nightly-2022-08-11
 ```
 
 ### <a name="install-protobuf-compiler">Install Protobuf Compiler</a>
@@ -102,7 +102,8 @@ Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-demo">Running the Demo</a>
 
-There are currently two demos: one that demonstrates the use of a property and one that demonstrates the use of a command.
+There are currently three demos: one that demonstrates the use of a property, one that demonstrates the use of a command and one that
+demonstrates the mixed use of properties and commands.
 
 The following instructions are for the demo for the use of a property.
 
@@ -111,7 +112,7 @@ Steps:
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
-1. In each window run the following command too set the DTDL_PATH environment variable.
+1. In each window run the following command to set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/property/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
@@ -132,7 +133,7 @@ Steps:
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
-1. In each window run the following command too set the DTDL_PATH environment variable.
+1. In each window run the following command to set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/command/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
@@ -144,6 +145,35 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./command-provider`<br>
 1. In the bottom window, run:<br><br>
 `./command-consumer`<br>
+1. Use control-c in each of the windows when you wish to stop the demo.
+
+## <a name="trademarks">Trademarks</a>
+
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
+[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
+Any use of third-party trademarks or logos are subject to those third-party's policies.
+
+The following instructions are for the demo for the mixed use of commands and properties.
+
+Steps:
+
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
+The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+1. In each window run the following command to set the DTDL_PATH environment variable.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/mixed/dtdl"`<br>
+1. In each window change directory to the directory containing the build artifacts.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`cd {repo-root-dir}/ibeji/target/debug`<br>
+1. In the top window, run:<br><br>
+`./in-vehicle-digital-twin`<br>
+1. In the middle window, run:<br><br>
+`./mixed-provider`<br>
+1. In the bottom window, run:<br><br>
+`./mixed-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## <a name="trademarks">Trademarks</a>

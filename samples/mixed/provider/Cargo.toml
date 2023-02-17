@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 
 [package]
-name = "command-provider"
+name = "mixed-provider"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -13,12 +13,12 @@ dt-model-identifiers = { path = "../../../dt-model/dt-model-identifiers" }
 env_logger= { workspace = true }
 ibeji-common = { path = "../../../common" }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
-log = { workspace = true}
+log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 proto = { path = "../../../proto" }
 serde_json = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 uuid = { workspace = true, features = ["v4", "fast-rng", "macro-diagnostics"] }
 

@@ -8,19 +8,19 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-async-std = { version = "^1.5", features = ["attributes"] }
+async-std = { workspace = true, features = ["attributes"] }
 ibeji-common = { path = "../common" }
 ibeji-common_test = { path = "../common-test" }
-generic-json = { version = "^0.7", features = ["serde_json-impl"] }
-iref = "^2.0.3"
+futures = { workspace = true }
+generic-json = { workspace = true, features = ["serde_json-impl"] }
+iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
-# json-ld  = { git = "https://github.com/timothee-haudebourg/json-ld", tag = "0.9.1-beta" }
-lazy_static = "1.4.0"
-log = "^0.4"
-regex = " 1.7.1"
-serde_json = "1.0.88"
-strum = "0.24"
-strum_macros = "0.24"
+lazy_static = { workspace = true }
+log = { workspace = true }
+regex = { workspace = true }
+serde_json = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
 
 [lib]
 path = "src/lib.rs"

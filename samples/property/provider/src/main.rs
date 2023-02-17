@@ -3,9 +3,11 @@
 
 mod provider_impl;
 
+use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
-use log::{info, LevelFilter};
+use log::{debug, info, warn, LevelFilter};
+use parking_lot::{Mutex, MutexGuard};
 use proto::consumer::consumer_client::ConsumerClient;
 use proto::consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
@@ -13,23 +15,19 @@ use proto::digitaltwin::RegisterRequest;
 use proto::provider::provider_server::ProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
-
-/// The id for ambient air tempterature property.
-const AMBIENT_AIR_TEMPERATURE_PROPERTY_ID: &str =
-    "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1";
 
 /// Start the ambient air temperature data stream.
 ///
 /// # Arguments
 /// `id_to_subscribers_map` - The id to subscribers map.
 #[allow(clippy::collapsible_else_if)]
-fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
-    info!("Starting the Provider's ambient air termperature data stream.");
+fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
+    debug!("Starting the Provider's ambient air temperature data stream.");
     tokio::spawn(async move {
         let mut temperature: u32 = 75;
         let mut is_temperature_increasing: bool = true;
@@ -38,27 +36,27 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
 
             // This block controls the lifetime of the lock.
             {
-                let lock: MutexGuard<SubscriptionMap> = subscription_map.lock().unwrap();
-                let get_result = lock.get(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID);
+                let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
+                let get_result = lock.get(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
                 urls = match get_result {
                     Some(val) => val.clone(),
                     None => HashSet::new(),
                 };
             }
 
-            info!("Ambient air temperature is {}", temperature);
-
             for url in urls {
-                info!("Publishing the ambient air temperature as {} to {}", temperature, &url);
+                info!("Publishing the ambient air temperature as {temperature} to {url}");
 
                 let client_result = ConsumerClient::connect(url).await;
                 if client_result.is_err() {
+                    warn!("Unable to connect. We will retry in a moment.");
+                    sleep(Duration::from_secs(1)).await;
                     continue;
                 }
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    entity_id: String::from(AMBIENT_AIR_TEMPERATURE_PROPERTY_ID),
+                    entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
                     value: temperature.to_string(),
                 });
 
@@ -83,7 +81,7 @@ fn start_ambient_air_temperatire_data_stream(subscription_map: Arc<Mutex<Subscri
                 }
             }
 
-            sleep(Duration::from_millis(1000)).await;
+            sleep(Duration::from_secs(5)).await;
         }
     });
 }
@@ -96,10 +94,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    info!("Preparing the Provider's DTDL.");
+    debug!("Preparing the Provider's DTDL.");
     let provider_dtdl_path = find_full_path("content/ambient_air_temperature.json")?;
     let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    info!("Prepared the Provider's DTDL.");
+    debug!("Prepared the Provider's DTDL.");
 
     // Setup the HTTP server.
     let addr: SocketAddr = "[::1]:40010".parse()?;
@@ -108,17 +106,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
 
-    info!("Registering the Provider's DTDL with the Digital Twin Service.");
+    debug!("Registering the Provider's DTDL with the Digital Twin Service.");
     let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;
     info!("The Provider's DTDL has been registered.");
 
-    start_ambient_air_temperatire_data_stream(subscription_map.clone());
+    start_ambient_air_temperature_data_stream(subscription_map.clone());
 
     server_future.await?;
 
-    info!("The Provider has completed.");
+    debug!("The Provider has completed.");
 
     Ok(())
 }

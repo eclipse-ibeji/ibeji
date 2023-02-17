@@ -71,7 +71,7 @@ impl Dtmi {
 
         let fragment = match iri.fragment() {
             Some(fragment) => String::from(fragment.as_str()),
-            None => String::from(""),
+            None => String::new(),
         };
 
         Ok(Self {
@@ -152,13 +152,13 @@ impl fmt::Display for Dtmi {
 /// * `value` - The IRI to copy from.
 pub fn create_dtmi(value: &str) -> Option<Dtmi> {
     if !DTMI_REGEX.is_match(value) {
-        warn!("The value '{}' does not represent a valid DTMI", value);
+        warn!("The value '{value}' does not represent a valid DTMI");
         return None;
     }
 
     let new_dtmi_result = Dtmi::new(value);
     if let Err(error) = new_dtmi_result {
-        warn!("{}", error);
+        warn!("{error}");
         return None;
     }
 

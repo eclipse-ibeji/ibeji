@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::{info, warn};
+use log::info;
 use proto::consumer::consumer_server::Consumer;
 use proto::consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
 use tonic::{Request, Response, Status};
@@ -36,15 +36,20 @@ impl Consumer for ConsumerImpl {
         &self,
         request: Request<RespondRequest>,
     ) -> Result<Response<RespondResponse>, Status> {
-        warn!("Got a response request: {request:?}");
+        let RespondRequest { entity_id, response_id, payload } = request.into_inner();
 
-        Err(Status::unimplemented("respond has not been implemented"))
+        info!("Received a respond for entity id {entity_id} with the response id {response_id} and the payload '{payload}'");
+
+        let response = RespondResponse {};
+
+        Ok(Response::new(response))
     }
 }
 
 #[cfg(test)]
 mod consumer_impl_tests {
     use super::*;
+    use uuid::Uuid;
 
     #[tokio::test]
     async fn publish_test() {
@@ -55,6 +60,19 @@ mod consumer_impl_tests {
 
         let request = tonic::Request::new(PublishRequest { entity_id, value });
         let result = consumer_impl.publish(request).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn respond_test() {
+        let consumer_impl = ConsumerImpl {};
+
+        let entity_id = String::from("some-id");
+        let response_id = Uuid::new_v4().to_string();
+        let payload = String::from("some-payload");
+
+        let request = tonic::Request::new(RespondRequest { entity_id, response_id, payload });
+        let result = consumer_impl.respond(request).await;
         assert!(result.is_ok());
     }
 }

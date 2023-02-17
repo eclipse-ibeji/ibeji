@@ -11,7 +11,7 @@ use crate::entity_kind::EntityKind;
 use crate::primitive_schema_info::PrimitiveSchemaInfo;
 use crate::schema_info::SchemaInfo;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct PrimitiveSchemaInfoImpl {
     // EntitytInfo
     dtdl_version: i32,

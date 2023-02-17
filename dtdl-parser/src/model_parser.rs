@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use async_std::task;
+use futures::executor::block_on;
 use ibeji_common::find_full_path;
 use json_ld::{context, Document, NoLoader, Node, Object};
 use log::warn;
@@ -93,13 +93,10 @@ impl ModelParser {
             self.preprocess(&mut doc)?;
 
             let mut loader = NoLoader::<Value>::new();
-            let dtdl_doc = match task::block_on(doc.expand::<context::Json<Value>, _>(&mut loader))
-            {
-                Ok(expanded_doc) => expanded_doc,
-                Err(error) => {
-                    return Err(format!("Failed to expand one of the JSON texts due to: {error:?}"))
-                }
-            };
+            let dtdl_doc =
+                block_on(doc.expand::<context::Json<Value>, _>(&mut loader)).map_err(|error| {
+                    format!("Failed to expand one of the JSON texts due to: {error:?}")
+                })?;
 
             for item in dtdl_doc.iter() {
                 let object: &Object<serde_json::Value> = item;
@@ -163,7 +160,7 @@ impl ModelParser {
             Ok(json) => json,
             Err(error) => {
                 return Err(format!(
-                    "Unable to pasrse the context located at {} due to: {:?}",
+                    "Unable to parse the context located at {} due to: {:?}",
                     filepath.display(),
                     error
                 ))
@@ -321,7 +318,6 @@ impl ModelParser {
 
             if let Some(entity_kind) = entity_kind_option {
                 if is_primitive_schema_kind(entity_kind) {
-                    println!("entity_kind is_primitive_entity_kind");
                     let id: Option<Dtmi> = self.generate_id(parent_id, "test");
                     if id.is_none() {
                         return Err(String::from(
@@ -337,7 +333,6 @@ impl ModelParser {
                         entity_kind,
                     )))
                 } else {
-                    println!("entity_kind is_NOT primitive_entity_kind");
                     Err(format!("expected a primitive schema, found {entity_kind}"))
                 }
             } else {
@@ -461,7 +456,6 @@ impl ModelParser {
         }
 
         if entity_kind_option.is_none() {
-            println!("Complex schema has no associated type.  It must have one.");
             return Err(String::from("Complex schema has no associated type.  It must have one."));
         }
 
@@ -470,7 +464,6 @@ impl ModelParser {
         if entity_kind == EntityKind::Object {
             self.get_object_schema(node, model_dict, parent_id)
         } else {
-            println!("Unsupported complex object: {entity_kind:?}.");
             Err(format!("Unsupported complex object: {entity_kind:?}."))
         }
     }
@@ -902,8 +895,6 @@ impl ModelParser {
         // name - optional
         let name = self.get_property_value(node, "dtmi:dtdl:property:name;2")?;
 
-        println!("Command: {}", name.clone().unwrap());
-
         let mut id: Option<Dtmi> = None;
         if node.id().is_some() {
             id = create_dtmi(node.id().unwrap().as_str());
@@ -1107,8 +1098,8 @@ mod model_parser_tests {
         );
     }
 
+    #[rustfmt::skip]
     #[test]
-    # [rustfmt::skip]
     fn demo_validation_test() {
         set_dtdl_path();
 
@@ -1129,12 +1120,12 @@ mod model_parser_tests {
         );
         let model_dict = model_dict_result.unwrap();
         assert!(
-            model_dict.len() == 14,
-            "expected length was 14, actual length is {}",
+            model_dict.len() == 13,
+            "expected length was 13, actual length is {}",
             model_dict.len()
         );
 
-        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1");
+        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");
         assert!(ambient_air_temperature_id.is_some());
         let ambient_air_temperature_entity_result =
             model_dict.get(&ambient_air_temperature_id.unwrap());
@@ -1149,7 +1140,7 @@ mod model_parser_tests {
         assert!(ambient_air_temperature_uri_property_value_result.is_some());
         assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
-        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:org:eclipse:sdv:command:HVAC:send_notification;1");
+        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1");
         assert!(send_notification_id.is_some());
         let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
         assert!(send_notification_entity_result.is_some());

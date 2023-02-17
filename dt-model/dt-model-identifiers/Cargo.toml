@@ -2,10 +2,13 @@
 # Licensed under the MIT license.
 
 [package]
-name = "ibeji-common_test"
+name = "dt-model-identifiers"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
-log = { workspace = true}
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["lib"]

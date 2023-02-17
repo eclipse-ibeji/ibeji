@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-use log::info;
+use log::warn;
 use proto::provider::provider_server::Provider;
 use proto::provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
@@ -22,11 +22,9 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<SubscribeRequest>,
     ) -> Result<Response<SubscribeResponse>, Status> {
-        info!("Got a subscribe request: {:?}", request);
-        // TODO - provide subscribe functionality
-        let response = SubscribeResponse {};
+        warn!("Got a subscribe request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("subscribe has not been implemented"))
     }
 
     /// Unsubscribe implementation.
@@ -37,11 +35,9 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<UnsubscribeRequest>,
     ) -> Result<Response<UnsubscribeResponse>, Status> {
-        info!("Got an unsubscribe request: {:?}", request);
-        // TODO - provide unsubscribe functionality
-        let response = UnsubscribeResponse {};
+        warn!("Got an unsubscribe request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("unsubscribe has not been implemented"))
     }
 
     /// Get implementation.
@@ -49,11 +45,9 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Get request.
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
-        info!("Got a get request: {:?}", request);
-        // TODO - provide get functionality
-        let response = GetResponse {};
+        warn!("Got a get request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("get has not been implemented"))
     }
 
     /// Set implementation.
@@ -61,11 +55,9 @@ impl Provider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        info!("Got a set request: {:?}", request);
-        // TODO - provide set functionality
-        let response = SetResponse {};
+        warn!("Got a set request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("set has not been implemented"))
     }
 
     /// Invoke implementation.
@@ -76,10 +68,8 @@ impl Provider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        info!("Got an invoke request: {:?}", request);
-        // TODO - provide set functionality
-        let response = InvokeResponse {};
+        warn!("Got an invoke request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("invoke has not been implemented"))
     }
 }

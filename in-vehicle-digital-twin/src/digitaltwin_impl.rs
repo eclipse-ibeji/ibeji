@@ -4,7 +4,9 @@
 extern crate iref;
 
 use dtdl_parser::model_parser::ModelParser;
-use log::info;
+use log::Level::Debug;
+use log::{debug, info, log_enabled, warn};
+use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
@@ -12,12 +14,12 @@ use proto::digitaltwin::{
 };
 use serde_json::Value;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinImpl {
-    pub entity_map: Arc<Mutex<HashMap<String, Value>>>,
+    pub entity_map: Arc<RwLock<HashMap<String, Value>>>,
 }
 
 #[tonic::async_trait]
@@ -33,34 +35,37 @@ impl DigitalTwin for DigitalTwinImpl {
         let request_inner = request.into_inner();
         let entity_id = request_inner.entity_id;
 
-        info!("Received a find_by_id request for entity id {}", &entity_id);
+        debug!("Received a find_by_id request for entity id {entity_id}");
 
-        let lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-        let val = match lock.get(&entity_id) {
-            Some(v) => v,
-            None => {
-                return Err(Status::not_found(format!(
-                    "Unable to find the DTDL for entity id {}",
-                    &entity_id
-                )))
-            }
-        };
+        let dtdl;
 
-        let dtdl = match serde_json::to_string_pretty(&val) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(Status::internal(format!(
-                    "Unexpected error with the DTDL for entity id {}: {:?}",
-                    &entity_id, error
-                )))
-            }
-        };
+        // This block controls the lifetime of the lock.
+        {
+            let lock: RwLockReadGuard<HashMap<String, Value>> = self.entity_map.read();
+            let val_option = lock.get(&entity_id);
+            let val = match val_option {
+                Some(v) => v,
+                None => {
+                    return Err(Status::not_found(format!(
+                        "Unable to find the DTDL for entity id {entity_id}"
+                    )))
+                }
+            };
+
+            dtdl = match serde_json::to_string_pretty(&val) {
+                Ok(content) => content,
+                Err(error) => {
+                    return Err(Status::internal(format!(
+                        "Unexpected error with the DTDL for entity id {entity_id}: {error:?}"
+                    )))
+                }
+            };
+        }
 
         let response = FindByIdResponse { dtdl };
 
         info!(
-            "Responded to the find_by_id request for entity id {} with the requested DTDL.",
-            &entity_id
+            "Responded to the find_by_id request for entity id {entity_id} with the requested DTDL."
         );
 
         Ok(Response::new(response))
@@ -74,19 +79,17 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<RegisterRequest>,
     ) -> Result<Response<RegisterResponse>, Status> {
-        info!("Received a register request.");
-
         let request_inner = request.into_inner();
         let dtdl = request_inner.dtdl;
 
-        let register_each_one_result = self.register_each_one(dtdl);
+        let register_each_one_result = self.register_each_one(&dtdl);
         if let Err(error) = register_each_one_result {
             return Err(Status::internal(error));
         }
 
         let response = RegisterResponse {};
 
-        info!("Completed registration.");
+        info!("Completed the resgister request.");
 
         Ok(Response::new(response))
     }
@@ -99,11 +102,9 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<UnregisterRequest>,
     ) -> Result<Response<UnregisterResponse>, Status> {
-        info!("Received an unregister request: {:?}", request);
-        // TODO - provide unregister functionality
-        let response = UnregisterResponse {};
+        warn!("Got an unregister request: {request:?}");
 
-        Ok(Response::new(response))
+        Err(Status::unimplemented("unregister has not been implemented"))
     }
 }
 
@@ -113,8 +114,8 @@ impl DigitalTwinImpl {
     /// # Arguments
     /// * `dtdl` - The DTDL for the array.
     #[allow(unused_variables)]
-    fn register_each_one(&self, dtdl: String) -> Result<(), String> {
-        let doc: Value = match serde_json::from_str(&dtdl) {
+    fn register_each_one(&self, dtdl: &str) -> Result<(), String> {
+        let doc: Value = match serde_json::from_str(dtdl) {
             Ok(json) => json,
             Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),
         };
@@ -152,10 +153,18 @@ impl DigitalTwinImpl {
         }
         let model_dict = model_dict_result.unwrap();
 
-        for (id, _entity) in model_dict {
-            let mut lock: MutexGuard<HashMap<String, Value>> = self.entity_map.lock().unwrap();
-            lock.insert(id.to_string(), doc.clone());
-            info!("Registered DTDL for id {}", &id);
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = self.entity_map.write();
+            for id in model_dict.keys() {
+                lock.insert(id.to_string(), doc.clone());
+            }
+        }
+
+        if log_enabled!(Debug) {
+            for id in model_dict.keys() {
+                debug!("Registered DTDL for id {id}");
+            }
         }
 
         Ok(())
@@ -165,7 +174,6 @@ impl DigitalTwinImpl {
 #[cfg(test)]
 mod digitaltwin_impl_tests {
     use super::*;
-    use async_std::task;
     use ibeji_common::find_full_path;
     use ibeji_common_test::set_dtdl_path;
     use std::fs;
@@ -180,8 +188,8 @@ mod digitaltwin_impl_tests {
         }
     }
 
-    #[test]
-    fn find_by_id_test() {
+    #[tokio::test]
+    async fn find_by_id_test() {
         set_dtdl_path();
 
         // Note: We can use any valid JSON.  We'll use samples/remotely_accessible_resource.json.
@@ -198,30 +206,29 @@ mod digitaltwin_impl_tests {
 
         let entity_id = String::from("dtmi::some_id");
 
-        let entity_map = Arc::new(Mutex::new(HashMap::new()));
+        let entity_map = Arc::new(RwLock::new(HashMap::new()));
 
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
-        // Note: We need to place this code in its own block to ensure that the lock
-        //       is released before we attempt the find_by_id operation.
+        // This block controls the lifetime of the lock.
         {
-            let mut lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
+            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = entity_map.write();
             lock.insert(entity_id.clone(), dtdl_json);
         }
 
         let request = tonic::Request::new(FindByIdRequest { entity_id });
-        let result = task::block_on(digital_twin_impl.find_by_id(request));
+        let result = digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
         let dtdl = response.into_inner().dtdl;
         assert!(!dtdl.is_empty());
     }
 
-    #[test]
-    fn register_test() {
+    #[tokio::test]
+    async fn register_test() {
         set_dtdl_path();
 
-        let entity_map = Arc::new(Mutex::new(HashMap::new()));
+        let entity_map = Arc::new(RwLock::new(HashMap::new()));
         let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
 
         let dtdl_path_result = find_full_path("samples/demo_resources.json");
@@ -232,11 +239,14 @@ mod digitaltwin_impl_tests {
         let dtdl = dtdl_result.unwrap();
 
         let request = tonic::Request::new(RegisterRequest { dtdl });
-        let result = task::block_on(digital_twin_impl.register(request));
+        let result = digital_twin_impl.register(request).await;
         assert!(result.is_ok());
 
-        // Make sure that we populated the entity map from the contents of the DTDL.
-        let lock: MutexGuard<HashMap<String, Value>> = entity_map.lock().unwrap();
-        assert!(lock.len() == 14, "expected length was 14, actual length is {}", lock.len());
+        // This block controls the lifetime of the lock.
+        {
+            let lock: RwLockReadGuard<HashMap<String, Value>> = entity_map.read();
+            // Make sure that we populated the entity map from the contents of the DTDL.
+            assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
+        }
     }
 }

@@ -24,7 +24,7 @@ jobs:
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: nightly-2022-08-11
           default: true
           override: true
           components: clippy, rustfmt
@@ -61,7 +61,7 @@ jobs:
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: nightly-2022-08-11
           default: true
           override: true
       - name: Cache Dependencies

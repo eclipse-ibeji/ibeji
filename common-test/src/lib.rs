@@ -36,9 +36,9 @@ pub fn set_dtdl_path() {
             "{repo_dir}/opendigitaltwins-dtdl/DTDL;{repo_dir}/iot-plugandplay-models;{repo_dir}/dtdl"
         );
         env::set_var(DTDL_PATH, &value);
-        trace!("{}={}", DTDL_PATH, &value);
+        trace!("{DTDL_PATH}={value}");
     } else {
-        warn!("Unable to set {}, as repo directory could not be determined.", DTDL_PATH);
+        warn!("Unable to set {DTDL_PATH}, as repo directory could not be determined.");
     }
 }
 

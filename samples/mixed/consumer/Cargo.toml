@@ -2,19 +2,19 @@
 # Licensed under the MIT license.
 
 [package]
-name = "command-provider"
+name = "mixed-consumer"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
+dtdl-parser = { path = "../../../dtdl-parser" }
 dt-model-identifiers = { path = "../../../dt-model/dt-model-identifiers" }
 env_logger= { workspace = true }
-ibeji-common = { path = "../../../common" }
+iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
-log = { workspace = true}
-parking_lot = { workspace = true }
+log = { workspace = true }
 prost = { workspace = true }
 proto = { path = "../../../proto" }
 serde_json = { workspace = true }

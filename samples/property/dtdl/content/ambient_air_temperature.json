@@ -2,84 +2,21 @@
   {
     "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:interface:DogMode:OnOffSwitch;1",
-    "contents": [
-      {
-        "@type": ["Property", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:property:DogMode:OnOffSwitch;1",
-        "name": "DogMode_OnOffSwitch",
-        "description": "DogMode on-off switch may be either 'on' or 'off'.",
-        "schema": "string",
-        "remote_access": [
-          {
-            "@type": "Endpoint",
-            "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
-    "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:interface:HVAC:FanSpeed;1",
-    "contents": [
-      {
-        "@type": ["Property", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:property:HVAC:FanSpeed;1",
-        "name": "HVAC_Fanspeed",
-        "description": "Fan Speed, 0 = off. 100 = max",
-        "schema": "integer",
-        "remote_access": [
-          {
-            "@type": "Endpoint",
-            "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
-    "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:interface:HVAC:Tempterature;1",
+    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
+    "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
         "@type": ["Property", "Temperature", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:property:HVAC:Tempterature;1",
-        "name": "HVAC_Temperature",
-        "description": "Temperature setting (in Fahrenheit).",
-        "schema": "double",
-        "unit": "degreeFahrenheit",
-        "remote_access": [
-          {
-            "@type": "Endpoint",
-            "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
-    "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:interface:cabin:AmbientAirTemperature;1",
-    "contents": [
-      {
-        "@type": ["Property", "Temperature", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1",
-        "name": "Cabin_AmbientAirTemperature",
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1",
+        "name": "ambient_air_temperature",
         "description": "The immediate surroundings air temperature (in Fahrenheit).",
-        "schema": "double",
+        "schema": "integer",
         "unit": "degreeFahrenheit",
         "remote_access": [
           {
             "@type": "Endpoint",
             "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
+            "operations": [ "Subscribe", "Unsubscribe" ]
           }
         ]
       }
