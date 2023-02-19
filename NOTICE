@@ -4,7 +4,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
-- MIT License (71)
+- MIT License (74)
 - Apache License 2.0 (3)
 - BSD 3-Clause "New" or "Revised" License (1)
 - Unicode License Agreement - Data Files and Software (2016) (1)
@@ -15,7 +15,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [sync_wrapper]( https://github.com/Actyx/sync_wrapper ) 0.1.1
+- [sync_wrapper]( https://github.com/Actyx/sync_wrapper ) 0.1.2
 
 #### License
 
@@ -204,7 +204,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [ryu]( https://github.com/dtolnay/ryu ) 1.0.11
+- [ryu]( https://github.com/dtolnay/ryu ) 1.0.12
 
 #### License
 
@@ -417,10 +417,10 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [prost]( https://github.com/tokio-rs/prost ) 0.11.2
-- [prost-build]( https://github.com/tokio-rs/prost ) 0.11.2
-- [prost-derive]( https://github.com/tokio-rs/prost ) 0.11.2
-- [prost-types]( https://github.com/tokio-rs/prost ) 0.11.2
+- [prost]( https://github.com/tokio-rs/prost ) 0.11.6
+- [prost-build]( https://github.com/tokio-rs/prost ) 0.11.6
+- [prost-derive]( https://github.com/tokio-rs/prost ) 0.11.6
+- [prost-types]( https://github.com/tokio-rs/prost ) 0.11.6
 
 #### License
 
@@ -673,6 +673,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #### Used by
 
 - [windows-sys]( https://github.com/microsoft/windows-rs ) 0.42.0
+- [windows-sys]( https://github.com/microsoft/windows-rs ) 0.45.0
+- [windows-targets]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.42.1
+- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.42.1
 
 #### License
 
@@ -705,7 +714,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #### Used by
 
-- [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.14.0
+- [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.15.0
 
 #### License
 
@@ -824,18 +833,17 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.77
+- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.79
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
-- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.60
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.47
+- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.61
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.7
-- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.83
-- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.83
-- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.33
-- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.83
-- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.83
-- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.83
-- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.60
+- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.84
+- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.84
+- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.34
+- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.84
+- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.84
+- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.84
+- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.61
 
 #### License
 
@@ -872,7 +880,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [mio]( https://github.com/tokio-rs/mio ) 0.8.5
+- [mio]( https://github.com/tokio-rs/mio ) 0.8.6
 
 #### License
 
@@ -936,13 +944,51 @@ THE SOFTWARE.
 #### Used by
 
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
-- [regex]( https://github.com/rust-lang/regex ) 1.7.0
+- [regex]( https://github.com/rust-lang/regex ) 1.7.1
 - [regex-syntax]( https://github.com/rust-lang/regex ) 0.6.28
 
 #### License
 
 ```text
 Copyright (c) 2014 The Rust Project Developers
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
+- [uuid]( https://github.com/uuid-rs/uuid ) 1.3.0
+
+#### License
+
+```text
+Copyright (c) 2014 The Rust Project Developers
+Copyright (c) 2018 Ashley Mannix, Christopher Armstrong, Dylan DPC, Hunar Roop Kahlon
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -1011,7 +1057,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [libc]( https://github.com/rust-lang/libc ) 0.2.137
+- [libc]( https://github.com/rust-lang/libc ) 0.2.139
 
 #### License
 
@@ -1048,7 +1094,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [hyper]( https://github.com/hyperium/hyper ) 0.14.23
+- [hyper]( https://github.com/hyperium/hyper ) 0.14.24
 
 #### License
 
@@ -1079,9 +1125,9 @@ THE SOFTWARE.
 
 #### Used by
 
-- [either]( https://github.com/bluss/either ) 1.8.0
+- [either]( https://github.com/bluss/either ) 1.8.1
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.10.5
-- [petgraph]( https://github.com/petgraph/petgraph ) 0.6.2
+- [petgraph]( https://github.com/petgraph/petgraph ) 0.6.3
 
 #### License
 
@@ -1118,7 +1164,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.14.0
+- [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.15.0
 
 #### License
 
@@ -1187,7 +1233,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [heck]( https://github.com/withoutboats/heck ) 0.4.0
+- [heck]( https://github.com/withoutboats/heck ) 0.4.1
 
 #### License
 
@@ -1224,7 +1270,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [which]( https://github.com/harryfei/which-rs.git ) 4.3.0
+- [which]( https://github.com/harryfei/which-rs.git ) 4.4.0
 
 #### License
 
@@ -1323,38 +1369,6 @@ SOFTWARE.
 
 #### Used by
 
-- [atty]( https://github.com/softprops/atty ) 0.2.14
-
-#### License
-
-```text
-Copyright (c) 2015-2019 Doug Tangren
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
 - [httparse]( https://github.com/seanmonstar/httparse ) 1.8.0
 
 #### License
@@ -1387,15 +1401,15 @@ THE SOFTWARE.
 
 #### Used by
 
-- [futures]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-channel]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-core]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-executor]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-io]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-macro]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-sink]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-task]( https://github.com/rust-lang/futures-rs ) 0.3.25
-- [futures-util]( https://github.com/rust-lang/futures-rs ) 0.3.25
+- [futures]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-channel]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-core]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-executor]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-io]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-macro]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-sink]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-task]( https://github.com/rust-lang/futures-rs ) 0.3.26
+- [futures-util]( https://github.com/rust-lang/futures-rs ) 0.3.26
 
 #### License
 
@@ -1532,7 +1546,9 @@ THE SOFTWARE.
 
 #### Used by
 
-- [quote]( https://github.com/dtolnay/quote ) 1.0.21
+- [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.9
+- [parking_lot]( https://github.com/Amanieu/parking_lot ) 0.12.1
+- [parking_lot_core]( https://github.com/Amanieu/parking_lot ) 0.9.7
 
 #### License
 
@@ -1650,6 +1666,43 @@ DEALINGS IN THE SOFTWARE.
 
 ```text
 Copyright (c) 2016--2017
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
+- [scopeguard]( https://github.com/bluss/scopeguard ) 1.1.0
+
+#### License
+
+```text
+Copyright (c) 2016-2019 Ulrik Sverdrup "bluss" and scopeguard developers
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -1858,7 +1911,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [http]( https://github.com/hyperium/http ) 0.2.8
+- [http]( https://github.com/hyperium/http ) 0.2.9
 
 #### License
 
@@ -1895,7 +1948,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [bytes]( https://github.com/tokio-rs/bytes ) 1.3.0
+- [bytes]( https://github.com/tokio-rs/bytes ) 1.4.0
 
 #### License
 
@@ -1969,7 +2022,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [try-lock]( https://github.com/seanmonstar/try-lock ) 0.2.3
+- [try-lock]( https://github.com/seanmonstar/try-lock ) 0.2.4
 
 #### License
 
@@ -2108,7 +2161,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [axum]( https://github.com/tokio-rs/axum ) 0.5.17
+- [axum]( https://github.com/tokio-rs/axum ) 0.6.7
 
 #### License
 
@@ -2182,70 +2235,6 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [async-stream]( https://github.com/tokio-rs/async-stream ) 0.3.3
-- [async-stream-impl]( https://github.com/tokio-rs/async-stream ) 0.3.3
-
-#### License
-
-```text
-Copyright (c) 2019 Carl Lerche
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-Copyright (c) 2018 David Tolnay
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
 - [http-body]( https://github.com/hyperium/http-body ) 0.4.5
 
 #### License
@@ -2283,7 +2272,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.11.1
+- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.12.0
 
 #### License
 
@@ -2436,7 +2425,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [tower-http]( https://github.com/tower-rs/tower-http ) 0.3.4
+- [tower-http]( https://github.com/tower-rs/tower-http ) 0.3.5
 
 #### License
 
@@ -2473,8 +2462,8 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [tonic]( https://github.com/hyperium/tonic ) 0.8.2
-- [tonic-build]( https://github.com/hyperium/tonic ) 0.8.2
+- [tonic]( https://github.com/hyperium/tonic ) 0.8.3
+- [tonic-build]( https://github.com/hyperium/tonic ) 0.8.4
 
 #### License
 
@@ -2505,9 +2494,44 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.22.0
+- [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.3.0
+
+#### License
+
+```text
+Copyright (c) 2021 The Uuid Developers
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.11
-- [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.4
 
 #### License
 
@@ -2544,7 +2568,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [tokio-macros]( https://github.com/tokio-rs/tokio ) 1.8.0
+- [tokio-macros]( https://github.com/tokio-rs/tokio ) 1.8.2
 
 #### License
 
@@ -2603,6 +2627,44 @@ SOFTWARE.
 
 #### Used by
 
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.25.0
+- [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.7
+
+#### License
+
+```text
+Copyright (c) 2023 Tokio Contributors
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
 - [getrandom]( https://github.com/rust-random/getrandom ) 0.2.8
 - [rand]( https://github.com/rust-random/rand ) 0.8.5
 - [rand_chacha]( https://github.com/rust-random/rand ) 0.3.1
@@ -2644,7 +2706,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [axum-core]( https://github.com/tokio-rs/axum ) 0.2.9
+- [axum-core]( https://github.com/tokio-rs/axum ) 0.3.2
 
 #### License
 
@@ -2730,25 +2792,56 @@ SOFTWARE.
 
 #### Used by
 
+- [matchit]( https://github.com/ibraheemdev/matchit ) 0.7.0
+
+#### License
+
+```text
+MIT License
+
+Copyright (c) 2022 Ibraheem Ahmed
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
+- [async-stream]( https://github.com/tokio-rs/async-stream ) 0.3.4
+- [async-stream-impl]( https://github.com/tokio-rs/async-stream ) 0.3.4
+- [command-consumer]( https://crates.io/crates/command-consumer ) 0.1.0
+- [command-provider]( https://crates.io/crates/command-provider ) 0.1.0
+- [dt-model-identifiers]( https://crates.io/crates/dt-model-identifiers ) 0.1.0
 - [dtdl-parser]( https://crates.io/crates/dtdl-parser ) 0.1.0
-- [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.4
+- [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.6
 - [ibeji-common]( https://crates.io/crates/ibeji-common ) 0.1.0
 - [ibeji-common_test]( https://crates.io/crates/ibeji-common_test ) 0.1.0
 - [in-vehicle-digital-twin]( https://crates.io/crates/in-vehicle-digital-twin ) 0.1.0
-- [matchit]( https://github.com/ibraheemdev/matchit ) 0.5.0
+- [mixed-consumer]( https://crates.io/crates/mixed-consumer ) 0.1.0
+- [mixed-provider]( https://crates.io/crates/mixed-provider ) 0.1.0
+- [property-consumer]( https://crates.io/crates/property-consumer ) 0.1.0
+- [property-provider]( https://crates.io/crates/property-provider ) 0.1.0
 - [proto]( https://crates.io/crates/proto ) 0.1.0
-- [provider]( https://crates.io/crates/provider ) 0.1.0
-- [simple-consumer]( https://crates.io/crates/simple-consumer ) 0.1.0
-- [simple-provider]( https://crates.io/crates/simple-provider ) 0.1.0
 - [winapi-i686-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
 - [winapi-x86_64-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
-- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.42.0
-- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.42.0
 
 #### License
 
@@ -2834,45 +2927,51 @@ SOFTWARE.
 
 #### Used by
 
-- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.66
-- [async-channel]( https://github.com/smol-rs/async-channel ) 1.7.1
+- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.69
+- [async-channel]( https://github.com/smol-rs/async-channel ) 1.8.0
 - [async-executor]( https://github.com/smol-rs/async-executor ) 1.5.0
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.3.1
-- [async-io]( https://github.com/smol-rs/async-io ) 1.11.0
+- [async-io]( https://github.com/smol-rs/async-io ) 1.12.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.6.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.3.0
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.58
-- [atomic-waker]( https://github.com/stjepang/atomic-waker ) 1.0.0
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.64
+- [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.0
 - [blocking]( https://github.com/smol-rs/blocking ) 1.3.0
-- [cache-padded]( https://github.com/smol-rs/cache-padded ) 1.2.0
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 0.7.3
-- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 1.2.4
-- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.0.0
-- [env_logger]( https://github.com/env-logger-rs/env_logger/ ) 0.9.3
+- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.1.0
+- [env_logger]( https://github.com/rust-cli/env_logger/ ) 0.10.0
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
-- [fastrand]( https://github.com/smol-rs/fastrand ) 1.8.0
+- [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
 - [futures-lite]( https://github.com/smol-rs/futures-lite ) 1.12.0
 - [generic-json]( https://github.com/timothee-haudebourg/generic-json ) 0.7.0
-- [hermit-abi]( https://github.com/hermitcore/libhermit-rs ) 0.1.19
-- [iref]( https://github.com/timothee-haudebourg/iref ) 2.2.0
-- [itoa]( https://github.com/dtolnay/itoa ) 1.0.4
+- [hermit-abi]( https://github.com/hermitcore/rusty-hermit ) 0.2.6
+- [hermit-abi]( https://github.com/hermitcore/rusty-hermit ) 0.3.1
+- [io-lifetimes]( https://github.com/sunfishcode/io-lifetimes ) 1.0.5
+- [iref]( https://github.com/timothee-haudebourg/iref ) 2.2.3
+- [is-terminal]( https://github.com/sunfishcode/is-terminal ) 0.4.3
+- [itoa]( https://github.com/dtolnay/itoa ) 1.0.5
 - [json-ld]( https://github.com/timothee-haudebourg/json-ld ) 0.6.1
 - [langtag]( https://github.com/timothee-haudebourg/langtag ) 0.2.0
-- [mown]( https://github.com/timothee-haudebourg/mown ) 0.2.1
-- [once_cell]( https://github.com/matklad/once_cell ) 1.16.0
+- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.1.4
+- [mown]( https://github.com/timothee-haudebourg/mown ) 0.2.2
+- [once_cell]( https://github.com/matklad/once_cell ) 1.17.1
 - [parking]( https://github.com/stjepang/parking ) 2.0.0
-- [pct-str]( https://github.com/timothee-haudebourg/pct-str ) 1.1.0
+- [pct-str]( https://github.com/timothee-haudebourg/pct-str ) 1.2.0
 - [pin-project]( https://github.com/taiki-e/pin-project ) 1.0.12
 - [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.0.12
 - [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.9
-- [polling]( https://github.com/smol-rs/polling ) 2.4.0
-- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.1.21
-- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.9
-- [serde]( https://github.com/serde-rs/serde ) 1.0.147
-- [serde_json]( https://github.com/serde-rs/json ) 1.0.89
-- [syn]( https://github.com/dtolnay/syn ) 1.0.103
-- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.5
+- [polling]( https://github.com/smol-rs/polling ) 2.5.2
+- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.1.23
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.51
+- [quote]( https://github.com/dtolnay/quote ) 1.0.23
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.36.8
+- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.11
+- [serde]( https://github.com/serde-rs/serde ) 1.0.152
+- [serde_json]( https://github.com/serde-rs/json ) 1.0.93
+- [syn]( https://github.com/dtolnay/syn ) 1.0.107
+- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.6
+- [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
 - [waker-fn]( https://github.com/stjepang/waker-fn ) 1.1.0
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
 
@@ -2993,7 +3092,7 @@ THE SOFTWARE.
 
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 0.7.20
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.5.0
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.1.3
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.2.0
 
 #### License
 
@@ -3199,7 +3298,7 @@ SOFTWARE.
 
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 0.7.20
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.5.0
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.1.3
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.2.0
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.5
 
 #### License
@@ -3215,7 +3314,7 @@ You may use this code under the terms of either license.
 
 #### Used by
 
-- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.5
+- [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.6
 
 #### License
 
