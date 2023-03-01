@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
 
 // Note: In the future this code could be auto-generated from a DTDL spec.
 

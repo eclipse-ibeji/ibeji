@@ -1,4 +1,4 @@
-# Project Ibeji
+# Project Eclipse Ibeji
 
 - [Introduction](#introduction)
 - [High-level Design](#high-level-design)
