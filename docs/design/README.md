@@ -1,4 +1,4 @@
-# Design Specification for Ibeji
+# Design Specification for Project Eclipse Ibeji
 
 - [Introduction](#introduction)
 - [Architecture](#architecture)
@@ -9,7 +9,7 @@
 
 ## <a name="introduction">Introduction</a>
 
-This project delivers an In-Vehicle software component that is a digital representation of vehicle hardware resources. The representation is usable by other software in the vehicle to read/write/query vehicle hardware resources in a standardized manner.
+Project Eclipse Ibeji delivers an In-Vehicle software component that is a digital representation of vehicle hardware resources. The representation is usable by other software in the vehicle to monitor and control vehicle hardware resources in a standardized manner.
 
 Please note that the initial Ibeji implementation is a proof-of-concept. We would like to see it evolve into an enterprise class solution.
 

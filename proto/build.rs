@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::compile_protos("consumer.proto")?;
