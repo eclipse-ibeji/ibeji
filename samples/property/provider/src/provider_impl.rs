@@ -44,7 +44,7 @@ impl Provider for ProviderImpl {
                 Some(get_value) => get_value.clone(),
                 None => HashSet::new(),
             };
-            uris.insert(consumer_uri.clone());
+            uris.insert(consumer_uri);
             lock.insert(entity_id.clone(), uris);
         }
 
