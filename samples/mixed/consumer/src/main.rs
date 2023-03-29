@@ -21,7 +21,7 @@ use uuid::Uuid;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 
-const CONSUMER_ADDR: &str = "[::1]:60010"; // Devskim: ignore DS137138
+const CONSUMER_ADDR: &str = "[::1]:60010";
 
 /// Start the show-notification repeater.
 ///
@@ -205,7 +205,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let hybrid_battery_remaining_property_uri =
         get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await.unwrap();
 
-    let consumer_uri = format!("http://{CONSUMER_ADDR}");
+    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
 
     send_subscribe_request(
         &ambient_air_temperature_property_provider_uri,

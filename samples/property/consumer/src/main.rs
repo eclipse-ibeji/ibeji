@@ -19,7 +19,7 @@ mod consumer_impl;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 
-const CONSUMER_ADDR: &str = "[::1]:60010"; // Devskim: ignore DS137138
+const CONSUMER_ADDR: &str = "[::1]:60010";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -85,7 +85,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let uri = String::from(uri_str_option.unwrap());
     info!("The URI for the ambient air temperature's provider is {uri}");
 
-    let consumer_uri = format!("http://{CONSUMER_ADDR}");
+    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
 
     // Subscribing to the ambient air temperature data feed.
     info!(

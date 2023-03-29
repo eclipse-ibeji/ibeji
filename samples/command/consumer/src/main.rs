@@ -20,8 +20,7 @@ use tonic::transport::Server;
 use uuid::Uuid;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-
-const CONSUMER_ADDR: &str = "[::1]:60010"; // Devskim: ignore DS137138
+const CONSUMER_ADDR: &str = "[::1]:60010";
 
 /// Start the show notification repeater.
 ///
@@ -134,7 +133,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = String::from(uri_str_option.unwrap());
     info!("The URI for the show-notification command's provider is {provider_uri}");
 
-    let consumer_uri = format!("http://{CONSUMER_ADDR}");
+    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
 
     start_show_notification_repeater(provider_uri, consumer_uri);
 

@@ -25,7 +25,7 @@ use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 use crate::vehicle::Vehicle;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-const PROVIDER_ADDR: &str = "[::1]:40010"; // Devskim: ignore DS137138
+const PROVIDER_ADDR: &str = "[::1]:40010";
 
 async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
     let urls;
