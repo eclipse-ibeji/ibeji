@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     });
     let response = client.find_by_id(request).await?;
-    let dtdl = response.into_inner().dtdl.clone();
+    let dtdl = response.into_inner().dtdl;
     debug!("Received the response for the find_by_id request.");
 
     debug!("Parsing the DTDL.");
@@ -95,7 +95,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ProviderClient::connect(uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
-        consumer_uri: String::from(consumer_uri),
+        consumer_uri,
     });
     let _response = client.subscribe(request).await?;
 

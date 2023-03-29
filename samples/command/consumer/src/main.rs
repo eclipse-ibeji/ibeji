@@ -89,7 +89,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         entity_id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     });
     let response = client.find_by_id(request).await?;
-    let dtdl = response.into_inner().dtdl.clone();
+    let dtdl = response.into_inner().dtdl;
     debug!("Received the response for the find_by_id request");
 
     debug!("Parsing the DTDL.");
