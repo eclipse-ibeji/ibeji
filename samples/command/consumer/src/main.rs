@@ -33,7 +33,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
         loop {
             let payload: String = String::from("The show-notification request.");
 
-            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,);
+            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
