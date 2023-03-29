@@ -15,6 +15,8 @@ use tonic::transport::Server;
 mod digitaltwin_impl;
 mod provider_impl;
 
+const IN_VEHICLE_DIGITAL_TWIN_ADDR: &str = "[::1]:50010";
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
@@ -23,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The In-Vehicle Digital Twin Service has started.");
 
     // Setup the HTTP server.
-    let addr: SocketAddr = "[::1]:50010".parse()?;
+    let addr: SocketAddr = IN_VEHICLE_DIGITAL_TWIN_ADDR.parse()?;
     let provider_impl = provider_impl::ProviderImpl::default();
     let digitaltwin_impl =
         digitaltwin_impl::DigitalTwinImpl { entity_map: Arc::new(RwLock::new(HashMap::new())) };
@@ -31,6 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(ProviderServer::new(provider_impl))
         .add_service(DigitalTwinServer::new(digitaltwin_impl))
         .serve(addr);
+    info!("The HTTP server is listening on address '{IN_VEHICLE_DIGITAL_TWIN_ADDR}'");
 
     server_future.await?;
 

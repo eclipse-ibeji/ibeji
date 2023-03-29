@@ -60,6 +60,8 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
+        info!("Received a subscribe request for id {entity_id} from consumer URI {consumer_uri}");
+
         // This block controls the lifetime of the lock.
         {
             let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
@@ -70,11 +72,11 @@ impl Provider for ProviderImpl {
                 Some(get_value) => get_value.clone(),
                 None => HashSet::new(),
             };
-            uris.insert(consumer_uri.clone());
+            uris.insert(consumer_uri);
             lock.insert(entity_id.clone(), uris);
         }
 
-        info!("Completed the subscribe request from URI {consumer_uri} for id {entity_id}");
+        debug!("Completed the subscribe request.");
 
         let response = SubscribeResponse {};
 
@@ -130,6 +132,8 @@ impl Provider for ProviderImpl {
 
         let response = SetResponse {};
 
+        debug!("Completed the set request.");
+
         Ok(Response::new(response))
     }
 
@@ -149,8 +153,8 @@ impl Provider for ProviderImpl {
         let consumer_uri: String = request_inner.consumer_uri;
         let payload: String = request_inner.payload;
 
-        debug!(
-            "Received an invoke request from consumer URI {consumer_uri} for entity id {entity_id} with payload '{payload}'"
+        info!(
+            "Received an invoke request from for entity id {entity_id} with payload '{payload}' from consumer URI {consumer_uri}"
         );
 
         tokio::spawn(async move {
@@ -162,8 +166,8 @@ impl Provider for ProviderImpl {
                 response_payload = format!("Error: The entity id {entity_id} is not recognized.");
             }
 
-            debug!(
-                "Sending an invoke response to consumer URI {consumer_uri} for entity id {entity_id}"
+            info!(
+                "Sending an invoke response for entity id {entity_id} to consumer URI {consumer_uri} "
             );
 
             let client_result = ConsumerClient::connect(consumer_uri).await;
@@ -182,6 +186,8 @@ impl Provider for ProviderImpl {
         });
 
         let response = InvokeResponse {};
+
+        debug!("Completed the invoke request.");
 
         Ok(Response::new(response))
     }

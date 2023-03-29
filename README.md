@@ -114,10 +114,10 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command to set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/property/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/dtdl;{repo-root-dir}/samples/property/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/ibeji/target/debug`<br>
+`cd {repo-root-dir}/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -135,10 +135,10 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command to set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/command/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/dtdl;{repo-root-dir}/samples/command/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/ibeji/target/debug`<br>
+`cd {repo-root-dir}/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -164,10 +164,10 @@ Orientate the three windows so that they are lined up in a column. The top windo
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window run the following command to set the DTDL_PATH environment variable.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`export DTDL_PATH="{repo-root-dir}/ibeji/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/ibeji/dtdl;{repo-root-dir}/ibeji/samples/mixed/dtdl"`<br>
+`export DTDL_PATH="{repo-root-dir}/opendigitaltwins-dtdl/DTDL;{repo-root-dir}/dtdl;{repo-root-dir}/samples/mixed/dtdl"`<br>
 1. In each window change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/ibeji/target/debug`<br>
+`cd {repo-root-dir}/target/debug`<br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>

@@ -36,7 +36,7 @@ impl DigitalTwin for DigitalTwinImpl {
         let request_inner = request.into_inner();
         let entity_id = request_inner.entity_id;
 
-        debug!("Received a find_by_id request for entity id {entity_id}");
+        info!("Received a find_by_id request for entity id {entity_id}");
 
         let dtdl;
 
@@ -65,9 +65,7 @@ impl DigitalTwin for DigitalTwinImpl {
 
         let response = FindByIdResponse { dtdl };
 
-        info!(
-            "Responded to the find_by_id request for entity id {entity_id} with the requested DTDL."
-        );
+        debug!("Responded to the find_by_id request.");
 
         Ok(Response::new(response))
     }
@@ -83,6 +81,8 @@ impl DigitalTwin for DigitalTwinImpl {
         let request_inner = request.into_inner();
         let dtdl = request_inner.dtdl;
 
+        info!("Received a register request for the DTDL:\n{}", &dtdl);
+
         let register_each_one_result = self.register_each_one(&dtdl);
         if let Err(error) = register_each_one_result {
             return Err(Status::internal(error));
@@ -90,7 +90,7 @@ impl DigitalTwin for DigitalTwinImpl {
 
         let response = RegisterResponse {};
 
-        info!("Completed the resgister request.");
+        debug!("Completed the register request.");
 
         Ok(Response::new(response))
     }

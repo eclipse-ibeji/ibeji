@@ -22,7 +22,7 @@ impl Consumer for ConsumerImpl {
     ) -> Result<Response<PublishResponse>, Status> {
         let PublishRequest { entity_id, value } = request.into_inner();
 
-        info!("Received a publish for entity id {entity_id} with the value {value}");
+        info!("Received a publish request for entity id {entity_id} with the value {value}");
 
         let response = PublishResponse {};
 
@@ -39,7 +39,7 @@ impl Consumer for ConsumerImpl {
     ) -> Result<Response<RespondResponse>, Status> {
         let RespondRequest { entity_id, response_id, payload } = request.into_inner();
 
-        info!("Received a respond for entity id {entity_id} with the response id {response_id} and the payload '{payload}'");
+        info!("Received a respond request for entity id {entity_id} with the response id {response_id} and the payload '{payload}'");
 
         let response = RespondResponse {};
 

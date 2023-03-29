@@ -17,6 +17,10 @@ use tonic::transport::Server;
 
 mod consumer_impl;
 
+const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
+
+const CONSUMER_ADDR: &str = "[::1]:60010";
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
@@ -25,20 +29,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Consumer has started.");
 
     // Setup the HTTP server.
-    let addr: SocketAddr = "[::1]:60010".parse()?;
+    let addr: SocketAddr = CONSUMER_ADDR.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
     // Obtain the DTDL for the ambient air temmpterature.
-    info!("Sending a find_by_id request to the Digital Twin Service for the DTDL for ambient air temperature.");
-    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
+    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
+        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
+    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
     let request = tonic::Request::new(FindByIdRequest {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     });
     let response = client.find_by_id(request).await?;
-    let dtdl = response.into_inner().dtdl.clone();
-    info!("Received the response for the find_by_id request. The DTDL is:\n{dtdl}");
+    let dtdl = response.into_inner().dtdl;
+    debug!("Received the response for the find_by_id request.");
 
     debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -81,14 +86,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let uri = String::from(uri_str_option.unwrap());
     info!("The URI for the ambient air temperature's provider is {uri}");
 
-    // Use the URI to subscribe to thr ambient air temperature data feed.\
+    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
+
+    // Subscribing to the ambient air temperature data feed.
+    info!(
+        "Sending a subscribe request for entity id {} to provider URI {uri}",
+        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID
+    );
     let mut client = ProviderClient::connect(uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
-        consumer_uri: String::from("http://[::1]:60010"), // Devskim: ignore DS137138
+        consumer_uri,
     });
     let _response = client.subscribe(request).await?;
-    info!("Subscribed to ambient air temperature.");
 
     server_future.await?;
 
