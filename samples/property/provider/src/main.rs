@@ -49,7 +49,8 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
             }
 
             for url in urls {
-                info!("Sending a publish request for {} with value {temperature} to consumer URI {url}", sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
+                info!("Sending a publish request for {} with value {temperature} to consumer URI {url}",
+                    sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
 
                 let client_result = ConsumerClient::connect(url).await;
                 if client_result.is_err() {

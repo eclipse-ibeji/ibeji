@@ -33,7 +33,8 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
         loop {
             let payload: String = String::from("The show-notification request.");
 
-            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
+            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}",
+                sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -83,7 +84,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
 
     // Obtain the DTDL for the send_notification command.
-    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
+    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
+        sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
     let request = tonic::Request::new(FindByIdRequest {
         entity_id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),

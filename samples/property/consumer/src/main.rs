@@ -35,7 +35,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
 
     // Obtain the DTDL for the ambient air temmpterature.
-    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}", sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
+    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
+        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
     let request = tonic::Request::new(FindByIdRequest {
         entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),

@@ -15,7 +15,7 @@ use tonic::transport::Server;
 mod digitaltwin_impl;
 mod provider_impl;
 
-const IN_VEHICLE_DIGITAL_TWIN_ADDR: &str = "[::1]:50010"; // Devskim: ignore DS137138
+const IN_VEHICLE_DIGITAL_TWIN_ADDR: &str = "[::1]:50010";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

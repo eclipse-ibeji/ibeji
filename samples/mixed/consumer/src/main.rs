@@ -34,7 +34,8 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
         loop {
             let payload: String = String::from("show-notification request");
 
-            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
+            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}",
+                sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -77,7 +78,8 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
     tokio::spawn(async move {
         let mut is_active = true;
         loop {
-            info!("Sending a set request for entity id {} to the value '{is_active}' to provider URI {provider_uri}", sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID);
+            info!("Sending a set request for entity id {} to the value '{is_active}' to provider URI {provider_uri}",
+                sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID);
 
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
