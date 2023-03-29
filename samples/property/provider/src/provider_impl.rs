@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use log::{info, warn};
+use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use proto::provider::{
     provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
@@ -33,6 +33,8 @@ impl Provider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let consumer_uri: String = request_inner.consumer_uri;
 
+        info!("Received a subscribe request for id {entity_id} from consumer URI {consumer_uri}");
+
         // This block controls the lifetime of the lock.
         {
             let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
@@ -46,9 +48,9 @@ impl Provider for ProviderImpl {
             lock.insert(entity_id.clone(), uris);
         }
 
-        info!("Completed the subscribe request from URI {consumer_uri} for id {entity_id}");
-
         let response = SubscribeResponse {};
+
+        debug!("Completed the subscribe request.");
 
         Ok(Response::new(response))
     }

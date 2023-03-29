@@ -19,6 +19,10 @@ use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
+const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
+
+const CONSUMER_ADDR: &str = "[::1]:60010"; // Devskim: ignore DS137138
+
 /// Start the show-notification repeater.
 ///
 /// # Arguments
@@ -28,6 +32,10 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
     debug!("Starting the Consumer's show-notification repeater.");
     tokio::spawn(async move {
         loop {
+            let payload: String = String::from("show-notification request");
+
+            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}", sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,);
+
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 warn!("Unable to connect. We will retry in a moment.");
@@ -37,8 +45,6 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
             let mut client = client_result.unwrap();
 
             let response_id = Uuid::new_v4().to_string();
-
-            let payload: String = String::from("The show-notification request.");
 
             let request = tonic::Request::new(InvokeRequest {
                 entity_id: String::from(
@@ -55,9 +61,9 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Invoked the show-notification command on endpoint {provider_uri}");
+            debug!("Completed the invoke request");
 
-            sleep(Duration::from_secs(5)).await;
+            sleep(Duration::from_secs(55)).await;
         }
     });
 }
@@ -71,6 +77,8 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
     tokio::spawn(async move {
         let mut is_active = true;
         loop {
+            info!("Sending a set request for entity id {} to the value '{is_active}' to provider URI {provider_uri}", sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID);
+
             let client_result = ProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 warn!("Unable to connect. We will retry in a moment.");
@@ -92,23 +100,23 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
                 Err(status) => warn!("{status:?}"),
             }
 
-            info!("Set the is_activate_air_conditioning property on endpoint {provider_uri}");
+            debug!("Completed the set request.");
 
-            sleep(Duration::from_secs(20)).await;
+            sleep(Duration::from_secs(30)).await;
         }
     });
 }
 
 async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     // Obtain the DTDL for the send_notification command.
-    debug!("Sending a find_by_id request to the Digital Twin Service for the DTDL for the send_notification command.");
-    let mut client = DigitalTwinClient::connect("http://[::1]:50010") // Devskim: ignore DS137138
+    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
+    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI)
         .await
         .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
     let response = client.find_by_id(request).await.map_err(|error| format!("{error}"))?;
     let dtdl = response.into_inner().dtdl;
-    debug!("Received the response for the find_by_id request. The DTDL is:\n{dtdl}");
+    debug!("Received the response for the find_by_id request");
 
     debug!("Parsing the DTDL.");
     let mut parser = ModelParser::new();
@@ -118,7 +126,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
         return Err(format!("Failed to parse the DTDL: {error}"));
     }
     let model_dict = model_dict_result.unwrap();
-    debug!("The DTDL parser has successfully parsed the DTDL.");
+    debug!("The DTDL parser has successfully parsed the DTDL");
 
     // Create the id (as a DTMI) for the send_notification command.
     let dtmi_id: Option<Dtmi> = create_dtmi(entity_id);
@@ -148,7 +156,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     let uri_property_value = uri_property_value_result.unwrap();
     let uri_str_option = uri_property_value.as_str();
     let provider_uri = String::from(uri_str_option.unwrap());
-    info!("The provider URI for entity {entity_id} is {provider_uri}");
+    info!("The provider URI for entity id {entity_id} is {provider_uri}");
 
     Ok(provider_uri)
 }
@@ -158,11 +166,11 @@ async fn send_subscribe_request(
     entity_id: &str,
     consumer_uri: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    debug!("Sending a subscribe request for {entity_id}.");
+    info!("Sending a subscribe request for entity id {entity_id} to provider URI {provider_uri}");
     let mut client = ProviderClient::connect(provider_uri.to_string()).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(entity_id),
-        consumer_uri: consumer_uri.to_string(), // Devskim: ignore DS137138
+        consumer_uri: consumer_uri.to_string(),
     });
     let _response = client.subscribe(request).await?;
 
@@ -177,11 +185,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Consumer has started.");
 
     // Setup the HTTP server.
-    let consumer_authority = String::from("[::1]:60010");
-    let addr: SocketAddr = consumer_authority.parse()?;
+    let addr: SocketAddr = CONSUMER_ADDR.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
+    info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
 
     let show_notification_command_provider_uri =
         get_provider_uri(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
@@ -197,7 +205,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let hybrid_battery_remaining_property_uri =
         get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await.unwrap();
 
-    let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
+    let consumer_uri = format!("http://{CONSUMER_ADDR}");
 
     send_subscribe_request(
         &ambient_air_temperature_property_provider_uri,

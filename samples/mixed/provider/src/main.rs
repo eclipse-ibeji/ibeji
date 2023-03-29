@@ -24,6 +24,9 @@ use tonic::transport::Server;
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 use crate::vehicle::Vehicle;
 
+const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
+const PROVIDER_ADDR: &str = "[::1]:40010"; // Devskim: ignore DS137138
+
 async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
     let urls;
 
@@ -38,7 +41,9 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
     }
 
     for url in urls {
-        debug!("Publishing {entity_id} as {value} to {url}");
+        debug!(
+            "Sending a publish request for {entity_id} with value {value} to consumer URI {url}"
+        );
 
         let client_result = ConsumerClient::connect(url).await;
         if client_result.is_err() {
@@ -58,6 +63,8 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
             Ok(_) => (),
             Err(status) => warn!("{status:?}"),
         }
+
+        debug!("Completed the publish request");
     }
 }
 
@@ -65,7 +72,7 @@ async fn start_vehicle_simulator(
     subscription_map: Arc<Mutex<SubscriptionMap>>,
     vehicle: Arc<Mutex<Vehicle>>,
 ) {
-    debug!("Starting the Provider's vehicle simulator.");
+    info!("Starting the Provider's vehicle simulator.");
     tokio::spawn(async move {
         loop {
             let ambient_air_temperature: i32;
@@ -84,7 +91,7 @@ async fn start_vehicle_simulator(
                 hybrid_battery_remaining = lock.hybrid_battery_remaining;
             }
 
-            info!("Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}");
+            info!("Publishing the values: Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}");
             publish(
                 subscription_map.clone(),
                 sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
@@ -123,19 +130,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     debug!("Prepared the Provider's DTDL.");
 
     // Setup the HTTP server.
-    let addr: SocketAddr = "[::1]:40010".parse()?;
+    let addr: SocketAddr = PROVIDER_ADDR.parse()?;
     let subscription_map = Arc::new(Mutex::new(SubscriptionMap::new()));
     let vehicle = Arc::new(Mutex::new(Vehicle::new()));
     let provider_impl =
         ProviderImpl { subscription_map: subscription_map.clone(), vehicle: vehicle.clone() };
     let server_future =
         Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
+    info!("The HTTP server is listening on address '{PROVIDER_ADDR}'");
 
-    debug!("Registering the Provider's DTDL with the In-Vehicle Digital Twin Service.");
-    let mut client = DigitalTwinClient::connect("http://[::1]:50010").await?; // Devskim: ignore DS137138
+    info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
+    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
     let request = tonic::Request::new(RegisterRequest { dtdl });
     let _response = client.register(request).await?;
-    info!("The Provider's DTDL has been registered.");
+    debug!("The Provider's DTDL has been registered.");
 
     start_vehicle_simulator(subscription_map.clone(), vehicle).await;
 

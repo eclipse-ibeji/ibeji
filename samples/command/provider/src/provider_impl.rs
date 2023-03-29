@@ -83,9 +83,10 @@ impl Provider for ProviderImpl {
         let payload: String = request_inner.payload;
 
         info!(
-            "Received an invoke request from consumer URI {} for entity id {} with payload '{}'",
-            &consumer_uri, &entity_id, &payload
+            "Received an invoke request from for entity id {entity_id} with payload '{payload}' from consumer URI {consumer_uri}"
         );
+
+        info!("Notification: '{payload}'");
 
         tokio::spawn(async move {
             let client_result = ConsumerClient::connect(consumer_uri.clone()).await;
@@ -93,8 +94,6 @@ impl Provider for ProviderImpl {
                 return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
             }
             let mut client = client_result.unwrap();
-
-            let payload: String = String::from("The show-notification response.");
 
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),
