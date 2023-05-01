@@ -10,12 +10,12 @@ cd "$(dirname "$0")/.."
 if ! command -v gh &> /dev/null
 then
     echo "GitHub CLI not found. Please install before running the script."
-    exit
+    exit 1
 fi
 
-if [ -z "$GITHUB_TOKEN" ]
+if [ -z "$GITHUB_PAT_TOKEN" ]
 then
-      echo "Missing \$GITHUB_TOKEN environment variable. Please set it before running the script."
+      echo "Missing \$GITHUB_PAT_TOKEN environment variable. Please set it before running the script."
       exit 1
 fi
 
@@ -34,7 +34,7 @@ fi
 
 NOTICE_FILENAME="NOTICE"
 echo "Running cargo-about for NOTICE file generation..."
-cargo about generate --workspace devops/cg/about.hbs --config devops/cg/about.toml > $NOTICE_FILENAME
+cargo about generate --workspace devops/cg/about.hbs --config devops/cg/about.toml | sed -E 's/[ \t]+\r?$//' > $NOTICE_FILENAME
 
 if [ -z "$(git diff --name-only $NOTICE_FILENAME)" ]
 then
@@ -46,5 +46,7 @@ else
       git add $NOTICE_FILENAME
       git commit -m "New notice file"
       git push -f --set-upstream origin "$BRANCH_NAME"
+      ## token needs repo access and read:org
+      echo "$GITHUB_PAT_TOKEN" | gh auth login --with-token
       gh pr create -B main -H "$BRANCH_NAME" --title "$PR_TITLE" --body 'This PR is merging latest changes related to notice file. Please review them before approving.'
 fi
