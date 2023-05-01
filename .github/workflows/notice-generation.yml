@@ -31,4 +31,4 @@ jobs:
           ./tools/notice_generation.sh
         shell: bash
         env:
-          GITHUB_PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
+          GITHUB_PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
