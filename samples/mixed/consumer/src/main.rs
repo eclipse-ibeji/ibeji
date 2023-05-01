@@ -9,11 +9,11 @@ use dtdl_parser::dtmi::{create_dtmi, Dtmi};
 use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
-use proto::consumer::consumer_server::ConsumerServer;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
-use proto::provider::provider_client::ProviderClient;
-use proto::provider::{InvokeRequest, SetRequest, SubscribeRequest};
+use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
+use samples_proto::sample_grpc::v1::digital_twin_provider::{InvokeRequest, SetRequest, SubscribeRequest};
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
@@ -37,7 +37,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
             info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}",
                 sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
 
-            let client_result = ProviderClient::connect(provider_uri.clone()).await;
+            let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 warn!("Unable to connect. We will retry in a moment.");
                 sleep(Duration::from_secs(1)).await;
@@ -81,7 +81,7 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
             info!("Sending a set request for entity id {} to the value '{is_active}' to provider URI {provider_uri}",
                 sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID);
 
-            let client_result = ProviderClient::connect(provider_uri.clone()).await;
+            let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
                 warn!("Unable to connect. We will retry in a moment.");
                 sleep(Duration::from_secs(1)).await;
@@ -169,7 +169,7 @@ async fn send_subscribe_request(
     consumer_uri: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a subscribe request for entity id {entity_id} to provider URI {provider_uri}");
-    let mut client = ProviderClient::connect(provider_uri.to_string()).await?;
+    let mut client = DigitalTwinProviderClient::connect(provider_uri.to_string()).await?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: String::from(entity_id),
         consumer_uri: consumer_uri.to_string(),
@@ -190,7 +190,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr: SocketAddr = CONSUMER_ADDR.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
-        Server::builder().add_service(ConsumerServer::new(consumer_impl)).serve(addr);
+        Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
 
     let show_notification_command_provider_uri =

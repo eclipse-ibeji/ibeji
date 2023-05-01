@@ -16,6 +16,9 @@
             {
               "@type": "Endpoint",
               "uri": "http://[::1]:40010",
+              "communication_protocol": "http",            
+              "schema_kind": "grpc",
+              "schema_reference": "https://github.com/eclipse-ibeji/samples/proto/sample_grpc/v1/digital_twin_provider.proto",              
               "operations": [ "Subscribe", "Unsubscribe" ]
             }
           ]
@@ -30,6 +33,9 @@
             {
               "@type": "Endpoint",
               "uri": "http://[::1]:40010",
+              "communication_protocol": "http",            
+              "schema_kind": "grpc",
+              "schema_reference": "https://github.com/eclipse-ibeji/samples/proto/sample_grpc/v1/digital_twin_provider.proto",              
               "operations": [ "Set", "Subscribe", "Unsubscribe" ]
             }
           ]
@@ -53,6 +59,9 @@
             {
               "@type": "Endpoint",
               "uri": "http://[::1]:40010",
+              "communication_protocol": "http",            
+              "schema_kind": "grpc",
+              "schema_reference": "https://github.com/eclipse-ibeji/samples/proto/sample_grpc/v1/digital_twin_provider.proto",              
               "operations": [ "Subscribe", "Unsubscribe" ]
             }
           ]
@@ -79,6 +88,9 @@
             {
               "@type": "Endpoint",
               "uri": "http://[::1]:40010",
+              "communication_protocol": "http",            
+              "schema_kind": "grpc",
+              "schema_reference": "https://github.com/eclipse-ibeji/samples/proto/sample_grpc/v1/digital_twin_provider.proto",              
               "operations": [ "Invoke" ]
             }
           ]

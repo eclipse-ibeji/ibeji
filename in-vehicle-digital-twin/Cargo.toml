@@ -10,6 +10,7 @@ license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
+data-exchange = { path = "../data-exchange" }
 env_logger= { workspace = true }
 ibeji-common = { path = "../common" }
 ibeji-common_test = { path = "../common-test" }

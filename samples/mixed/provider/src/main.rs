@@ -10,11 +10,11 @@ use env_logger::{Builder, Target};
 use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
-use proto::consumer::consumer_client::ConsumerClient;
-use proto::consumer::PublishRequest;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::RegisterRequest;
-use proto::provider::provider_server::ProviderServer;
+use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -45,7 +45,7 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
             "Sending a publish request for {entity_id} with value {value} to consumer URI {url}"
         );
 
-        let client_result = ConsumerClient::connect(url).await;
+        let client_result = DigitalTwinConsumerClient::connect(url).await;
         if client_result.is_err() {
             warn!("Unable to connect. We will retry in a moment.");
             sleep(Duration::from_secs(1)).await;
@@ -136,7 +136,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_impl =
         ProviderImpl { subscription_map: subscription_map.clone(), vehicle: vehicle.clone() };
     let server_future =
-        Server::builder().add_service(ProviderServer::new(provider_impl)).serve(addr);
+        Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
     info!("The HTTP server is listening on address '{PROVIDER_ADDR}'");
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");

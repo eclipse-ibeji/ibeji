@@ -29,9 +29,3 @@ pub mod vehicle {
         }
     }
 }
-
-pub mod property {
-    pub mod uri {
-        pub const ID: &str = "dtmi:sdv:property:uri;1";
-    }
-}

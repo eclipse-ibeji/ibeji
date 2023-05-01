@@ -256,12 +256,6 @@ impl ModelParser {
         let dtdl_2_context_value = self.retrieve_context(dtdl_2_context_path)?;
         self.replace_context_inline_in_doc(doc, "dtmi:dtdl:context;2", &dtdl_2_context_value)?;
 
-        let sdv_2_context_path_string = find_full_path("v2/context/SDV.v2.context.json")?;
-        let sdv_2_context_path_string_unwrapped = sdv_2_context_path_string;
-        let sdv_2_context_path = Path::new(&sdv_2_context_path_string_unwrapped);
-        let sdv_2_context_value = self.retrieve_context(sdv_2_context_path)?;
-        self.replace_context_inline_in_doc(doc, "dtmi:sdv:context;2", &sdv_2_context_value)?;
-
         Ok(())
     }
 
@@ -1101,16 +1095,16 @@ mod model_parser_tests {
 
     #[rustfmt::skip]
     #[test]
-    fn demo_validation_test() {
+    fn sdv_vehicle_validation_test() {
         set_dtdl_path();
 
         let mut json_texts = Vec::<String>::new();
 
-        let demo_path_result = find_full_path("samples/demo_resources.json");
-        assert!(demo_path_result.is_ok());
-        let demo_contents_result = retrieve_dtdl(&demo_path_result.unwrap());
-        assert!(demo_contents_result.is_ok());
-        json_texts.push(demo_contents_result.unwrap());
+        let vehicle_path_result = find_full_path("v2/content/sdv/vehicle.json");
+        assert!(vehicle_path_result.is_ok());
+        let vehicle_contents_result = retrieve_dtdl(&vehicle_path_result.unwrap());
+        assert!(vehicle_contents_result.is_ok());
+        json_texts.push(vehicle_contents_result.unwrap());
 
         let mut parser = ModelParser::new();
         let model_dict_result = parser.parse(&json_texts);
@@ -1120,39 +1114,26 @@ mod model_parser_tests {
             model_dict_result.err().unwrap()
         );
         let model_dict = model_dict_result.unwrap();
-        assert!(
-            model_dict.len() == 13,
-            "expected length was 13, actual length is {}",
-            model_dict.len()
-        );
 
         let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");
         assert!(ambient_air_temperature_id.is_some());
         let ambient_air_temperature_entity_result =
             model_dict.get(&ambient_air_temperature_id.unwrap());
         assert!(ambient_air_temperature_entity_result.is_some());
-        let ambient_air_temperature_uri_property_result = ambient_air_temperature_entity_result
-            .unwrap()
-            .undefined_properties()
-            .get("dtmi:sdv:property:uri;1");
-        assert!(ambient_air_temperature_uri_property_result.is_some());
-        let ambient_air_temperature_uri_property_value_result =
-            ambient_air_temperature_uri_property_result.unwrap().get("@value");
-        assert!(ambient_air_temperature_uri_property_value_result.is_some());
-        assert!(ambient_air_temperature_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
 
-        let send_notification_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:SendNotification;1");
-        assert!(send_notification_id.is_some());
-        let send_notification_entity_result = model_dict.get(&send_notification_id.unwrap());
-        assert!(send_notification_entity_result.is_some());
-        let send_notification_uri_property_result = send_notification_entity_result
-            .unwrap()
-            .undefined_properties()
-            .get("dtmi:sdv:property:uri;1");
-        assert!(send_notification_uri_property_result.is_some());
-        let send_notification_uri_property_value_result =
-            send_notification_uri_property_result.unwrap().get("@value");
-        assert!(send_notification_uri_property_value_result.is_some());
-        assert!(send_notification_uri_property_value_result.unwrap() == "http://[::1]:40010"); // Devskim: ignore DS137138
+        let is_air_conditioning_active_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1");
+        assert!(is_air_conditioning_active_id.is_some());
+        let is_air_conditioning_active_entity_result = model_dict.get(&is_air_conditioning_active_id.unwrap());
+        assert!(is_air_conditioning_active_entity_result.is_some());
+
+        let hybrid_battery_remaining_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:OBD:HybridBatteryRemaining;1");
+        assert!(hybrid_battery_remaining_id.is_some());
+        let hybrid_battery_remaining_entity_result = model_dict.get(&hybrid_battery_remaining_id.unwrap());
+        assert!(hybrid_battery_remaining_entity_result.is_some());
+
+        let show_notification_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:Infotainment:HMI:ShowNotification;1");
+        assert!(show_notification_id.is_some());
+        let show_notification_entity_result = model_dict.get(&show_notification_id.unwrap());
+        assert!(show_notification_entity_result.is_some());
     }
 }

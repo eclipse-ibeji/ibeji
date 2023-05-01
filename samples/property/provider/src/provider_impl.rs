@@ -4,8 +4,8 @@
 
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
-use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
+use samples_proto::sample_grpc::v1::digital_twin_provider::{
+    digital_twin_provider_server::DigitalTwinProvider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
     SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
@@ -20,7 +20,7 @@ pub struct ProviderImpl {
 }
 
 #[tonic::async_trait]
-impl Provider for ProviderImpl {
+impl DigitalTwinProvider for ProviderImpl {
     /// Subscribe implementation.
     ///
     /// # Arguments

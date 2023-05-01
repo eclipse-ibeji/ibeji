@@ -5,9 +5,11 @@
 use dt_model_identifiers::sdv_v1 as sdv;
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
-use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
-use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::RespondRequest;
+use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
+use samples_proto::sample_grpc::v1::digital_twin_provider::{
+    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
     SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
@@ -47,7 +49,7 @@ impl ProviderImpl {
 }
 
 #[tonic::async_trait]
-impl Provider for ProviderImpl {
+impl DigitalTwinProvider for ProviderImpl {
     /// Subscribe implementation.
     ///
     /// # Arguments
@@ -170,7 +172,7 @@ impl Provider for ProviderImpl {
                 "Sending an invoke response for entity id {entity_id} to consumer URI {consumer_uri} "
             );
 
-            let client_result = ConsumerClient::connect(consumer_uri).await;
+            let client_result = DigitalTwinConsumerClient::connect(consumer_uri).await;
             if client_result.is_err() {
                 return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
             }

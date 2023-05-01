@@ -13,23 +13,25 @@ service DigitalTwin {
 }
 
 message FindByIdRequest {
-   string entity_id = 1;
+   string payload = 1;
 }
 
 message FindByIdResponse {
-   string dtdl = 1;
+   string payload = 1;
 }
 
 message RegisterRequest {
-   string dtdl = 1;
+   string payload = 1;
 }
 
 message RegisterResponse {
+   string payload = 1;
 }
 
 message UnregisterRequest {
-   string entity_id = 1;
+   string payload = 1;
 }
 
 message UnregisterResponse {
+   string payload = 1;
 }

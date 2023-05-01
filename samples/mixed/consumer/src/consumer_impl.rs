@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: MIT
 
 use log::info;
-use proto::consumer::consumer_server::Consumer;
-use proto::consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumer;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct ConsumerImpl {}
 
 #[tonic::async_trait]
-impl Consumer for ConsumerImpl {
+impl DigitalTwinConsumer for ConsumerImpl {
     /// Publish implementation.
     ///
     /// # Arguments

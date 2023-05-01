@@ -3,15 +3,15 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "proto"
-version = "0.1.0"
+name = "samples_proto"
+version = "1.0.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 prost = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [build-dependencies]
 tonic-build = { workspace = true }
