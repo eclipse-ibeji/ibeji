@@ -4,7 +4,6 @@
 
 mod consumer_impl;
 
-use data_exchange::digitaltwin::{FindByIdRequestPayload, FindByIdResponsePayload};
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
@@ -82,32 +81,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
 
-    // Obtain the DTDL for the send_notification command.
     info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request_payload = FindByIdRequestPayload {
-        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
-    };
-    let request_payload = match serde_json::to_string(&request_payload) {
-        Ok(content) => content,
-        Err(error) => panic!("Failed to serialize the request payload: {error}")
-    };
+  
     let request = tonic::Request::new(FindByIdRequest {
-        payload: request_payload
+        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
     });
     let response = client.find_by_id(request).await?;
     let response_inner = response.into_inner();
-    info!("{}", &response_inner.payload);
-    let response_payload: FindByIdResponsePayload =
-        serde_json::from_str(&response_inner.payload).map_err(|error| format!("Failed to deserialize the response payload: {error}"))?;
     debug!("Received the response for the find_by_id request");
-    info!("response_payload: {:?}", response_payload.entity);    
+    info!("response_payload: {:?}", response_inner.entity_access_info); 
+    
     let provider_uri;
-    match response_payload.entity {
+    match response_inner.entity_access_info {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
-            provider_uri = content.endpoints[0].uri.clone();
+            provider_uri = content.endpoint_info_list[0].uri.clone();
         },
         None => {
             panic!("Did not find an entity for the show-notification command");            

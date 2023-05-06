@@ -4,13 +4,12 @@
 
 mod provider_impl;
 
-use data_exchange::digitaltwin::{Entity, Endpoint, RegisterRequestPayload};
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::Mutex;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
-use proto::digitaltwin::RegisterRequest;
+use proto::digitaltwin::{RegisterRequest, EndpointInfo, EntityAccessInfo};
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -33,25 +32,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     operations.push(String::from("Get"));
     operations.push(String::from("Set"));
 
-    let endpoint = Endpoint {
+    let endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations,
         uri: String::from("http://[::1]:40010"),
         context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
     };
 
-    let mut endpoints = Vec::new();
-    endpoints.push(endpoint);
+    let mut endpoint_info_list = Vec::new();
+    endpoint_info_list.push(endpoint_info);
 
-    let entity = Entity {
+    let entity_access_info = EntityAccessInfo {
         name: String::from("ShowNotification"),
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
         description: String::from("Show a notification on the HMI."),
-        endpoints
+        endpoint_info_list
     };
 
-    let mut entities = Vec::new();
-    entities.push(entity);
+    let mut entity_access_info_list = Vec::new();
+    entity_access_info_list.push(entity_access_info);
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_ADDR.parse()?;
@@ -63,16 +62,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request_payload = RegisterRequestPayload {
-        entities
-    };
-    let request_payload = match serde_json::to_string(&request_payload) {
-        Ok(content) => content,
-        Err(error) => panic!("Failed to serialize the request payload: {error}")
-    };
+   
     let request = tonic::Request::new(RegisterRequest {
-        payload: request_payload
-    });
+        entity_access_info_list
+    });    
     let _response = client.register(request).await?;
     debug!("The Provider's DTDL has been registered.");
 

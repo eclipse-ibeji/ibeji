@@ -9,16 +9,16 @@ use log::{debug, info, log_enabled, warn};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
+    EntityAccessInfo,
     FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
     UnregisterResponse};
-use data_exchange::digitaltwin::{Entity, FindByIdRequestPayload, FindByIdResponsePayload, RegisterRequestPayload};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinImpl {
-    pub entity_map: Arc<RwLock<HashMap<String, Entity>>>,
+    pub entity_access_info_map: Arc<RwLock<HashMap<String, EntityAccessInfo>>>,
 }
 
 #[tonic::async_trait]
@@ -31,45 +31,23 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
-        let request_inner = request.into_inner();
+        let request_inner = request.into_inner();      
 
-        let payload: FindByIdRequestPayload = match serde_json::from_str(&request_inner.payload) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(Status::internal(format!(
-                    "Unexpected error with the payload: {error:?}"
-                )))
-            }
-        };
-
-        let entity_id = payload.id;
+        let entity_id = request_inner.id;
 
         info!("Received a find_by_id request for entity id {entity_id}");
 
-        let entity: Option<Entity>;
+        let entity_access_info;
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Entity>> = self.entity_map.read();
-            entity = lock.get(&entity_id).map(|value| value.clone());          
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> = self.entity_access_info_map.read();
+            entity_access_info = lock.get(&entity_id).map(|value| value.clone());          
         }
 
-        let response_payload = FindByIdResponsePayload {
-            entity
-        };
+        info!("{:?}", entity_access_info);
 
-        let payload = match serde_json::to_string(&response_payload) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(Status::internal(format!(
-                    "Unexpected error with the conversion to JSON for entity {entity_id}: {error}"
-                )))
-            }
-        };
-
-        info!("{}", payload);
-
-        let response = FindByIdResponse { payload };
+        let response = FindByIdResponse { entity_access_info };
 
         debug!("Responded to the find_by_id request.");
 
@@ -86,27 +64,18 @@ impl DigitalTwin for DigitalTwinImpl {
     ) -> Result<Response<RegisterResponse>, Status> {
         let request_inner = request.into_inner();
 
-        let payload: RegisterRequestPayload = match serde_json::from_str(&request_inner.payload) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(Status::internal(format!(
-                    "Unexpected error with the payload: {error:?}"
-                )))
-            }
-        };
+        for entity_access_info in &request_inner.entity_access_info_list {
+            info!("Received a register request for the the entity:\n{}", &entity_access_info.id);
 
-        for entity in &payload.entities {
-            info!("Received a register request for the the entity:\n{}", &entity.id);
-
-            match self.register_entity(entity.clone()) {
+            match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => {
-                    self.register_entity(entity.clone()).map_err(|error| return Status::internal(format!("{}", error)))?
+                    self.register_entity(entity_access_info.clone()).map_err(|error| return Status::internal(format!("{}", error)))?
                 },
                 Err(error) => return Err(Status::internal(error))
             };
         }
 
-        let response = RegisterResponse {payload: String::from("")};
+        let response = RegisterResponse {};
 
         debug!("Completed the register request.");
 
@@ -133,22 +102,22 @@ impl DigitalTwinImpl {
     ///
     /// # Arguments
     /// * `entity` - The entity.
-    fn register_entity(&self, entity: Entity) -> Result<(), String> {
+    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Entity>> = self.entity_map.write();
-            match lock.get(&entity.id) {
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = self.entity_access_info_map.write();
+            match lock.get(&entity_access_info.id) {
                 Some(_) => {
                     // TODO: merge existing contents with new contents
                 },
                 None => {
-                    lock.insert(entity.id.clone(), entity.clone());
+                    lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
                 }
             };
         }
 
         if log_enabled!(Debug) {
-            debug!("Registered entity {}", &entity.id);
+            debug!("Registered entity {}", &entity_access_info.id);
         }
 
         Ok(())
@@ -159,7 +128,7 @@ impl DigitalTwinImpl {
 mod digitaltwin_impl_tests {
     use super::*;
     use ibeji_common_test::set_dtdl_path;
-    use data_exchange::digitaltwin::{Endpoint, FindByIdResponsePayload};
+    use proto::digitaltwin::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {
@@ -169,51 +138,44 @@ mod digitaltwin_impl_tests {
         operations.push(String::from("Subscribe"));
         operations.push(String::from("Unsubscribe"));        
 
-        let endpoint = Endpoint {
+        let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"),
-            context: String::from("dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1"),
+            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };
 
-        let mut endpoints = Vec::new();
-        endpoints.push(endpoint);
+        let mut endpoint_info_list = Vec::new();
+        endpoint_info_list.push(endpoint_info);
 
-        let entity = Entity {
-            digital_twin_model: String::from("dtmi:svd:vehcile;1"),
+        let entity_access_info= EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1"),
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoints           
+            endpoint_info_list           
         };      
 
-        let entity_map = Arc::new(RwLock::new(HashMap::new()));
+        let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
+        let digital_twin_impl = DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Entity>> = entity_map.write();
-            lock.insert(entity.id.clone(), entity.clone());
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.write();
+            lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
-        let request_payload = FindByIdRequestPayload {
-            id: entity.id.clone()
-        };
-
-        let request_payload_result = serde_json::to_string(&request_payload);
-        assert!(request_payload_result.is_ok());
-
-        let request = tonic::Request::new(FindByIdRequest { payload: request_payload_result.unwrap()});
+        let request = tonic::Request::new(FindByIdRequest { id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1")});
         let result = digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
         let response_inner = response.into_inner();
 
-        let response_payload_result: Result<FindByIdResponsePayload, serde_json::Error> = serde_json::from_str(&response_inner.payload);
-        assert!(response_payload_result.is_ok());
+        assert!(response_inner.entity_access_info.is_some());
 
-        // assert!(!response_payload.entity.is_empty());
+        assert!(response_inner.entity_access_info.unwrap().id == "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");        
+
+        // TODO: add check
     }
 
     #[tokio::test]
@@ -224,51 +186,43 @@ mod digitaltwin_impl_tests {
         operations.push(String::from("Subscribe"));
         operations.push(String::from("Unsubscribe"));        
 
-        let endpoint = Endpoint {
+        let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"),
-            context: String::from("dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1"),            
+            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),            
             operations,
         };
 
-        let mut endpoints = Vec::new();
-        endpoints.push(endpoint);
+        let mut endpoint_info_list = Vec::new();
+        endpoint_info_list.push(endpoint_info);
 
-        let entity = Entity {
-            digital_twin_model: String::from("dtmi:svd:vehcile;1"),
+        let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:Vehicle:Cabin:HAVC:AmbientAirTemperature;1"),
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoints           
+            endpoint_info_list           
         };
 
-        let mut entities = Vec::new();
-        entities.push(entity.clone());  
+        let mut entity_access_info_list = Vec::new();
+        entity_access_info_list.push(entity_access_info.clone());  
 
-        let entity_map = Arc::new(RwLock::new(HashMap::new()));
+        let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
+        let digital_twin_impl = DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Entity>> = entity_map.write();
-            lock.insert(entity.id.clone(), entity.clone());
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.write();
+            lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
-        let register_request_payload = RegisterRequestPayload {
-            entities: entities.clone()
-        };
-
-        let request_payload_result = serde_json::to_string(&register_request_payload);
-        assert!(request_payload_result.is_ok());
-
-        let request = tonic::Request::new(RegisterRequest { payload: request_payload_result.unwrap() });
+        let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
         let result = digital_twin_impl.register(request).await;
         assert!(result.is_ok());
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Entity>> = entity_map.read();
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.read();
             // Make sure that we populated the entity map from the contents of the DTDL.
             assert!(lock.len() == 1, "expected length was 1, actual length is {}", lock.len());
         }

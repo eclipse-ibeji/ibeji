@@ -25,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup the HTTP server.
     let addr: SocketAddr = IN_VEHICLE_DIGITAL_TWIN_ADDR.parse()?;
     let digitaltwin_impl =
-        digitaltwin_impl::DigitalTwinImpl { entity_map: Arc::new(RwLock::new(HashMap::new())) };
+        digitaltwin_impl::DigitalTwinImpl { entity_access_info_map: Arc::new(RwLock::new(HashMap::new())) };
     let server_future = Server::builder()
         .add_service(DigitalTwinServer::new(digitaltwin_impl))
         .serve(addr);
