@@ -1039,7 +1039,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [libc]( https://github.com/rust-lang/libc ) 0.2.142
+- [libc]( https://github.com/rust-lang/libc ) 0.2.143
 
 #### License
 
@@ -2764,7 +2764,7 @@ SOFTWARE.
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.6
 - [json-ld]( https://github.com/timothee-haudebourg/json-ld ) 0.6.1
 - [langtag]( https://github.com/timothee-haudebourg/langtag ) 0.2.0
-- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.6
+- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.7
 - [mown]( https://github.com/timothee-haudebourg/mown ) 0.2.2
 - [once_cell]( https://github.com/matklad/once_cell ) 1.17.1
 - [parking]( https://github.com/smol-rs/parking ) 2.1.0
@@ -2775,9 +2775,9 @@ SOFTWARE.
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.1.25
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.56
 - [quote]( https://github.com/dtolnay/quote ) 1.0.26
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.18
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.19
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.12
-- [serde]( https://github.com/serde-rs/serde ) 1.0.160
+- [serde]( https://github.com/serde-rs/serde ) 1.0.162
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.96
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
 - [syn]( https://github.com/dtolnay/syn ) 2.0.15
