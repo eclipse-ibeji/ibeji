@@ -107,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations,
-        uri: String::from("http://[::1]:40010"),
+        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
 

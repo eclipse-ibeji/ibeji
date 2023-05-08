@@ -139,7 +139,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ambient_air_temperature_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations: telemetry_operations.clone(),
-        uri: String::from("http://[::1]:40010"),
+        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
     let mut ambient_air_temperature_endpoint_info_list = Vec::new();
@@ -155,7 +155,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let is_air_conditioning_active_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations: property_operations,
-        uri: String::from("http://[::1]:40010"),
+        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
     let mut is_air_conditioning_active_endpoint_info_list = Vec::new();
@@ -171,7 +171,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let hybrid_battery_remaining_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations: telemetry_operations,
-        uri: String::from("http://[::1]:40010"),
+        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
     };
     let mut hybrid_battery_remaining_endpoint_info_list = Vec::new();
@@ -187,7 +187,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let show_notification_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
         operations: command_operations,
-        uri: String::from("http://[::1]:40010"),
+        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     };
     let mut show_notification_endpoint_info_list = Vec::new();

@@ -141,7 +141,7 @@ mod digitaltwin_impl_tests {
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
-            uri: String::from("http://[::1]:40010"),
+            uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
             context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };
@@ -196,7 +196,7 @@ mod digitaltwin_impl_tests {
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
-            uri: String::from("http://[::1]:40010"),
+            uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
             context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };

@@ -19,12 +19,12 @@ message EndpointInfo {
    string context = 4;
 }
 
-message EntityAccessInfo {   
+message EntityAccessInfo {
    string name = 1;
    string id = 2;
    string description = 3;
    repeated EndpointInfo endpointInfoList = 4;
-}  
+}
 
 message FindByIdRequest {
    string id = 1;
@@ -45,7 +45,7 @@ message UnregisterRequest {
    string id = 1;
    string protocol = 2;
    string uri = 3;
-   string context = 4;   
+   string context = 4;
 }
 
 message UnregisterResponse {
