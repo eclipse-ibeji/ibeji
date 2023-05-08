@@ -5,8 +5,6 @@
 mod consumer_impl;
 
 use dt_model_identifiers::sdv_v1 as sdv;
-use dtdl_parser::dtmi::{create_dtmi, Dtmi};
-use dtdl_parser::model_parser::ModelParser;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
@@ -115,49 +113,23 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI)
         .await
         .map_err(|error| format!("{error}"))?;
-    let request = tonic::Request::new(FindByIdRequest { entity_id: String::from(entity_id) });
+    let request = tonic::Request::new(FindByIdRequest { id: String::from(entity_id) });
     let response = client.find_by_id(request).await.map_err(|error| format!("{error}"))?;
-    let dtdl = response.into_inner().dtdl;
+    let response_inner = response.into_inner();
     debug!("Received the response for the find_by_id request");
+    info!("response_payload: {:?}", response_inner.entity_access_info);
 
-    debug!("Parsing the DTDL.");
-    let mut parser = ModelParser::new();
-    let json_texts = vec![dtdl];
-    let model_dict_result = parser.parse(&json_texts);
-    if let Err(error) = model_dict_result {
-        return Err(format!("Failed to parse the DTDL: {error}"));
-    }
-    let model_dict = model_dict_result.unwrap();
-    debug!("The DTDL parser has successfully parsed the DTDL");
-
-    // Create the id (as a DTMI) for the send_notification command.
-    let dtmi_id: Option<Dtmi> = create_dtmi(entity_id);
-    if dtmi_id.is_none() {
-        return Err(String::from("Unable to create the dtmi"));
+    let provider_uri;
+    match response_inner.entity_access_info {
+        Some(content) => {
+            // TODO: select the right one, rather than just using the first one
+            provider_uri = content.endpoint_info_list[0].uri.clone();
+        },
+        None => {
+            panic!("Did not find an entity for the AmbientAirTemperature command");            
+        }
     }
 
-    // Get the entity from the DTDL for the dtmi id.
-    let entity_result = model_dict.get(&dtmi_id.unwrap());
-    if entity_result.is_none() {
-        return Err(String::from("Unable to find the entity"));
-    }
-    let entity = entity_result.unwrap();
-
-    // Get the URI property from the entity.
-    let uri_property_result = entity.undefined_properties().get(sdv::property::uri::ID);
-    if uri_property_result.is_none() {
-        return Err(String::from("Unable to find the URI property"));
-    }
-    let uri_property = uri_property_result.unwrap();
-
-    // Get the value for the URI property.
-    let uri_property_value_result = uri_property.get("@value");
-    if uri_property_value_result.is_none() {
-        return Err(String::from("Unable to find the value for the URI."));
-    }
-    let uri_property_value = uri_property_value_result.unwrap();
-    let uri_str_option = uri_property_value.as_str();
-    let provider_uri = String::from(uri_str_option.unwrap());
     info!("The provider URI for entity id {entity_id} is {provider_uri}");
 
     Ok(provider_uri)

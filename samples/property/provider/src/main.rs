@@ -6,13 +6,12 @@ mod provider_impl;
 
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
-use proto::digitaltwin::RegisterRequest;
+use proto::digitaltwin::{RegisterRequest, EndpointInfo, EntityAccessInfo};
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
@@ -101,10 +100,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    debug!("Preparing the Provider's DTDL.");
-    let provider_dtdl_path = find_full_path("content/ambient_air_temperature.json")?;
-    let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    debug!("Prepared the Provider's DTDL.");
+    let mut operations = Vec::new();
+    operations.push(String::from("Subscribe"));
+    operations.push(String::from("Unsubscribe"));
+
+    let endpoint_info = EndpointInfo {
+        protocol: String::from("grpc"),
+        operations,
+        uri: String::from("http://[::1]:40010"),
+        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID)
+    };
+
+    let mut endpoint_info_list = Vec::new();
+    endpoint_info_list.push(endpoint_info);
+
+    let entity_access_info = EntityAccessInfo {
+        name: String::from("AmbientAirTemperature"),
+        id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
+        endpoint_info_list
+    };
+
+    let mut entity_access_info_list = Vec::new();
+    entity_access_info_list.push(entity_access_info);
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_ADDR.parse()?;
@@ -116,9 +134,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(RegisterRequest { dtdl });
+    let request = tonic::Request::new(RegisterRequest {
+        entity_access_info_list
+    });    
     let _response = client.register(request).await?;
-    info!("The Provider's DTDL has been registered.");
+    debug!("The Provider's DTDL has been registered.");    
 
     start_ambient_air_temperature_data_stream(subscription_map.clone());
 

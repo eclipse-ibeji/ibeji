@@ -13,10 +13,10 @@ members = [
   "samples/proto",
   "samples/command/consumer",
   "samples/command/provider",
-#  "samples/mixed/consumer",
-#  "samples/mixed/provider",
-#  "samples/property/consumer",
-#  "samples/property/provider"
+  "samples/mixed/consumer",
+  "samples/mixed/provider",
+  "samples/property/consumer",
+  "samples/property/provider"
 ]
 
 [workspace.dependencies]

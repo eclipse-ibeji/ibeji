@@ -31,7 +31,6 @@ message FindByIdRequest {
 }
 
 message FindByIdResponse {
-   // optional
    EntityAccessInfo entityAccessInfo = 1;
 }
 
@@ -44,6 +43,9 @@ message RegisterResponse {
 
 message UnregisterRequest {
    string id = 1;
+   string protocol = 2;
+   string uri = 3;
+   string context = 4;   
 }
 
 message UnregisterResponse {

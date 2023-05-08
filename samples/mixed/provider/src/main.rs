@@ -7,13 +7,12 @@ mod vehicle;
 
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-use ibeji_common::{find_full_path, retrieve_dtdl};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
-use proto::digitaltwin::RegisterRequest;
+use proto::digitaltwin::{RegisterRequest, EndpointInfo, EntityAccessInfo};
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::collections::HashSet;
 use std::net::SocketAddr;
@@ -124,10 +123,88 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    debug!("Preparing the Provider's DTDL.");
-    let provider_dtdl_path = find_full_path("content/mixed.json")?;
-    let dtdl = retrieve_dtdl(&provider_dtdl_path)?;
-    debug!("Prepared the Provider's DTDL.");
+    let mut telemetry_operations = Vec::new();
+    telemetry_operations.push(String::from("Subscribe"));
+    telemetry_operations.push(String::from("Unsubscribe"));
+
+    let mut property_operations = Vec::new();
+    property_operations.push(String::from("Subscribe"));
+    property_operations.push(String::from("Unsubscribe"));
+    property_operations.push(String::from("Get"));
+    property_operations.push(String::from("Set"));    
+
+    let mut command_operations = Vec::new();
+    command_operations.push(String::from("Invoke"));      
+
+    // AmbientAirTemperature
+    let ambient_air_temperature_endpoint_info = EndpointInfo {
+        protocol: String::from("grpc"),
+        operations: telemetry_operations.clone(),
+        uri: String::from("http://[::1]:40010"),
+        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID)
+    };
+    let mut ambient_air_temperature_endpoint_info_list = Vec::new();
+    ambient_air_temperature_endpoint_info_list.push(ambient_air_temperature_endpoint_info);
+    let ambient_air_temperature_access_info = EntityAccessInfo {
+        name: String::from("AmbientAirTemperature"),
+        id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
+        endpoint_info_list: ambient_air_temperature_endpoint_info_list
+    };
+
+    // IsAirConditioningActive
+    let is_air_conditioning_active_endpoint_info = EndpointInfo {
+        protocol: String::from("grpc"),
+        operations: property_operations,
+        uri: String::from("http://[::1]:40010"),
+        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID)
+    };
+    let mut is_air_conditioning_active_endpoint_info_list = Vec::new();
+    is_air_conditioning_active_endpoint_info_list.push(is_air_conditioning_active_endpoint_info);    
+    let is_air_conditioning_active_access_info = EntityAccessInfo {
+        name: String::from("IsAirConditioningActive"),
+        id: String::from(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID),
+        description: String::from("Is air conditioning active?"),
+        endpoint_info_list: is_air_conditioning_active_endpoint_info_list
+    };
+
+    // HybridBatteryRemaining
+    let hybrid_battery_remaining_endpoint_info = EndpointInfo {
+        protocol: String::from("grpc"),
+        operations: telemetry_operations,
+        uri: String::from("http://[::1]:40010"),
+        context: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID)
+    };
+    let mut hybrid_battery_remaining_endpoint_info_list = Vec::new();
+    hybrid_battery_remaining_endpoint_info_list.push(hybrid_battery_remaining_endpoint_info);
+    let hybrid_battery_remaining_access_info = EntityAccessInfo {
+        name: String::from("HybridBatteryRemaining"),
+        id: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
+        description: String::from("The remaining hybrid battery life."),
+        endpoint_info_list: hybrid_battery_remaining_endpoint_info_list
+    };
+
+    // ShowNotification
+    let show_notification_endpoint_info = EndpointInfo {
+        protocol: String::from("grpc"),
+        operations: command_operations,
+        uri: String::from("http://[::1]:40010"),
+        context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
+    };    
+    let mut show_notification_endpoint_info_list = Vec::new();
+    show_notification_endpoint_info_list.push(show_notification_endpoint_info);    
+    let show_notification_access_info = EntityAccessInfo {
+        name: String::from("ShowNotification"),
+        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
+        description: String::from("Show a notification on the HMI."),
+        endpoint_info_list: show_notification_endpoint_info_list
+    };
+
+    let mut entity_access_info_list = Vec::new();
+    entity_access_info_list.push(ambient_air_temperature_access_info);
+    entity_access_info_list.push(is_air_conditioning_active_access_info);
+    entity_access_info_list.push(hybrid_battery_remaining_access_info);
+    entity_access_info_list.push(show_notification_access_info);              
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_ADDR.parse()?;
@@ -141,9 +218,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(RegisterRequest { dtdl });
+    let request = tonic::Request::new(RegisterRequest {
+        entity_access_info_list
+    });    
     let _response = client.register(request).await?;
-    debug!("The Provider's DTDL has been registered.");
+    debug!("The Provider's DTDL has been registered.");      
 
     start_vehicle_simulator(subscription_map.clone(), vehicle).await;
 

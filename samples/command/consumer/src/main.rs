@@ -84,7 +84,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-  
     let request = tonic::Request::new(FindByIdRequest {
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
     });
@@ -100,7 +99,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             provider_uri = content.endpoint_info_list[0].uri.clone();
         },
         None => {
-            panic!("Did not find an entity for the show-notification command");            
+            panic!("Did not find an entity for the ShowNotification command");            
         }
     }
 
