@@ -9,9 +9,9 @@ use log::{debug, info, log_enabled, warn};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digitaltwin::digital_twin_server::DigitalTwin;
 use proto::digitaltwin::{
-    EntityAccessInfo,
-    FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
-    UnregisterResponse};
+    EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
+    UnregisterRequest, UnregisterResponse,
+};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
@@ -31,7 +31,7 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
-        let request_inner = request.into_inner();      
+        let request_inner = request.into_inner();
 
         let entity_id = request_inner.id;
 
@@ -41,8 +41,9 @@ impl DigitalTwin for DigitalTwinImpl {
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> = self.entity_access_info_map.read();
-            entity_access_info = lock.get(&entity_id).map(|value| value.clone());          
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
+                self.entity_access_info_map.read();
+            entity_access_info = lock.get(&entity_id).map(|value| value.clone());
         }
 
         info!("{:?}", entity_access_info);
@@ -68,10 +69,10 @@ impl DigitalTwin for DigitalTwinImpl {
             info!("Received a register request for the the entity:\n{}", &entity_access_info.id);
 
             match self.register_entity(entity_access_info.clone()) {
-                Ok(_) => {
-                    self.register_entity(entity_access_info.clone()).map_err(|error| return Status::internal(format!("{}", error)))?
-                },
-                Err(error) => return Err(Status::internal(error))
+                Ok(_) => self
+                    .register_entity(entity_access_info.clone())
+                    .map_err(|error| return Status::internal(format!("{}", error)))?,
+                Err(error) => return Err(Status::internal(error)),
             };
         }
 
@@ -97,7 +98,6 @@ impl DigitalTwin for DigitalTwinImpl {
 }
 
 impl DigitalTwinImpl {
-
     /// Register the entity.
     ///
     /// # Arguments
@@ -105,11 +105,12 @@ impl DigitalTwinImpl {
     fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = self.entity_access_info_map.write();
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+                self.entity_access_info_map.write();
             match lock.get(&entity_access_info.id) {
                 Some(_) => {
                     // TODO: merge existing contents with new contents
-                },
+                }
                 None => {
                     lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
                 }
@@ -136,7 +137,7 @@ mod digitaltwin_impl_tests {
 
         let mut operations = Vec::new();
         operations.push(String::from("Subscribe"));
-        operations.push(String::from("Unsubscribe"));        
+        operations.push(String::from("Unsubscribe"));
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
@@ -148,24 +149,28 @@ mod digitaltwin_impl_tests {
         let mut endpoint_info_list = Vec::new();
         endpoint_info_list.push(endpoint_info);
 
-        let entity_access_info= EntityAccessInfo {
+        let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
             id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoint_info_list           
-        };      
+            endpoint_info_list,
+        };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl = DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let digital_twin_impl =
+            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.write();
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+                entity_access_info_map.write();
             lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
-        let request = tonic::Request::new(FindByIdRequest { id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1")});
+        let request = tonic::Request::new(FindByIdRequest {
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+        });
         let result = digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
@@ -173,7 +178,10 @@ mod digitaltwin_impl_tests {
 
         assert!(response_inner.entity_access_info.is_some());
 
-        assert!(response_inner.entity_access_info.unwrap().id == "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");        
+        assert!(
+            response_inner.entity_access_info.unwrap().id
+                == "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
+        );
 
         // TODO: add check
     }
@@ -184,12 +192,12 @@ mod digitaltwin_impl_tests {
 
         let mut operations = Vec::new();
         operations.push(String::from("Subscribe"));
-        operations.push(String::from("Unsubscribe"));        
+        operations.push(String::from("Unsubscribe"));
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"),
-            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),            
+            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };
 
@@ -200,19 +208,21 @@ mod digitaltwin_impl_tests {
             name: String::from("AmbientAirTemperature"),
             id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoint_info_list           
+            endpoint_info_list,
         };
 
         let mut entity_access_info_list = Vec::new();
-        entity_access_info_list.push(entity_access_info.clone());  
+        entity_access_info_list.push(entity_access_info.clone());
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl = DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let digital_twin_impl =
+            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.write();
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+                entity_access_info_map.write();
             lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
@@ -222,7 +232,8 @@ mod digitaltwin_impl_tests {
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> = entity_access_info_map.read();
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
+                entity_access_info_map.read();
             // Make sure that we populated the entity map from the contents of the DTDL.
             assert!(lock.len() == 1, "expected length was 1, actual length is {}", lock.len());
         }

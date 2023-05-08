@@ -7,11 +7,13 @@ mod consumer_impl;
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
-use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
-use samples_proto::sample_grpc::v1::digital_twin_provider::{InvokeRequest, SetRequest, SubscribeRequest};
+use samples_proto::sample_grpc::v1::digital_twin_provider::{
+    InvokeRequest, SetRequest, SubscribeRequest,
+};
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
@@ -124,9 +126,9 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
             provider_uri = content.endpoint_info_list[0].uri.clone();
-        },
+        }
         None => {
-            panic!("Did not find an entity for the AmbientAirTemperature command");            
+            panic!("Did not find an entity for the AmbientAirTemperature command");
         }
     }
 

@@ -9,8 +9,8 @@ use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer
 use samples_proto::sample_grpc::v1::digital_twin_consumer::RespondRequest;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
 use samples_proto::sample_grpc::v1::digital_twin_provider::{
-    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
-    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
+    SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;

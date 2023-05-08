@@ -4,7 +4,9 @@
 
 use log::info;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumer;
-use samples_proto::sample_grpc::v1::digital_twin_consumer::{PublishRequest, PublishResponse, RespondRequest, RespondResponse};
+use samples_proto::sample_grpc::v1::digital_twin_consumer::{
+    PublishRequest, PublishResponse, RespondRequest, RespondResponse,
+};
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]

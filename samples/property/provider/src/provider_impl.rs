@@ -5,8 +5,9 @@
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_proto::sample_grpc::v1::digital_twin_provider::{
-    digital_twin_provider_server::DigitalTwinProvider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
-    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+    digital_twin_provider_server::DigitalTwinProvider, GetRequest, GetResponse, InvokeRequest,
+    InvokeResponse, SetRequest, SetResponse, SubscribeRequest, SubscribeResponse,
+    UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;

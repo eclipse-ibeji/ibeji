@@ -7,9 +7,9 @@ mod consumer_impl;
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
-use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
 use proto::digitaltwin::FindByIdRequest;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_proto::sample_grpc::v1::digital_twin_provider::InvokeRequest;
 use std::net::SocketAddr;
@@ -85,21 +85,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
     let request = tonic::Request::new(FindByIdRequest {
-        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
+        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     });
     let response = client.find_by_id(request).await?;
     let response_inner = response.into_inner();
     debug!("Received the response for the find_by_id request");
-    info!("response_payload: {:?}", response_inner.entity_access_info); 
-    
+    info!("response_payload: {:?}", response_inner.entity_access_info);
+
     let provider_uri;
     match response_inner.entity_access_info {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
             provider_uri = content.endpoint_info_list[0].uri.clone();
-        },
+        }
         None => {
-            panic!("Did not find an entity for the ShowNotification command");            
+            panic!("Did not find an entity for the ShowNotification command");
         }
     }
 

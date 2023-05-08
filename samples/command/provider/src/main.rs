@@ -9,7 +9,7 @@ use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::Mutex;
 use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
-use proto::digitaltwin::{RegisterRequest, EndpointInfo, EntityAccessInfo};
+use proto::digitaltwin::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         protocol: String::from("grpc"),
         operations,
         uri: String::from("http://[::1]:40010"),
-        context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
+        context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     };
 
     let mut endpoint_info_list = Vec::new();
@@ -46,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: String::from("ShowNotification"),
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
         description: String::from("Show a notification on the HMI."),
-        endpoint_info_list
+        endpoint_info_list,
     };
 
     let mut entity_access_info_list = Vec::new();
@@ -62,9 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(RegisterRequest {
-        entity_access_info_list
-    });    
+    let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
     let _response = client.register(request).await?;
     debug!("The Provider's DTDL has been registered.");
 
