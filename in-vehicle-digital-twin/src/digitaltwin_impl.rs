@@ -71,7 +71,7 @@ impl DigitalTwin for DigitalTwinImpl {
             match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => self
                     .register_entity(entity_access_info.clone())
-                    .map_err(|error| Status::internal(format!("{error}")))?,
+                    .map_err(|error| Status::internal(error))?,
                 Err(error) => return Err(Status::internal(error)),
             };
         }
