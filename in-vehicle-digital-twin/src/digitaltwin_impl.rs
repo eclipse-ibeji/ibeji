@@ -71,7 +71,7 @@ impl DigitalTwin for DigitalTwinImpl {
             match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => self
                     .register_entity(entity_access_info.clone())
-                    .map_err(|error| Status::internal(format!("{}", error)))?,
+                    .map_err(|error| Status::internal(format!("{error}")))?,
                 Err(error) => return Err(Status::internal(error)),
             };
         }
@@ -144,14 +144,11 @@ mod digitaltwin_impl_tests {
             operations,
         };
 
-        let mut endpoint_info_list = Vec::new();
-        endpoint_info_list.push(endpoint_info);
-
         let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
             id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoint_info_list,
+            endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
@@ -188,15 +185,11 @@ mod digitaltwin_impl_tests {
     async fn register_test() {
         set_dtdl_path();
 
-        let mut operations = Vec::new();
-        operations.push(String::from("Subscribe"));
-        operations.push(String::from("Unsubscribe"));
-
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
             context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
-            operations,
+            operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
         };
 
         let mut endpoint_info_list = Vec::new();
