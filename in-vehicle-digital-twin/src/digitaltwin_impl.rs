@@ -71,7 +71,7 @@ impl DigitalTwin for DigitalTwinImpl {
             match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => self
                     .register_entity(entity_access_info.clone())
-                    .map_err(|error| Status::internal(error))?,
+                    .map_err(Status::internal)?,
                 Err(error) => return Err(Status::internal(error)),
             };
         }
@@ -192,18 +192,12 @@ mod digitaltwin_impl_tests {
             operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
         };
 
-        let mut endpoint_info_list = Vec::new();
-        endpoint_info_list.push(endpoint_info);
-
         let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
             id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             description: String::from("Ambient air temperature"),
-            endpoint_info_list,
+            endpoint_info_list: vec!(endpoint_info),
         };
-
-        let mut entity_access_info_list = Vec::new();
-        entity_access_info_list.push(entity_access_info.clone());
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
@@ -217,7 +211,7 @@ mod digitaltwin_impl_tests {
             lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
-        let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
+        let request = tonic::Request::new(RegisterRequest { entity_access_info_list: vec!(entity_access_info) });
         let result = digital_twin_impl.register(request).await;
         assert!(result.is_ok());
 
