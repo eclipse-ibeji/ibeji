@@ -43,7 +43,7 @@ impl DigitalTwin for DigitalTwinImpl {
         {
             let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
                 self.entity_access_info_map.read();
-            entity_access_info = lock.get(&entity_id).map(|value| value.clone());
+            entity_access_info = lock.get(&entity_id).cloned();
         }
 
         info!("{:?}", entity_access_info);
@@ -71,7 +71,7 @@ impl DigitalTwin for DigitalTwinImpl {
             match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => self
                     .register_entity(entity_access_info.clone())
-                    .map_err(|error| return Status::internal(format!("{}", error)))?,
+                    .map_err(|error| Status::internal(format!("{}", error)))?,
                 Err(error) => return Err(Status::internal(error)),
             };
         }
@@ -135,13 +135,11 @@ mod digitaltwin_impl_tests {
     async fn find_by_id_test() {
         set_dtdl_path();
 
-        let mut operations = Vec::new();
-        operations.push(String::from("Subscribe"));
-        operations.push(String::from("Unsubscribe"));
+        let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
-            uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+            uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
             context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };
@@ -196,7 +194,7 @@ mod digitaltwin_impl_tests {
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
-            uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+            uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
             context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
             operations,
         };

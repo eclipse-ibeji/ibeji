@@ -100,25 +100,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let mut operations = Vec::new();
-    operations.push(String::from("Subscribe"));
-    operations.push(String::from("Unsubscribe"));
-
     let endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations,
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
-
-    let mut endpoint_info_list = Vec::new();
-    endpoint_info_list.push(endpoint_info);
 
     let entity_access_info = EntityAccessInfo {
         name: String::from("AmbientAirTemperature"),
         id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
         description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
-        endpoint_info_list,
+        endpoint_info_list: vec![endpoint_info],
     };
 
     let mut entity_access_info_list = Vec::new();

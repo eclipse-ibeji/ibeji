@@ -123,23 +123,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let mut telemetry_operations = Vec::new();
-    telemetry_operations.push(String::from("Subscribe"));
-    telemetry_operations.push(String::from("Unsubscribe"));
-
-    let mut property_operations = Vec::new();
-    property_operations.push(String::from("Subscribe"));
-    property_operations.push(String::from("Unsubscribe"));
-    property_operations.push(String::from("Set"));
-
-    let mut command_operations = Vec::new();
-    command_operations.push(String::from("Invoke"));
-
     // AmbientAirTemperature
     let ambient_air_temperature_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations: telemetry_operations.clone(),
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
     let mut ambient_air_temperature_endpoint_info_list = Vec::new();
@@ -154,8 +142,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // IsAirConditioningActive
     let is_air_conditioning_active_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations: property_operations,
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![
+            String::from("Subscribe"),
+            String::from("Unsubscribe"),
+            String::from("Get"),
+        ],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
     let mut is_air_conditioning_active_endpoint_info_list = Vec::new();
@@ -170,8 +162,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // HybridBatteryRemaining
     let hybrid_battery_remaining_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations: telemetry_operations,
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
     };
     let mut hybrid_battery_remaining_endpoint_info_list = Vec::new();
@@ -186,8 +178,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // ShowNotification
     let show_notification_endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations: command_operations,
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![String::from("Invoke")],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     };
     let mut show_notification_endpoint_info_list = Vec::new();
@@ -199,11 +191,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         endpoint_info_list: show_notification_endpoint_info_list,
     };
 
-    let mut entity_access_info_list = Vec::new();
-    entity_access_info_list.push(ambient_air_temperature_access_info);
-    entity_access_info_list.push(is_air_conditioning_active_access_info);
-    entity_access_info_list.push(hybrid_battery_remaining_access_info);
-    entity_access_info_list.push(show_notification_access_info);
+    let entity_access_info_list = vec![
+        ambient_air_temperature_access_info,
+        is_air_conditioning_active_access_info,
+        hybrid_battery_remaining_access_info,
+        show_notification_access_info,
+    ];
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_ADDR.parse()?;

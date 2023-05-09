@@ -28,29 +28,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let mut operations = Vec::new();
-    operations.push(String::from("Get"));
-    operations.push(String::from("Set"));
-
     let endpoint_info = EndpointInfo {
         protocol: String::from("grpc"),
-        operations,
-        uri: String::from("http://[::1]:40010"),    // Devskim: ignore DS137138
+        operations: vec![String::from("Get"), String::from("Set")],
+        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     };
-
-    let mut endpoint_info_list = Vec::new();
-    endpoint_info_list.push(endpoint_info);
 
     let entity_access_info = EntityAccessInfo {
         name: String::from("ShowNotification"),
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
         description: String::from("Show a notification on the HMI."),
-        endpoint_info_list,
+        endpoint_info_list: vec![endpoint_info],
     };
-
-    let mut entity_access_info_list = Vec::new();
-    entity_access_info_list.push(entity_access_info);
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_ADDR.parse()?;
@@ -62,7 +52,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
+    let request =
+        tonic::Request::new(RegisterRequest { entity_access_info_list: vec![entity_access_info] });
     let _response = client.register(request).await?;
     debug!("The Provider's DTDL has been registered.");
 
