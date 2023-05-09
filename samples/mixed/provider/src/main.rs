@@ -134,7 +134,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: String::from("AmbientAirTemperature"),
         id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
         description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
-        endpoint_info_list: vec!(ambient_air_temperature_endpoint_info),
+        endpoint_info_list: vec![ambient_air_temperature_endpoint_info],
     };
 
     // IsAirConditioningActive
@@ -152,7 +152,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: String::from("IsAirConditioningActive"),
         id: String::from(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID),
         description: String::from("Is air conditioning active?"),
-        endpoint_info_list: vec!(is_air_conditioning_active_endpoint_info),
+        endpoint_info_list: vec![is_air_conditioning_active_endpoint_info],
     };
 
     // HybridBatteryRemaining
@@ -166,7 +166,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: String::from("HybridBatteryRemaining"),
         id: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
         description: String::from("The remaining hybrid battery life."),
-        endpoint_info_list: vec!(hybrid_battery_remaining_endpoint_info),
+        endpoint_info_list: vec![hybrid_battery_remaining_endpoint_info],
     };
 
     // ShowNotification
@@ -180,7 +180,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: String::from("ShowNotification"),
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
         description: String::from("Show a notification on the HMI."),
-        endpoint_info_list: vec!(show_notification_endpoint_info),
+        endpoint_info_list: vec![show_notification_endpoint_info],
     };
 
     let entity_access_info_list = vec![

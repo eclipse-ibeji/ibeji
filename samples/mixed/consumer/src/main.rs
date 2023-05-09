@@ -125,7 +125,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
             content.endpoint_info_list[0].uri.clone()
-        },
+        }
         None => {
             panic!("Did not find an entity for the AmbientAirTemperature command");
         }

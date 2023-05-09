@@ -48,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
             content.endpoint_info_list[0].uri.clone()
-        },
+        }
         None => {
             panic!("Did not find an entity for the AmbientAirTemperature command");
         }
