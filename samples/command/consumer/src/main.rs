@@ -92,16 +92,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     debug!("Received the response for the find_by_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info);
 
-    let provider_uri;
-    match response_inner.entity_access_info {
+    let provider_uri = match response_inner.entity_access_info {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
-            provider_uri = content.endpoint_info_list[0].uri.clone();
-        }
+            content.endpoint_info_list[0].uri.clone()
+        },
         None => {
             panic!("Did not find an entity for the ShowNotification command");
         }
-    }
+    };
 
     info!("The URI for the show-notification command's provider is {provider_uri}");
 
