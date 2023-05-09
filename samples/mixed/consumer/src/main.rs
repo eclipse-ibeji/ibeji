@@ -121,16 +121,15 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
     debug!("Received the response for the find_by_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info);
 
-    let provider_uri;
-    match response_inner.entity_access_info {
+    let provider_uri = match response_inner.entity_access_info {
         Some(content) => {
             // TODO: select the right one, rather than just using the first one
-            provider_uri = content.endpoint_info_list[0].uri.clone();
-        }
+            content.endpoint_info_list[0].uri.clone()
+        },
         None => {
             panic!("Did not find an entity for the AmbientAirTemperature command");
         }
-    }
+    };
 
     info!("The provider URI for entity id {entity_id} is {provider_uri}");
 
