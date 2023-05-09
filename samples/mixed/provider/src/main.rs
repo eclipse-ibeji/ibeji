@@ -130,13 +130,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
-    let mut ambient_air_temperature_endpoint_info_list = Vec::new();
-    ambient_air_temperature_endpoint_info_list.push(ambient_air_temperature_endpoint_info);
     let ambient_air_temperature_access_info = EntityAccessInfo {
         name: String::from("AmbientAirTemperature"),
         id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
         description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
-        endpoint_info_list: ambient_air_temperature_endpoint_info_list,
+        endpoint_info_list: vec!(ambient_air_temperature_endpoint_info),
     };
 
     // IsAirConditioningActive
@@ -150,13 +148,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
     };
-    let mut is_air_conditioning_active_endpoint_info_list = Vec::new();
-    is_air_conditioning_active_endpoint_info_list.push(is_air_conditioning_active_endpoint_info);
     let is_air_conditioning_active_access_info = EntityAccessInfo {
         name: String::from("IsAirConditioningActive"),
         id: String::from(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID),
         description: String::from("Is air conditioning active?"),
-        endpoint_info_list: is_air_conditioning_active_endpoint_info_list,
+        endpoint_info_list: vec!(is_air_conditioning_active_endpoint_info),
     };
 
     // HybridBatteryRemaining
@@ -166,13 +162,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
     };
-    let mut hybrid_battery_remaining_endpoint_info_list = Vec::new();
-    hybrid_battery_remaining_endpoint_info_list.push(hybrid_battery_remaining_endpoint_info);
     let hybrid_battery_remaining_access_info = EntityAccessInfo {
         name: String::from("HybridBatteryRemaining"),
         id: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
         description: String::from("The remaining hybrid battery life."),
-        endpoint_info_list: hybrid_battery_remaining_endpoint_info_list,
+        endpoint_info_list: vec!(hybrid_battery_remaining_endpoint_info),
     };
 
     // ShowNotification
@@ -182,13 +176,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
         context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
     };
-    let mut show_notification_endpoint_info_list = Vec::new();
-    show_notification_endpoint_info_list.push(show_notification_endpoint_info);
     let show_notification_access_info = EntityAccessInfo {
         name: String::from("ShowNotification"),
         id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
         description: String::from("Show a notification on the HMI."),
-        endpoint_info_list: show_notification_endpoint_info_list,
+        endpoint_info_list: vec!(show_notification_endpoint_info),
     };
 
     let entity_access_info_list = vec![
