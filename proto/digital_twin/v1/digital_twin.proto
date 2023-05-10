@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package digitaltwin;
+package digital_twin;
 
 service DigitalTwin {
     rpc FindById (FindByIdRequest) returns (FindByIdResponse);

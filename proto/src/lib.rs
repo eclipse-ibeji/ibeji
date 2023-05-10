@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-pub mod digitaltwin {
+pub mod digital_twin {
     #![allow(clippy::derive_partial_eq_without_eq)]
-    tonic::include_proto!("digitaltwin");
+    tonic::include_proto!("digital_twin");
 }

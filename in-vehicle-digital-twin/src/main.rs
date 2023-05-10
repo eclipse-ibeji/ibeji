@@ -5,7 +5,7 @@
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::RwLock;
-use proto::digitaltwin::digital_twin_server::DigitalTwinServer;
+use proto::digital_twin::digital_twin_server::DigitalTwinServer;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;

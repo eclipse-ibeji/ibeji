@@ -5,8 +5,8 @@
 use dt_model_identifiers::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
-use proto::digitaltwin::digital_twin_client::DigitalTwinClient;
-use proto::digitaltwin::FindByIdRequest;
+use proto::digital_twin::digital_twin_client::DigitalTwinClient;
+use proto::digital_twin::FindByIdRequest;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_proto::sample_grpc::v1::digital_twin_provider::SubscribeRequest;

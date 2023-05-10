@@ -7,8 +7,8 @@ extern crate iref;
 use log::Level::Debug;
 use log::{debug, info, log_enabled, warn};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use proto::digitaltwin::digital_twin_server::DigitalTwin;
-use proto::digitaltwin::{
+use proto::digital_twin::digital_twin_server::DigitalTwin;
+use proto::digital_twin::{
     EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
     UnregisterRequest, UnregisterResponse,
 };
@@ -129,7 +129,7 @@ impl DigitalTwinImpl {
 mod digitaltwin_impl_tests {
     use super::*;
     use ibeji_common_test::set_dtdl_path;
-    use proto::digitaltwin::EndpointInfo;
+    use proto::digital_twin::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {
