@@ -34,7 +34,7 @@ pub fn set_dtdl_path() {
     let repo_dir_result = get_repo_dir();
     if let Some(repo_dir) = repo_dir_result {
         let value = format!(
-            "{repo_dir}/opendigitaltwins-dtdl/DTDL;{repo_dir}/iot-plugandplay-models;{repo_dir}/dtdl;{repo_dir}/dt-model/dtdl"
+            "{repo_dir}/opendigitaltwins-dtdl/DTDL;{repo_dir}/iot-plugandplay-models;{repo_dir}/dtdl;{repo_dir}/digital-twin-model/dtdl"
         );
         env::set_var(DTDL_PATH, &value);
         trace!("{DTDL_PATH}={value}");

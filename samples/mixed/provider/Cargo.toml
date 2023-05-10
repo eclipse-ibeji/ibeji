@@ -10,7 +10,7 @@ license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
-dt-model-identifiers = { path = "../../../dt-model/dt-model-identifiers" }
+digital-twin-model = { path = "../../../digital-twin-model" }
 env_logger= { workspace = true }
 ibeji-common = { path = "../../../common" }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }

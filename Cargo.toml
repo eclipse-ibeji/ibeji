@@ -7,7 +7,7 @@
 members = [
   "common",
   "common-test",
-  "dt-model/dt-model-identifiers",
+  "digital-twin-model",
   "dtdl-parser",
   "in-vehicle-digital-twin",
   "samples/proto",
