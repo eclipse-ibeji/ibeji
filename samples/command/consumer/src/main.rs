@@ -18,7 +18,7 @@ use tonic::transport::Server;
 use uuid::Uuid;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-const CONSUMER_ADDR: &str = "[::1]:60010";
+const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 
 /// Start the show notification repeater.
 ///
@@ -74,12 +74,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Consumer has started.");
 
     // Setup the HTTP server.
-    let consumer_authority = String::from(CONSUMER_ADDR);
-    let addr: SocketAddr = consumer_authority.parse()?;
+    let addr: SocketAddr = CONSUMER_AUTHORITY.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
+    info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
 
     info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
@@ -104,7 +103,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The URI for the show-notification command's provider is {provider_uri}");
 
-    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
+    let consumer_uri = format!("http://{CONSUMER_AUTHORITY}"); // Devskim: ignore DS137138
 
     start_show_notification_repeater(provider_uri, consumer_uri);
 

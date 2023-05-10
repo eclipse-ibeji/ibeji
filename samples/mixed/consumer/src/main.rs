@@ -21,7 +21,7 @@ use uuid::Uuid;
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 
-const CONSUMER_ADDR: &str = "[::1]:60010";
+const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 
 /// Start the show-notification repeater.
 ///
@@ -116,7 +116,7 @@ async fn get_provider_uri(entity_id: &str) -> Result<String, String> {
         .await
         .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { id: String::from(entity_id) });
-    let response = client.find_by_id(request).await.map_err(|error| format!("{error}"))?;
+    let response = client.find_by_id(request).await.map_err(|error| error.to_string())?;
     let response_inner = response.into_inner();
     debug!("Received the response for the find_by_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info);
@@ -160,11 +160,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Consumer has started.");
 
     // Setup the HTTP server.
-    let addr: SocketAddr = CONSUMER_ADDR.parse()?;
+    let addr: SocketAddr = CONSUMER_AUTHORITY.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{CONSUMER_ADDR}'");
+    info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
 
     let show_notification_command_provider_uri =
         get_provider_uri(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID)
@@ -180,7 +180,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let hybrid_battery_remaining_property_uri =
         get_provider_uri(sdv::vehicle::obd::hybrid_battery_remaining::ID).await.unwrap();
 
-    let consumer_uri = format!("http://{CONSUMER_ADDR}"); // Devskim: ignore DS137138
+    let consumer_uri = format!("http://{CONSUMER_AUTHORITY}"); // Devskim: ignore DS137138
 
     send_subscribe_request(
         &ambient_air_temperature_property_provider_uri,

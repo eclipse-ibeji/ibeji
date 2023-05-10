@@ -18,7 +18,7 @@ use tonic::transport::Server;
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-const PROVIDER_ADDR: &str = "[::1]:40010";
+const PROVIDER_AUTHORITY: &str = "[::1]:40010";
 
 #[tokio::main]
 #[allow(clippy::collapsible_else_if)]
@@ -43,12 +43,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     // Setup the HTTP server.
-    let addr: SocketAddr = PROVIDER_ADDR.parse()?;
+    let addr: SocketAddr = PROVIDER_AUTHORITY.parse()?;
     let subscription_map = Arc::new(Mutex::new(SubscriptionMap::new()));
     let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
     let server_future =
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{PROVIDER_ADDR}'");
+    info!("The HTTP server is listening on address '{PROVIDER_AUTHORITY}'");
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;

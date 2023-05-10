@@ -46,7 +46,7 @@ impl DigitalTwin for DigitalTwinImpl {
             entity_access_info = lock.get(&entity_id).cloned();
         }
 
-        info!("{:?}", entity_access_info);
+        info!("{entity_access_info:?}");
 
         let response = FindByIdResponse { entity_access_info };
 
@@ -66,7 +66,7 @@ impl DigitalTwin for DigitalTwinImpl {
         let request_inner = request.into_inner();
 
         for entity_access_info in &request_inner.entity_access_info_list {
-            info!("Received a register request for the the entity:\n{}", &entity_access_info.id);
+            info!("Received a register request for the the entity:\n{}", entity_access_info.id);
 
             match self.register_entity(entity_access_info.clone()) {
                 Ok(_) => {

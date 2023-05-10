@@ -91,11 +91,9 @@ impl DigitalTwinProvider for ProviderImpl {
         info!("Notification: '{payload}'");
 
         tokio::spawn(async move {
-            let client_result = DigitalTwinConsumerClient::connect(consumer_uri.clone()).await;
-            if client_result.is_err() {
-                return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
-            }
-            let mut client = client_result.unwrap();
+            let mut client = DigitalTwinConsumerClient::connect(consumer_uri.clone())
+                .await
+                .map_err(|error| Status::internal(error.to_string()))?;
 
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),
