@@ -9,9 +9,10 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+prost = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
-prost = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
