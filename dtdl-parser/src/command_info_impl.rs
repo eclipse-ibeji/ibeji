@@ -225,21 +225,21 @@ mod command_info_impl_tests {
         command_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         command_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(command_info.dtdl_version() == 2);
-        assert!(command_info.id() == &id);
+        assert_eq!(command_info.dtdl_version(), 2);
+        assert_eq!(command_info.id(), &id);
         assert!(command_info.child_of().is_some());
-        assert!(command_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(command_info.child_of().clone().unwrap(), child_of);
         assert!(command_info.defined_in().is_some());
-        assert!(command_info.defined_in().clone().unwrap() == defined_in);
-        assert!(command_info.entity_kind() == EntityKind::Command);
-        assert!(command_info.undefined_properties().len() == 2);
-        assert!(
-            command_info.undefined_properties().get("first").unwrap().clone()
-                == first_propery_value
+        assert_eq!(command_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(command_info.entity_kind(), EntityKind::Command);
+        assert_eq!(command_info.undefined_properties().len(), 2);
+        assert_eq!(
+            command_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            command_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            command_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match command_info.name() {

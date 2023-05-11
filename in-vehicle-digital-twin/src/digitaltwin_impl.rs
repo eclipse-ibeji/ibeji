@@ -31,9 +31,7 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
-        let request_inner = request.into_inner();
-
-        let entity_id = request_inner.id;
+        let entity_id = request.into_inner().id;
 
         info!("Received a find_by_id request for entity id {entity_id}");
 
@@ -47,6 +45,10 @@ impl DigitalTwin for DigitalTwinImpl {
         }
 
         info!("{entity_access_info:?}");
+
+        if entity_access_info.is_none() {
+            return Err(Status::not_found("Unable to find the entity with id {entity_id}"));
+        }
 
         let response = FindByIdResponse { entity_access_info };
 
@@ -68,12 +70,7 @@ impl DigitalTwin for DigitalTwinImpl {
         for entity_access_info in &request_inner.entity_access_info_list {
             info!("Received a register request for the the entity:\n{}", entity_access_info.id);
 
-            match self.register_entity(entity_access_info.clone()) {
-                Ok(_) => {
-                    self.register_entity(entity_access_info.clone()).map_err(Status::internal)?
-                }
-                Err(error) => return Err(Status::internal(error)),
-            };
+            self.register_entity(entity_access_info.clone()).map_err(Status::internal)?;
         }
 
         let response = RegisterResponse {};
@@ -173,9 +170,9 @@ mod digitaltwin_impl_tests {
 
         assert!(response_inner.entity_access_info.is_some());
 
-        assert!(
-            response_inner.entity_access_info.unwrap().id
-                == "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
+        assert_eq!(
+            response_inner.entity_access_info.unwrap().id,
+            "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
         );
 
         // TODO: add check
@@ -222,7 +219,7 @@ mod digitaltwin_impl_tests {
             let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
                 entity_access_info_map.read();
             // Make sure that we populated the entity map from the contents of the DTDL.
-            assert!(lock.len() == 1, "expected length was 1, actual length is {}", lock.len());
+            assert_eq!(lock.len(), 1, "expected length was 1, actual length is {}", lock.len());
         }
     }
 }

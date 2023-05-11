@@ -136,19 +136,19 @@ mod primitive_schema_info_impl_tests {
         primitive_schema_info
             .add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(primitive_schema_info.dtdl_version() == 2);
-        assert!(primitive_schema_info.id() == &id);
+        assert_eq!(primitive_schema_info.dtdl_version(), 2);
+        assert_eq!(primitive_schema_info.id(), &id);
         assert!(primitive_schema_info.child_of().is_none());
         assert!(primitive_schema_info.defined_in().is_none());
         assert!(primitive_schema_info.entity_kind() == EntityKind::String);
-        assert!(primitive_schema_info.undefined_properties().len() == 2);
-        assert!(
-            primitive_schema_info.undefined_properties().get("first").unwrap().clone()
-                == first_propery_value
+        assert_eq!(primitive_schema_info.undefined_properties().len(), 2);
+        assert_eq!(
+            primitive_schema_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            primitive_schema_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            primitive_schema_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
     }
 }

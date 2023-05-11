@@ -193,21 +193,21 @@ mod relationship_info_impl_tests {
         relationship_info
             .add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(relationship_info.dtdl_version() == 2);
-        assert!(relationship_info.id() == &id);
+        assert_eq!(relationship_info.dtdl_version(), 2);
+        assert_eq!(relationship_info.id(), &id);
         assert!(relationship_info.child_of().is_some());
-        assert!(relationship_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(relationship_info.child_of().clone().unwrap(), child_of);
         assert!(relationship_info.defined_in().is_some());
-        assert!(relationship_info.defined_in().clone().unwrap() == defined_in);
-        assert!(relationship_info.entity_kind() == EntityKind::Property);
-        assert!(relationship_info.undefined_properties().len() == 2);
-        assert!(
-            relationship_info.undefined_properties().get("first").unwrap().clone()
-                == first_propery_value
+        assert_eq!(relationship_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(relationship_info.entity_kind(), EntityKind::Property);
+        assert_eq!(relationship_info.undefined_properties().len(), 2);
+        assert_eq!(
+            relationship_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            relationship_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            relationship_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match relationship_info.name() {

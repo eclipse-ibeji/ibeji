@@ -146,14 +146,14 @@ mod provider_impl_tests {
             let first_get_result = lock.get(&first_id);
             assert!(first_get_result.is_some());
             let first_value = first_get_result.unwrap();
-            assert!(first_value.len() == 2);
+            assert_eq!(first_value.len(), 2);
             assert!(first_value.contains(&first_uri));
             assert!(first_value.contains(&second_uri));
 
             let second_get_result = lock.get(&second_id);
             assert!(second_get_result.is_some());
             let second_value = second_get_result.unwrap();
-            assert!(second_value.len() == 1);
+            assert_eq!(second_value.len(), 1);
             assert!(second_value.contains(&third_uri));
         }
     }

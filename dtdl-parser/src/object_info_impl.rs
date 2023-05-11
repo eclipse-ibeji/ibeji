@@ -159,20 +159,21 @@ mod object_info_impl_tests {
         object_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         object_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(object_info.dtdl_version() == 2);
-        assert!(object_info.id() == &id);
+        assert_eq!(object_info.dtdl_version(), 2);
+        assert_eq!(object_info.id(), &id);
         assert!(object_info.child_of().is_some());
-        assert!(object_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(object_info.child_of().clone().unwrap(), child_of);
         assert!(object_info.defined_in().is_some());
-        assert!(object_info.defined_in().clone().unwrap() == defined_in);
-        assert!(object_info.entity_kind() == EntityKind::Object);
-        assert!(object_info.undefined_properties().len() == 2);
-        assert!(
-            object_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+        assert_eq!(object_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(object_info.entity_kind(), EntityKind::Object);
+        assert_eq!(object_info.undefined_properties().len(), 2);
+        assert_eq!(
+            object_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            object_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            object_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match object_info.fields() {

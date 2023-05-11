@@ -176,24 +176,24 @@ mod dmti_tests {
         assert!(new_dtmi_result.is_ok());
         let mut dtmi: Dtmi = new_dtmi_result.unwrap();
         assert!(dtmi.major_version().is_some());
-        assert!(dtmi.major_version().unwrap() == 1);
+        assert_eq!(dtmi.major_version().unwrap(), 1);
         assert!(dtmi.minor_version().is_some());
-        assert!(dtmi.minor_version().unwrap() == 234);
-        assert!(dtmi.complete_version() == 1.000234);
-        assert!(dtmi.versionless() == "dtmi:com:example:Thermostat");
-        assert!(dtmi.labels().len() == 3);
-        assert!(dtmi.labels()[0] == "com");
-        assert!(dtmi.labels()[1] == "example");
-        assert!(dtmi.labels()[2] == "Thermostat");
-        assert!(dtmi.absolute_path == "com:example:Thermostat");
-        assert!(dtmi.fragment() == "some-fragment");
-        assert!(format!("{dtmi}") == "dtmi:com:example:Thermostat;1.234#some-fragment");
+        assert_eq!(dtmi.minor_version().unwrap(), 234);
+        assert_eq!(dtmi.complete_version(), 1.000234);
+        assert_eq!(dtmi.versionless(), "dtmi:com:example:Thermostat");
+        assert_eq!(dtmi.labels().len(), 3);
+        assert_eq!(dtmi.labels()[0], "com");
+        assert_eq!(dtmi.labels()[1], "example");
+        assert_eq!(dtmi.labels()[2], "Thermostat");
+        assert_eq!(dtmi.absolute_path, "com:example:Thermostat");
+        assert_eq!(dtmi.fragment(), "some-fragment");
+        assert_eq!(format!("{dtmi}"), "dtmi:com:example:Thermostat;1.234#some-fragment");
 
         new_dtmi_result = Dtmi::new("dtmi:com:example:Thermostat;1.234#");
         assert!(new_dtmi_result.is_ok());
         dtmi = new_dtmi_result.unwrap();
-        assert!(dtmi.fragment() == "");
-        assert!(format!("{dtmi}") == "dtmi:com:example:Thermostat;1.234#");
+        assert_eq!(dtmi.fragment(), "");
+        assert_eq!(format!("{dtmi}"), "dtmi:com:example:Thermostat;1.234#");
     }
 
     #[test]
@@ -205,13 +205,13 @@ mod dmti_tests {
         assert!(dtmi.major_version().unwrap() == 1);
         assert!(dtmi.minor_version().is_some());
         assert!(dtmi.minor_version().unwrap() == 234567);
-        assert!(dtmi.complete_version() == 1.234567);
-        assert!(dtmi.versionless() == "dtmi:com:example:Thermostat");
-        assert!(dtmi.labels().len() == 3);
-        assert!(dtmi.labels()[0] == "com");
-        assert!(dtmi.labels()[1] == "example");
-        assert!(dtmi.labels()[2] == "Thermostat");
-        assert!(dtmi.absolute_path == "com:example:Thermostat");
+        assert_eq!(dtmi.complete_version(), 1.234567);
+        assert_eq!(dtmi.versionless(), "dtmi:com:example:Thermostat");
+        assert_eq!(dtmi.labels().len(), 3);
+        assert_eq!(dtmi.labels()[0], "com");
+        assert_eq!(dtmi.labels()[1], "example");
+        assert_eq!(dtmi.labels()[2], "Thermostat");
+        assert_eq!(dtmi.absolute_path, "com:example:Thermostat");
     }
 
     #[test]
@@ -244,7 +244,7 @@ mod dmti_tests {
         assert!(third_create_dtmi_result.is_some());
         let third_dtmi = third_create_dtmi_result.unwrap();
 
-        assert!(first_dtmi == second_dtmi);
+        assert_eq!(first_dtmi, second_dtmi);
         assert!(first_dtmi != third_dtmi);
     }
 }

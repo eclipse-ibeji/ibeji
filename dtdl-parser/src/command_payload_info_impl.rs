@@ -183,27 +183,27 @@ mod command_payload_info_impl_tests {
         command_payload_info
             .add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(command_payload_info.dtdl_version() == DTDL_VERSION);
-        assert!(command_payload_info.id() == &id);
+        assert_eq!(command_payload_info.dtdl_version(), DTDL_VERSION);
+        assert_eq!(command_payload_info.id(), &id);
         assert!(command_payload_info.child_of().is_some());
-        assert!(command_payload_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(command_payload_info.child_of().clone().unwrap(), child_of);
         assert!(command_payload_info.defined_in().is_some());
-        assert!(command_payload_info.defined_in().clone().unwrap() == defined_in);
-        assert!(command_payload_info.entity_kind() == EntityKind::CommandPayload);
+        assert_eq!(command_payload_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(command_payload_info.entity_kind(), EntityKind::CommandPayload);
         assert!(command_payload_info.schema().is_some());
         match command_payload_info.schema() {
             Some(schema) => assert_eq!(schema.entity_kind(), EntityKind::String),
             None => return Err(String::from("schema has not been set")),
         }
 
-        assert!(command_payload_info.undefined_properties().len() == 2);
-        assert!(
-            command_payload_info.undefined_properties().get("first").unwrap().clone()
-                == first_propery_value
+        assert_eq!(command_payload_info.undefined_properties().len(), 2);
+        assert_eq!(
+            command_payload_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            command_payload_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            command_payload_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match command_payload_info.name() {
