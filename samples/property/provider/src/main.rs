@@ -124,7 +124,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(RegisterRequest { entity_access_info_list: vec![entity_access_info] });
+    let request =
+        tonic::Request::new(RegisterRequest { entity_access_info_list: vec![entity_access_info] });
     let _response = client.register(request).await?;
     debug!("The Provider's DTDL has been registered.");
 

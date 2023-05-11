@@ -1087,7 +1087,8 @@ mod model_parser_tests {
         );
         let model_dict = model_dict_result.unwrap();
         assert_eq!(
-            model_dict.len(), 31,
+            model_dict.len(),
+            31,
             "expected length was 31, actual length is {}",
             model_dict.len()
         );
