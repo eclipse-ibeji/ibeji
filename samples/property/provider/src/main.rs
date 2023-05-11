@@ -124,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let entity_access_info_list = vec!(entity_access_info);
 
     let v = serde_json::to_value(&entity_access_info_list).unwrap();
-    println!("{}", v.to_string());
+    println!("{}", v);
 
     let j = json!(
     [
@@ -135,13 +135,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "context": String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
                     "operations":["Subscribe","Unsubscribe"],
                     "protocol":"grpc","uri":"http://[::1]:40010"
-                }                
+                }
             ],
             "id": String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
             "name":"AmbientAirTemperature"
         }
     ]);
-    println!("{}", j.to_string());
+    println!("{}", j);
 
     // Setup the HTTP server.
     let addr: SocketAddr = PROVIDER_AUTHORITY.parse()?;
