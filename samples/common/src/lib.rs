@@ -21,7 +21,7 @@ pub mod digital_twin_protocol {
 /// # Arguments
 /// `subset` - The provided subset.
 /// `superset` - The provided superset.
-pub fn is_subset(subset: &Vec<String>, superset: &Vec<String>) -> bool {
+pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
     subset.iter().all(|subset_member| {
         superset.iter().any(|supserset_member| subset_member == supserset_member)
     })
