@@ -175,6 +175,7 @@ mod digitaltwin_impl_tests {
         );
         assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
         assert_eq!(response_entity_access_info.endpoint_info_list[0].uri, "http://[::1]:40010");
+        // Devskim: ignore DS137138
     }
 
     #[tokio::test]
