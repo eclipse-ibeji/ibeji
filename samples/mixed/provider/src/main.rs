@@ -11,6 +11,7 @@ use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use proto::digital_twin::digital_twin_client::DigitalTwinClient;
 use proto::digital_twin::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_common::{digital_twin_operation, digital_twin_protocol};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
@@ -53,8 +54,8 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
         let mut client = client_result.unwrap();
 
         let request = tonic::Request::new(PublishRequest {
-            entity_id: String::from(entity_id),
-            value: String::from(value),
+            entity_id: entity_id.to_string(),
+            value: value.to_string(),
         });
 
         let response = client.publish(request).await;
@@ -116,7 +117,7 @@ async fn start_vehicle_simulator(
 }
 
 #[tokio::main]
-#[allow(clippy::collapsible_else_if)]
+// #[allow(clippy::collapsible_else_if)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
     Builder::new().filter(None, LevelFilter::Info).target(Target::Stdout).init();
@@ -125,61 +126,67 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // AmbientAirTemperature
     let ambient_air_temperature_endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
-        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![
+            digital_twin_operation::SUBSCRIBE.to_string(),
+            digital_twin_operation::UNSUBSCRIBE.to_string(),
+        ],
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
     let ambient_air_temperature_access_info = EntityAccessInfo {
-        name: String::from("AmbientAirTemperature"),
-        id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
-        description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
+        name: "AmbientAirTemperature".to_string(),
+        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
         endpoint_info_list: vec![ambient_air_temperature_endpoint_info],
     };
 
     // IsAirConditioningActive
     let is_air_conditioning_active_endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
+        protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![
-            String::from("Subscribe"),
-            String::from("Unsubscribe"),
-            String::from("Get"),
+            digital_twin_operation::SUBSCRIBE.to_string(),
+            digital_twin_operation::UNSUBSCRIBE.to_string(),
+            digital_twin_operation::SET.to_string(),
         ],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
     let is_air_conditioning_active_access_info = EntityAccessInfo {
-        name: String::from("IsAirConditioningActive"),
-        id: String::from(sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID),
-        description: String::from("Is air conditioning active?"),
+        name: "IsAirConditioningActive".to_string(),
+        id: sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID.to_string(),
+        description: "Is air conditioning active?".to_string(),
         endpoint_info_list: vec![is_air_conditioning_active_endpoint_info],
     };
 
     // HybridBatteryRemaining
     let hybrid_battery_remaining_endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
-        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![
+            digital_twin_operation::SUBSCRIBE.to_string(),
+            digital_twin_operation::UNSUBSCRIBE.to_string(),
+        ],
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::obd::hybrid_battery_remaining::ID.to_string(),
     };
     let hybrid_battery_remaining_access_info = EntityAccessInfo {
-        name: String::from("HybridBatteryRemaining"),
-        id: String::from(sdv::vehicle::obd::hybrid_battery_remaining::ID),
-        description: String::from("The remaining hybrid battery life."),
+        name: "HybridBatteryRemaining".to_string(),
+        id: sdv::vehicle::obd::hybrid_battery_remaining::ID.to_string(),
+        description: "The remaining hybrid battery life.".to_string(),
         endpoint_info_list: vec![hybrid_battery_remaining_endpoint_info],
     };
 
     // ShowNotification
     let show_notification_endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
-        operations: vec![String::from("Invoke")],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![digital_twin_operation::INVOKE.to_string()],
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
     };
     let show_notification_access_info = EntityAccessInfo {
-        name: String::from("ShowNotification"),
-        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
-        description: String::from("Show a notification on the HMI."),
+        name: "ShowNotification".to_string(),
+        id: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
+        description: "Show a notification on the HMI.".to_string(),
         endpoint_info_list: vec![show_notification_endpoint_info],
     };
 

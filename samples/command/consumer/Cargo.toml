@@ -17,6 +17,7 @@ json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "reso
 log = { workspace = true }
 prost = { workspace = true }
 proto = { path = "../../../proto" }
+samples_common = { path = "../../common" }
 samples_proto = { path = "../../proto" }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

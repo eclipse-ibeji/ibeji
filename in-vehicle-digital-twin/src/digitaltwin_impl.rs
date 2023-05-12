@@ -4,8 +4,7 @@
 
 extern crate iref;
 
-use log::Level::Debug;
-use log::{debug, info, log_enabled, warn};
+use log::{debug, info, warn};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digital_twin::digital_twin_server::DigitalTwin;
 use proto::digital_twin::{
@@ -70,7 +69,7 @@ impl DigitalTwin for DigitalTwinImpl {
         for entity_access_info in &request_inner.entity_access_info_list {
             info!("Received a register request for the the entity:\n{}", entity_access_info.id);
 
-            self.register_entity(entity_access_info.clone()).map_err(Status::internal)?;
+            self.register_entity(entity_access_info.clone())?;
         }
 
         let response = RegisterResponse {};
@@ -99,14 +98,14 @@ impl DigitalTwinImpl {
     ///
     /// # Arguments
     /// * `entity` - The entity.
-    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
+    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
         // This block controls the lifetime of the lock.
         {
             let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
                 self.entity_access_info_map.write();
             match lock.get(&entity_access_info.id) {
                 Some(_) => {
-                    // TODO: merge existing contents with new contents
+                    return Err(Status::unimplemented("The in-vehicle digital twin service does not yet support multiple registrations of the same entity."));
                 }
                 None => {
                     lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
@@ -168,12 +167,14 @@ mod digitaltwin_impl_tests {
 
         assert!(response_inner.entity_access_info.is_some());
 
+        let response_entity_access_info = response_inner.entity_access_info.unwrap();
+
         assert_eq!(
-            response_inner.entity_access_info.unwrap().id,
+            response_entity_access_info.id,
             "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
         );
-
-        // TODO: add check
+        assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
+        assert_eq!(response_entity_access_info.endpoint_info_list[0].uri, "http://[::1]:40010");
     }
 
     #[tokio::test]
@@ -199,18 +200,11 @@ mod digitaltwin_impl_tests {
         let digital_twin_impl =
             DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
-        // This block controls the lifetime of the lock.
-        {
-            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
-                entity_access_info_map.write();
-            lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
-        }
-
         let request = tonic::Request::new(RegisterRequest {
             entity_access_info_list: vec![entity_access_info],
         });
         let result = digital_twin_impl.register(request).await;
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "register result is not okay: {result:?}");
 
         // This block controls the lifetime of the lock.
         {

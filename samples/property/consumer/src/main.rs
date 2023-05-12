@@ -7,6 +7,7 @@ use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use proto::digital_twin::digital_twin_client::DigitalTwinClient;
 use proto::digital_twin::FindByIdRequest;
+use samples_common::digital_twin_operation;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_proto::sample_grpc::v1::digital_twin_provider::SubscribeRequest;
@@ -64,7 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     let mut client = DigitalTwinProviderClient::connect(provider_uri).await?;
     let request = tonic::Request::new(SubscribeRequest {
-        entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        entity_id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
         consumer_uri,
     });
     let _response = client.subscribe(request).await?;
