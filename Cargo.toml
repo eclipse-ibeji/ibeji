@@ -10,7 +10,7 @@ members = [
   "digital-twin-model",
   "dtdl-parser",
   "in-vehicle-digital-twin",
-  "samples/common",  
+  "samples/common",
   "samples/proto",
   "samples/command/consumer",
   "samples/command/provider",
