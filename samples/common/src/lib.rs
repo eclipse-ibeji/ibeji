@@ -21,7 +21,7 @@ pub mod digital_twin_protocol {
 /// # Arguments
 /// `subset` - The provided subset.
 /// `superset` - The provided superset.
-pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
+pub fn is_subset(subset: &Vec<String>, superset: &Vec<String>) -> bool {
     subset.iter().all(|subset_member| {
         superset.iter().any(|supserset_member| subset_member == supserset_member)
     })
@@ -34,36 +34,36 @@ mod ibeji_common_tests {
     #[test]
     fn is_subset_test() {
         assert!(is_subset(
-            &[],
-            &[]
+            &vec!(),
+            &vec!()
         ));
         assert!(is_subset(
-            &[],
-            &["one".to_string()]
+            &vec!(),
+            &vec!("one".to_string())
         ));
         assert!(is_subset(
-            &[],
-            &["one".to_string(), "two".to_string()]
+            &vec!(),
+            &vec!("one".to_string(), "two".to_string())
         ));
         assert!(is_subset(
-            &["one".to_string()],
-            &["one".to_string(), "two".to_string()]
+            &vec!("one".to_string()),
+            &vec!("one".to_string(), "two".to_string())
         ));
         assert!(is_subset(
-            &["one".to_string(), "two".to_string()],
-            &["one".to_string(), "two".to_string()]
+            &vec!("one".to_string(), "two".to_string()),
+            &vec!("one".to_string(), "two".to_string())
         ));
         assert!(!is_subset(
-            &["one".to_string(), "two".to_string(), "three".to_string()],
-            &["one".to_string(), "two".to_string()]
+            &vec!("one".to_string(), "two".to_string(), "three".to_string()),
+            &vec!("one".to_string(), "two".to_string())
         ));
         assert!(!is_subset(
-            &["one".to_string(), "two".to_string(), "three".to_string()],
-            &["one".to_string()]
+            &vec!("one".to_string(), "two".to_string(), "three".to_string()),
+            &vec!("one".to_string())
         ));
         assert!(!is_subset(
-            &["one".to_string(), "two".to_string(), "three".to_string()],
-            &[]
+            &vec!("one".to_string(), "two".to_string(), "three".to_string()),
+            &vec!()
         ));
     }
 }
