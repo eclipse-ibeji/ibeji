@@ -114,9 +114,7 @@ impl DigitalTwinImpl {
             };
         }
 
-        if log_enabled!(Debug) {
-            debug!("Registered entity {}", &entity_access_info.id);
-        }
+        debug!("Registered entity {}", &entity_access_info.id);
 
         Ok(())
     }
