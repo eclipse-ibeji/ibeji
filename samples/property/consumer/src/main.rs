@@ -7,7 +7,7 @@ use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use proto::digital_twin::digital_twin_client::DigitalTwinClient;
 use proto::digital_twin::FindByIdRequest;
-use samples_common::digital_twin_operation;
+use samples_common::{digital_twin_operation, digital_twin_protocol, is_subset};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_proto::sample_grpc::v1::digital_twin_provider::SubscribeRequest;
@@ -19,6 +19,49 @@ mod consumer_impl;
 const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 
 const CONSUMER_AUTHORITY: &str = "[::1]:60010";
+
+/// Get the provider URI.
+///
+/// # Arguments
+/// `entity_id` - The matching entity id.
+/// `protocol` - The required protocol.
+/// `operations` - The required operations.
+async fn get_provider_uri(
+    entity_id: &str,
+    protocol: &str,
+    operations: &Vec<String>,
+) -> Result<String, String> {
+    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
+    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI)
+        .await
+        .map_err(|error| format!("{error}"))?;
+    let request = tonic::Request::new(FindByIdRequest { id: entity_id.to_string() });
+    let response = client.find_by_id(request).await.map_err(|error| error.to_string())?;
+    let response_inner = response.into_inner();
+    debug!("Received the response for the find_by_id request");
+    info!("response_payload: {:?}", response_inner.entity_access_info);
+
+    let entity_access_info = response_inner.entity_access_info.expect("Did not find the entity");
+
+    let mut provider_uri_option: Option<String> = None;
+    for endpoint_info in entity_access_info.endpoint_info_list {
+        // We require and endpoint that supports the protocol and supports all of the operations.
+        if endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations) {
+            provider_uri_option = Some(endpoint_info.uri);
+            break;
+        }
+    }
+
+    if provider_uri_option.is_none() {
+        return Err("Did not find an endpoint that met our requirements".to_string());
+    }
+
+    let provider_uri = provider_uri_option.unwrap();
+
+    info!("The provider URI for entity id {entity_id} is {provider_uri}");
+
+    Ok(provider_uri)
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,27 +77,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
 
-    // Obtain the DTDL for the ambient air temmpterature.
-    info!("Sending a find_by_id request for entity id {} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}",
-        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
-    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request = tonic::Request::new(FindByIdRequest {
-        id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
-    });
-    let response = client.find_by_id(request).await?;
-    let response_inner = response.into_inner();
-    debug!("Received the response for the find_by_id request");
-    info!("response_payload: {:?}", response_inner.entity_access_info);
+    let provider_uri = get_provider_uri(
+        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
+        digital_twin_protocol::GRPC,
+        &vec![digital_twin_operation::SUBSCRIBE.to_string()],
+    )
+    .await
+    .unwrap();
 
-    let provider_uri = match response_inner.entity_access_info {
-        Some(content) => {
-            // TODO: select the right one, rather than just using the first one
-            content.endpoint_info_list[0].uri.clone()
-        }
-        None => {
-            panic!("Did not find an entity for the AmbientAirTemperature command");
-        }
-    };
+    info!("The URI for the AmbientAirTemperature property's provider is {provider_uri}");
 
     let consumer_uri = format!("http://{CONSUMER_AUTHORITY}"); // Devskim: ignore DS137138
 

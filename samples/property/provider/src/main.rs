@@ -10,6 +10,7 @@ use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use proto::digital_twin::digital_twin_client::DigitalTwinClient;
 use proto::digital_twin::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_common::{digital_twin_operation, digital_twin_protocol};
 use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_proto::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
@@ -60,7 +61,7 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    entity_id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+                    entity_id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
                     value: temperature.to_string(),
                 });
 
@@ -101,16 +102,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Provider has started.");
 
     let endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
-        operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![
+            digital_twin_operation::SUBSCRIBE.to_string(),
+            digital_twin_operation::UNSUBSCRIBE.to_string(),
+        ],
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
-        name: String::from("AmbientAirTemperature"),
-        id: String::from(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID),
-        description: String::from("The immediate surroundings air temperature (in Fahrenheit)."),
+        name: "AmbientAirTemperature".to_string(),
+        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
         endpoint_info_list: vec![endpoint_info],
     };
 

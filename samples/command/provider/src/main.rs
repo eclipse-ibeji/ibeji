@@ -10,6 +10,7 @@ use log::{debug, info, LevelFilter};
 use parking_lot::Mutex;
 use proto::digital_twin::digital_twin_client::DigitalTwinClient;
 use proto::digital_twin::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_common::{digital_twin_operation, digital_twin_protocol};
 use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -29,16 +30,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Provider has started.");
 
     let endpoint_info = EndpointInfo {
-        protocol: String::from("grpc"),
-        operations: vec![String::from("Get"), String::from("Set")],
-        uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-        context: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![digital_twin_operation::INVOKE.to_string()],
+        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        context: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
-        name: String::from("ShowNotification"),
-        id: String::from(sdv::vehicle::cabin::infotainment::hmi::show_notification::ID),
-        description: String::from("Show a notification on the HMI."),
+        name: "ShowNotification".to_string(),
+        id: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
+        description: "Show a notification on the HMI.".to_string(),
         endpoint_info_list: vec![endpoint_info],
     };
 

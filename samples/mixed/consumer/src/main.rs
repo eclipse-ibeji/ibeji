@@ -72,7 +72,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
 /// Start the activate-air-conditioing repeater.
 ///
 /// # Arguments
-/// `provider_uri` - The provider_uri..
+/// `provider_uri` - The provider_uri.
 fn start_activate_air_conditioning_repeater(provider_uri: String) {
     debug!("Starting the Consumer's activate-air-conditioning repeater.");
     tokio::spawn(async move {
@@ -109,6 +109,12 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
     });
 }
 
+/// Get the provider URI.
+///
+/// # Arguments
+/// `entity_id` - The matching entity id.
+/// `protocol` - The required protocol.
+/// `operations` - The required operations.
 async fn get_provider_uri(
     entity_id: &str,
     protocol: &str,
@@ -124,9 +130,7 @@ async fn get_provider_uri(
     debug!("Received the response for the find_by_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info);
 
-    let entity_access_info = response_inner
-        .entity_access_info
-        .expect("Did not find an entity for the AmbientAirTemperature property");
+    let entity_access_info = response_inner.entity_access_info.expect("Did not find the entity");
 
     let mut provider_uri_option: Option<String> = None;
     for endpoint_info in entity_access_info.endpoint_info_list {
@@ -148,6 +152,12 @@ async fn get_provider_uri(
     Ok(provider_uri)
 }
 
+/// Send a subscribe request.
+///
+/// # Arguments
+/// `provider_uri` - The provider's URI.
+/// `entity_id` - The entity id.
+/// `consumer_uri` - The consumer's URI.
 async fn send_subscribe_request(
     provider_uri: &str,
     entity_id: &str,
