@@ -33,22 +33,10 @@ mod ibeji_common_tests {
 
     #[test]
     fn is_subset_test() {
-        assert!(is_subset(
-            &vec!(),
-            &vec!()
-        ));
-        assert!(is_subset(
-            &vec!(),
-            &vec!("one".to_string())
-        ));
-        assert!(is_subset(
-            &vec!(),
-            &vec!("one".to_string(), "two".to_string())
-        ));
-        assert!(is_subset(
-            &vec!("one".to_string()),
-            &vec!("one".to_string(), "two".to_string())
-        ));
+        assert!(is_subset(&vec!(), &vec!()));
+        assert!(is_subset(&vec!(), &vec!("one".to_string())));
+        assert!(is_subset(&vec!(), &vec!("one".to_string(), "two".to_string())));
+        assert!(is_subset(&vec!("one".to_string()), &vec!("one".to_string(), "two".to_string())));
         assert!(is_subset(
             &vec!("one".to_string(), "two".to_string()),
             &vec!("one".to_string(), "two".to_string())
