@@ -30,7 +30,7 @@ const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 async fn get_provider_uri(
     entity_id: &str,
     protocol: &str,
-    operations: &Vec<String>,
+    operations: &[String],
 ) -> Result<String, String> {
     info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
     let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI)
@@ -47,7 +47,7 @@ async fn get_provider_uri(
     let mut provider_uri_option: Option<String> = None;
     for endpoint_info in entity_access_info.endpoint_info_list {
         // We require and endpoint that supports the protocol and supports all of the operations.
-        if endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations) {
+        if endpoint_info.protocol == protocol && is_subset(operations, endpoint_info.operations.as_slice()) {
             provider_uri_option = Some(endpoint_info.uri);
             break;
         }
@@ -126,7 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = get_provider_uri(
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
         digital_twin_protocol::GRPC,
-        &vec![digital_twin_operation::INVOKE.to_string()],
+        vec![digital_twin_operation::INVOKE.to_string()].as_slice(),
     )
     .await
     .unwrap();
