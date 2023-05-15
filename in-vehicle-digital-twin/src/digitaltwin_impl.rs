@@ -4,12 +4,11 @@
 
 extern crate iref;
 
-use log::{debug, info, warn};
+use log::{debug, info};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use proto::digital_twin::digital_twin_server::DigitalTwin;
 use proto::digital_twin::{
     EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
-    UnregisterRequest, UnregisterResponse,
 };
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -77,19 +76,6 @@ impl DigitalTwin for DigitalTwinImpl {
         debug!("Completed the register request.");
 
         Ok(Response::new(response))
-    }
-
-    /// Unregister implementation.
-    ///
-    /// # Arguments
-    /// * `request` - Unregister request.
-    async fn unregister(
-        &self,
-        request: Request<UnregisterRequest>,
-    ) -> Result<Response<UnregisterResponse>, Status> {
-        warn!("Got an unregister request: {request:?}");
-
-        Err(Status::unimplemented("unregister has not been implemented"))
     }
 }
 

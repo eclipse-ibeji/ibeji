@@ -3,6 +3,6 @@
 participant "Provider"
 participant "Consumer"
 
-"Provider" -> "Consumer" : Publish - request (id, value)
+"Provider" -> "Consumer" : Publish - request (entity id, value)
 
 @enduml

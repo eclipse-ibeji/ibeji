@@ -3,6 +3,6 @@
 participant "Provider"
 participant "Consumer"
 
-"Consumer" -> "Provider" : Subscribe - response (id, uri)
+"Consumer" -> "Provider" : Subscribe - response (entity id, consumer uri)
 
 @enduml

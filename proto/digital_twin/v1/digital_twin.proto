@@ -9,7 +9,6 @@ package digital_twin;
 service DigitalTwin {
     rpc FindById (FindByIdRequest) returns (FindByIdResponse);
     rpc Register (RegisterRequest) returns (RegisterResponse);
-    rpc Unregister (UnregisterRequest) returns (UnregisterResponse);
 }
 
 message EndpointInfo {
@@ -39,14 +38,4 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-}
-
-message UnregisterRequest {
-   string id = 1;
-   string protocol = 2;
-   string uri = 3;
-   string context = 4;
-}
-
-message UnregisterResponse {
 }

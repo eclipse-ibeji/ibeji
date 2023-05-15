@@ -17,15 +17,15 @@ Please note that the initial Ibeji implementation is a proof-of-concept. We woul
 
 Ibeji has three main architectural concepts:
 
-- Consumer
-- Provider
+- Digital Twin Consumer
+- Digital Twin Provider
 - In-Vehicle Digital Twin Service
 
-The first Ibeji architectural concept that we will introduce is the Consumer. A Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
+The first Ibeji architectural concept that we will introduce is the Digital Twin Consumer. A Digital Twin Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
 
-Another Ibeji architectural concept is the Provider. A Provider is the access point to some/all of the vehicle's hardware resources. A Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Consumers. Each resource includes meta data that allow Consumers to understand the semantics of the resource and know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Providers and internally resolves overlapping resources offered by multiple Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths). A Provider must support a Provider interface that enables access to resource data feeds.
+Another Ibeji architectural concept is the Digital Twin Provider. A Digital Twin Provider is the access point to some/all of the vehicle's hardware resources. A Digital Twin Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Digital Twin Consumers. Each resource includes meta data so that DIgital Twin Consumers know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Digital Twin Providers and internally resolves overlapping resources offered by multiple Digital Twin Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths).
 
-In the middle is the In-Vehicle Digital Twin Service. It exports a query interface that enables Consumers to discover the vehicle's resources and provides the details necessary to use those resources. The In-Vehicle Digital Twin Service has an interface that allows Providers to dynamically register and unregister resources.
+In the middle is the In-Vehicle Digital Twin Service. It exports a query interface that enables Digital Twin Consumers to discover the vehicle's resources and provides the details necessary to use those resources. The In-Vehicle Digital Twin Service has an interface that allows Digital Twin Providers to dynamically register their resources.
 
 Below is the component diagram for Ibeji.
 
@@ -33,48 +33,41 @@ Below is the component diagram for Ibeji.
 
 ## <a name="dtdl">DTDL</a>
 
-Fundamental to the Ibeji solution is its use of Digital Twin Definition Language [DTDL](https://github.com/Azure/opendigitaltwins-dtdl) to identify and specify each of the vehicle's resources, and to provide the metadata needed to interact the resource.
+Fundamental to the Ibeji solution is its use of Digital Twin Definition Language [DTDL](https://github.com/Azure/opendigitaltwins-dtdl) to identify and specify each of the vehicle's resources.
 
 This initial contribution does not try to arrange the resources into a hierarchy or into a graph. It is intended that some future update will enable this capability.
 
-DTDL can identify and specify each of the resources. DTDL allows additional metadata to be associated with each of the resources, specifically the endpoint that can be used to interact with that resource. Below is an example for the AmbientAirTemperature property. You can see that the resource has the "RemotelyAccessible" type, which allows it to specify remote access metadata. The remote_access element utilizes an "Endpoint" type to specify the resource's endpoint and the supported operations.
+DTDL can identify and specify each of the resources. Below is an example for the AmbientAirTemperature property.
 
 ```uml
   {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;3"],
+    "@context": ["dtmi:dtdl:context;2"],
     "@type": "Interface",
-    "@id": "dtmi:org:eclipse:sdv:interface:cabin:AmbientAirTemperature;1",
+    "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
     "contents": [
       {
-        "@type": ["Property", "Temperature", "RemotelyAccessible"],
-        "@id": "dtmi:org:eclipse:sdv:property:cabin:AmbientAirTemperature;1",
+        "@type": ["Property", "Temperature"],
+        "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1",
         "name": "Cabin_AmbientAirTemperature",
         "description": "The immediate surroundings air temperature (in Fahrenheit).",
-        "schema": "double",
-        "unit": "degreeFahrenheit",
-        "remote_access": [
-          {
-            "@type": "Endpoint",
-            "uri": "http://[::1]:40010",
-            "operations": [ "Get", "Set", "Subscribe", "Unsubscribe" ]
-          }
-        ]
+        "schema": "integer",
+        "unit": "degreeFahrenheit"
       }
     ]
   }
 ```
 
-The DTDL must use the standard dtmi dtdl context. It must also use the dtmi sdv context, which provides the definitions for the RemotelyAccessible type and the remote_access element.
+The DTDL must use the standard dtmi dtdl context.
 
 ## <a name="in-vehicle-digital-twin-service">In-Vehicle Digital Twin Service</a>
 
 ### In-Vehicle Digital Twin Service Overview
 
-The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api, and the ability to subscribe to a provided hardware resource data feed and to invoke commands on provided hardware resources.
+The initial In-Vehicle Digital Twin Service will provide the functionality needed by the proof-of-concept. On the Provider side, this initial contribution supports only a single Provider registering its DTDL. On the Consumer side, there is a simplified query api, and the ability to subscribe to a provided hardware resource data feed and to invoke a command on a provided hardware resource.
 
 ### Interfaces
 
-The initial In-Vehicle Digital Twin Service supports both Providers and Consumers with a gRPC interface.
+The initial In-Vehicle Digital Twin Service supports both Providers and Consumers.
 
 ### Activities
 
@@ -98,19 +91,19 @@ The initial Providers will implement basic resources - the AmbientAirTemperature
 
 ### Interfaces
 
-A Provider supports a gRPC interface for subscribing to resource's data feeds, unsubscribing from a resource's data feed, requesting a resource's value, setting a resource's value and invoking a command.
+A Provider supports an interface for subscribing to resource's data feeds, requesting a resource's value, setting a resource's value and invoking a command.
 
 ### Activities
 
 #### Subscribe
 
-Below is the sequence diagram for the Subscribe activity. The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
+Below is the sequence diagram for the Subscribe activity.
 
 ![Sequence Diagram](diagrams/subscribe_sequence.svg)
 
 #### Invoke
 
-Below is the sequence diagram for the Invoke activity. The Provider's endpoint details are exported by the Provider as DTDL to the Digital Twin Service.
+Below is the sequence diagram for the Invoke activity.
 
 ![Sequence Diagram](diagrams/invoke_sequence.svg)
 
@@ -122,7 +115,7 @@ The initial Consumers will provide the functionality needed by the proof-of-conc
 
 Interfaces
 
-A Consumer supports a gRPC interface that is the callback/notification endpoint for subscribed-to data feeds.
+A Consumer supports an interface that is the callback/notification endpoint for subscribed-to data feeds.
 
 Activities
 
@@ -138,7 +131,7 @@ Below is the sequence diagram for the Respond activity.
 
 ![Sequence Diagram](diagrams/respond_sequence.svg)
 
-## <a name="appendix-a">Appendix A – Provider gRPC Interface</a>
+## <a name="appendix-a">Appendix A – Digital Twin Provider Interface</a>
 
 ### Subscribe
 
@@ -199,18 +192,19 @@ Invoke a command.
 #### Request
 
 - entity_id - The command's id.
-- uri - The uri for the endpoint where the command's response should be delivered.
+- consumer_uri - The uri for the endpoint where the command's response should be delivered.
+- response_id - The id that the invoker of the command provided for the response.
 - payload - The command's request payload.
 
 #### Response
 
 - No response.
 
-## <a name="appendix-b">Appendix B – Digital Twin gRPC Interface</a>
+## <a name="appendix-b">Appendix B – Digital Twin Interface</a>
 
 ### FindById
 
-Find an entity's DTDL.
+Find an entity's access information.
 
 #### Request
 
@@ -218,33 +212,21 @@ Find an entity's DTDL.
 
 #### Response
 
-- dtdl - The resource's DTDL.
+- entity_access_info - The entity's access information.
 
 ### Register
 
-Register one or more entities.
+Register one or more entities access information.
 
 #### Request
 
-- dtdl - The DTDL that represents the entities.
+- entity_access_info_list - A list of entity access infromation.
 
 #### Response
 
 - No response.
 
-### Unregister
-
-Unregister an entity.
-
-#### Request
-
-- id - The resource's id.
-
-#### Response
-
-- No response.
-
-## <a name="appendix-c">Appendix C – Consumer gRPC Interface</a>
+## <a name="appendix-c">Appendix C – Digital Twin Consumer Interface</a>
 
 ### Publish
 

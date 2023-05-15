@@ -3,6 +3,6 @@
 participant "Provider"
 participant "In-Vehicle Digital Twin Service"
 
-"Provider" -> "In-Vehicle Digital Twin Service" : Register - request (dtdl)
+"Provider" -> "In-Vehicle Digital Twin Service" : Register - request (entity access info list)
 
 @enduml
