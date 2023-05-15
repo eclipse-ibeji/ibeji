@@ -46,7 +46,7 @@ async fn get_provider_uri(
     let mut provider_uri_option: Option<String> = None;
     for endpoint_info in entity_access_info.endpoint_info_list {
         // We require and endpoint that supports the protocol and supports all of the operations.
-        if endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations.as_slice()) {
+        if endpoint_info.protocol == protocol && is_subset(operations, endpoint_info.operations.as_slice()) {
             provider_uri_option = Some(endpoint_info.uri);
             break;
         }
@@ -80,7 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = get_provider_uri(
         sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
         digital_twin_protocol::GRPC,
-        &vec![digital_twin_operation::SUBSCRIBE.to_string()].as_slice(),
+        &[digital_twin_operation::SUBSCRIBE.to_string()],
     )
     .await
     .unwrap();
