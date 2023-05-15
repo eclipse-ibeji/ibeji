@@ -220,7 +220,7 @@ Register one or more entities access information.
 
 #### Request
 
-- entity_access_info_list - A list of entity access infromation.
+- entity_access_info_list - A list of entity access information.
 
 #### Response
 
