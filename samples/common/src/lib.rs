@@ -40,22 +40,10 @@ mod ibeji_common_tests {
 
     #[test]
     fn is_subset_test() {
-        assert!(is_subset(
-            &[],
-            &[]
-        ));
-        assert!(is_subset(
-            &[],
-            &["one".to_string()]
-        ));
-        assert!(is_subset(
-            &[],
-            &["one".to_string(), "two".to_string()]
-        ));
-        assert!(is_subset(
-            &["one".to_string()],
-            &["one".to_string(), "two".to_string()]
-        ));
+        assert!(is_subset(&[], &[]));
+        assert!(is_subset(&[], &["one".to_string()]));
+        assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
         assert!(is_subset(
             &["one".to_string(), "two".to_string()],
             &["one".to_string(), "two".to_string()]
@@ -68,9 +56,6 @@ mod ibeji_common_tests {
             &["one".to_string(), "two".to_string(), "three".to_string()],
             &["one".to_string()]
         ));
-        assert!(!is_subset(
-            &["one".to_string(), "two".to_string(), "three".to_string()],
-            &[]
-        ));
+        assert!(!is_subset(&["one".to_string(), "two".to_string(), "three".to_string()], &[]));
     }
 }
