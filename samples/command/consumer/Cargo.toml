@@ -16,7 +16,6 @@ iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 log = { workspace = true }
 prost = { workspace = true }
-proto = { path = "../../../proto" }
 samples_common = { path = "../../common" }
 samples_proto = { path = "../../proto" }
 serde_json = { workspace = true }

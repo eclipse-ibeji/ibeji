@@ -7,3 +7,8 @@ name = "samples_common"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+log = { workspace = true }
+proto = { path = "../../proto" }
+tonic = { workspace = true }
