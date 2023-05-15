@@ -4,9 +4,10 @@
 
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
-use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
-    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+use samples_proto::sample_grpc::v1::digital_twin_provider::{
+    digital_twin_provider_server::DigitalTwinProvider, GetRequest, GetResponse, InvokeRequest,
+    InvokeResponse, SetRequest, SetResponse, SubscribeRequest, SubscribeResponse,
+    UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
@@ -20,7 +21,7 @@ pub struct ProviderImpl {
 }
 
 #[tonic::async_trait]
-impl Provider for ProviderImpl {
+impl DigitalTwinProvider for ProviderImpl {
     /// Subscribe implementation.
     ///
     /// # Arguments
@@ -145,14 +146,14 @@ mod provider_impl_tests {
             let first_get_result = lock.get(&first_id);
             assert!(first_get_result.is_some());
             let first_value = first_get_result.unwrap();
-            assert!(first_value.len() == 2);
+            assert_eq!(first_value.len(), 2);
             assert!(first_value.contains(&first_uri));
             assert!(first_value.contains(&second_uri));
 
             let second_get_result = lock.get(&second_id);
             assert!(second_get_result.is_some());
             let second_value = second_get_result.unwrap();
-            assert!(second_value.len() == 1);
+            assert_eq!(second_value.len(), 1);
             assert!(second_value.contains(&third_uri));
         }
     }

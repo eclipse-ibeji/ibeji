@@ -56,9 +56,9 @@ mod ibeji_common_tests {
     fn find_full_path_test() {
         set_dtdl_path();
 
-        let find_full_path_result = find_full_path("samples/remotely_accessible_resource.json");
+        let find_full_path_result = find_full_path("v2/content/sdv/vehicle.json");
         assert!(find_full_path_result.is_ok());
         let full_path = find_full_path_result.unwrap();
-        assert!(full_path.ends_with("/samples/remotely_accessible_resource.json"));
+        assert!(full_path.ends_with("/v2/content/sdv/vehicle.json"));
     }
 }

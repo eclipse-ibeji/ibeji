@@ -189,20 +189,21 @@ mod field_info_impl_tests {
         field_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         field_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(field_info.dtdl_version() == 2);
-        assert!(field_info.id() == &id);
+        assert_eq!(field_info.dtdl_version(), 2);
+        assert_eq!(field_info.id(), &id);
         assert!(field_info.child_of().is_some());
-        assert!(field_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(field_info.child_of().clone().unwrap(), child_of);
         assert!(field_info.defined_in().is_some());
-        assert!(field_info.defined_in().clone().unwrap() == defined_in);
-        assert!(field_info.entity_kind() == EntityKind::Telemetry);
-        assert!(field_info.undefined_properties().len() == 2);
-        assert!(
-            field_info.undefined_properties().get("first").unwrap().clone() == first_propery_value
+        assert_eq!(field_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(field_info.entity_kind(), EntityKind::Telemetry);
+        assert_eq!(field_info.undefined_properties().len(), 2);
+        assert_eq!(
+            field_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            field_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            field_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match field_info.name() {

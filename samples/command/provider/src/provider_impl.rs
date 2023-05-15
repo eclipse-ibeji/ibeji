@@ -4,10 +4,12 @@
 
 use log::{info, warn};
 use parking_lot::Mutex;
-use proto::consumer::{consumer_client::ConsumerClient, RespondRequest};
-use proto::provider::{
-    provider_server::Provider, GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest,
-    SetResponse, SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
+use samples_proto::sample_grpc::v1::digital_twin_consumer::RespondRequest;
+use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
+use samples_proto::sample_grpc::v1::digital_twin_provider::{
+    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
+    SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
@@ -21,7 +23,7 @@ pub struct ProviderImpl {
 }
 
 #[tonic::async_trait]
-impl Provider for ProviderImpl {
+impl DigitalTwinProvider for ProviderImpl {
     /// Subscribe implementation.
     ///
     /// # Arguments
@@ -89,11 +91,9 @@ impl Provider for ProviderImpl {
         info!("Notification: '{payload}'");
 
         tokio::spawn(async move {
-            let client_result = ConsumerClient::connect(consumer_uri.clone()).await;
-            if client_result.is_err() {
-                return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
-            }
-            let mut client = client_result.unwrap();
+            let mut client = DigitalTwinConsumerClient::connect(consumer_uri.clone())
+                .await
+                .map_err(|error| Status::internal(error.to_string()))?;
 
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),

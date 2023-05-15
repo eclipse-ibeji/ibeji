@@ -3,7 +3,7 @@
 participant "In-Vehicle Digital Twin Service"
 participant "Consumer"
 
-"Consumer" -> "In-Vehicle Digital Twin Service" : FindById - request (id)
-"In-Vehicle Digital Twin Service" --> "Consumer" : FindById - response (dtdl)
+"Consumer" -> "In-Vehicle Digital Twin Service" : FindById - request (entity id)
+"In-Vehicle Digital Twin Service" --> "Consumer" : FindById - response (entity access info)
 
 @enduml

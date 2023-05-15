@@ -3,10 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "model-identifiers"
+name = "digital-twin-model"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 
+[lib]
+path = "src/lib.rs"
+crate-type = ["lib"]

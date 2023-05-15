@@ -3,6 +3,6 @@
 participant "Provider"
 participant "Consumer"
 
-"Provider" -> "Consumer" : Respond - request (id, payload)
+"Provider" -> "Consumer" : Respond - request (entity id, response id, payload)
 
 @enduml

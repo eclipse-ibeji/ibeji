@@ -3,13 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "dt-model-identifiers"
+name = "samples_common"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
-
-[lib]
-path = "src/lib.rs"
-crate-type = ["lib"]
+log = { workspace = true }
+proto = { path = "../../proto" }
+tonic = { workspace = true }

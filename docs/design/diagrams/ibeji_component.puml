@@ -1,16 +1,15 @@
 @startuml
 
 frame "Consumer" {
-  interface "Consumer" as ConsumerInterface
+  interface DigitalTwinConsumerInterface
 }
 
 frame "In-Vehicle Digital Twin Service" {
-  interface "Digital Twin" as DigitalTwinInterface
-  interface "Provider" as DTProviderInterface
+  interface DigitalTwinInterface
 }
 
 frame "Provider" {
-  interface "Provider" as ProviderInterface
+  interface DigitalTwinProviderInterface
 }
 
 @enduml

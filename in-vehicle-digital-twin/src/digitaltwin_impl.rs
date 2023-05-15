@@ -4,23 +4,19 @@
 
 extern crate iref;
 
-use dtdl_parser::model_parser::ModelParser;
-use log::Level::Debug;
-use log::{debug, info, log_enabled, warn};
+use log::{debug, info};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use proto::digitaltwin::digital_twin_server::DigitalTwin;
-use proto::digitaltwin::{
-    FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse, UnregisterRequest,
-    UnregisterResponse,
+use proto::digital_twin::digital_twin_server::DigitalTwin;
+use proto::digital_twin::{
+    EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
 };
-use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinImpl {
-    pub entity_map: Arc<RwLock<HashMap<String, Value>>>,
+    pub entity_access_info_map: Arc<RwLock<HashMap<String, EntityAccessInfo>>>,
 }
 
 #[tonic::async_trait]
@@ -33,37 +29,26 @@ impl DigitalTwin for DigitalTwinImpl {
         &self,
         request: Request<FindByIdRequest>,
     ) -> Result<Response<FindByIdResponse>, Status> {
-        let request_inner = request.into_inner();
-        let entity_id = request_inner.entity_id;
+        let entity_id = request.into_inner().id;
 
         info!("Received a find_by_id request for entity id {entity_id}");
 
-        let dtdl;
+        let entity_access_info;
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Value>> = self.entity_map.read();
-            let val_option = lock.get(&entity_id);
-            let val = match val_option {
-                Some(v) => v,
-                None => {
-                    return Err(Status::not_found(format!(
-                        "Unable to find the DTDL for entity id {entity_id}"
-                    )))
-                }
-            };
-
-            dtdl = match serde_json::to_string_pretty(&val) {
-                Ok(content) => content,
-                Err(error) => {
-                    return Err(Status::internal(format!(
-                        "Unexpected error with the DTDL for entity id {entity_id}: {error:?}"
-                    )))
-                }
-            };
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
+                self.entity_access_info_map.read();
+            entity_access_info = lock.get(&entity_id).cloned();
         }
 
-        let response = FindByIdResponse { dtdl };
+        info!("{entity_access_info:?}");
+
+        if entity_access_info.is_none() {
+            return Err(Status::not_found("Unable to find the entity with id {entity_id}"));
+        }
+
+        let response = FindByIdResponse { entity_access_info };
 
         debug!("Responded to the find_by_id request.");
 
@@ -79,13 +64,11 @@ impl DigitalTwin for DigitalTwinImpl {
         request: Request<RegisterRequest>,
     ) -> Result<Response<RegisterResponse>, Status> {
         let request_inner = request.into_inner();
-        let dtdl = request_inner.dtdl;
 
-        info!("Received a register request for the DTDL:\n{}", &dtdl);
+        for entity_access_info in &request_inner.entity_access_info_list {
+            info!("Received a register request for the the entity:\n{}", entity_access_info.id);
 
-        let register_each_one_result = self.register_each_one(&dtdl);
-        if let Err(error) = register_each_one_result {
-            return Err(Status::internal(error));
+            self.register_entity(entity_access_info.clone())?;
         }
 
         let response = RegisterResponse {};
@@ -94,79 +77,29 @@ impl DigitalTwin for DigitalTwinImpl {
 
         Ok(Response::new(response))
     }
-
-    /// Unregister implementation.
-    ///
-    /// # Arguments
-    /// * `request` - Unregister request.
-    async fn unregister(
-        &self,
-        request: Request<UnregisterRequest>,
-    ) -> Result<Response<UnregisterResponse>, Status> {
-        warn!("Got an unregister request: {request:?}");
-
-        Err(Status::unimplemented("unregister has not been implemented"))
-    }
 }
 
 impl DigitalTwinImpl {
-    /// This function assumes that an array of resources has been provided and that each resource in the array needs to be registered.
+    /// Register the entity.
     ///
     /// # Arguments
-    /// * `dtdl` - The DTDL for the array.
-    #[allow(unused_variables)]
-    fn register_each_one(&self, dtdl: &str) -> Result<(), String> {
-        let doc: Value = match serde_json::from_str(dtdl) {
-            Ok(json) => json,
-            Err(error) => return Err(format!("Failed to parse the DTDL due to: {error:?}")),
-        };
-
-        match doc {
-            Value::Array(array) => {
-                for v in array.iter() {
-                    self.register_one(v)?
-                }
-            }
-            _ => return Err(String::from("An unexpected item was encountered in the DTDL.")),
-        };
-
-        Ok(())
-    }
-
-    /// Register the resource specified in the the JSON doc.
-    ///
-    /// # Arguments
-    /// * `doc` - The JSON doc that specifies the entity.
-    fn register_one(&self, doc: &Value) -> Result<(), String> {
-        let dtdl = match serde_json::to_string_pretty(&doc) {
-            Ok(content) => content,
-            Err(error) => {
-                return Err(format!("Failed to make the DTDL pretty due to: : {error:?}"))
-            }
-        };
-
-        let mut parser = ModelParser::new();
-        let json_texts = vec![dtdl];
-
-        let model_dict_result = parser.parse(&json_texts);
-        if let Err(error) = model_dict_result {
-            return Err(format!("Failed to parse the DTDL due to: {error:?}"));
-        }
-        let model_dict = model_dict_result.unwrap();
-
+    /// * `entity` - The entity.
+    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = self.entity_map.write();
-            for id in model_dict.keys() {
-                lock.insert(id.to_string(), doc.clone());
-            }
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+                self.entity_access_info_map.write();
+            match lock.get(&entity_access_info.id) {
+                Some(_) => {
+                    return Err(Status::unimplemented("The in-vehicle digital twin service does not yet support multiple registrations of the same entity."));
+                }
+                None => {
+                    lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
+                }
+            };
         }
 
-        if log_enabled!(Debug) {
-            for id in model_dict.keys() {
-                debug!("Registered DTDL for id {id}");
-            }
-        }
+        debug!("Registered entity {}", &entity_access_info.id);
 
         Ok(())
     }
@@ -175,79 +108,99 @@ impl DigitalTwinImpl {
 #[cfg(test)]
 mod digitaltwin_impl_tests {
     use super::*;
-    use ibeji_common::find_full_path;
     use ibeji_common_test::set_dtdl_path;
-    use std::fs;
-    use std::path::Path;
-
-    fn retrieve_dtdl(file_path: &str) -> Result<String, String> {
-        let path = Path::new(file_path);
-        let read_result = fs::read_to_string(path);
-        match read_result {
-            Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
-        }
-    }
+    use proto::digital_twin::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {
         set_dtdl_path();
 
-        // Note: We can use any valid JSON.  We'll use samples/remotely_accessible_resource.json.
-        let dtdl_path_result = find_full_path("samples/remotely_accessible_resource.json");
-        assert!(dtdl_path_result.is_ok());
-        let dtdl_path = dtdl_path_result.unwrap();
-        let dtdl_result = retrieve_dtdl(&dtdl_path);
-        assert!(dtdl_result.is_ok());
-        let dtdl = dtdl_result.unwrap();
+        let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
-        let dtdl_json_result = serde_json::from_str(&dtdl);
-        assert!(dtdl_json_result.is_ok());
-        let dtdl_json = dtdl_json_result.unwrap();
+        let endpoint_info = EndpointInfo {
+            protocol: String::from("grpc"),
+            uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
+            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            operations,
+        };
 
-        let entity_id = String::from("dtmi::some_id");
+        let entity_access_info = EntityAccessInfo {
+            name: String::from("AmbientAirTemperature"),
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            description: String::from("Ambient air temperature"),
+            endpoint_info_list: vec![endpoint_info],
+        };
 
-        let entity_map = Arc::new(RwLock::new(HashMap::new()));
+        let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
+        let digital_twin_impl =
+            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Value>> = entity_map.write();
-            lock.insert(entity_id.clone(), dtdl_json);
+            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+                entity_access_info_map.write();
+            lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
         }
 
-        let request = tonic::Request::new(FindByIdRequest { entity_id });
+        let request = tonic::Request::new(FindByIdRequest {
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+        });
         let result = digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
-        let dtdl = response.into_inner().dtdl;
-        assert!(!dtdl.is_empty());
+        let response_inner = response.into_inner();
+
+        assert!(response_inner.entity_access_info.is_some());
+
+        let response_entity_access_info = response_inner.entity_access_info.unwrap();
+
+        assert_eq!(
+            response_entity_access_info.id,
+            "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
+        );
+        assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
+        assert_eq!(
+            response_entity_access_info.endpoint_info_list[0].uri,
+            "http://[::1]:40010" // Devskim: ignore DS137138
+        );
     }
 
     #[tokio::test]
     async fn register_test() {
         set_dtdl_path();
 
-        let entity_map = Arc::new(RwLock::new(HashMap::new()));
-        let digital_twin_impl = DigitalTwinImpl { entity_map: entity_map.clone() };
+        let endpoint_info = EndpointInfo {
+            protocol: String::from("grpc"),
+            uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
+            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
+        };
 
-        let dtdl_path_result = find_full_path("samples/demo_resources.json");
-        assert!(dtdl_path_result.is_ok());
-        let dtdl_path = dtdl_path_result.unwrap();
-        let dtdl_result = retrieve_dtdl(&dtdl_path);
-        assert!(dtdl_result.is_ok());
-        let dtdl = dtdl_result.unwrap();
+        let entity_access_info = EntityAccessInfo {
+            name: String::from("AmbientAirTemperature"),
+            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            description: String::from("Ambient air temperature"),
+            endpoint_info_list: vec![endpoint_info],
+        };
 
-        let request = tonic::Request::new(RegisterRequest { dtdl });
+        let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
+
+        let digital_twin_impl =
+            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+
+        let request = tonic::Request::new(RegisterRequest {
+            entity_access_info_list: vec![entity_access_info],
+        });
         let result = digital_twin_impl.register(request).await;
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "register result is not okay: {result:?}");
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Value>> = entity_map.read();
+            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
+                entity_access_info_map.read();
             // Make sure that we populated the entity map from the contents of the DTDL.
-            assert!(lock.len() == 13, "expected length was 13, actual length is {}", lock.len());
+            assert_eq!(lock.len(), 1, "expected length was 1, actual length is {}", lock.len());
         }
     }
 }

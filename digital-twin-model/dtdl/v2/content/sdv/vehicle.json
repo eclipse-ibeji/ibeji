@@ -1,72 +1,51 @@
 [
   {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@context": ["dtmi:dtdl:context;2"],
     "@type": "Interface",
     "@id": "dtmi:sdv:Vehicle:Cabin:HVAC;1",
     "description": "Heat, Ventilation and Air Conditioning",
     "contents": [
       {
-          "@type": ["Property", "Temperature", "RemotelyAccessible"],
+          "@type": ["Property", "Temperature"],
           "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1",
           "name": "AmbientAirTemperature",
           "description": "The immediate surroundings air temperature (in Fahrenheit).",
           "schema": "integer",
-          "unit": "degreeFahrenheit",
-          "remote_access": [
-            {
-              "@type": "Endpoint",
-              "uri": "http://[::1]:40010",
-              "operations": [ "Subscribe", "Unsubscribe" ]
-            }
-          ]
+          "unit": "degreeFahrenheit"
         },
         {
-          "@type": ["Property", "RemotelyAccessible"],
+          "@type": ["Property"],
           "@id": "dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1",
           "name": "IsAirConditioningActive",
           "description": "Is air conditioning active?",
-          "schema": "boolean",
-          "remote_access": [
-            {
-              "@type": "Endpoint",
-              "uri": "http://[::1]:40010",
-              "operations": [ "Set", "Subscribe", "Unsubscribe" ]
-            }
-          ]
+          "schema": "boolean"
         }
     ]
   },
   {
-    "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+    "@context": ["dtmi:dtdl:context;2"],
     "@type": "Interface",
     "@id": "dtmi:sdv:Vehicle:OBD;1",
     "description": "On-board Diagnostics Interface",
     "contents": [
       {
-          "@type": ["Property", "RemotelyAccessible"],
+          "@type": ["Property"],
           "@id": "dtmi:sdv:Vehicle:OBD:HybridBatteryRemaining;1",
           "name": "HybridBatteryRemaining",
           "description": "The remaining hybrid battery life.",
           "schema": "integer",
-          "unit": "percent",
-          "remote_access": [
-            {
-              "@type": "Endpoint",
-              "uri": "http://[::1]:40010",
-              "operations": [ "Subscribe", "Unsubscribe" ]
-            }
-          ]
+          "unit": "percent"
         }
       ]
     },
     {
-      "@context": ["dtmi:dtdl:context;2", "dtmi:sdv:context;2"],
+      "@context": ["dtmi:dtdl:context;2"],
       "@type": "Interface",
       "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI;1",
       "description": "The Human Machine Interface.",
       "contents": [
         {
-          "@type": ["Command", "RemotelyAccessible"],
+          "@type": ["Command"],
           "@id": "dtmi:sdv:Vehicle:Cabin:Infotainment:HMI:ShowNotification;1",
           "name": "ShowNotification",
           "request": {
@@ -74,14 +53,7 @@
             "displayName": "Show Notification",
             "descriptiption": "Show a notification on the HMI.",
             "schema": "string"
-          },
-          "remote_access": [
-            {
-              "@type": "Endpoint",
-              "uri": "http://[::1]:40010",
-              "operations": [ "Invoke" ]
-            }
-          ]
+          }
         }
       ]
     }

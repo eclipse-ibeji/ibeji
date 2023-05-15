@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package provider;
+package digital_twin_provider;
 
-service Provider {
+service DigitalTwinProvider {
     rpc Subscribe (SubscribeRequest) returns (SubscribeResponse);
     rpc Unsubscribe (UnsubscribeRequest) returns (UnsubscribeResponse);
     rpc Get (GetRequest) returns (GetResponse);

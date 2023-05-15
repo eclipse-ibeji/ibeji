@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package consumer;
+package digital_twin_consumer;
 
-service Consumer {
+service DigitalTwinConsumer {
     rpc Publish (PublishRequest) returns (PublishResponse);
     rpc Respond (RespondRequest) returns (RespondResponse);
 }

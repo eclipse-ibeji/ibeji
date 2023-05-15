@@ -176,21 +176,21 @@ mod component_info_impl_tests {
         component_info.add_undefined_property(String::from("first"), first_propery_value.clone());
         component_info.add_undefined_property(String::from("second"), second_propery_value.clone());
 
-        assert!(component_info.dtdl_version() == 2);
-        assert!(component_info.id() == &id);
+        assert_eq!(component_info.dtdl_version(), 2);
+        assert_eq!(component_info.id(), &id);
         assert!(component_info.child_of().is_some());
-        assert!(component_info.child_of().clone().unwrap() == child_of);
+        assert_eq!(component_info.child_of().clone().unwrap(), child_of);
         assert!(component_info.defined_in().is_some());
-        assert!(component_info.defined_in().clone().unwrap() == defined_in);
-        assert!(component_info.entity_kind() == EntityKind::Component);
-        assert!(component_info.undefined_properties().len() == 2);
-        assert!(
-            component_info.undefined_properties().get("first").unwrap().clone()
-                == first_propery_value
+        assert_eq!(component_info.defined_in().clone().unwrap(), defined_in);
+        assert_eq!(component_info.entity_kind(), EntityKind::Component);
+        assert_eq!(component_info.undefined_properties().len(), 2);
+        assert_eq!(
+            component_info.undefined_properties().get("first").unwrap().clone(),
+            first_propery_value
         );
-        assert!(
-            component_info.undefined_properties().get("second").unwrap().clone()
-                == second_propery_value
+        assert_eq!(
+            component_info.undefined_properties().get("second").unwrap().clone(),
+            second_propery_value
         );
 
         match component_info.name() {

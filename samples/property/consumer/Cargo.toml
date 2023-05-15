@@ -10,14 +10,15 @@ license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
-dtdl-parser = { path = "../../../dtdl-parser" }
-dt-model-identifiers = { path = "../../../dt-model/dt-model-identifiers" }
+digital-twin-model = { path = "../../../digital-twin-model" }
 env_logger= { workspace = true }
 iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 log = { workspace = true }
 prost = { workspace = true }
 proto = { path = "../../../proto" }
+samples_common = { path = "../../common" }
+samples_proto = { path = "../../proto" }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }

@@ -3,6 +3,6 @@
 participant "Provider"
 participant "Consumer"
 
-"Consumer" -> "Provider" : Invoke - request (id, url, payload)
+"Consumer" -> "Provider" : Invoke - request (entity id, consumer uri, response id, payload)
 
 @enduml
