@@ -126,7 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = get_provider_uri(
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
         digital_twin_protocol::GRPC,
-        vec![digital_twin_operation::INVOKE.to_string()].as_slice(),
+        &[digital_twin_operation::INVOKE.to_string()],
     )
     .await
     .unwrap();
