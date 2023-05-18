@@ -10,8 +10,6 @@ license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
-ibeji-common = { path = "../common" }
-ibeji-common_test = { path = "../common-test" }
 futures = { workspace = true }
 generic-json = { workspace = true, features = ["serde_json-impl"] }
 iref = { workspace = true }

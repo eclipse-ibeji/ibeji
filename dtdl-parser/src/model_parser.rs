@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 use futures::executor::block_on;
-use ibeji_common::find_full_path;
 use json_ld::{context, Document, NoLoader, Node, Object};
 use log::warn;
 use serde_json::{Map, Value};
 use std::collections::HashMap;
+use std::env;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
@@ -48,6 +48,9 @@ impl Default for ModelParser {
 }
 
 impl ModelParser {
+    /// The DTDL-path environment variable name.
+    pub const DTDL_PATH: &str = "DTDL_PATH";
+
     /// Returns a new ModelParser instance.
     pub fn new() -> Self {
         Self {}
@@ -250,7 +253,7 @@ impl ModelParser {
     /// {"title": "http://purl.org/dc/terms/title"}
     /// ]
     fn preprocess(&mut self, doc: &mut Value) -> Result<(), String> {
-        let dtdl_2_context_path_string = find_full_path("v2/context/DTDL.v2.context.json")?;
+        let dtdl_2_context_path_string = Self::find_full_path("v2/context/DTDL.v2.context.json")?;
         let dtdl_2_context_path_string_unwrapped = dtdl_2_context_path_string;
         let dtdl_2_context_path = Path::new(&dtdl_2_context_path_string_unwrapped);
         let dtdl_2_context_value = self.retrieve_context(dtdl_2_context_path)?;
@@ -1031,22 +1034,88 @@ impl ModelParser {
 
         Ok(())
     }
+
+    /// Find the full path given a relative path and a preset DTDL_PATH environment variable (containing a semicolon-separated list of DTDL directories).
+    ///
+    /// # Arguments
+    /// `relative_path` - The relative path.
+    pub fn find_full_path(relative_path: &str) -> Result<String, String> {
+        match env::var(Self::DTDL_PATH) {
+            Ok(paths) => {
+                let split = paths.split(';');
+                let vec: Vec<&str> = split.collect();
+                for path in vec {
+                    let full_path = Path::new(path).join(relative_path);
+                    if full_path.exists() {
+                        return Ok(full_path.to_str().unwrap().to_string());
+                    }
+                }
+            }
+            Err(_) => {
+                return Err(String::from(
+                    "Unable to get the environment variable DTDL_PATH. Please set it.",
+                ))
+            }
+        }
+        Err(String::from("Unable to resolve the full path"))
+    }
 }
 
 #[cfg(test)]
 mod model_parser_tests {
     use super::*;
-    use ibeji_common_test::set_dtdl_path;
+    use log::trace;
     use std::fs;
     use std::path::Path;
     use std::vec::Vec;
 
+    /// The DTDL-path environment variable name.
+    const CARGO_MANIFEST_DIR: &str = "CARGO_MANIFEST_DIR";
+
+    /// Retrieve the contents of the DTDL from the specified file path.
+    ///
+    /// # Arguments:
+    /// `file_path` - The file path where the DTDL is located.
     fn retrieve_dtdl(file_path: &str) -> Result<String, String> {
         let path = Path::new(file_path);
         let read_result = fs::read_to_string(path);
         match read_result {
             Ok(contents) => Ok(contents),
-            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error:?}")),
+            Err(error) => Err(format!("Unable to retrieve the DTDL due to: {error}")),
+        }
+    }
+
+    /// Get the repository's directory.
+    fn get_repo_dir() -> Option<String> {
+        // CARGO_MANIFEST_DIR - The directory containing the manifest of your package.
+        let cargo_manifest_dir_result = env::var(CARGO_MANIFEST_DIR);
+        if let Ok(cargo_manifest_dir) = cargo_manifest_dir_result {
+            let cargo_manifest_dir_path = Path::new(&cargo_manifest_dir);
+            let parent_result = cargo_manifest_dir_path.parent();
+            if let Some(parent) = parent_result {
+                parent.to_str().map(String::from)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
+    /// Set the DTDL_PATH environment, so that the tests can use it.
+    fn set_dtdl_path() {
+        let repo_dir_result = get_repo_dir();
+        if let Some(repo_dir) = repo_dir_result {
+            let value = format!(
+                "{repo_dir}/external/opendigitaltwins-dtdl/DTDL;{repo_dir}/external/iot-plugandplay-models;{repo_dir}/dtdl-parser/dtdl;{repo_dir}/digital-twin-model/dtdl"
+            );
+            env::set_var(ModelParser::DTDL_PATH, &value);
+            trace!("{}={value}", ModelParser::DTDL_PATH);
+        } else {
+            warn!(
+                "Unable to set {}, as repo directory could not be determined.",
+                ModelParser::DTDL_PATH
+            );
         }
     }
 
@@ -1057,21 +1126,21 @@ mod model_parser_tests {
         let mut json_texts = Vec::<String>::new();
 
         let device_information_full_path_result =
-            find_full_path("dtmi/azure/devicemanagement/deviceinformation-1.json");
+            ModelParser::find_full_path("dtmi/azure/devicemanagement/deviceinformation-1.json");
         assert!(device_information_full_path_result.is_ok());
         let device_information_contents_result =
             retrieve_dtdl(&device_information_full_path_result.unwrap());
         assert!(device_information_contents_result.is_ok());
         json_texts.push(device_information_contents_result.unwrap());
 
-        let thermostat_full_path_result = find_full_path("v2/samples/Thermostat.json");
+        let thermostat_full_path_result = ModelParser::find_full_path("v2/samples/Thermostat.json");
         assert!(thermostat_full_path_result.is_ok());
         let thermostat_contents_result = retrieve_dtdl(&thermostat_full_path_result.unwrap());
         assert!(thermostat_contents_result.is_ok());
         json_texts.push(thermostat_contents_result.unwrap());
 
         let temp_controller_full_path_result =
-            find_full_path("v2/samples/TemperatureController.json");
+            ModelParser::find_full_path("v2/samples/TemperatureController.json");
         assert!(temp_controller_full_path_result.is_ok());
         let temp_controller_contents_result =
             retrieve_dtdl(&temp_controller_full_path_result.unwrap());
@@ -1101,7 +1170,7 @@ mod model_parser_tests {
 
         let mut json_texts = Vec::<String>::new();
 
-        let vehicle_path_result = find_full_path("v2/content/sdv/vehicle.json");
+        let vehicle_path_result = ModelParser::find_full_path("v2/content/sdv/vehicle.json");
         assert!(vehicle_path_result.is_ok());
         let vehicle_contents_result = retrieve_dtdl(&vehicle_path_result.unwrap());
         assert!(vehicle_contents_result.is_ok());
@@ -1136,5 +1205,15 @@ mod model_parser_tests {
         assert!(show_notification_id.is_some());
         let show_notification_entity_result = model_dict.get(&show_notification_id.unwrap());
         assert!(show_notification_entity_result.is_some());
+    }
+
+    #[test]
+    fn find_full_path_test() {
+        set_dtdl_path();
+
+        let find_full_path_result = ModelParser::find_full_path("v2/content/sdv/vehicle.json");
+        assert!(find_full_path_result.is_ok());
+        let full_path = find_full_path_result.unwrap();
+        assert!(full_path.ends_with("/v2/content/sdv/vehicle.json"));
     }
 }

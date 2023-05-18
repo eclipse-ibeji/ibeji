@@ -4,12 +4,12 @@
 
 extern crate iref;
 
-use log::{debug, info};
-use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use proto::digital_twin::digital_twin_server::DigitalTwin;
-use proto::digital_twin::{
+use core_protobuf_data_access::digital_twin::v1::digital_twin_server::DigitalTwin;
+use core_protobuf_data_access::digital_twin::v1::{
     EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
 };
+use log::{debug, info};
+use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
@@ -108,13 +108,10 @@ impl DigitalTwinImpl {
 #[cfg(test)]
 mod digitaltwin_impl_tests {
     use super::*;
-    use ibeji_common_test::set_dtdl_path;
-    use proto::digital_twin::EndpointInfo;
+    use core_protobuf_data_access::digital_twin::v1::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {
-        set_dtdl_path();
-
         let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
         let endpoint_info = EndpointInfo {
@@ -168,8 +165,6 @@ mod digitaltwin_impl_tests {
 
     #[tokio::test]
     async fn register_test() {
-        set_dtdl_path();
-
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138

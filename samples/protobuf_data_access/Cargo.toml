@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "samples_proto"
+name = "samples-protobuf-data-access"
 version = "1.0.0"
 edition = "2021"
 license = "MIT"
@@ -11,6 +11,7 @@ license = "MIT"
 [dependencies]
 tonic = { workspace = true }
 prost = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [build-dependencies]

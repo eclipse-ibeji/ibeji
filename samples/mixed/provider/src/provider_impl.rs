@@ -5,10 +5,10 @@
 use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
-use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
-use samples_proto::sample_grpc::v1::digital_twin_consumer::RespondRequest;
-use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
-use samples_proto::sample_grpc::v1::digital_twin_provider::{
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::RespondRequest;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };

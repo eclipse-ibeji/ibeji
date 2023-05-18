@@ -8,9 +8,9 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::{digital_twin_operation, digital_twin_protocol, find_provider_endpoint};
-use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
-use samples_proto::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
-use samples_proto::sample_grpc::v1::digital_twin_provider::{
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     InvokeRequest, SetRequest, SubscribeRequest,
 };
 use std::net::SocketAddr;
