@@ -3,23 +3,20 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "command-provider"
+name = "samples-property"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
-digital-twin-model = { path = "../../../digital-twin-model" }
+digital-twin-model = { path = "../../digital-twin-model" }
 env_logger= { workspace = true }
-ibeji-common = { path = "../../../common" }
-json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
-log = { workspace = true}
+log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
-proto = { path = "../../../proto" }
-samples_common = { path = "../../common" }
-samples_proto = { path = "../../proto" }
+samples-common = { path = "../common" }
+samples-proto = { path = "../proto" }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
@@ -27,3 +24,11 @@ uuid = { workspace = true, features = ["v4", "fast-rng", "macro-diagnostics"] }
 
 [build-dependencies]
 tonic-build = { workspace = true }
+
+[[bin]]
+name = "property-provider"
+path = "provider/src/main.rs"
+
+[[bin]]
+name = "property-consumer"
+path = "consumer/src/main.rs"

@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use core_proto::digital_twin::v1::digital_twin_server::DigitalTwinServer;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::RwLock;
-use proto::digital_twin::digital_twin_server::DigitalTwinServer;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
