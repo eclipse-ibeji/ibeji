@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use log::{debug, info};
-use samples_proto::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_proto::digital_twin::v1::{EndpointInfo, FindByIdRequest};
+use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
+use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, FindByIdRequest};
 
 /// Supported digital twin operations.
 pub mod digital_twin_operation {

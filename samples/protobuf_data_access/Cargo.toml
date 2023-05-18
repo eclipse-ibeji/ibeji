@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "samples-proto"
+name = "samples-protobuf-data-access"
 version = "1.0.0"
 edition = "2021"
 license = "MIT"

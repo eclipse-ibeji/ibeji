@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use core_proto::digital_twin::v1::digital_twin_server::DigitalTwinServer;
+use core_protobuf_data_access::digital_twin::v1::digital_twin_server::DigitalTwinServer;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::RwLock;

@@ -10,5 +10,5 @@ license = "MIT"
 
 [dependencies]
 log = { workspace = true }
-samples-proto = { path = "../proto" }
+samples-protobuf-data-access = { path = "../protobuf_data_access" }
 tonic = { workspace = true }

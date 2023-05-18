@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use log::{info, warn};
-use samples_proto::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumer;
-use samples_proto::sample_grpc::v1::digital_twin_consumer::{
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumer;
+use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::{
     PublishRequest, PublishResponse, RespondRequest, RespondResponse,
 };
 use tonic::{Request, Response, Status};

@@ -4,8 +4,8 @@
 
 extern crate iref;
 
-use core_proto::digital_twin::v1::digital_twin_server::DigitalTwin;
-use core_proto::digital_twin::v1::{
+use core_protobuf_data_access::digital_twin::v1::digital_twin_server::DigitalTwin;
+use core_protobuf_data_access::digital_twin::v1::{
     EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
 };
 use log::{debug, info};
@@ -108,7 +108,7 @@ impl DigitalTwinImpl {
 #[cfg(test)]
 mod digitaltwin_impl_tests {
     use super::*;
-    use core_proto::digital_twin::v1::EndpointInfo;
+    use core_protobuf_data_access::digital_twin::v1::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {

@@ -6,7 +6,7 @@
 
 members = [
   # core
-  "core/proto",
+  "core/protobuf_data_access",
   "core/in-vehicle-digital-twin",
 
   # digital twin model
@@ -17,7 +17,7 @@ members = [
 
   # samples
   "samples/common",
-  "samples/proto",
+  "samples/protobuf_data_access",
   "samples/command",
   "samples/mixed",
   "samples/property",

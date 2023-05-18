@@ -16,7 +16,7 @@ json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "reso
 log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
-core-proto = { path = "../proto" }
+core-protobuf-data-access = { path = "../protobuf_data_access" }
 serde_json = { workspace = true }
 tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
