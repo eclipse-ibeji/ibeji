@@ -10,6 +10,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &["../../interfaces/digital_twin/v1/digital_twin.proto"],
             &["../../interfaces/digital_twin/v1/"],
         )?;
+    tonic_build::configure()
+        .compile(
+            &["../../external/chariott/proto/chariott/runtime/v1/runtime.proto"],
+            &["../../external/chariott/proto"],
+        )?;
+    tonic_build::configure()
+        .compile(
+            &["../../external/chariott/proto/chariott/provider/v1/provider.proto"],
+            &["../../external/chariott/proto"],
+        )?;     
 
     Ok(())
 }
