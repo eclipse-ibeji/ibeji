@@ -22,8 +22,8 @@ use tonic::transport::Server;
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-const PROVIDER_AUTHORITY: &str = "[::1]:40010";
+const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://0.0.0.0:5010"; // Devskim: ignore DS137138
+const PROVIDER_AUTHORITY: &str = "0.0.0.0:4010";
 
 /// Start the ambient air temperature data stream.
 ///
@@ -107,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             digital_twin_operation::SUBSCRIBE.to_string(),
             digital_twin_operation::UNSUBSCRIBE.to_string(),
         ],
-        uri: "http://[::1]:40010".to_string(), // Devskim: ignore DS137138
+        uri: "http://0.0.0.0:4010".to_string(), // Devskim: ignore DS137138
         context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
 

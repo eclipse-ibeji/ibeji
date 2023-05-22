@@ -5,7 +5,7 @@
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
-use samples_common::{digital_twin_operation, digital_twin_protocol, find_provider_endpoint};
+use samples_common::{digital_twin_operation, digital_twin_protocol, discover_digital_twin_services_using_chariott, find_provider_endpoint};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::SubscribeRequest;
@@ -14,9 +14,9 @@ use tonic::transport::Server;
 
 mod consumer_impl;
 
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
+// const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 
-const CONSUMER_AUTHORITY: &str = "[::1]:60010";
+const CONSUMER_AUTHORITY: &str = "0.0.0.0:6010";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -32,8 +32,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
 
+    let url_option = discover_digital_twin_services_using_chariott().await?;
+    if url_option.is_none() {
+        return Err("Failed to discover the in-vehicle digital twin service's URL")?;
+    }
+
+    let url = url_option.unwrap().clone();
+    
+    // Workarounhd: see https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
+    let static_url_str = Box::leak(url.into_boxed_str());
+
     let provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
+        static_url_str,
         sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::SUBSCRIBE.to_string()],

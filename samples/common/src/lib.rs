@@ -3,8 +3,20 @@
 // SPDX-License-Identifier: MIT
 
 use log::{debug, info};
+use samples_protobuf_data_access::chariott::{
+    common::v1::{
+        discover_fulfillment,
+        DiscoverIntent,
+        fulfillment::Fulfillment as FulfillmentEnum,
+        intent::Intent as IntentEnum,
+        Intent as IntentMessage,        
+    },
+    runtime::v1::{FulfillRequest},
+};
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, FindByIdRequest};
+use samples_protobuf_data_access::chariott::runtime::v1::chariott_service_client::ChariottServiceClient;
+use tonic::{Request, Status};
 
 /// Supported digital twin operations.
 pub mod digital_twin_operation {
@@ -39,7 +51,7 @@ pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
 /// `protocol` - The required protocol.
 /// `operations` - The required operations.
 pub async fn find_provider_endpoint(
-    in_vehicle_digitial_twin_servuce_uri: &'static str,
+    in_vehicle_digitial_twin_servuce_uri: &'static str,    
     entity_id: &str,
     protocol: &str,
     operations: &[String],
@@ -76,6 +88,44 @@ pub async fn find_provider_endpoint(
     info!("Found a matching endpoint for entity id {entity_id} that has URI {}", result.uri);
 
     Ok(result)
+}
+
+pub async fn discover_digital_twin_services_using_chariott() -> Result<Option<String>, Status> {
+
+    let chariott_url = "http://0.0.0.0:4243";
+
+    let mut client = ChariottServiceClient::connect(chariott_url.to_string()).await.map_err(|e|Status::internal(e.to_string()))?;
+
+    let request = Request::new(FulfillRequest {
+        namespace: "sdv.ibeji".to_string(),
+        intent: Some(IntentMessage {
+            intent: Some(IntentEnum::Discover(DiscoverIntent {})),
+        }),
+    });
+
+    // Get list of services at the requested namespace, if any.
+    let services: Option<Vec<discover_fulfillment::Service>> = client
+        .fulfill(request)
+        .await?
+        .into_inner()
+        .fulfillment
+        .and_then(|fulfillment_message| fulfillment_message.fulfillment)
+        .and_then(|fulfillment_enum| match fulfillment_enum {
+            FulfillmentEnum::Discover(discover) => {
+                Some(discover.services.into_iter().collect())
+            }
+            _ => None,
+        });
+
+    if services.is_some() {
+        for service in services.unwrap() {
+            if service.schema_kind == "grpc+proto" {
+                return Ok(Some(service.url.to_string()))
+            }
+        }
+    }
+
+    Ok(None)
 }
 
 #[cfg(test)]

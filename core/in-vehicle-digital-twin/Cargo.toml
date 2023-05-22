@@ -20,6 +20,7 @@ core-protobuf-data-access = { path = "../protobuf_data_access" }
 serde_json = { workspace = true }
 tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
+url = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
