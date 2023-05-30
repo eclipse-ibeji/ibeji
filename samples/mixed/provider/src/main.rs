@@ -9,7 +9,7 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
-use samples_common::{digital_twin_operation, digital_twin_protocol};
+use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;

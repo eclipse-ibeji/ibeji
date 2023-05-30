@@ -16,21 +16,23 @@ use tonic::{Request, Status};
 use tonic::transport::Server;
 use url::Url;
 
+// use crate::invehicle_digital_twin_config::load_settings;
+
 mod digitaltwin_impl;
+mod invehicle_digital_twin_config;
 mod providerservice_impl;
 
-const IN_VEHICLE_DIGITAL_TWIN_AUTHORITY: &str = "0.0.0.0:5010";
+// const INVEHICLE_DIGITAL_TWIN_AUTHORITY: &str = "0.0.0.0:5010";
 
-pub async fn register_ibeji_services_with_chariott(digital_twin_url: &str) -> Result<(), Status> {
-
-    let chariott_url = "http://0.0.0.0:4243";
+pub async fn register_ibeji_services_with_chariott(chariott_url: &str, invehicle_digital_twin_url: &str) -> Result<(), Status> {
+    // let chariott_url = "http://0.0.0.0:4243";
 
     let mut client = ChariottServiceClient::connect(chariott_url.to_string()).await.map_err(|e|Status::internal(e.to_string()))?;
 
     let service = Some(IntentServiceRegistration {
         name: "digital-twin".to_string(),
         version: "1.0".to_string(),
-        url: digital_twin_url.to_string(),
+        url: invehicle_digital_twin_url.to_string(),
         locality: intent_service_registration::ExecutionLocality::Local as i32,
     });
 
@@ -64,22 +66,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The In-Vehicle Digital Twin Service has started.");
 
+    let settings = invehicle_digital_twin_config::load_settings();
+    let invehicle_digital_twin_authority = settings.invehicle_digital_twin_authority;
+    let chariott_url_option = settings.chariott_url;
+
     // Setup the HTTP server.
-    let addr: SocketAddr = IN_VEHICLE_DIGITAL_TWIN_AUTHORITY.parse()?;
+    let addr: SocketAddr = invehicle_digital_twin_authority.parse()?;
     let digitaltwin_impl = digitaltwin_impl::DigitalTwinImpl {
         entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
     };
-    let in_vehicle_digital_twin_address = format!("http://{IN_VEHICLE_DIGITAL_TWIN_AUTHORITY}"); // Devskim: ignore DS137138    
-    let in_vehicle_digital_twin_url = Url::parse(&in_vehicle_digital_twin_address)?;
-    let providerservice_impl = providerservice_impl::ProviderServiceImpl::new(in_vehicle_digital_twin_url);
+    let invehicle_digital_twin_address = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138    
+    let invehicle_digital_twin_url = Url::parse(&invehicle_digital_twin_address)?;
+    let providerservice_impl = providerservice_impl::ProviderServiceImpl::new(invehicle_digital_twin_url);
     let server_future =
         Server::builder()
             .add_service(DigitalTwinServer::new(digitaltwin_impl))
             .add_service(ProviderServiceServer::new(providerservice_impl))
             .serve(addr);
-    info!("The HTTP server is listening on address '{in_vehicle_digital_twin_address}'");
+    info!("The HTTP server is listening on address '{invehicle_digital_twin_address}'");
 
-    register_ibeji_services_with_chariott(&in_vehicle_digital_twin_address).await?;
+    if chariott_url_option.is_some() {
+        register_ibeji_services_with_chariott(&chariott_url_option.unwrap(), &invehicle_digital_twin_address).await?;
+    }
 
     server_future.await?;
 
