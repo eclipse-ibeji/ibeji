@@ -16,29 +16,32 @@ use tonic::{Request, Status};
 use tonic::transport::Server;
 use url::Url;
 
-// use crate::invehicle_digital_twin_config::load_settings;
-
 mod digitaltwin_impl;
 mod invehicle_digital_twin_config;
 mod providerservice_impl;
 
-// const INVEHICLE_DIGITAL_TWIN_AUTHORITY: &str = "0.0.0.0:5010";
+pub const DIGITAL_TWIN_SERVICE_NAME: &str = "digital_twin";
+pub const DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
+pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
 
-pub async fn register_ibeji_services_with_chariott(chariott_url: &str, invehicle_digital_twin_url: &str) -> Result<(), Status> {
-    // let chariott_url = "http://0.0.0.0:4243";
-
+/// Register the digital twin service with Chariott.
+///
+/// # Arguments
+/// * `chariott_url` - Chariott's URL.
+/// * `invehicle_digital_twin_url` - In-vehcile Digital Twin Service's URL.
+pub async fn register_digital_twin_service_with_chariott(chariott_url: &str, invehicle_digital_twin_url: &str) -> Result<(), Status> {
     let mut client = ChariottServiceClient::connect(chariott_url.to_string()).await.map_err(|e|Status::internal(e.to_string()))?;
 
     let service = Some(IntentServiceRegistration {
-        name: "digital-twin".to_string(),
-        version: "1.0".to_string(),
+        name: DIGITAL_TWIN_SERVICE_NAME.to_string(),
+        version: DIGITAL_TWIN_SERVICE_VERSION.to_string(),
         url: invehicle_digital_twin_url.to_string(),
         locality: intent_service_registration::ExecutionLocality::Local as i32,
     });
 
     let intents = vec![
         IntentRegistration {
-            namespace: "sdv.ibeji".to_string(),
+            namespace: CHARIOTT_NAMESPACE_FOR_IBEJI.to_string(),
             intent: intent_registration::Intent::Discover as i32,
         },
     ];
@@ -66,6 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The In-Vehicle Digital Twin Service has started.");
 
+    // Load the config.
     let settings = invehicle_digital_twin_config::load_settings();
     let invehicle_digital_twin_authority = settings.invehicle_digital_twin_authority;
     let chariott_url_option = settings.chariott_url;
@@ -85,8 +89,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .serve(addr);
     info!("The HTTP server is listening on address '{invehicle_digital_twin_address}'");
 
+    // Register the digital twin service with Chariott if Chariott's URL was provided in the config.
     if chariott_url_option.is_some() {
-        register_ibeji_services_with_chariott(&chariott_url_option.unwrap(), &invehicle_digital_twin_address).await?;
+        register_digital_twin_service_with_chariott(&chariott_url_option.unwrap(), &invehicle_digital_twin_address).await?;
     }
 
     server_future.await?;

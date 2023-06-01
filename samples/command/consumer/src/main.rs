@@ -8,7 +8,7 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::misc::find_provider_endpoint;
+use samples_common::misc::discover_digital_twin_provider_using_ibeji;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::InvokeRequest;
@@ -17,7 +17,7 @@ use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
+const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URL: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
 const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 
 /// Start the show notification repeater.
@@ -79,8 +79,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
 
-    let provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
+    let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
+        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URL,
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::INVOKE.to_string()],

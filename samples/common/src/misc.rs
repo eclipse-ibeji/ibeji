@@ -18,6 +18,9 @@ use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, FindByIdReque
 use samples_protobuf_data_access::chariott::runtime::v1::chariott_service_client::ChariottServiceClient;
 use tonic::{Request, Status};
 
+pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
+pub const CHARIOTT_SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
+
 /// Is the provided subset a subset of the provided superset?
 ///
 /// # Arguments
@@ -29,21 +32,21 @@ pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
     })
 }
 
-/// Find a provider endpoint that satifies the requirements.
+/// Use Ibeji to discover the endpoint for a digital twin provider that satifies the requirements.
 ///
 /// # Arguments
-/// `invehcile_digitial_twin_servuce_uri` - iI-vehicle digital twin service URI.
+/// `invehcile_digitial_twin_servuce_url` - In-vehicle digital twin service URL.
 /// `entity_id` - The matching entity id.
 /// `protocol` - The required protocol.
 /// `operations` - The required operations.
-pub async fn find_provider_endpoint(
-    invehicle_digitial_twin_servuce_uri: &'static str,    
+pub async fn discover_digital_twin_provider_using_ibeji(
+    invehicle_digitial_twin_servuce_url: &'static str,    
     entity_id: &str,
     protocol: &str,
     operations: &[String],
 ) -> Result<EndpointInfo, String> {
-    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {invehicle_digitial_twin_servuce_uri}");
-    let mut client = DigitalTwinClient::connect(invehicle_digitial_twin_servuce_uri)
+    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URL {invehicle_digitial_twin_servuce_url}");
+    let mut client = DigitalTwinClient::connect(invehicle_digitial_twin_servuce_url)
         .await
         .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { id: entity_id.to_string() });
@@ -76,14 +79,15 @@ pub async fn find_provider_endpoint(
     Ok(result)
 }
 
-pub async fn discover_digital_twin_services_using_chariott(chariott_url: &str) -> Result<Option<String>, Status> {
-
-    // let chariott_url = "http://0.0.0.0:4243";
-
+/// Use Chariott to discover the endpoint for the digital twin service.
+///
+/// # Arguments
+/// * `chariott_url` - Chariott's URL.
+pub async fn discover_digital_twin_service_using_chariott(chariott_url: &str) -> Result<Option<String>, Status> {
     let mut client = ChariottServiceClient::connect(chariott_url.to_string()).await.map_err(|e|Status::internal(e.to_string()))?;
 
     let request = Request::new(FulfillRequest {
-        namespace: "sdv.ibeji".to_string(),
+        namespace: CHARIOTT_NAMESPACE_FOR_IBEJI.to_string(),
         intent: Some(IntentMessage {
             intent: Some(IntentEnum::Discover(DiscoverIntent {})),
         }),
@@ -103,9 +107,10 @@ pub async fn discover_digital_twin_services_using_chariott(chariott_url: &str) -
             _ => None,
         });
 
+    // If we discovered one or more service, then return the URL for the first one that uses gRPC.
     if services.is_some() {
         for service in services.unwrap() {
-            if service.schema_kind == "grpc+proto" {
+            if service.schema_kind == CHARIOTT_SCHEMA_KIND_FOR_GRPC {
                 return Ok(Some(service.url.to_string()))
             }
         }
