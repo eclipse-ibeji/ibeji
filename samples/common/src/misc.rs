@@ -152,7 +152,7 @@ pub async fn discover_digital_twin_service_using_chariott(
     if services.is_some() {
         for service in services.unwrap() {
             if service.schema_kind == CHARIOTT_SCHEMA_KIND_FOR_GRPC {
-                return Ok(Some(service.url.to_string()));
+                return Ok(Some(service.url));
             }
         }
     }
