@@ -160,7 +160,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
-    info!("Sending a register request wto the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
+    info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
         register_ambient_air_temperature(&invehicle_digital_twin_url, &provider_uri)
     })

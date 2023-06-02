@@ -2,6 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+mod consumer_impl;
+
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
@@ -14,8 +16,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::Subscr
 use std::net::SocketAddr;
 use tokio::time::Duration;
 use tonic::{Status, transport::Server};
-
-mod consumer_impl;
 
 /// Subscribe to the ambient air temperature.
 ///
