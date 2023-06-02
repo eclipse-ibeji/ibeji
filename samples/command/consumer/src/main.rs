@@ -8,7 +8,8 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::misc::discover_digital_twin_provider_using_ibeji;
+use samples_common::consumer_config::load_settings;
+use samples_common::misc::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_url};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::InvokeRequest;
@@ -16,9 +17,6 @@ use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
-
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URL: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 
 /// Start the show notification repeater.
 ///
@@ -72,15 +70,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Consumer has started.");
 
+    let settings = load_settings();
+
+    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
+        settings.invehicle_digital_twin_url,
+        settings.chariott_url,
+    )
+    .await?;
+
+    let consumer_authority = settings.consumer_authority;
+
     // Setup the HTTP server.
-    let addr: SocketAddr = CONSUMER_AUTHORITY.parse()?;
+    let addr: SocketAddr = consumer_authority.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
+    info!("The HTTP server is listening on address '{consumer_authority}'");
+
+    // This is a workaround: see https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
+    let static_url_str = Box::leak(invehicle_digital_twin_url.into_boxed_str());
 
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URL,
+        static_url_str,
         sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::INVOKE.to_string()],
@@ -91,8 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider_uri = provider_endpoint_info.uri;
 
     info!("The URI for the ShowNotification command's provider is {provider_uri}");
-
-    let consumer_uri = format!("http://{CONSUMER_AUTHORITY}"); // Devskim: ignore DS137138
+    let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 
     start_show_notification_repeater(provider_uri, consumer_uri);
 

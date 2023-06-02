@@ -9,6 +9,8 @@ use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
+use samples_common::misc::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::provider_config::load_settings;
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
@@ -18,12 +20,48 @@ use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::time::{sleep, Duration};
-use tonic::transport::Server;
+use tonic::{Status, transport::Server};
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://0.0.0.0:5010"; // Devskim: ignore DS137138
-const PROVIDER_AUTHORITY: &str = "0.0.0.0:4010";
+/// Register the ambient air temperature property's endpoint.
+///
+/// # Arguments
+/// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
+/// * `provider_uri` - The provider's URI.
+async fn register_ambient_air_temperature(
+    invehicle_digital_twin_url: &str,
+    provider_uri: &str,
+) -> Result<(), Status> {
+    let endpoint_info = EndpointInfo {
+        protocol: digital_twin_protocol::GRPC.to_string(),
+        operations: vec![
+            digital_twin_operation::SUBSCRIBE.to_string(),
+            digital_twin_operation::UNSUBSCRIBE.to_string(),
+        ],
+        uri: provider_uri.to_string(),
+        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+    };
+
+    let entity_access_info = EntityAccessInfo {
+        name: "AmbientAirTemperature".to_string(),
+        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
+        endpoint_info_list: vec![endpoint_info],
+    };
+
+    let mut client = DigitalTwinClient::connect(invehicle_digital_twin_url.to_string())
+        .await
+        .map_err(|e| Status::internal(e.to_string()))?;
+    let request =
+        tonic::Request::new(RegisterRequest { entity_access_info_list: vec![entity_access_info] });
+    let _response = client.register(request).await?;
+
+    Ok(())
+}
+
+// const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://0.0.0.0:5010"; // Devskim: ignore DS137138
+// const PROVIDER_AUTHORITY: &str = "0.0.0.0:4010";
 
 /// Start the ambient air temperature data stream.
 ///
@@ -101,37 +139,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let endpoint_info = EndpointInfo {
-        protocol: digital_twin_protocol::GRPC.to_string(),
-        operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string(),
-            digital_twin_operation::UNSUBSCRIBE.to_string(),
-        ],
-        uri: "http://0.0.0.0:4010".to_string(), // Devskim: ignore DS137138
-        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
-    };
+    let settings = load_settings();
 
-    let entity_access_info = EntityAccessInfo {
-        name: "AmbientAirTemperature".to_string(),
-        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
-        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
-        endpoint_info_list: vec![endpoint_info],
-    };
+    let provider_authority = settings.provider_authority;
+
+    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
+        settings.invehicle_digital_twin_url,
+        settings.chariott_url,
+    )
+    .await?;
+
+    // Construct the provider URI from the provider authority.
+    let provider_uri = format!("http://{provider_authority}"); // Devskim: ignore DS137138
 
     // Setup the HTTP server.
-    let addr: SocketAddr = PROVIDER_AUTHORITY.parse()?;
+    let addr: SocketAddr = provider_authority.parse()?;
     let subscription_map = Arc::new(Mutex::new(SubscriptionMap::new()));
     let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
     let server_future =
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{PROVIDER_AUTHORITY}'");
+    info!("The HTTP server is listening on address '{provider_authority}'");
 
-    info!("Sending a register request with the Provider's DTDL to the In-Vehicle Digital Twin Service URI {IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI}");
-    let mut client = DigitalTwinClient::connect(IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI).await?;
-    let request =
-        tonic::Request::new(RegisterRequest { entity_access_info_list: vec![entity_access_info] });
-    let _response = client.register(request).await?;
-    debug!("The Provider's DTDL has been registered.");
+    info!("Sending a register request wto the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
+    retry_async_based_on_status(30, Duration::from_secs(1), || {
+        register_ambient_air_temperature(&invehicle_digital_twin_url, &provider_uri)
+    })
+    .await?;
 
     start_ambient_air_temperature_data_stream(subscription_map.clone());
 

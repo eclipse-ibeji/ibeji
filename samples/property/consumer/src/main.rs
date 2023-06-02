@@ -53,8 +53,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    // Setup the HTTP server.
     let consumer_authority = settings.consumer_authority;
+
+    // Setup the HTTP server.
     let addr: SocketAddr = consumer_authority.parse().unwrap();
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
