@@ -4,8 +4,8 @@
 
 use core_protobuf_data_access::chariott::{
     common::v1::{
-        discover_fulfillment::Service, DiscoverFulfillment, fulfillment::Fulfillment as FulfillmentEnum,
-        Fulfillment as FulfillmentMessage, intent::Intent as IntentEnum,
+        discover_fulfillment::Service, fulfillment::Fulfillment as FulfillmentEnum,
+        intent::Intent as IntentEnum, DiscoverFulfillment, Fulfillment as FulfillmentMessage,
     },
     provider::v1::{provider_service_server::ProviderService, FulfillRequest, FulfillResponse},
 };
@@ -15,7 +15,7 @@ use tonic::{Request, Response, Status};
 use url::Url;
 
 pub const CHARIOTT_SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
-pub const CHARIOTT_SCHEMA_REFERENCE_FOR_DIGITAL_TWIN_SERVICE : &str = "digital_twin.v1";
+pub const CHARIOTT_SCHEMA_REFERENCE_FOR_DIGITAL_TWIN_SERVICE: &str = "digital_twin.v1";
 
 #[derive(Debug)]
 pub struct ProviderServiceImpl {
@@ -55,7 +55,7 @@ impl ProviderService for ProviderServiceImpl {
                 fulfillment: Some(FulfillmentMessage { fulfillment: Some(f) }),
             })
         })
-    }    
+    }
 }
 
 impl ProviderServiceImpl {
@@ -68,7 +68,7 @@ impl ProviderServiceImpl {
 mod providerservice_impl_tests {
     use super::*;
     use core_protobuf_data_access::chariott::common::v1::{
-        DiscoverIntent, Intent as IntentMessage
+        DiscoverIntent, Intent as IntentMessage,
     };
 
     #[tokio::test]
@@ -77,10 +77,8 @@ mod providerservice_impl_tests {
             ProviderServiceImpl { url: Url::parse("http://0.0.0.0:80").unwrap() };
 
         let request = Request::new(FulfillRequest {
-            intent: Some(IntentMessage {
-                intent: Some(IntentEnum::Discover(DiscoverIntent {})),
-            }),
-        });        
+            intent: Some(IntentMessage { intent: Some(IntentEnum::Discover(DiscoverIntent {})) }),
+        });
         let result = provider_service_impl.fulfill(request).await;
         assert!(result.is_ok(), "fulfill result is not okay: {result:?}");
 

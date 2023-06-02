@@ -25,4 +25,3 @@ pub mod chariott {
         }
     }
 }
-

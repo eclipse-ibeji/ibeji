@@ -4,8 +4,8 @@
 
 #![cfg(feature = "yaml")]
 
-use serde_derive::Deserialize;
 use config::{Config, File, FileFormat};
+use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
