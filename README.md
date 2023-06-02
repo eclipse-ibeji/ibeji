@@ -117,13 +117,13 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `cd {repo-root-dir}/target/debug`<br>
 1. Make sure that we have three config files with the following contents:<br><br>
 ---- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"<br><br>`
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
 ---- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -144,13 +144,13 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `cd {repo-root-dir}/target/debug`<br>
 1. Make sure that we have three config files with the following contents:<br><br>
 ---- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"<br><br>`
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
 ---- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -171,13 +171,13 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `cd {repo-root-dir}/target/debug`<br>
 1. Make sure that we have three config files with the following contents:<br><br>
 ---- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"<br><br>`
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
 ---- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"<br>
-invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -189,7 +189,7 @@ invehicle_digital_twin_url: "http://0.0.0.0:5010"<br><br>`
 If you want the consumers and providers for each demo to use Chariott to discover the URL for the In-Vehicle Digital Twin Service, rather than
 having it statically provided in their respective config file, then do the following before starting each demo:
 
-1. Clone a copy of Chariott from GitHub (https://github.com/eclipse-chariott/chariott).
+1. Clone a copy of Chariott from GitHub (`https://github.com/eclipse-chariott/chariott`).
 1. Build Chariott
 1. Set Chariott's CHARIOTT_REGISTRY_TTL_SECS environment variable to a high number (we suggest 86400 seconds), as Ibeji does not rely on Chariott's announce feature:<br><br>
 `export CHARIOTT_REGISTRY_TTL_SECS=86400`<br>
