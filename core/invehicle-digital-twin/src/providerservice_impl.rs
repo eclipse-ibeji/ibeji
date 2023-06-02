@@ -74,7 +74,7 @@ mod providerservice_impl_tests {
     #[tokio::test]
     async fn fulfill_test() {
         let provider_service_impl =
-            ProviderServiceImpl { url: Url::parse("http://0.0.0.0:80").unwrap() };
+            ProviderServiceImpl { url: Url::parse("http://0.0.0.0:80").unwrap() }; // Devskim: ignore DS137138
 
         let request = Request::new(FulfillRequest {
             intent: Some(IntentMessage { intent: Some(IntentEnum::Discover(DiscoverIntent {})) }),

@@ -56,13 +56,13 @@ pub async fn register_digital_twin_service_with_chariott(
 
     let response = client.register(request).await;
 
-    if !response.is_ok() {
+    if response.is_err() {
         return Err(Status::internal("Chariott register request failed"));
     }
 
     info!("{:?}", response.unwrap().into_inner());
 
-    return Ok(());
+    Ok(())
 }
 
 #[tokio::main]
