@@ -14,6 +14,7 @@ pub struct Settings {
     pub invehicle_digital_twin_url: Option<String>,
 }
 
+/// Load the settings.
 pub fn load_settings() -> Settings {
     let config = Config::builder()
         .add_source(File::new("consumer_settings", FileFormat::Yaml))

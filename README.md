@@ -197,7 +197,7 @@ having it statically provided in their respective config file, then do the follo
 `cargo run -p chariott`<br>
 1. In each of the the config files, add the setting:<br><br>
 `chariott_url: "http://0.0.0.0:4243"`<br>
-1. In the consumer's config file and the provider's config file, comment out the setting for invehicle_digital_twin_url, so that the chariott_url will be used to find the In-vehicle Digital Twin URL.<br>
+1. In the consumer's config file and the provider's config file, remove the setting for invehicle_digital_twin_url, so that the chariott_url will be used to find the In-vehicle Digital Twin URL.<br>
 
 ## <a name="trademarks">Trademarks</a>
 

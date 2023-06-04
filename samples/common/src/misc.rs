@@ -14,11 +14,11 @@ use samples_protobuf_data_access::chariott::{
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, FindByIdRequest};
 use std::future::Future;
+use tokio::time::{sleep, Duration};
 use tonic::{Code, Request, Status};
 
-use tokio::time::{sleep, Duration};
-
 pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
+
 pub const CHARIOTT_SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
 
 /// Is the provided subset a subset of the provided superset?
@@ -160,6 +160,13 @@ pub async fn discover_digital_twin_service_using_chariott(
     Ok(None)
 }
 
+/// Retrieve the In-Vehicle Digital Twin URL.
+/// If invehicle_digital_twin_url is provided, then it's bvalue is returned.
+/// Otherwise, chariott_url is used to retrieve it from Chariott.
+///
+/// # Arguments
+/// * `invehicle_digital_twin_url` - Optional, In-Vehicle Digital Twin URL.
+/// * `chariott_url` - Optional, Chariott URL.
 pub async fn retrieve_invehicle_digital_twin_url(
     invehicle_digital_twin_url: Option<String>,
     chariott_url: Option<String>,

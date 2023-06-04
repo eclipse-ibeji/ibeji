@@ -13,6 +13,7 @@ pub struct Settings {
     pub chariott_url: Option<String>,
 }
 
+/// Load the settings.
 pub fn load_settings() -> Settings {
     let config = Config::builder()
         .add_source(File::new("invehicle_digital_twin_settings", FileFormat::Yaml))
