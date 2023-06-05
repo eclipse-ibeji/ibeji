@@ -7,6 +7,8 @@
 use config::{Config, File, FileFormat};
 use serde_derive::Deserialize;
 
+const CONFIG_FILENAME: &str = "provider_settings";
+
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub provider_authority: String,
@@ -16,10 +18,8 @@ pub struct Settings {
 
 /// Load the settings.
 pub fn load_settings() -> Settings {
-    let config = Config::builder()
-        .add_source(File::new("provider_settings", FileFormat::Yaml))
-        .build()
-        .unwrap();
+    let config =
+        Config::builder().add_source(File::new(CONFIG_FILENAME, FileFormat::Yaml)).build().unwrap();
 
     let settings: Settings = config.try_deserialize().unwrap();
 

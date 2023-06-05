@@ -153,9 +153,10 @@ pub async fn discover_digital_twin_service_using_chariott(
                 return Ok(service.url);
             }
         }
+        Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as none of the services found had the '{constants::chariott::SCHEMA_KIND_FOR_GRPC}' schema kind"))
+    } else {
+        Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
     }
-
-    Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
 }
 
 /// Retrieve the In-Vehicle Digital Twin URL.

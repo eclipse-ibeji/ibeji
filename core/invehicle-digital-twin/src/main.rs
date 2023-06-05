@@ -31,7 +31,7 @@ pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
 ///
 /// # Arguments
 /// * `chariott_url` - Chariott's URL.
-/// * `invehicle_digital_twin_url` - In-vehcile Digital Twin Service's URL.
+/// * `invehicle_digital_twin_url` - In-vehicle Digital Twin Service's URL.
 pub async fn register_digital_twin_service_with_chariott(
     chariott_url: &str,
     invehicle_digital_twin_url: &str,
@@ -93,6 +93,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The HTTP server is listening on address '{invehicle_digital_twin_address}'");
 
     // Register the digital twin service with Chariott if Chariott's URL was provided in the config.
+    // Note: We are not using Chariott's announce, and therefore the digital twin serice will be forcibly unregistered
+    //       after 15 seconds unless the CHARIOTT_REGISTRY_TTL_SECS environment variable is set. Please make sure that
+    //       it is set (and exported) in the shell running Chariott before Chariott has started.
     if chariott_url_option.is_some() {
         register_digital_twin_service_with_chariott(
             &chariott_url_option.unwrap(),

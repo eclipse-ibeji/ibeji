@@ -11,7 +11,7 @@ use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::misc::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
-use samples_common::provider_config::load_settings;
+use samples_common::provider_config;
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
@@ -214,7 +214,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let settings = load_settings();
+    let settings = provider_config::load_settings();
 
     let provider_authority = settings.provider_authority;
 

@@ -115,7 +115,7 @@ The middle window can be used for the Provider. The bottom window can be used fo
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
-1. Make sure that we have three config files with the following contents:<br><br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
 ---- consumer_settings.yaml ----<br>
 `consumer_authority: "0.0.0.0:6010"`<br>
 `invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
@@ -142,7 +142,7 @@ The middle window can be used for the Provider. The bottom window can be used fo
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
-1. Make sure that we have three config files with the following contents:<br><br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
 ---- consumer_settings.yaml ----<br>
 `consumer_authority: "0.0.0.0:6010"`<br>
 `invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
@@ -169,7 +169,7 @@ The middle window can be used for the Provider. The bottom window can be used fo
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
-1. Make sure that we have three config files with the following contents:<br><br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
 ---- consumer_settings.yaml ----<br>
 `consumer_authority: "0.0.0.0:6010"`<br>
 `invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>

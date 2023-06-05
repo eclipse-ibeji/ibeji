@@ -8,7 +8,7 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::consumer_config::load_settings;
+use samples_common::consumer_config;
 use samples_common::misc::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_url};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Consumer has started.");
 
-    let settings = load_settings();
+    let settings = consumer_config::load_settings();
 
     let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
         settings.invehicle_digital_twin_url,
