@@ -107,8 +107,8 @@ demonstrates the mixed use of properties and commands.
 
 The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
 
-* {repo-root-dir}/core/invehicle_digital_twin/template
-* {repo-root-dir}/samples/common/template
+- {repo-root-dir}/core/invehicle_digital_twin/template
+- {repo-root-dir}/samples/common/template
 
 The following instructions are for the demo for the use of a property.
 

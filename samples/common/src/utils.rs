@@ -124,7 +124,7 @@ pub async fn discover_digital_twin_service_using_chariott(
     });
 
     // Get list of services at the requested namespace, if any.
-    let services: Option<Vec<discover_fulfillment::Service>> = client
+    let fulfillment_result: Option<Vec<discover_fulfillment::Service>> = client
         .fulfill(request)
         .await?
         .into_inner()
@@ -136,15 +136,13 @@ pub async fn discover_digital_twin_service_using_chariott(
         });
 
     // If we discovered one or more service, then return the URL for the first one that uses gRPC.
-    if services.is_some() {
-        for service in services.unwrap() {
-            if service.schema_kind == constants::chariott::SCHEMA_KIND_FOR_GRPC {
-                return Ok(service.url);
-            }
-        }
-        Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as none of the services found had the '{constants::chariott::SCHEMA_KIND_FOR_GRPC}' schema kind"))
-    } else {
-        Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
+    match fulfillment_result {
+        Some(services) => 
+            services.iter()
+                .find(|service| service.schema_kind == constants::chariott::SCHEMA_KIND_FOR_GRPC)
+                .map(|service| service.url.clone())
+                .ok_or(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as none of the services found had the '{constants::chariott::SCHEMA_KIND_FOR_GRPC}' schema kind")),
+        None => Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
     }
 }
 
