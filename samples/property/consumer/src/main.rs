@@ -62,12 +62,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{consumer_authority}'");
 
-    // This is a workaround: see https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
-    let static_url_str = Box::leak(invehicle_digital_twin_url.into_boxed_str());
-
     // Retrieve the provider URI.
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
-        static_url_str,
+        &invehicle_digital_twin_url,
         sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::SUBSCRIBE.to_string()],

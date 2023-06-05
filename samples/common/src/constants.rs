@@ -11,7 +11,12 @@ pub mod digital_twin_operation {
     pub const INVOKE: &str = "Invoke";
 }
 
-// Supported gitial twin protocols.
+// Supported digital twin protocols.
 pub mod digital_twin_protocol {
     pub const GRPC: &str = "grpc";
+}
+
+pub mod chariott {
+    pub const NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
+    pub const SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
 }

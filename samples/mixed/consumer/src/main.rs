@@ -155,12 +155,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
     info!("The HTTP server is listening on address '{consumer_authority}'");
 
-    // This is a workaround: see https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
-    let static_url_str = Box::leak(invehicle_digital_twin_url.into_boxed_str());
-
     let show_notification_command_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            static_url_str,
+            &invehicle_digital_twin_url,
             sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::INVOKE.to_string()],
@@ -172,7 +169,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let ambient_air_temperature_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            static_url_str,
+            &invehicle_digital_twin_url,
             sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::SUBSCRIBE.to_string()],
@@ -184,7 +181,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let is_air_conditioning_active_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            static_url_str,
+            &invehicle_digital_twin_url,
             sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
             digital_twin_protocol::GRPC,
             &[
@@ -199,7 +196,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let hybrid_battery_remaining_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            static_url_str,
+            &invehicle_digital_twin_url,
             sdv::vehicle::obd::hybrid_battery_remaining::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::SUBSCRIBE.to_string()],

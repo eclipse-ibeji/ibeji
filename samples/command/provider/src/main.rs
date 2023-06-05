@@ -21,7 +21,7 @@ use tonic::{Status, transport::Server};
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 
-/// Register the show notification commans's endpoint.
+/// Register the show notification command's endpoint.
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
@@ -33,7 +33,7 @@ async fn register_show_notification(
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![digital_twin_operation::INVOKE.to_string()],
-        uri: provider_uri.to_string(), // Devskim: ignore DS137138
+        uri: provider_uri.to_string(),
         context: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
     };
 

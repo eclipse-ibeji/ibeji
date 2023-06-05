@@ -42,7 +42,7 @@ async fn register_entities(
             digital_twin_operation::SUBSCRIBE.to_string(),
             digital_twin_operation::UNSUBSCRIBE.to_string(),
         ],
-        uri: provider_uri.to_string(), // Devskim: ignore DS137138
+        uri: provider_uri.to_string(),
         context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
     let ambient_air_temperature_access_info = EntityAccessInfo {
@@ -60,7 +60,7 @@ async fn register_entities(
             digital_twin_operation::UNSUBSCRIBE.to_string(),
             digital_twin_operation::SET.to_string(),
         ],
-        uri: provider_uri.to_string(), // Devskim: ignore DS137138
+        uri: provider_uri.to_string(),
         context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
     };
     let is_air_conditioning_active_access_info = EntityAccessInfo {
@@ -77,7 +77,7 @@ async fn register_entities(
             digital_twin_operation::SUBSCRIBE.to_string(),
             digital_twin_operation::UNSUBSCRIBE.to_string(),
         ],
-        uri: provider_uri.to_string(), // Devskim: ignore DS137138
+        uri: provider_uri.to_string(),
         context: sdv::vehicle::obd::hybrid_battery_remaining::ID.to_string(),
     };
     let hybrid_battery_remaining_access_info = EntityAccessInfo {
@@ -91,7 +91,7 @@ async fn register_entities(
     let show_notification_endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![digital_twin_operation::INVOKE.to_string()],
-        uri: provider_uri.to_string(), // Devskim: ignore DS137138
+        uri: provider_uri.to_string(),
         context: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
     };
     let show_notification_access_info = EntityAccessInfo {

@@ -2,6 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use crate::constants;
+
 use log::{debug, info};
 use samples_protobuf_data_access::chariott::runtime::v1::chariott_service_client::ChariottServiceClient;
 use samples_protobuf_data_access::chariott::{
@@ -16,10 +18,6 @@ use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, FindByIdReque
 use std::future::Future;
 use tokio::time::{sleep, Duration};
 use tonic::{Code, Request, Status};
-
-pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
-
-pub const CHARIOTT_SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
 
 /// Is the provided subset a subset of the provided superset?
 ///
@@ -36,9 +34,9 @@ pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
 /// Retry an async function that uses tonic::Status in for its error result.
 ///
 /// # Arguments
-/// * `max_retries` - The maximu number of retries.
+/// * `max_retries` - The maximum number of retries.
 /// * `duration_between_attempts` - The duration of time attempts.
-/// * `function` - THe function.
+/// * `function` - The function.
 pub async fn retry_async_based_on_status<T, Fut, F: FnMut() -> Fut>(
     max_retries: i32,
     duration_between_attempts: Duration,
@@ -76,18 +74,18 @@ where
 /// Use Ibeji to discover the endpoint for a digital twin provider that satifies the requirements.
 ///
 /// # Arguments
-/// * `invehcile_digitial_twin_servuce_url` - In-vehicle digital twin service URL.
+/// * `invehicle_digitial_twin_servuce_url` - In-vehicle digital twin service URL.
 /// * `entity_id` - The matching entity id.
 /// * `protocol` - The required protocol.
 /// * `operations` - The required operations.
 pub async fn discover_digital_twin_provider_using_ibeji(
-    invehicle_digitial_twin_servuce_url: &'static str,
+    invehicle_digitial_twin_servuce_url: &str,
     entity_id: &str,
     protocol: &str,
     operations: &[String],
 ) -> Result<EndpointInfo, String> {
     info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URL {invehicle_digitial_twin_servuce_url}");
-    let mut client = DigitalTwinClient::connect(invehicle_digitial_twin_servuce_url)
+    let mut client = DigitalTwinClient::connect(invehicle_digitial_twin_servuce_url.to_string())
         .await
         .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { id: entity_id.to_string() });
@@ -126,13 +124,13 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 /// * `chariott_url` - Chariott's URL.
 pub async fn discover_digital_twin_service_using_chariott(
     chariott_url: &str,
-) -> Result<Option<String>, Status> {
+) -> Result<String, Status> {
     let mut client = ChariottServiceClient::connect(chariott_url.to_string())
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(FulfillRequest {
-        namespace: CHARIOTT_NAMESPACE_FOR_IBEJI.to_string(),
+        namespace: constants::chariott::NAMESPACE_FOR_IBEJI.to_string(),
         intent: Some(IntentMessage { intent: Some(IntentEnum::Discover(DiscoverIntent {})) }),
     });
 
@@ -151,17 +149,17 @@ pub async fn discover_digital_twin_service_using_chariott(
     // If we discovered one or more service, then return the URL for the first one that uses gRPC.
     if services.is_some() {
         for service in services.unwrap() {
-            if service.schema_kind == CHARIOTT_SCHEMA_KIND_FOR_GRPC {
-                return Ok(Some(service.url));
+            if service.schema_kind == constants::chariott::SCHEMA_KIND_FOR_GRPC {
+                return Ok(service.url);
             }
         }
     }
 
-    Ok(None)
+    Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
 }
 
 /// Retrieve the In-Vehicle Digital Twin URL.
-/// If invehicle_digital_twin_url is provided, then it's bvalue is returned.
+/// If invehicle_digital_twin_url is provided, then it's value is returned.
 /// Otherwise, chariott_url is used to retrieve it from Chariott.
 ///
 /// # Arguments
@@ -180,8 +178,7 @@ pub async fn retrieve_invehicle_digital_twin_url(
             match chariott_url {
                 Some(value) => {
                     match retry_async_based_on_status(30, Duration::from_secs(1), || discover_digital_twin_service_using_chariott(&value)).await {
-                        Ok(Some(value)) => value,
-                        Ok(None) => Err("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott")?,
+                        Ok(value) => value,
                         Err(error) => Err(format!("Failed to discover the in-vehicle digital twin service's URL due to error: {error}"))?
                     }
                 }

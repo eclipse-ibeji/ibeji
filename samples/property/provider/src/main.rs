@@ -60,9 +60,6 @@ async fn register_ambient_air_temperature(
     Ok(())
 }
 
-// const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://0.0.0.0:5010"; // Devskim: ignore DS137138
-// const PROVIDER_AUTHORITY: &str = "0.0.0.0:4010";
-
 /// Start the ambient air temperature data stream.
 ///
 /// # Arguments
