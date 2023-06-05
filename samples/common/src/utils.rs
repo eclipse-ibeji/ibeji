@@ -137,7 +137,7 @@ pub async fn discover_digital_twin_service_using_chariott(
 
     // If we discovered one or more service, then return the URL for the first one that uses gRPC.
     match fulfillment_result {
-        Some(services) => 
+        Some(services) =>
             services.iter()
                 .find(|service| service.schema_kind == constants::chariott::SCHEMA_KIND_FOR_GRPC)
                 .map(|service| service.url.clone())
