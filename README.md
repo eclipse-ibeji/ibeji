@@ -105,6 +105,11 @@ Currently, we have no integration tests or end-to-end tests.
 There are currently three demos: one that demonstrates the use of a property, one that demonstrates the use of a command and one that
 demonstrates the mixed use of properties and commands.
 
+The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
+
+* {repo-root-dir}/core/invehicle_digital_twin/template
+* {repo-root-dir}/samples/common/template
+
 The following instructions are for the demo for the use of a property.
 
 Steps:
