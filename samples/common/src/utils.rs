@@ -96,26 +96,15 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 
     let entity_access_info = response_inner.entity_access_info.expect("Did not find the entity");
 
-    let mut matching_endpoint_info_option: Option<EndpointInfo> = None;
-    for endpoint_info in entity_access_info.endpoint_info_list {
-        // We require and endpoint that supports the protocol and supports all of the operations.
-        if endpoint_info.protocol == protocol
-            && is_subset(operations, endpoint_info.operations.as_slice())
-        {
-            matching_endpoint_info_option = Some(endpoint_info);
-            break;
-        }
+    match entity_access_info.endpoint_info_list.iter()
+        .find(|endpoint_info| endpoint_info.protocol == protocol && is_subset(operations, endpoint_info.operations.as_slice())).cloned()
+    {
+        Some(result) => {
+            info!("Found a matching endpoint for entity id {entity_id} that has URI {}", result.uri);
+            Ok(result)
+        },
+        None => Err("Did not find an endpoint that met our requirements".to_string())
     }
-
-    if matching_endpoint_info_option.is_none() {
-        return Err("Did not find an endpoint that met our requirements".to_string());
-    }
-
-    let result = matching_endpoint_info_option.unwrap();
-
-    info!("Found a matching endpoint for entity id {entity_id} that has URI {}", result.uri);
-
-    Ok(result)
 }
 
 /// Use Chariott to discover the endpoint for the digital twin service.
@@ -194,7 +183,7 @@ pub async fn retrieve_invehicle_digital_twin_url(
 }
 
 #[cfg(test)]
-mod ibeji_common_misc_tests {
+mod ibeji_common_utils_tests {
     use super::*;
 
     #[test]

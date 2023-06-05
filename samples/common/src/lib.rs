@@ -4,5 +4,5 @@
 
 pub mod constants;
 pub mod consumer_config;
-pub mod misc;
 pub mod provider_config;
+pub mod utils;

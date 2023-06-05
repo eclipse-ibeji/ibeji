@@ -10,7 +10,7 @@ use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::misc::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
 use samples_common::provider_config;
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
 use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
@@ -207,7 +207,6 @@ async fn start_vehicle_simulator(
 }
 
 #[tokio::main]
-// #[allow(clippy::collapsible_else_if)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
     Builder::new().filter(None, LevelFilter::Info).target(Target::Stdout).init();
