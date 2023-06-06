@@ -113,13 +113,11 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                 } else {
                     temperature += 1;
                 }
+            } else if temperature == 65 {
+                is_temperature_increasing = true;
+                temperature += 1;
             } else {
-                if temperature == 65 {
-                    is_temperature_increasing = true;
-                    temperature += 1;
-                } else {
-                    temperature -= 1;
-                }
+                temperature -= 1;
             }
 
             sleep(Duration::from_secs(5)).await;
