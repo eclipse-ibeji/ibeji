@@ -141,7 +141,7 @@ pub async fn discover_digital_twin_service_using_chariott(
             services.iter()
                 .find(|service| service.schema_kind == constants::chariott::SCHEMA_KIND_FOR_GRPC)
                 .map(|service| service.url.clone())
-                .ok_or(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as none of the services found had the '{constants::chariott::SCHEMA_KIND_FOR_GRPC}' schema kind")),
+                .ok_or_else(|| Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as none of the services found had the '{constants::chariott::SCHEMA_KIND_FOR_GRPC}' schema kind")),
         None => Err(Status::not_found("Failed to discover the in-vehicle digital twin service's URL, as it is not registered with Chariott"))
     }
 }
