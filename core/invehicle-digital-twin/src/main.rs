@@ -54,7 +54,8 @@ pub async fn register_digital_twin_service_with_chariott(
 
     let request = Request::new(RegisterRequest { service, intents });
 
-    let response = client.register(request)
+    let response = client
+        .register(request)
         .await
         .map_err(|_| Status::internal("Chariott register request failed"))?;
 

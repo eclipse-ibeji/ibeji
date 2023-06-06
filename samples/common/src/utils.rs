@@ -96,14 +96,23 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 
     let entity_access_info = response_inner.entity_access_info.expect("Did not find the entity");
 
-    match entity_access_info.endpoint_info_list.iter()
-        .find(|endpoint_info| endpoint_info.protocol == protocol && is_subset(operations, endpoint_info.operations.as_slice())).cloned()
+    match entity_access_info
+        .endpoint_info_list
+        .iter()
+        .find(|endpoint_info| {
+            endpoint_info.protocol == protocol
+                && is_subset(operations, endpoint_info.operations.as_slice())
+        })
+        .cloned()
     {
         Some(result) => {
-            info!("Found a matching endpoint for entity id {entity_id} that has URI {}", result.uri);
+            info!(
+                "Found a matching endpoint for entity id {entity_id} that has URI {}",
+                result.uri
+            );
             Ok(result)
-        },
-        None => Err("Did not find an endpoint that met our requirements".to_string())
+        }
+        None => Err("Did not find an endpoint that met our requirements".to_string()),
     }
 }
 
