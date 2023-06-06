@@ -86,10 +86,11 @@ impl DigitalTwinImpl {
     /// * `entity` - The entity.
     fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
         // This block controls the lifetime of the lock.
-        // {
+        {
             let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
                 self.entity_access_info_map.write();
-            match lock.get(&entity_access_info.id) {
+            let get_result = lock.get(&entity_access_info.id);
+            match get_result {
                 Some(_) => {
                     return Err(Status::unimplemented("The in-vehicle digital twin service does not yet support multiple registrations of the same entity."));
                 }
@@ -97,7 +98,7 @@ impl DigitalTwinImpl {
                     lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
                 }
             };
-        // }
+        }
 
         debug!("Registered entity {}", &entity_access_info.id);
 
