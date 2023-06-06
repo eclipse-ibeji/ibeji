@@ -7,7 +7,9 @@ mod consumer_impl;
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
-use samples_common::{digital_twin_operation, digital_twin_protocol, find_provider_endpoint};
+use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
+use samples_common::utils::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::consumer_config;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
@@ -15,12 +17,8 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
 };
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
-use tonic::transport::Server;
+use tonic::{Status, transport::Server};
 use uuid::Uuid;
-
-const IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI: &str = "http://[::1]:50010"; // Devskim: ignore DS137138
-
-const CONSUMER_AUTHORITY: &str = "[::1]:60010";
 
 /// Start the show-notification repeater.
 ///
@@ -117,9 +115,11 @@ async fn send_subscribe_request(
     provider_uri: &str,
     entity_id: &str,
     consumer_uri: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<(), Status> {
     info!("Sending a subscribe request for entity id {entity_id} to provider URI {provider_uri}");
-    let mut client = DigitalTwinProviderClient::connect(provider_uri.to_string()).await?;
+    let mut client = DigitalTwinProviderClient::connect(provider_uri.to_string())
+        .await
+        .map_err(|e| Status::internal(e.to_string()))?;
     let request = tonic::Request::new(SubscribeRequest {
         entity_id: entity_id.to_string(),
         consumer_uri: consumer_uri.to_string(),
@@ -136,78 +136,101 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Consumer has started.");
 
+    let settings = consumer_config::load_settings();
+
+    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
+        settings.invehicle_digital_twin_url,
+        settings.chariott_url,
+    )
+    .await?;
+
+    let consumer_authority = settings.consumer_authority;
+
+    let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
+
     // Setup the HTTP server.
-    let addr: SocketAddr = CONSUMER_AUTHORITY.parse()?;
+    let addr: SocketAddr = consumer_authority.parse()?;
     let consumer_impl = consumer_impl::ConsumerImpl::default();
     let server_future =
         Server::builder().add_service(DigitalTwinConsumerServer::new(consumer_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{CONSUMER_AUTHORITY}'");
+    info!("The HTTP server is listening on address '{consumer_authority}'");
 
-    let show_notification_command_provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
-        sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
-        digital_twin_protocol::GRPC,
-        &[digital_twin_operation::INVOKE.to_string()],
-    )
-    .await
-    .unwrap();
+    let show_notification_command_provider_endpoint_info =
+        discover_digital_twin_provider_using_ibeji(
+            &invehicle_digital_twin_url,
+            sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
+            digital_twin_protocol::GRPC,
+            &[digital_twin_operation::INVOKE.to_string()],
+        )
+        .await
+        .unwrap();
     let show_notification_command_provider_uri =
         show_notification_command_provider_endpoint_info.uri;
 
-    let ambient_air_temperature_property_provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
-        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
-        digital_twin_protocol::GRPC,
-        &[digital_twin_operation::SUBSCRIBE.to_string()],
-    )
-    .await
-    .unwrap();
+    let ambient_air_temperature_property_provider_endpoint_info =
+        discover_digital_twin_provider_using_ibeji(
+            &invehicle_digital_twin_url,
+            sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
+            digital_twin_protocol::GRPC,
+            &[digital_twin_operation::SUBSCRIBE.to_string()],
+        )
+        .await
+        .unwrap();
     let ambient_air_temperature_property_provider_uri =
         ambient_air_temperature_property_provider_endpoint_info.uri;
 
-    let is_air_conditioning_active_property_provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
-        sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
-        digital_twin_protocol::GRPC,
-        &[digital_twin_operation::SUBSCRIBE.to_string(), digital_twin_operation::SET.to_string()],
-    )
-    .await
-    .unwrap();
+    let is_air_conditioning_active_property_provider_endpoint_info =
+        discover_digital_twin_provider_using_ibeji(
+            &invehicle_digital_twin_url,
+            sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
+            digital_twin_protocol::GRPC,
+            &[
+                digital_twin_operation::SUBSCRIBE.to_string(),
+                digital_twin_operation::SET.to_string(),
+            ],
+        )
+        .await
+        .unwrap();
     let is_air_conditioning_active_property_provider_uri =
         is_air_conditioning_active_property_provider_endpoint_info.uri;
 
-    let hybrid_battery_remaining_property_provider_endpoint_info = find_provider_endpoint(
-        IN_VEHICLE_DIGITAL_TWIN_SERVICE_URI,
-        sdv::vehicle::obd::hybrid_battery_remaining::ID,
-        digital_twin_protocol::GRPC,
-        &[digital_twin_operation::SUBSCRIBE.to_string()],
-    )
-    .await
-    .unwrap();
+    let hybrid_battery_remaining_property_provider_endpoint_info =
+        discover_digital_twin_provider_using_ibeji(
+            &invehicle_digital_twin_url,
+            sdv::vehicle::obd::hybrid_battery_remaining::ID,
+            digital_twin_protocol::GRPC,
+            &[digital_twin_operation::SUBSCRIBE.to_string()],
+        )
+        .await
+        .unwrap();
     let hybrid_battery_remaining_property_provider_uri =
         hybrid_battery_remaining_property_provider_endpoint_info.uri;
 
-    let consumer_uri = format!("http://{CONSUMER_AUTHORITY}"); // Devskim: ignore DS137138
-
-    send_subscribe_request(
-        &ambient_air_temperature_property_provider_uri,
-        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
-        &consumer_uri,
-    )
+    retry_async_based_on_status(30, Duration::from_secs(1), || {
+        send_subscribe_request(
+            &ambient_air_temperature_property_provider_uri,
+            sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
+            &consumer_uri,
+        )
+    })
     .await?;
 
-    send_subscribe_request(
-        &is_air_conditioning_active_property_provider_uri,
-        sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
-        &consumer_uri,
-    )
+    retry_async_based_on_status(30, Duration::from_secs(1), || {
+        send_subscribe_request(
+            &is_air_conditioning_active_property_provider_uri,
+            sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
+            &consumer_uri,
+        )
+    })
     .await?;
 
-    send_subscribe_request(
-        &hybrid_battery_remaining_property_provider_uri,
-        sdv::vehicle::obd::hybrid_battery_remaining::ID,
-        &consumer_uri,
-    )
+    retry_async_based_on_status(30, Duration::from_secs(1), || {
+        send_subscribe_request(
+            &hybrid_battery_remaining_property_provider_uri,
+            sdv::vehicle::obd::hybrid_battery_remaining::ID,
+            &consumer_uri,
+        )
+    })
     .await?;
 
     start_activate_air_conditioning_repeater(is_air_conditioning_active_property_provider_uri);

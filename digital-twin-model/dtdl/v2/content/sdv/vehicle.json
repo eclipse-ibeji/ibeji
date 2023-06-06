@@ -51,7 +51,7 @@
           "request": {
             "name": "ShowNotification",
             "displayName": "Show Notification",
-            "descriptiption": "Show a notification on the HMI.",
+            "description": "Show a notification on the HMI.",
             "schema": "string"
           }
         }

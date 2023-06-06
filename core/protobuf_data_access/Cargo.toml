@@ -10,6 +10,7 @@ license = "MIT"
 
 [dependencies]
 prost = { workspace = true }
+prost-types = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }

@@ -2,7 +2,12 @@ br
 build
 cargo
 cd
+CHARIOTT
+Chariott
+Chariott's
+chariott
 com
+config
 digitaltwins
 dir
 dt
@@ -19,6 +24,7 @@ ibeji
 Ibeji
 Ibeji's
 intellectualproperty
+invehicle
 iot
 js
 json
@@ -39,4 +45,6 @@ snapd
 sudo
 timothee
 toolchain
+url
 www
+yaml

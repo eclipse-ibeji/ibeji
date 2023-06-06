@@ -105,6 +105,11 @@ Currently, we have no integration tests or end-to-end tests.
 There are currently three demos: one that demonstrates the use of a property, one that demonstrates the use of a command and one that
 demonstrates the mixed use of properties and commands.
 
+The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
+
+- {repo-root-dir}/core/invehicle_digital_twin/template
+- {repo-root-dir}/samples/common/template
+
 The following instructions are for the demo for the use of a property.
 
 Steps:
@@ -112,9 +117,18 @@ Steps:
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
-1. In each window change directory to the directory containing the build artifacts.
+1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
+---- consumer_settings.yaml ----<br>
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
+---- invehicle_digital_twin_settings.yaml ----<br>
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
+---- provider_settings.yaml ----<br>
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -130,9 +144,18 @@ Steps:
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
-1. In each window change directory to the directory containing the build artifacts.
+1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
+---- consumer_settings.yaml ----<br>
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
+---- invehicle_digital_twin_settings.yaml ----<br>
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
+---- provider_settings.yaml ----<br>
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -141,14 +164,6 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./command-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
-## <a name="trademarks">Trademarks</a>
-
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
-trademarks or logos is subject to and must follow
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
-
 The following instructions are for the demo for the mixed use of commands and properties.
 
 Steps:
@@ -156,9 +171,18 @@ Steps:
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
-1. In each window change directory to the directory containing the build artifacts.
+1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
+---- consumer_settings.yaml ----<br>
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
+---- invehicle_digital_twin_settings.yaml ----<br>
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
+---- provider_settings.yaml ----<br>
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
@@ -166,6 +190,19 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 1. In the bottom window, run:<br><br>
 `./mixed-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
+
+If you want the consumers and providers for each demo to use Chariott to discover the URL for the In-Vehicle Digital Twin Service, rather than
+having it statically provided in their respective config file, then do the following before starting each demo:
+
+1. Clone a copy of Chariott from GitHub (`https://github.com/eclipse-chariott/chariott`).
+1. Build Chariott
+1. Set Chariott's CHARIOTT_REGISTRY_TTL_SECS environment variable to a high number (we suggest 86400 seconds), as Ibeji does not rely on Chariott's announce feature:<br><br>
+`export CHARIOTT_REGISTRY_TTL_SECS=86400`<br>
+1. Run Chariott:<br><br>
+`cargo run -p chariott`<br>
+1. In each of the the config files, add the setting:<br><br>
+`chariott_url: "http://0.0.0.0:4243"`<br>
+1. In the consumer's config file and the provider's config file, remove the setting for invehicle_digital_twin_url, so that the chariott_url will be used to find the In-vehicle Digital Twin URL.<br>
 
 ## <a name="trademarks">Trademarks</a>
 
