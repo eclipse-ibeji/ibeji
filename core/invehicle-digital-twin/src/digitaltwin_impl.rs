@@ -86,7 +86,7 @@ impl DigitalTwinImpl {
     /// * `entity` - The entity.
     fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
         // This block controls the lifetime of the lock.
-        {
+        // {
             let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
                 self.entity_access_info_map.write();
             match lock.get(&entity_access_info.id) {
@@ -97,7 +97,7 @@ impl DigitalTwinImpl {
                     lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
                 }
             };
-        }
+        // }
 
         debug!("Registered entity {}", &entity_access_info.id);
 
