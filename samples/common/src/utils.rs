@@ -170,10 +170,14 @@ pub async fn retrieve_invehicle_digital_twin_url(
     // First try to use the one specified in the invehicle_digital_twin_url setting.
     // If it is not set, then go to Chariott to obtain it.
     let result = match invehicle_digital_twin_url {
-        Some(value) => value,
+        Some(value) => {
+            info!("The URL for the in-vehicle digital twin service is specified in the settings file.");
+            value
+        },
         None => {
             match chariott_url {
                 Some(value) => {
+                    info!("The URL for the in-vehicle digital twin service will be retrieved from Chariott.");
                     match retry_async_based_on_status(30, Duration::from_secs(1), || discover_digital_twin_service_using_chariott(&value)).await {
                         Ok(value) => value,
                         Err(error) => Err(format!("Failed to discover the in-vehicle digital twin service's URL due to error: {error}"))?
