@@ -94,18 +94,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //       after 15 seconds unless the CHARIOTT_REGISTRY_TTL_SECS environment variable is set. Please make sure that
     //       it is set (and exported) in the shell running Chariott before Chariott has started.
     if chariott_url_option.is_some() {
-        match register_digital_twin_service_with_chariott(
+        let response = register_digital_twin_service_with_chariott(
             &chariott_url_option.unwrap(),
             &invehicle_digital_twin_address,
         )
-        .await
-        {
-            Ok(()) => return Ok(()),
-            Err(error) => {
-                error!("Failed to register this service with Chariott: '{error}'");
-                Err(error)?
-            }
-        };
+        .await;
+        if let Err(error) = response {
+            error!("Failed to register this service with Chariott: '{error}'");
+            return Err(error)?;
+        }
         info!("This service is now registered with Chariott.");
     } else {
         info!("This service is not using Chariott.");
