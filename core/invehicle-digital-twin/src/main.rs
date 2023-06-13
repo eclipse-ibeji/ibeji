@@ -10,7 +10,7 @@ use core_protobuf_data_access::chariott::runtime::v1::{
 };
 use core_protobuf_data_access::digital_twin::v1::digital_twin_server::DigitalTwinServer;
 use env_logger::{Builder, Target};
-use log::{debug, info, LevelFilter};
+use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use std::collections::HashMap;
 use std::net::SocketAddr;
@@ -54,12 +54,10 @@ pub async fn register_digital_twin_service_with_chariott(
 
     let request = Request::new(RegisterRequest { service, intents });
 
-    let response = client
+    let _response = client
         .register(request)
         .await
         .map_err(|_| Status::internal("Chariott register request failed"))?;
-
-    info!("{:?}", response.into_inner());
 
     Ok(())
 }
@@ -96,11 +94,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //       after 15 seconds unless the CHARIOTT_REGISTRY_TTL_SECS environment variable is set. Please make sure that
     //       it is set (and exported) in the shell running Chariott before Chariott has started.
     if chariott_url_option.is_some() {
-        register_digital_twin_service_with_chariott(
+        match register_digital_twin_service_with_chariott(
             &chariott_url_option.unwrap(),
             &invehicle_digital_twin_address,
         )
-        .await?;
+        .await
+        {
+            Ok(()) => return Ok(()),
+            Err(error) => {
+                error!("Failed to register this service with Chariott: '{error}'");
+                Err(error)?
+            }
+        };
+        info!("This service is now registered with Chariott.");
+    } else {
+        info!("This service is not using Chariott.");
     }
 
     server_future.await?;
