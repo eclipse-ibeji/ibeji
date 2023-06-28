@@ -1,0 +1,81 @@
+@startuml
+
+autonumber
+
+"In-Vehicle Digital Twin Service" <- "Digital Twin Provider - Vehicle": Register - request
+note left
+endpoints: [
+  {
+    dtid: "sample-vehicle"
+    model: "dtmi:sdv:Vehicle;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:40010
+    context: "sample-vehicle"
+  }
+]
+end note
+"In-Vehicle Digital Twin Service" -> "Digital Twin Provider - Vehicle": Register - response
+
+"In-Vehicle Digital Twin Service" <- "Digital Twin Provider - Cabin": Register - request
+note left
+endpoints: [
+  {
+    dtid: "sample-cabin"
+    model: "dtmi:sdv:Cabin;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:50010
+    context: "sample-cabin"
+  }
+]
+end note
+"In-Vehicle Digital Twin Service" -> "Digital Twin Provider - Cabin": Register - response
+
+"In-Vehicle Digital Twin Service" <- "Digital Twin Provider - FrontSeat": Register - request
+note left
+endpoints: [
+  {
+    dtid: "sample-front-right-seat"
+    model: "dtmi:sdv:FrontSeat;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:60010
+    context: "sample-front-right-seat"
+  }
+  {
+    dtid: "sample-front-left-seat"
+    model: "dtmi:sdv:FrontSeat;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:60010
+    context: "sample-front-left-seat"
+  }
+]
+end note
+"In-Vehicle Digital Twin Service" -> "Digital Twin Provider - FrontSeat": Register - response
+
+"In-Vehicle Digital Twin Service" <- "Digital Twin Provider - PremiumSeatMassager": Register - request
+note left
+endpoints: [
+  {
+    dtid: "sample-front-right-seat-massager"
+    model: "dtmi:sdv:PremiumAirbagSeatMassager;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:70010
+    context: "sample-front-right-seat-massager"
+  }
+  {
+    dtid: "sample-front-left-seat-massager"
+    model: "dtmi:sdv:PremiumAirbagSeatMassager;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:70010
+    context: "sample-front-left-seat-massager"
+  }
+]
+end note
+"In-Vehicle Digital Twin Service" -> "Digital Twin Provider - PremiumSeatMassager": Register - response
+
+@enduml

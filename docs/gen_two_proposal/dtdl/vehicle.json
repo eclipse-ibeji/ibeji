@@ -1,0 +1,36 @@
+[
+  {
+    "@context": ["dtmi:dtdl:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:sdv:Vehicle;1",
+    "description": "Vehicle",
+    "contents": [
+      {
+        "@type": "Property",
+        "name": "VehicleIdentification",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "VIN",
+              "schema": "string",
+              "decription": "17-character Vehicle Identification Number (VIN) as defined by ISO 3779."
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Component",
+        "@id": "dtmi:sdv:Vehicle:Cabin;1",
+        "schema": "dtmi:sdv:Cabin;1",
+        "name": "Cabin"
+      },
+      {
+        "@type": "Component", 
+        "@id": "dtmi:sdv:Vehicle:OBD;1",
+        "schema": "dtmi:sdv:OBD;1",
+        "name": "OBD"
+      },
+    ]
+  }
+]

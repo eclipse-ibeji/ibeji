@@ -1,0 +1,21 @@
+[
+  {
+    "@context": ["dtmi:dtdl:context;2"],
+    "@type": "Interface",
+    "@id": "dtmi:sdv:HMI;1",
+    "description": "The Human Machine Interface.",
+    "contents": [
+      {
+        "@type": "Command",
+        "@id": "dtmi:sdv:HMI:ShowNotification;1",
+        "name": "ShowNotification",
+        "request": {
+          "name": "ShowNotification",
+          "displayName": "Show Notification",
+          "description": "Show a notification on the HMI.",
+          "schema": "string"
+        }
+      }
+    ]
+  }
+]

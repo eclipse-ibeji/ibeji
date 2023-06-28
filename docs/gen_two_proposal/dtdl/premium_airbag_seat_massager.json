@@ -1,0 +1,9 @@
+[ 
+  { 
+    "@context": ["dtmi:dtdl:context;2"], 
+    "@type": "Interface", 
+    "@id": "dtmi:sdv:PremiumAirbagSeatMassager;1", 
+    "description": "Premium Airbag Seat Massager", 
+    "extends": "dtmi:sdv:AirbagSeatMassager;1"
+  } 
+] 

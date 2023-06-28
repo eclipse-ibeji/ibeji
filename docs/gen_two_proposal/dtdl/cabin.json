@@ -1,0 +1,34 @@
+[ 
+  { 
+    "@context": ["dtmi:dtdl:context;2"], 
+    "@type": "Interface", 
+    "@id": "dtmi:sdv:Cabin;1", 
+    "description": "Cabin", 
+    "contents": [ 
+      { 
+          "@type": "Component", 
+          "@id": "dtmi:sdv:Cabin:HVAC;1", 
+          "schema": "dtmi:sdv:HVAC;1", 
+          "name": "HVAC"
+      }, 
+      { 
+          "@type": "Component", 
+          "@id": "dtmi:sdv:Cabin:Infotainment;1", 
+          "schema": "dtmi:sdv:Infotainment;1", 
+          "name": "Infotainment"
+      }, 
+      { 
+          "@type": "Component", 
+          "@id": "dtmi:sdv:Cabin:FrontLeftSeat;1", 
+          "schema": "dtmi:sdv:FrontSeat;1", 
+          "name": "FrontLeftSeat"
+      }, 
+      { 
+          "@type": "Component", 
+          "@id": "dtmi:sdv:Cabin:FrontRightSeat;1", 
+          "schema": "dtmi:sdv:FrontSeat;1", 
+          "name": "FrontRightSeat"
+      } 
+    ]
+  } 
+] 

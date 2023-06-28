@@ -1,0 +1,192 @@
+@startuml
+
+autonumber
+
+"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByModel("dtmi:svd:Vehicle;1") - request
+
+"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByModel - response 
+note left
+FindByModel response:
+
+endpoints: [
+  {
+    dtid: "sample-vehicle"
+    model: "dtmi:sdv:Vehicle;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:40010
+    context: "sample-vehicle"
+  }
+]
+end note
+
+"Massage Controller" -> "Digital Twin Provider - Vehicle": Get on endpoint for "sample-vehicle" - request
+
+"Massage Controller" <- "Digital Twin Provider - Vehicle": Get - response
+note left
+Get response's payload (in JSON):
+
+[
+  {
+    "@dtid": "sample-vehicle",
+    "VehicleIdentification": {
+      "VIN": "1M8GDM9AXKP042788"
+    },
+    "Cabin": {
+      "@dtid": "sample-cabin",
+      "@metadata": {
+        "model": "dtmi:sdv.Cabin;1"
+      }
+    },
+    "OBD": {
+      "@dtid": "sample-obd",
+      "@metadata": {
+        "model": "dtmi:sdv.OBD;1"
+    },
+    "@metadata": {
+      "model": "dtmi:sdv.Vehicle;1"
+    }
+  }
+]
+end note
+
+"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByDigitalTwin("sample-cabin") - request
+
+"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByDigitalTwin - response 
+note left
+FindByDigitalTwin response:
+
+endpoints: [
+  {
+    dtid: "sample-cabin"
+    model: "dtmi:sdv:Cabin;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:50010
+    context: "sample-cabin"
+  }
+]
+end note
+
+
+"Massage Controller" -> "Digital Twin Provider - Cabin": Get on endpoint for "sample-cabin" - request
+
+"Massage Controller" <- "Digital Twin Provider - Cabin": Get - response
+note left
+Get response's payload (in JSON):
+
+ {
+  "@dtid": "sample-cabin",
+  "HVAC": {
+    "@dtid": "sample-hvac",
+    "@metadata": {
+      "model": "dtmi:sdv.HVAC;1"
+    }
+  },
+  "Infotainment": {
+    "@dtid": "sample-infotainment",
+    "@metadata": {
+      "model": "dtmi:sdv.Infotainment;1"
+  },
+  "FrontLeftSeat": {
+    "@dtid": "sample-front-left-seat",
+    "@metadata": {
+      "model": "dtmi:sdv.FrontSeat;1"
+  },
+  "FrontRightSeat": {
+    "@dtid": "sample-front-right-seat",
+    "@metadata": {
+      "model": "dtmi:sdv.FrontSeat;1"
+  },
+  "@metadata": {
+    "model": "dtmi:sdv.Cabin;1"
+  }
+} 
+end note
+
+"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByDigitalTwin("sample-front-right-seat") - request
+
+"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByDigitalTwin - response 
+note left
+FindByDigitalTwin response:
+
+endpoints: [
+  {
+    dtid: "sample-front-right-seat"
+    model: "dtmi:sdv:FrontSeat;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:60010
+    context: "sample-front-right-seat"
+  }
+]
+end note
+
+"Massage Controller" -> "Digital Twin Provider - FrontSeat": Get on endpoint for "sample-front-seat" - request
+
+"Massage Controller" <- "Digital Twin Provider - FrontSeat": Get - response
+note left
+Get response's payload (in JSON):
+
+{
+  "@dtid": "sample-front-seat",
+  "SeatMassager": {
+    "@dtid": "sample-front-right-seat-massager",
+    "@metadata": {
+      "model": "dtmi:sdv.PremiumAirbagSeatMassager;1"
+    }
+  }
+  "@metadata": {
+    "model": "dtmi:sdv.FrontSeat;1"
+  }
+}
+end note
+
+"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByDigitalTwin("sample-front-right-seat-massager") - request
+
+"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByDIgitalTwin - response 
+note left
+FindByDigitalTwin response:
+
+endpoints: [
+  {
+    dtid: "sample-front-right-seat-massager"
+    model: "dtmi:sdv:PremiumAirbagSeatMassager;1"
+    protocol: "grpc"
+    operations: [ "Get", "Set" ]
+    uri: http://[::1]:70010
+    context: "sample-front-right-seat-massager"
+  }
+]
+end note
+
+loop until stopped
+  "Massage Controller" -> "Digital Twin Provider - PremiumAirbagSeatMassager": Set on "sample-front-right-seat-massager" - request
+  note right
+
+  An example of one of the set calls:
+
+  {
+    "@dtid": "sample-front-right-seat-massager",
+    "MassageAirBags": {
+      "0":  "25",
+      "1":  "25",
+      "2":  "50",
+      "3":  "50",
+      "4":  "75",
+      "5":  "75",
+      "6":  "100",
+      "7":  "100",
+      "8":  "75",
+      "9":  "75",
+    },
+    "@metadata": {
+      "model": "dtmi:sdv.PremiumAirbagSeatMassager;1"
+    }
+  }
+  end note
+
+  "Massage Controller" <- "Digital Twin Provider - PremiumAirbagSeatMassager": Set - response
+end
+
+@enduml
