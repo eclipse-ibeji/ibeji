@@ -47,16 +47,9 @@ stable release of Rust sometime in the not too distant future when some of the R
 sudo apt update
 sudo apt install -y snapd
 sudo snap install rustup --classic
-rustup toolchain install nightly-2022-08-11
-rustup default nightly-2022-08-11
 ```
 
-If you have already installed Rust, but you are using another release, then you can switch to the nightly-2022-08-11 release by running the following commands:
-
-```shell
-rustup toolchain install nightly-2022-08-11
-rustup default nightly-2022-08-11
-```
+The toolchain version is managed by the `rust-toolchain.toml` file. If you do not have the correct toolchain installed on your system, it will automatically be installed when needed (for example, when running `cargo build`), so there is no need to install it manually.
 
 ### <a name="install-protobuf-compiler">Install Protobuf Compiler</a>
 

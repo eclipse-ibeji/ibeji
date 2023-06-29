@@ -44,6 +44,7 @@ sdk
 snapd
 sudo
 timothee
+toml
 toolchain
 url
 www
