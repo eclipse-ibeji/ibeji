@@ -1,9 +1,9 @@
 [ 
   { 
-    "@context": ["dtmi:dtdl:context;2"], 
+    "@context": ["dtmi:dtdl:context;3"], 
     "@type": "Interface", 
     "@id": "dtmi:sdv:BasicAirbagSeatMassager;1", 
     "description": "Basic Airbag Seat Massager", 
-    "extends": "dtmi:sdv:AirbagSeatMassager;1",
+    "extends": "dtmi:sdv:AirbagSeatMassager;1"
   } 
 ] 

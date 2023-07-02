@@ -1,11 +1,11 @@
 [ 
   { 
-    "@context": ["dtmi:dtdl:context;2"], 
+    "@context": ["dtmi:dtdl:context;3"], 
     "@type": "Interface", 
     "@id": "dtmi:sdv:AirbagSeatMassager;1", 
     "description": "Airbag Seat Massager", 
-    "extends": "dtmi:sdv.SeatMassager;1",
-    "contents": {
+    "extends": "dtmi:sdv:SeatMassager;1",
+    "contents": [
       {
         "@type": "Property",
         "name": "MassageAirbags",
@@ -14,6 +14,6 @@
           "elementSchema": "integer"
         }
       }
-    } 
+    ]
   } 
 ] 

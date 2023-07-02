@@ -1,6 +1,6 @@
 [
   {
-    "@context": ["dtmi:dtdl:context;2"],
+    "@context": ["dtmi:dtdl:context;3"],
     "@type": "Interface",
     "@id": "dtmi:sdv:HMI;1",
     "description": "The Human Machine Interface.",

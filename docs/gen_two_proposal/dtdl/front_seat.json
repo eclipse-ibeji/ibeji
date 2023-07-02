@@ -1,16 +1,16 @@
 [ 
   { 
-    "@context": ["dtmi:dtdl:context;2"], 
+    "@context": ["dtmi:dtdl:context;3"], 
     "@type": "Interface", 
     "@id": "dtmi:sdv:FrontSeat;1", 
     "description": "Front Seat", 
-    "extends": "dtrmi:sdv:Seat;1",
+    "extends": "dtmi:sdv:Seat;1",
     "contents": [ 
       { 
           "@type": "Component", 
           "schema": "dtmi:sdv:SeatMassager;1", 
-          "name": "SeatMassager", 
-      }, 
+          "name": "SeatMassager"
+      } 
     ] 
   } 
 ] 

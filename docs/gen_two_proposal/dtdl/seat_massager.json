@@ -1,6 +1,6 @@
 [ 
   { 
-    "@context": ["dtmi:dtdl:context;2"], 
+    "@context": ["dtmi:dtdl:context;3"], 
     "@type": "Interface", 
     "@id": "dtmi:sdv:SeatMassager;1", 
     "description": "Seat Massager"

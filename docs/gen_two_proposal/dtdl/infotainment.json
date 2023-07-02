@@ -1,13 +1,13 @@
 [
   {
-    "@context": ["dtmi:dtdl:context;2"],
+    "@context": ["dtmi:dtdl:context;3"],
     "@type": "Interface",
     "@id": "dtmi:sdv:Infotainment;1",
     "description": "The Infotainment system.",
     "contents": [
       {
         "@type": "Component",
-         "@id": "dtmi:sdv:Infotainment:HMI;1",
+        "@id": "dtmi:sdv:Infotainment:HMI;1",
         "schema": "dtmi:sdv:HMI;1",
         "name": "HMI"
       }
