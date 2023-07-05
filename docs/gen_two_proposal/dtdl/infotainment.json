@@ -6,10 +6,11 @@
     "description": "The Infotainment system.",
     "contents": [
       {
-        "@type": "Component",
-        "@id": "dtmi:sdv:Infotainment:HMI;1",
-        "schema": "dtmi:sdv:HMI;1",
-        "name": "HMI"
+        "@type": "Relationship",
+        "@id": "dtmi:sdv:Infotainment:HasHMI;1",
+        "target": "dtmi:sdv:HMI;1",
+        "name": "HasHMI",
+        "maxMultiplicity": 1
       }
     ]
   }

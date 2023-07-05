@@ -20,15 +20,17 @@
       },
       {
         "@type": "Relationship",
-        "@id": "dtmi:sdv:Vehicle:Cabin;1",
+        "@id": "dtmi:sdv:Vehicle:HasCabin;1",
         "target": "dtmi:sdv:Cabin;1",
-        "name": "Cabin"
+        "name": "HasCabin",
+        "maxMultiplicity": 1
       },
       {
         "@type": "Relationship", 
-        "@id": "dtmi:sdv:Vehicle:OBD;1",
+        "@id": "dtmi:sdv:Vehicle:HasOBD;1",
         "target": "dtmi:sdv:OBD;1",
-        "name": "OBD"
+        "name": "HasOBD",
+        "maxMultiplicity": 1
       }
     ]
   }

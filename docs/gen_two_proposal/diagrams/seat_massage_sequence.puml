@@ -28,23 +28,32 @@ Get response's payload (in JSON):
 
 [
   {
-    "@dtid": "sample-vehicle",
+    "$dtid": "sample-vehicle",
     "VehicleIdentification": {
       "VIN": "1M8GDM9AXKP042788"
     },
-    "Cabin": {
-      "@dtid": "sample-cabin",
-      "@metadata": {
-        "model": "dtmi:sdv.Cabin;1"
-      }
-    },
-    "OBD": {
-      "@dtid": "sample-obd",
-      "@metadata": {
-        "model": "dtmi:sdv.OBD;1"
-    },
-    "@metadata": {
+    "$metadata": {
       "model": "dtmi:sdv.Vehicle;1"
+    }
+  },
+  { 
+    "$relationshipId": "has-cabin-01", 
+    "$sourceId": "sample-vehicle", 
+    "$relationshipName": "HasCabin", 
+    "$targetId": "sample-cabin", 
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Vehicle;1",
+      "targetModel": "dtmi:sdv.Cabin;1"
+    }
+  },
+  { 
+    "$relationshipId": "has-obd-01", 
+    "$sourceId": "sample-vehicle", 
+    "$relationshipName": "HasOBD", 
+    "$targetId": "sample-obd", 
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Vehcile;1",
+      "targetModel": "dtmi:sdv.OBD;1"
     }
   }
 ]
@@ -75,31 +84,56 @@ end note
 note left
 Get response's payload (in JSON):
 
- {
-  "@dtid": "sample-cabin",
-  "HVAC": {
-    "@dtid": "sample-hvac",
-    "@metadata": {
-      "model": "dtmi:sdv.HVAC;1"
+[
+  {
+    "$dtid": "sample-cabin",
+    "$metadata": {
+     "model": "dtmi:sdv.Cabin;1"
     }
   },
-  "Infotainment": {
-    "@dtid": "sample-infotainment",
-    "@metadata": {
-      "model": "dtmi:sdv.Infotainment;1"
+  { 
+    "$relationshipId": "has-hvac-01", 
+    "$sourceId": "sample-cabin", 
+    "$relationshipName": "HasCabin", 
+    "$targetId": "sample-hvac", 
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Cabin;1",
+      "targetModel": "dtmi:sdv.HVAC;1"
+    }
   },
-  "FrontLeftSeat": {
-    "@dtid": "sample-front-left-seat",
-    "@metadata": {
-      "model": "dtmi:sdv.FrontSeat;1"
+  { 
+    "$relationshipId": "has-infotainment-01", 
+    "$sourceId": "sample-cabin", 
+    "$relationshipName": "HasInfotainment", 
+    "$targetId": "sample-infotainment", 
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Cabin;1",
+      "targetModel": "dtmi:sdv.Infotainment;1"
+    }
   },
-  "FrontRightSeat": {
-    "@dtid": "sample-front-right-seat",
-    "@metadata": {
-      "model": "dtmi:sdv.FrontSeat;1"
+  { 
+    "$relationshipId": "has-seat-01", 
+    "$sourceId": "sample-cabin", 
+    "$relationshipName": "HasSeat", 
+    "$targetId": "sample-front-left-seat", 
+    "SeatRow": "front",
+    "SeatPosition": "left",
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Cabin;1",
+      "targetModel": "dtmi:sdv.FrontSeat;1"
+    }
   },
-  "@metadata": {
-    "model": "dtmi:sdv.Cabin;1"
+  { 
+    "$relationshipId": "has-seat-02", 
+    "$sourceId": "sample-cabin", 
+    "$relationshipName": "HasSeat", 
+    "$targetId": "sample-front-right-seat", 
+    "SeatRow": "front",
+    "SeatPosition": "right",
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.Cabin;1",
+      "targetModel": "dtmi:sdv.FrontSeat;1"
+    }
   }
 } 
 end note
@@ -128,23 +162,29 @@ end note
 note left
 Get response's payload (in JSON):
 
-{
-  "@dtid": "sample-front-seat",
-  "SeatMassager": {
-    "@dtid": "sample-front-right-seat-massager",
+[
+  {
+    "@dtid": "sample-front-seat",
     "@metadata": {
-      "model": "dtmi:sdv.PremiumAirbagSeatMassager;1"
+      "model": "dtmi:sdv.FrontSeat;1"
+    }
+  },
+  { 
+    "$relationshipId": "has-seatmassager-02", 
+    "$sourceId": "sample-front-seat", 
+    "$relationshipName": "HasSeat", 
+    "$targetId": "sample-front-right-seat-massager", 
+    "$metadata": {
+      "sourceModel": "dtmi:sdv.FrontSeat;1",
+      "targetModel": "dtmi:sdv.PremiumAirbagSeatMassager;1"
     }
   }
-  "@metadata": {
-    "model": "dtmi:sdv.FrontSeat;1"
-  }
-}
+]
 end note
 
 "Massage Controller" -> "In-Vehicle Digital Twin Service": FindByDigitalTwin("sample-front-right-seat-massager") - request
 
-"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByDIgitalTwin - response 
+"Massage Controller" <- "In-Vehicle Digital Twin Service": FindByDigitalTwin - response 
 note left
 FindByDigitalTwin response:
 

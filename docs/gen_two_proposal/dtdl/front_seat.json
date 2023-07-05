@@ -7,9 +7,11 @@
     "extends": "dtmi:sdv:Seat;1",
     "contents": [ 
       { 
-          "@type": "Component", 
-          "schema": "dtmi:sdv:SeatMassager;1", 
-          "name": "SeatMassager"
+          "@type": "Relationship", 
+          "@id": "dtmi:sdv:FrontSeat:HasSeatMassager;1", 
+          "target": "dtmi:sdv:SeatMassager;1", 
+          "name": "HasSeatMassager",
+          "maxMultiplicity": 1
       } 
     ] 
   } 

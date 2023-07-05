@@ -7,25 +7,28 @@
     "contents": [ 
       { 
           "@type": "Relationship", 
-          "@id": "dtmi:sdv:Cabin:HVAC;1", 
+          "@id": "dtmi:sdv:Cabin:HasHVAC;1", 
           "target": "dtmi:sdv:HVAC;1", 
-          "name": "HVAC"
+          "name": "HasHVAC",
+          "maxMultiplicity": 1
       }, 
       { 
           "@type": "Relationship", 
-          "@id": "dtmi:sdv:Cabin:Infotainment;1", 
+          "@id": "dtmi:sdv:Cabin:HasInfotainment;1", 
           "target": "dtmi:sdv:Infotainment;1", 
-          "name": "Infotainment"
+          "name": "HasInfotainment",
+          "maxMultiplicity": 1
       },
       {
         "@type": "Relationship",
-        "name": "Has_Seat",
+        "@id": "dtmi:sdv:Cabin:HasSeat;1", 
+        "name": "HasSeat",
         "target": "dtmi:sdv:Seat;1",
         "properties": [
           {
             "@type": "Property",
             "@id": "dtmi:sdv:Seat:Row;1",
-            "name": "Seat_Row",
+            "name": "SeatRow",
             "schema": {
               "@type": "Enum",
               "valueSchema": "string",
@@ -51,7 +54,7 @@
           {
             "@type": "Property",
             "@id": "dtmi:sdv:Seat:Position;1",
-            "name": "Seat_Position",
+            "name": "SeatPosition",
             "schema": {
               "@type": "Enum",
               "valueSchema": "string",
