@@ -5,7 +5,7 @@
 mod provider_impl;
 mod vehicle;
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
@@ -17,6 +17,8 @@ use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessI
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
+use serde_derive::{Deserialize, Serialize};
+use serde_json;
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -25,6 +27,30 @@ use tonic::{Status, transport::Server};
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
 use crate::vehicle::Vehicle;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct AmbientAirTemperatureProperty {
+    #[serde(rename = "AmbientAirTemperature")]
+    ambient_air_temperature: sdv::hvac::ambient_air_temperature::TYPE,
+    #[serde(rename = "$metadata")]
+    metadata: Metadata
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct HybridBatteryRemainingProperty {
+    #[serde(rename = "HybridBatteryRemainaing")]
+    hybrid_battery_remaining: sdv::obd::hybrid_battery_remaining::TYPE,
+    #[serde(rename = "$metadata")]
+    metadata: Metadata
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct IsAirConditioingActiveProperty {
+    #[serde(rename = "IsAirConditioingActive")]
+    is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE,
+    #[serde(rename = "$metadata")]
+    metadata: Metadata
+}
 
 /// Register the entities endpoints.
 ///
@@ -39,16 +65,15 @@ async fn register_entities(
     let ambient_air_temperature_endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string(),
-            digital_twin_operation::UNSUBSCRIBE.to_string(),
+            digital_twin_operation::SUBSCRIBE.to_string()
         ],
         uri: provider_uri.to_string(),
-        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        context: sdv::hvac::ambient_air_temperature::ID.to_string(),
     };
     let ambient_air_temperature_access_info = EntityAccessInfo {
-        name: "AmbientAirTemperature".to_string(),
-        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
-        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
+        name: sdv::hvac::ambient_air_temperature::NAME.to_string(),
+        id: sdv::hvac::ambient_air_temperature::ID.to_string(),
+        description: sdv::hvac::ambient_air_temperature::DESCRIPTION.to_string(),
         endpoint_info_list: vec![ambient_air_temperature_endpoint_info],
     };
 
@@ -57,16 +82,15 @@ async fn register_entities(
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![
             digital_twin_operation::SUBSCRIBE.to_string(),
-            digital_twin_operation::UNSUBSCRIBE.to_string(),
             digital_twin_operation::SET.to_string(),
         ],
         uri: provider_uri.to_string(),
-        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        context: sdv::hvac::is_air_conditioning_active::ID.to_string(),
     };
     let is_air_conditioning_active_access_info = EntityAccessInfo {
-        name: "IsAirConditioningActive".to_string(),
-        id: sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID.to_string(),
-        description: "Is air conditioning active?".to_string(),
+        name: sdv::hvac::is_air_conditioning_active::NAME.to_string(),
+        id: sdv::hvac::is_air_conditioning_active::ID.to_string(),
+        description: sdv::hvac::is_air_conditioning_active::DESCRIPTION.to_string(),
         endpoint_info_list: vec![is_air_conditioning_active_endpoint_info],
     };
 
@@ -75,15 +99,14 @@ async fn register_entities(
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![
             digital_twin_operation::SUBSCRIBE.to_string(),
-            digital_twin_operation::UNSUBSCRIBE.to_string(),
         ],
         uri: provider_uri.to_string(),
-        context: sdv::vehicle::obd::hybrid_battery_remaining::ID.to_string(),
+        context: sdv::obd::hybrid_battery_remaining::ID.to_string(),
     };
     let hybrid_battery_remaining_access_info = EntityAccessInfo {
-        name: "HybridBatteryRemaining".to_string(),
-        id: sdv::vehicle::obd::hybrid_battery_remaining::ID.to_string(),
-        description: "The remaining hybrid battery life.".to_string(),
+        name:  sdv::obd::hybrid_battery_remaining::NAME.to_string(),
+        id: sdv::obd::hybrid_battery_remaining::ID.to_string(),
+        description:  sdv::obd::hybrid_battery_remaining::DESCRIPTION.to_string(),
         endpoint_info_list: vec![hybrid_battery_remaining_endpoint_info],
     };
 
@@ -92,12 +115,12 @@ async fn register_entities(
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![digital_twin_operation::INVOKE.to_string()],
         uri: provider_uri.to_string(),
-        context: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
+        context: sdv::hmi::show_notification::ID.to_string(),
     };
     let show_notification_access_info = EntityAccessInfo {
-        name: "ShowNotification".to_string(),
-        id: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID.to_string(),
-        description: "Show a notification on the HMI.".to_string(),
+        name: sdv::hmi::show_notification::NAME.to_string(),
+        id: sdv::hmi::show_notification::ID.to_string(),
+        description: sdv::hmi::show_notification::DESCRIPTION.to_string(),
         endpoint_info_list: vec![show_notification_endpoint_info],
     };
 
@@ -182,22 +205,40 @@ async fn start_vehicle_simulator(
             }
 
             info!("Publishing the values: Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}");
+            let ambient_air_temperature_property: AmbientAirTemperatureProperty = AmbientAirTemperatureProperty {
+                ambient_air_temperature,
+                metadata: Metadata {
+                    model: sdv::hvac::ambient_air_temperature::ID.to_string(),
+                }
+            };            
             publish(
                 subscription_map.clone(),
-                sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
-                &ambient_air_temperature.to_string(),
+                sdv::hvac::ambient_air_temperature::ID,
+                &serde_json::to_string(&ambient_air_temperature_property).unwrap(),
             )
             .await;
+            let is_air_conditioning_active_property: IsAirConditioingActiveProperty = IsAirConditioingActiveProperty {
+                is_air_conditioning_active,
+                metadata: Metadata {
+                    model: sdv::hvac::is_air_conditioning_active::ID.to_string(),
+                }
+            };        
             publish(
                 subscription_map.clone(),
-                sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID,
-                &is_air_conditioning_active.to_string(),
+                sdv::hvac::is_air_conditioning_active::ID,
+                &serde_json::to_string(&is_air_conditioning_active_property).unwrap(),
             )
             .await;
+            let hybrid_battery_remaining_property: HybridBatteryRemainingProperty = HybridBatteryRemainingProperty {
+                hybrid_battery_remaining,
+                metadata: Metadata {
+                    model: sdv::obd::hybrid_battery_remaining::ID.to_string(),
+                }
+            };        
             publish(
                 subscription_map.clone(),
-                sdv::vehicle::obd::hybrid_battery_remaining::ID,
-                &hybrid_battery_remaining.to_string(),
+                sdv::obd::hybrid_battery_remaining::ID,
+                &serde_json::to_string(&hybrid_battery_remaining_property).unwrap(),
             )
             .await;
 

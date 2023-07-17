@@ -4,7 +4,7 @@
 
 mod consumer_impl;
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
@@ -13,10 +13,19 @@ use samples_common::utils::{discover_digital_twin_provider_using_ibeji, retrieve
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::InvokeRequest;
+use serde_derive::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct ShowNotificationRequestPayload {
+    #[serde(rename = "Notification")]
+    notification: sdv::hmi::show_notification::request::TYPE,
+    #[serde(rename = "$metadata")]
+    metadata: Metadata
+}
 
 /// Start the show notification repeater.
 ///
@@ -25,12 +34,22 @@ use uuid::Uuid;
 /// `consumer_uri` - The consumer_uri.
 fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) {
     debug!("Starting the Consumer's show notification repeater.");
+
+    let metadata = Metadata {
+        model: sdv::hmi::show_notification::request::ID.to_string(),
+    };
+
+    let request_payload: ShowNotificationRequestPayload = ShowNotificationRequestPayload {
+        notification: "The show-notification request.".to_string(),
+        metadata,
+    };
+
+    let request_payload_json = serde_json::to_string(&request_payload).unwrap();
+
     tokio::spawn(async move {
         loop {
-            let payload: String = "The show-notification request.".to_string();
-
-            info!("Sending an invoke request on entity {} with payload '{payload} to provider URI {provider_uri}",
-                sdv::vehicle::cabin::infotainment::hmi::show_notification::ID);
+            info!("Sending an invoke request on entity {} with payload '{}' to provider URI {provider_uri}",
+                sdv::hmi::show_notification::ID, &request_payload_json);
 
             let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -43,11 +62,11 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
             let response_id = Uuid::new_v4().to_string();
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: sdv::vehicle::cabin::infotainment::hmi::show_notification::ID
+                entity_id: sdv::hmi::show_notification::ID
                     .to_string(),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
-                payload,
+                payload: request_payload_json.to_string(),
             });
 
             let response = client.invoke(request).await;
@@ -89,7 +108,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
         &invehicle_digital_twin_url,
-        sdv::vehicle::cabin::infotainment::hmi::show_notification::ID,
+        sdv::hmi::show_notification::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::INVOKE.to_string()],
     )

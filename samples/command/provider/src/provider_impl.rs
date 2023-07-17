@@ -2,8 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use log::{info, warn};
-use parking_lot::Mutex;
+use digital_twin_model::sdv_v1 as sdv;
+use log::{debug, info, warn};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::RespondRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
@@ -11,15 +11,17 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
-use std::collections::{HashMap, HashSet};
-use std::sync::Arc;
+use serde_derive::{Deserialize, Serialize};
+use serde_json;
 use tonic::{Request, Response, Status};
 
-pub type SubscriptionMap = HashMap<String, HashSet<String>>;
+/// The reponse payload is empty.
+#[derive(Debug, Serialize, Deserialize)]
+struct ResponsePayload {
+}
 
 #[derive(Debug, Default)]
 pub struct ProviderImpl {
-    pub subscription_map: Arc<Mutex<SubscriptionMap>>,
 }
 
 #[tonic::async_trait]
@@ -78,32 +80,36 @@ impl DigitalTwinProvider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        let request_inner = request.into_inner();
-        let entity_id: String = request_inner.entity_id.clone();
-        let response_id: String = request_inner.response_id.clone();
-        let consumer_uri: String = request_inner.consumer_uri;
-        let payload: String = request_inner.payload;
+        let InvokeRequest { entity_id, response_id, consumer_uri, payload } = request.into_inner();
 
-        info!(
-            "Received an invoke request from for entity id {entity_id} with payload '{payload}' from consumer URI {consumer_uri}"
+        let request_payload_json: serde_json::Value = serde_json::from_str(&payload).unwrap();
+        let notification_json = request_payload_json.get(sdv::hmi::show_notification::request::NAME).unwrap();
+
+        let notification: sdv::hmi::show_notification::request::TYPE = serde_json::from_value(notification_json.clone()).unwrap();
+        
+        debug!(
+            "Received an invoke request from for entity id {entity_id} with payload'{payload}' from consumer URI {consumer_uri}"
         );
 
-        info!("Notification: '{payload}'");
+        info!("Notification: '{notification}'");
 
         tokio::spawn(async move {
             let mut client = DigitalTwinConsumerClient::connect(consumer_uri.clone())
                 .await
                 .map_err(|error| Status::internal(error.to_string()))?;
 
+            let response_payload = ResponsePayload {};
+            let response_payload_json = serde_json::to_string(&response_payload).unwrap();
+
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),
                 response_id,
-                payload,
+                payload: response_payload_json
             });
 
             let response_future = client.respond(respond_request).await;
 
-            info!(
+            debug!(
                 "Sent an invoke response to consumer URI {} for entity id {}",
                 &consumer_uri, &entity_id
             );
@@ -124,8 +130,7 @@ mod provider_impl_tests {
 
     #[tokio::test]
     async fn invoke_test() {
-        let subscription_map = Arc::new(Mutex::new(HashMap::new()));
-        let provider_impl = ProviderImpl { subscription_map };
+        let provider_impl = ProviderImpl { };
 
         let entity_id = String::from("one-id");
         let consumer_uri = String::from("bogus uri");
