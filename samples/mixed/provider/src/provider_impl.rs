@@ -13,7 +13,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use serde_derive::{Deserialize, Serialize};
-use serde_json;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 use tonic::{Request, Response, Status};

@@ -18,7 +18,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digita
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use serde_derive::{Deserialize, Serialize};
-use serde_json;
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::Arc;
