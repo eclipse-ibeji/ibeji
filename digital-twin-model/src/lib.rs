@@ -9,6 +9,5 @@ use serde_derive::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
     #[serde(rename = "$model")]
-    pub model: String
+    pub model: String,
 }
-

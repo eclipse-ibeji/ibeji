@@ -57,7 +57,6 @@ async fn register_massage_airbags(
     Ok(())
 }
 
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
@@ -80,7 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;
-    let properties = Arc::new(Mutex::new(ProviderProperties { massage_airbags: Vec::new()}));
+    let properties = Arc::new(Mutex::new(ProviderProperties { massage_airbags: Vec::new() }));
     let provider_impl = ProviderImpl { properties: properties.clone() };
     let server_future =
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);

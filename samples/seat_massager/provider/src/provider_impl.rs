@@ -23,7 +23,7 @@ struct Property {
     #[serde(rename = "MassageAirbags")]
     massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 #[derive(Debug, Default)]
@@ -42,9 +42,12 @@ impl ProviderImpl {
         value: &str,
     ) -> Result<(), String> {
         let message_airbags_property_json: serde_json::Value = serde_json::from_str(value).unwrap();
-        let message_airbags_json = message_airbags_property_json.get(sdv::airbag_seat_massager::massage_airbags::NAME).unwrap();
+        let message_airbags_json = message_airbags_property_json
+            .get(sdv::airbag_seat_massager::massage_airbags::NAME)
+            .unwrap();
 
-        let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE = serde_json::from_value(message_airbags_json.clone()).unwrap();
+        let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE =
+            serde_json::from_value(message_airbags_json.clone()).unwrap();
 
         info!("Setting message airbags to: {:?}", massage_airbags);
 
@@ -58,16 +61,12 @@ impl ProviderImpl {
         Ok(())
     }
 
-    fn get_message_airbags(
-        properties: Arc<Mutex<ProviderProperties>>
-    ) -> Result<String, String> {
-        let metadata = Metadata {
-            model: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
-        };
-
+    fn get_message_airbags(properties: Arc<Mutex<ProviderProperties>>) -> Result<String, String> {
         let mut property: Property = Property {
             massage_airbags: Vec::new(),
-            metadata,
+            metadata: Metadata {
+                model: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
+            },
         };
 
         // This block controls the lifetime of the lock.
@@ -82,7 +81,6 @@ impl ProviderImpl {
         Ok(json_str)
     }
 }
-
 
 #[tonic::async_trait]
 impl DigitalTwinProvider for ProviderImpl {
@@ -138,17 +136,14 @@ impl DigitalTwinProvider for ProviderImpl {
                     return;
                 }
                 let mut client = client_result.unwrap();
-    
-                let publish_request = tonic::Request::new(PublishRequest {
-                    entity_id,
-                    value: result.unwrap(),
-                });
+
+                let publish_request =
+                    tonic::Request::new(PublishRequest { entity_id, value: result.unwrap() });
                 let response = client.publish(publish_request).await;
                 if let Err(status) = response {
                     warn!("Publish failed: {status:?}");
                     return;
                 }
-        
             } else {
                 warn!("The entity id {entity_id} is not recognized.");
                 return;
@@ -205,4 +200,4 @@ impl DigitalTwinProvider for ProviderImpl {
 
         Err(Status::unimplemented("invoke has not been implemented"))
     }
-}  
+}

@@ -17,12 +17,10 @@ use tonic::{Request, Response, Status};
 
 /// The reponse payload is empty.
 #[derive(Debug, Serialize, Deserialize)]
-struct ResponsePayload {
-}
+struct ResponsePayload {}
 
 #[derive(Debug, Default)]
-pub struct ProviderImpl {
-}
+pub struct ProviderImpl {}
 
 #[tonic::async_trait]
 impl DigitalTwinProvider for ProviderImpl {
@@ -83,10 +81,12 @@ impl DigitalTwinProvider for ProviderImpl {
         let InvokeRequest { entity_id, response_id, consumer_uri, payload } = request.into_inner();
 
         let request_payload_json: serde_json::Value = serde_json::from_str(&payload).unwrap();
-        let notification_json = request_payload_json.get(sdv::hmi::show_notification::request::NAME).unwrap();
+        let notification_json =
+            request_payload_json.get(sdv::hmi::show_notification::request::NAME).unwrap();
 
-        let notification: sdv::hmi::show_notification::request::TYPE = serde_json::from_value(notification_json.clone()).unwrap();
-        
+        let notification: sdv::hmi::show_notification::request::TYPE =
+            serde_json::from_value(notification_json.clone()).unwrap();
+
         debug!(
             "Received an invoke request from for entity id {entity_id} with payload'{payload}' from consumer URI {consumer_uri}"
         );
@@ -104,7 +104,7 @@ impl DigitalTwinProvider for ProviderImpl {
             let respond_request = tonic::Request::new(RespondRequest {
                 entity_id: entity_id.clone(),
                 response_id,
-                payload: response_payload_json
+                payload: response_payload_json,
             });
 
             let response_future = client.respond(respond_request).await;
@@ -126,20 +126,38 @@ impl DigitalTwinProvider for ProviderImpl {
 #[cfg(test)]
 mod provider_impl_tests {
     use super::*;
+    use digital_twin_model::Metadata;
     use uuid::Uuid;
+
+    #[derive(Debug, Serialize, Deserialize)]
+    struct ShowNotificationRequestPayload {
+        #[serde(rename = "Notification")]
+        notification: sdv::hmi::show_notification::request::TYPE,
+        #[serde(rename = "$metadata")]
+        metadata: Metadata,
+    }
 
     #[tokio::test]
     async fn invoke_test() {
-        let provider_impl = ProviderImpl { };
+        let provider_impl = ProviderImpl {};
 
         let entity_id = String::from("one-id");
         let consumer_uri = String::from("bogus uri");
 
         let response_id = Uuid::new_v4().to_string();
-        let payload = String::from("some-payload");
 
-        let request =
-            tonic::Request::new(InvokeRequest { entity_id, consumer_uri, response_id, payload });
+        let request_payload: ShowNotificationRequestPayload = ShowNotificationRequestPayload {
+            notification: "The show-notification request.".to_string(),
+            metadata: Metadata { model: sdv::hmi::show_notification::request::ID.to_string() },
+        };
+        let request_payload_json = serde_json::to_string(&request_payload).unwrap();
+
+        let request = tonic::Request::new(InvokeRequest {
+            entity_id,
+            consumer_uri,
+            response_id,
+            payload: request_payload_json,
+        });
         let result = provider_impl.invoke(request).await;
         assert!(result.is_ok());
 

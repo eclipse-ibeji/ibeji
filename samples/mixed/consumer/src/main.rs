@@ -26,7 +26,7 @@ struct IsAirConditioningActiveProperty {
     #[serde(rename = "IsAirConditioningActive")]
     is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -34,7 +34,7 @@ struct ShowNotificationRequestPayload {
     #[serde(rename = "Notification")]
     notification: sdv::hmi::show_notification::request::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 /// Start the show-notification repeater.
@@ -46,17 +46,15 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
     debug!("Starting the Consumer's show-notification repeater.");
 
     tokio::spawn(async move {
-        let metadata = Metadata {
-            model: sdv::hmi::show_notification::request::ID.to_string(),
-        };
-    
+        let metadata = Metadata { model: sdv::hmi::show_notification::request::ID.to_string() };
+
         let request_payload: ShowNotificationRequestPayload = ShowNotificationRequestPayload {
             notification: "The show-notification request.".to_string(),
             metadata,
         };
 
         let request_payload_json = serde_json::to_string(&request_payload).unwrap();
-    
+
         loop {
             info!("Sending an invoke request on entity {} with payload '{} to provider URI {provider_uri}",
                 sdv::hmi::show_notification::ID, &request_payload_json);
@@ -72,8 +70,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
             let response_id = Uuid::new_v4().to_string();
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: sdv::hmi::show_notification::ID
-                    .to_string(),
+                entity_id: sdv::hmi::show_notification::ID.to_string(),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload: request_payload_json.to_string(),
@@ -106,14 +103,11 @@ fn start_activate_air_conditioning_repeater(provider_uri: String) {
             info!("Sending a set request for entity id {} to the value '{is_active}' to provider URI {provider_uri}",
                 sdv::hvac::is_air_conditioning_active::ID);
 
-            let metadata: Metadata = Metadata {
-                model: sdv::hvac::is_air_conditioning_active::ID.to_string()
-            };
-            let property: IsAirConditioningActiveProperty = IsAirConditioningActiveProperty {
-                is_air_conditioning_active: is_active,
-                metadata
-            };
-    
+            let metadata: Metadata =
+                Metadata { model: sdv::hvac::is_air_conditioning_active::ID.to_string() };
+            let property: IsAirConditioningActiveProperty =
+                IsAirConditioningActiveProperty { is_air_conditioning_active: is_active, metadata };
+
             let value = serde_json::to_string_pretty(&property).unwrap();
 
             let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;

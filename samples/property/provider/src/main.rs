@@ -31,7 +31,7 @@ struct Property {
     #[serde(rename = "AmbientAirTemperature")]
     ambient_air_temperature: sdv::hvac::ambient_air_temperature::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 /// Register the ambient air temperature property's endpoint.
@@ -45,9 +45,7 @@ async fn register_ambient_air_temperature(
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
-        operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string(),
-        ],
+        operations: vec![digital_twin_operation::SUBSCRIBE.to_string()],
         uri: provider_uri.to_string(),
         context: sdv::hvac::ambient_air_temperature::ID.to_string(),
     };
@@ -69,17 +67,10 @@ async fn register_ambient_air_temperature(
     Ok(())
 }
 
-fn create_property(
-    ambient_air_temperature: i32
-) -> String {
-    let metadata = Metadata {
-        model: sdv::hvac::ambient_air_temperature::ID.to_string(),
-    };
+fn create_property(ambient_air_temperature: i32) -> String {
+    let metadata = Metadata { model: sdv::hvac::ambient_air_temperature::ID.to_string() };
 
-    let property: Property = Property {
-        ambient_air_temperature,
-        metadata,
-    };
+    let property: Property = Property { ambient_air_temperature, metadata };
 
     serde_json::to_string(&property).unwrap()
 }

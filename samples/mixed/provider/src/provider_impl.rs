@@ -25,7 +25,7 @@ struct IsAirConditioningActiveProperty {
     #[serde(rename = "IsAirConditioningActive")]
     massage_airbags: sdv::hvac::is_air_conditioning_active::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 pub type SubscriptionMap = HashMap<String, HashSet<String>>;
@@ -125,9 +125,13 @@ impl DigitalTwinProvider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let value: String = request_inner.value;
 
-        let is_air_conditioing_active_property_json: serde_json::Value = serde_json::from_str(&value).unwrap();
-        let is_air_conditioing_active_json = is_air_conditioing_active_property_json.get(sdv::hvac::is_air_conditioning_active::NAME).unwrap();
-        let is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE = serde_json::from_value(is_air_conditioing_active_json.clone()).unwrap();
+        let is_air_conditioing_active_property_json: serde_json::Value =
+            serde_json::from_str(&value).unwrap();
+        let is_air_conditioing_active_json = is_air_conditioing_active_property_json
+            .get(sdv::hvac::is_air_conditioning_active::NAME)
+            .unwrap();
+        let is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE =
+            serde_json::from_value(is_air_conditioing_active_json.clone()).unwrap();
 
         info!("Received a set request for entity id {entity_id} with value '{value}'");
 
@@ -135,7 +139,10 @@ impl DigitalTwinProvider for ProviderImpl {
 
         tokio::spawn(async move {
             if entity_id == sdv::hvac::is_air_conditioning_active::ID {
-                let result = ProviderImpl::set_is_air_conditioning_active(vehicle.clone(), is_air_conditioning_active);
+                let result = ProviderImpl::set_is_air_conditioning_active(
+                    vehicle.clone(),
+                    is_air_conditioning_active,
+                );
                 if result.is_err() {
                     warn!("Failed to set {} due to: {}", entity_id, result.unwrap_err());
                 }

@@ -8,7 +8,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digita
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::{
     PublishRequest, PublishResponse, RespondRequest, RespondResponse,
 };
-use serde_json;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
@@ -28,7 +27,8 @@ impl DigitalTwinConsumer for ConsumerImpl {
         let j: serde_json::Value = serde_json::from_str(&value).unwrap();
         let j_prop = j.get(sdv::airbag_seat_massager::massage_airbags::NAME).unwrap();
 
-        let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE = serde_json::from_value(j_prop.clone()).unwrap();
+        let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE =
+            serde_json::from_value(j_prop.clone()).unwrap();
 
         println!("{:?}", massage_airbags);
 
@@ -56,17 +56,37 @@ impl DigitalTwinConsumer for ConsumerImpl {
 #[cfg(test)]
 mod consumer_impl_tests {
     use super::*;
+    use digital_twin_model::Metadata;
+    use serde_derive::{Deserialize, Serialize};
+
+    #[derive(Debug, Serialize, Deserialize)]
+    struct Property {
+        #[serde(rename = "MassageAirbags")]
+        massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE,
+        #[serde(rename = "$metadata")]
+        metadata: Metadata,
+    }
+
+    #[derive(Debug, Serialize, Deserialize)]
+    struct ResponsePayload {}
 
     #[tokio::test]
     async fn publish_test() {
         let consumer_impl = ConsumerImpl {};
 
         let entity_id = String::from("some-entity-id");
-        let value = String::from("some-value");
 
-        let request = tonic::Request::new(PublishRequest { entity_id, value });
+        let property: Property = Property {
+            massage_airbags: Vec::new(),
+            metadata: Metadata {
+                model: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
+            },
+        };
+        let property_json = serde_json::to_string(&property).unwrap();
+
+        let request = tonic::Request::new(PublishRequest { entity_id, value: property_json });
         let result = consumer_impl.publish(request).await;
-        assert!(result.is_err());
+        assert!(result.is_ok());
     }
 
     #[tokio::test]
@@ -75,10 +95,16 @@ mod consumer_impl_tests {
 
         let entity_id = String::from("some-entity-id");
         let response_id = String::from("some-response-id");
-        let payload = String::from("some-payload");        
 
-        let request = tonic::Request::new(RespondRequest { entity_id, response_id, payload });
+        let response_payload: ResponsePayload = ResponsePayload {};
+        let response_payload_json = serde_json::to_string(&response_payload).unwrap();
+
+        let request = tonic::Request::new(RespondRequest {
+            entity_id,
+            response_id,
+            payload: response_payload_json,
+        });
         let result = consumer_impl.respond(request).await;
         assert!(result.is_err());
-    }    
+    }
 }

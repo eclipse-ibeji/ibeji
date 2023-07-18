@@ -1,13 +1,13 @@
-[ 
-  { 
-    "@context": ["dtmi:dtdl:context;3"], 
-    "@type": "Interface", 
-    "@id": "dtmi:sdv:AirbagSeatMassager;1", 
-    "description": "Airbag Seat Massager", 
+[
+  {
+    "@context": ["dtmi:dtdl:context;3"],
+    "@type": "Interface",
+    "@id": "dtmi:sdv:AirbagSeatMassager;1",
+    "description": "Airbag Seat Massager",
     "contents": [
       {
         "@type": "Property",
-        "@id": "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1", 
+        "@id": "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1",
         "name": "MassageAirbags",
         "description": "The inflation level (0..100) for each massage airbag.",
         "schema": {
@@ -16,5 +16,5 @@
         }
       }
     ]
-  } 
-] 
+  }
+]

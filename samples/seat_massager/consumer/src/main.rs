@@ -23,7 +23,7 @@ struct Property {
     #[serde(rename = "MassageAirbags")]
     massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 /// Start the seat massage sequence.
@@ -37,13 +37,9 @@ fn start_seat_massage_sequence(provider_uri: String) {
     let mut is_wave_moving_forwards = true;
     const MAX_ROW: i8 = 5;
 
-    let metadata: Metadata = Metadata {
-        model: sdv::airbag_seat_massager::massage_airbags::ID.to_string()
-    };
-    let mut property: Property = Property {
-        massage_airbags: Vec::new(),
-        metadata
-    };
+    let metadata: Metadata =
+        Metadata { model: sdv::airbag_seat_massager::massage_airbags::ID.to_string() };
+    let mut property: Property = Property { massage_airbags: Vec::new(), metadata };
 
     tokio::spawn(async move {
         loop {
@@ -62,8 +58,10 @@ fn start_seat_massage_sequence(provider_uri: String) {
 
             let value = serde_json::to_string_pretty(&property).unwrap();
 
-            info!("Sending a set request for entity id {} to provider URI {provider_uri}",
-                sdv::airbag_seat_massager::massage_airbags::ID);
+            info!(
+                "Sending a set request for entity id {} to provider URI {provider_uri}",
+                sdv::airbag_seat_massager::massage_airbags::ID
+            );
 
             let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -95,8 +93,8 @@ fn start_seat_massage_sequence(provider_uri: String) {
                 crest_row = 1;
                 is_wave_moving_forwards = true;
             } else {
-                crest_row-= 1;
-            } 
+                crest_row -= 1;
+            }
 
             debug!("Completed the set request.");
 
@@ -115,8 +113,10 @@ fn start_seat_massage_get_repeater(provider_uri: String, consumer_uri: String) {
 
     tokio::spawn(async move {
         loop {
-            info!("Sending a get request for entity id {} to provider URI {provider_uri}",
-                sdv::airbag_seat_massager::massage_airbags::ID);
+            info!(
+                "Sending a get request for entity id {} to provider URI {provider_uri}",
+                sdv::airbag_seat_massager::massage_airbags::ID
+            );
 
             let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
             if client_result.is_err() {
@@ -142,7 +142,6 @@ fn start_seat_massage_get_repeater(provider_uri: String, consumer_uri: String) {
         }
     });
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -189,6 +188,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     server_future.await?;
 
     debug!("The Consumer has completed.");
-    
+
     Ok(())
 }

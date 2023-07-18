@@ -33,7 +33,7 @@ struct AmbientAirTemperatureProperty {
     #[serde(rename = "AmbientAirTemperature")]
     ambient_air_temperature: sdv::hvac::ambient_air_temperature::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -41,7 +41,7 @@ struct HybridBatteryRemainingProperty {
     #[serde(rename = "HybridBatteryRemainaing")]
     hybrid_battery_remaining: sdv::obd::hybrid_battery_remaining::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -49,7 +49,7 @@ struct IsAirConditioingActiveProperty {
     #[serde(rename = "IsAirConditioingActive")]
     is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 /// Register the entities endpoints.
@@ -64,9 +64,7 @@ async fn register_entities(
     // AmbientAirTemperature
     let ambient_air_temperature_endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
-        operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string()
-        ],
+        operations: vec![digital_twin_operation::SUBSCRIBE.to_string()],
         uri: provider_uri.to_string(),
         context: sdv::hvac::ambient_air_temperature::ID.to_string(),
     };
@@ -97,16 +95,14 @@ async fn register_entities(
     // HybridBatteryRemaining
     let hybrid_battery_remaining_endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
-        operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string(),
-        ],
+        operations: vec![digital_twin_operation::SUBSCRIBE.to_string()],
         uri: provider_uri.to_string(),
         context: sdv::obd::hybrid_battery_remaining::ID.to_string(),
     };
     let hybrid_battery_remaining_access_info = EntityAccessInfo {
-        name:  sdv::obd::hybrid_battery_remaining::NAME.to_string(),
+        name: sdv::obd::hybrid_battery_remaining::NAME.to_string(),
         id: sdv::obd::hybrid_battery_remaining::ID.to_string(),
-        description:  sdv::obd::hybrid_battery_remaining::DESCRIPTION.to_string(),
+        description: sdv::obd::hybrid_battery_remaining::DESCRIPTION.to_string(),
         endpoint_info_list: vec![hybrid_battery_remaining_endpoint_info],
     };
 
@@ -205,36 +201,39 @@ async fn start_vehicle_simulator(
             }
 
             info!("Publishing the values: Ambient air temperature is {ambient_air_temperature}; Is air conditioning active is {is_air_conditioning_active}; Hybrid battery remaining is {hybrid_battery_remaining}");
-            let ambient_air_temperature_property: AmbientAirTemperatureProperty = AmbientAirTemperatureProperty {
-                ambient_air_temperature,
-                metadata: Metadata {
-                    model: sdv::hvac::ambient_air_temperature::ID.to_string(),
-                }
-            };            
+            let ambient_air_temperature_property: AmbientAirTemperatureProperty =
+                AmbientAirTemperatureProperty {
+                    ambient_air_temperature,
+                    metadata: Metadata {
+                        model: sdv::hvac::ambient_air_temperature::ID.to_string(),
+                    },
+                };
             publish(
                 subscription_map.clone(),
                 sdv::hvac::ambient_air_temperature::ID,
                 &serde_json::to_string(&ambient_air_temperature_property).unwrap(),
             )
             .await;
-            let is_air_conditioning_active_property: IsAirConditioingActiveProperty = IsAirConditioingActiveProperty {
-                is_air_conditioning_active,
-                metadata: Metadata {
-                    model: sdv::hvac::is_air_conditioning_active::ID.to_string(),
-                }
-            };        
+            let is_air_conditioning_active_property: IsAirConditioingActiveProperty =
+                IsAirConditioingActiveProperty {
+                    is_air_conditioning_active,
+                    metadata: Metadata {
+                        model: sdv::hvac::is_air_conditioning_active::ID.to_string(),
+                    },
+                };
             publish(
                 subscription_map.clone(),
                 sdv::hvac::is_air_conditioning_active::ID,
                 &serde_json::to_string(&is_air_conditioning_active_property).unwrap(),
             )
             .await;
-            let hybrid_battery_remaining_property: HybridBatteryRemainingProperty = HybridBatteryRemainingProperty {
-                hybrid_battery_remaining,
-                metadata: Metadata {
-                    model: sdv::obd::hybrid_battery_remaining::ID.to_string(),
-                }
-            };        
+            let hybrid_battery_remaining_property: HybridBatteryRemainingProperty =
+                HybridBatteryRemainingProperty {
+                    hybrid_battery_remaining,
+                    metadata: Metadata {
+                        model: sdv::obd::hybrid_battery_remaining::ID.to_string(),
+                    },
+                };
             publish(
                 subscription_map.clone(),
                 sdv::obd::hybrid_battery_remaining::ID,

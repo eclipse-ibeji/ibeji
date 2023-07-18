@@ -24,7 +24,7 @@ struct ShowNotificationRequestPayload {
     #[serde(rename = "Notification")]
     notification: sdv::hmi::show_notification::request::TYPE,
     #[serde(rename = "$metadata")]
-    metadata: Metadata
+    metadata: Metadata,
 }
 
 /// Start the show notification repeater.
@@ -35,13 +35,9 @@ struct ShowNotificationRequestPayload {
 fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) {
     debug!("Starting the Consumer's show notification repeater.");
 
-    let metadata = Metadata {
-        model: sdv::hmi::show_notification::request::ID.to_string(),
-    };
-
     let request_payload: ShowNotificationRequestPayload = ShowNotificationRequestPayload {
         notification: "The show-notification request.".to_string(),
-        metadata,
+        metadata: Metadata { model: sdv::hmi::show_notification::request::ID.to_string() },
     };
 
     let request_payload_json = serde_json::to_string(&request_payload).unwrap();
@@ -62,8 +58,7 @@ fn start_show_notification_repeater(provider_uri: String, consumer_uri: String) 
             let response_id = Uuid::new_v4().to_string();
 
             let request = tonic::Request::new(InvokeRequest {
-                entity_id: sdv::hmi::show_notification::ID
-                    .to_string(),
+                entity_id: sdv::hmi::show_notification::ID.to_string(),
                 consumer_uri: consumer_uri.clone(),
                 response_id,
                 payload: request_payload_json.to_string(),
