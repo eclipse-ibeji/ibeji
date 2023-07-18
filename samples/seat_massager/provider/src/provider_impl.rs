@@ -13,7 +13,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use serde_derive::{Deserialize, Serialize};
-use serde_json;
 use std::sync::Arc;
 use std::vec::Vec;
 use tonic::{Request, Response, Status};
@@ -117,7 +116,7 @@ impl DigitalTwinProvider for ProviderImpl {
     async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
         let request_inner = request.into_inner();
         let entity_id: String = request_inner.entity_id.clone();
-        let consumer_uri: String = request_inner.consumer_uri.clone();
+        let consumer_uri: String = request_inner.consumer_uri;
 
         info!("Received a get request for entity id {entity_id}");
 
@@ -142,11 +141,9 @@ impl DigitalTwinProvider for ProviderImpl {
                 let response = client.publish(publish_request).await;
                 if let Err(status) = response {
                     warn!("Publish failed: {status:?}");
-                    return;
                 }
             } else {
                 warn!("The entity id {entity_id} is not recognized.");
-                return;
             }
         });
 
