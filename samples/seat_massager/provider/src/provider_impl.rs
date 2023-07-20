@@ -37,7 +37,7 @@ pub struct ProviderImpl {
 
 impl ProviderImpl {
     /// Set the massage airbags property from its JSON form.
-    /// 
+    ///
     /// # Arguments
     /// * `properties` - The providers properties.
     /// * `value` - The massiage airbags property in  its JSON form.
@@ -66,7 +66,7 @@ impl ProviderImpl {
     }
 
     /// Get the massage airbags property in its JSON form.
-    /// 
+    ///
     /// # Arguments
     /// * `properties` - The providers properties.
     fn get_massage_airbags(properties: Arc<Mutex<ProviderProperties>>) -> Result<String, String> {
@@ -133,7 +133,8 @@ impl DigitalTwinProvider for ProviderImpl {
 
         tokio::spawn(async move {
             if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
-                let get_massage_airbags_result = ProviderImpl::get_massage_airbags(properties.clone());
+                let get_massage_airbags_result =
+                    ProviderImpl::get_massage_airbags(properties.clone());
                 if let Err(error_message) = get_massage_airbags_result {
                     warn!("Failed to get {entity_id} due to: {error_message}");
                     return;
@@ -145,8 +146,10 @@ impl DigitalTwinProvider for ProviderImpl {
                 }
                 let mut client = client_result.unwrap();
 
-                let publish_request =
-                    tonic::Request::new(PublishRequest { entity_id, value: get_massage_airbags_result.unwrap() });
+                let publish_request = tonic::Request::new(PublishRequest {
+                    entity_id,
+                    value: get_massage_airbags_result.unwrap(),
+                });
                 let response = client.publish(publish_request).await;
                 if let Err(status) = response {
                     warn!("Publish failed: {status:?}");
