@@ -30,8 +30,6 @@ impl DigitalTwinConsumer for ConsumerImpl {
         let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE =
             serde_json::from_value(j_prop.clone()).unwrap();
 
-        println!("{:?}", massage_airbags);
-
         info!("Received a publish for entity id {entity_id} with the value: {massage_airbags:?}");
 
         let response = PublishResponse {};

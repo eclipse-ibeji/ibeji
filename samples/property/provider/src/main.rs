@@ -66,6 +66,10 @@ async fn register_ambient_air_temperature(
     Ok(())
 }
 
+/// Create the JSON for the ambient air temperature property.
+///
+/// # Arguments
+/// * `ambient_air_temperature` - The ambient air temperature value.
 fn create_property(ambient_air_temperature: i32) -> String {
     let metadata = Metadata { model: sdv::hvac::ambient_air_temperature::ID.to_string() };
 

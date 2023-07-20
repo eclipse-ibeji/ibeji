@@ -5,7 +5,7 @@
 - [DTDL](#dtdl)
 - [In-Vehicle Digital Twin Service](#in-vehicle-digital-twin-service)
 - [Sample Digital Twin Interactions](#sample-digital-twin-interactions)
-- [Appendix: Digital Twin Interface](#digital-twin-interface)
+- [Appendix: Digital Twin Interface](#appendix-digital-twin-interface)
 
 ## <a name="introduction">Introduction</a>
 
@@ -108,7 +108,7 @@ The sequence diagram for a Digital Twin Consumer using the Invoke operation.
 
 ![Sequence Diagram](diagrams/invoke_sequence.svg)
 
-## <a name="digital-twin-interface">Appendix: Digital Twin Interface</a>
+## <a name="appendix-digital-twin-interface">Appendix: Digital Twin Interface</a>
 
 ### FindById
 

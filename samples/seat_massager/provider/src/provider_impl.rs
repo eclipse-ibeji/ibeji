@@ -36,7 +36,12 @@ pub struct ProviderImpl {
 }
 
 impl ProviderImpl {
-    fn set_message_airbags(
+    /// Set the massage airbags property from its JSON form.
+    /// 
+    /// # Arguments
+    /// * `properties` - The providers properties.
+    /// * `value` - The massiage airbags property in  its JSON form.
+    fn set_massage_airbags(
         properties: Arc<Mutex<ProviderProperties>>,
         value: &str,
     ) -> Result<(), String> {
@@ -60,7 +65,11 @@ impl ProviderImpl {
         Ok(())
     }
 
-    fn get_message_airbags(properties: Arc<Mutex<ProviderProperties>>) -> Result<String, String> {
+    /// Get the massage airbags property in its JSON form.
+    /// 
+    /// # Arguments
+    /// * `properties` - The providers properties.
+    fn get_massage_airbags(properties: Arc<Mutex<ProviderProperties>>) -> Result<String, String> {
         let mut property: Property = Property {
             massage_airbags: Vec::new(),
             metadata: Metadata {
@@ -75,9 +84,9 @@ impl ProviderImpl {
             property.massage_airbags = lock.massage_airbags.clone();
         }
 
-        let json_str = serde_json::to_string(&property).unwrap();
+        let property_json = serde_json::to_string(&property).unwrap();
 
-        Ok(json_str)
+        Ok(property_json)
     }
 }
 
@@ -124,20 +133,20 @@ impl DigitalTwinProvider for ProviderImpl {
 
         tokio::spawn(async move {
             if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
-                let result = ProviderImpl::get_message_airbags(properties.clone());
-                if result.is_err() {
-                    warn!("Failed to get {} due to: {}", entity_id, result.unwrap_err());
+                let get_massage_airbags_result = ProviderImpl::get_massage_airbags(properties.clone());
+                if let Err(error_message) = get_massage_airbags_result {
+                    warn!("Failed to get {entity_id} due to: {error_message}");
                     return;
                 }
                 let client_result = DigitalTwinConsumerClient::connect(consumer_uri).await;
-                if client_result.is_err() {
-                    warn!("Unable to connect due to {}", client_result.unwrap_err());
+                if let Err(error_message) = client_result {
+                    warn!("Unable to connect due to {error_message}");
                     return;
                 }
                 let mut client = client_result.unwrap();
 
                 let publish_request =
-                    tonic::Request::new(PublishRequest { entity_id, value: result.unwrap() });
+                    tonic::Request::new(PublishRequest { entity_id, value: get_massage_airbags_result.unwrap() });
                 let response = client.publish(publish_request).await;
                 if let Err(status) = response {
                     warn!("Publish failed: {status:?}");
@@ -169,7 +178,7 @@ impl DigitalTwinProvider for ProviderImpl {
 
         tokio::spawn(async move {
             if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
-                let result = ProviderImpl::set_message_airbags(properties.clone(), &value);
+                let result = ProviderImpl::set_massage_airbags(properties.clone(), &value);
                 if result.is_err() {
                     warn!("Failed to set {} due to: {}", entity_id, result.unwrap_err());
                 }

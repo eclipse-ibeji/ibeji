@@ -14,6 +14,7 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digita
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{GetRequest, SetRequest};
 use serde_derive::{Deserialize, Serialize};
+use std::cmp::max;
 use std::net::SocketAddr;
 use tokio::time::{sleep, Duration};
 use tonic::transport::Server;
@@ -43,16 +44,24 @@ fn start_seat_massage_sequence(provider_uri: String) {
 
     tokio::spawn(async move {
         loop {
+            let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
+            if client_result.is_err() {
+                warn!("Unable to connect. We will retry in a moment.");
+                sleep(Duration::from_secs(1)).await;
+                continue;
+            }
+            let mut client = client_result.unwrap();
+
             // We assume that the seat has 6 rows with 3 airbags in each row.
-            // The sequence will represent a wave with the crest_row representing the crest of the wave.
+            // The sequence will mimic a wave motion.  With the crest of the wave
+            // having the maximum inflation level and either side of the crest
+            // having gradually decreasing inflation levels.
+            // crest_row represents the row where the crest of the wave is located.
             property.massage_airbags = Vec::new();
             for airbag in 0..18 {
                 let row = airbag / 3;
                 let rows_from_crest = i8::abs(crest_row - row);
-                let mut inflation_level = 100 - (rows_from_crest * 20);
-                if inflation_level < 0 {
-                    inflation_level = 0;
-                }
+                let inflation_level = max(100 - (rows_from_crest * 20), 0);
                 property.massage_airbags.push(inflation_level as i32);
             }
 
@@ -62,14 +71,6 @@ fn start_seat_massage_sequence(provider_uri: String) {
                 "Sending a set request for entity id {} to provider URI {provider_uri}",
                 sdv::airbag_seat_massager::massage_airbags::ID
             );
-
-            let client_result = DigitalTwinProviderClient::connect(provider_uri.clone()).await;
-            if client_result.is_err() {
-                warn!("Unable to connect. We will retry in a moment.");
-                sleep(Duration::from_secs(1)).await;
-                continue;
-            }
-            let mut client = client_result.unwrap();
 
             let request = tonic::Request::new(SetRequest {
                 entity_id: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
@@ -82,16 +83,13 @@ fn start_seat_massage_sequence(provider_uri: String) {
             }
 
             // Set crest_row for the next loop iteration.
-            if is_wave_moving_forwards {
-                if crest_row == MAX_ROW {
-                    crest_row = MAX_ROW - 1;
-                    is_wave_moving_forwards = false;
-                } else {
-                    crest_row += 1;
-                }
-            } else if crest_row == 0 {
-                crest_row = 1;
+            if crest_row == 0 {
                 is_wave_moving_forwards = true;
+            } else if crest_row == MAX_ROW {
+                is_wave_moving_forwards = false;
+            }
+            if is_wave_moving_forwards {
+                crest_row += 1;
             } else {
                 crest_row -= 1;
             }
