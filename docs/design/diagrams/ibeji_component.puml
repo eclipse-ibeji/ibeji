@@ -1,15 +1,17 @@
 @startuml
 
-frame "Consumer" {
-  interface DigitalTwinConsumerInterface
+frame "Digital Twin Consumer" {
 }
 
 frame "In-Vehicle Digital Twin Service" {
-  interface DigitalTwinInterface
+  interface "Digital Twin Interface"
 }
 
-frame "Provider" {
-  interface DigitalTwinProviderInterface
+frame "Digital Twin Provider" {
 }
+
+"Digital Twin Provider" --> "Digital Twin Interface" : Register
+
+"Digital Twin Consumer" --> "Digital Twin Interface" : FindById
 
 @enduml

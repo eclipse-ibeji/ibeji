@@ -13,7 +13,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
 use std::collections::{HashMap, HashSet};
-use std::str::FromStr;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
@@ -30,14 +29,13 @@ pub struct ProviderImpl {
 impl ProviderImpl {
     fn set_is_air_conditioning_active(
         vehicle: Arc<Mutex<Vehicle>>,
-        value: &str,
+        value: bool,
     ) -> Result<(), String> {
         // This block controls the lifetime of the lock.
         {
             let mut lock: MutexGuard<Vehicle> = vehicle.lock();
 
-            lock.is_air_conditioning_active =
-                FromStr::from_str(value).map_err(|error| format!("{error:?}"))?;
+            lock.is_air_conditioning_active = value;
         }
 
         Ok(())
@@ -117,13 +115,25 @@ impl DigitalTwinProvider for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
         let value: String = request_inner.value;
 
+        let is_air_conditioing_active_property_json: serde_json::Value =
+            serde_json::from_str(&value)
+                .map_err(|error| Status::invalid_argument(error.to_string()))?;
+        let is_air_conditioning_active_json = is_air_conditioing_active_property_json
+            .get(sdv::hvac::is_air_conditioning_active::NAME)
+            .unwrap();
+        let is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE =
+            serde_json::from_value(is_air_conditioning_active_json.clone()).unwrap();
+
         info!("Received a set request for entity id {entity_id} with value '{value}'");
 
         let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
 
         tokio::spawn(async move {
-            if entity_id == sdv::vehicle::cabin::hvac::is_air_conditioning_active::ID {
-                let result = ProviderImpl::set_is_air_conditioning_active(vehicle.clone(), &value);
+            if entity_id == sdv::hvac::is_air_conditioning_active::ID {
+                let result = ProviderImpl::set_is_air_conditioning_active(
+                    vehicle.clone(),
+                    is_air_conditioning_active,
+                );
                 if result.is_err() {
                     warn!("Failed to set {} due to: {}", entity_id, result.unwrap_err());
                 }
@@ -162,7 +172,7 @@ impl DigitalTwinProvider for ProviderImpl {
         tokio::spawn(async move {
             let mut response_payload: String = format!("Successfully invoked {entity_id}");
 
-            if entity_id == sdv::vehicle::cabin::infotainment::hmi::show_notification::ID {
+            if entity_id == sdv::hmi::show_notification::ID {
                 ProviderImpl::show_notification(&payload);
             } else {
                 response_payload = format!("Error: The entity id {entity_id} is not recognized.");

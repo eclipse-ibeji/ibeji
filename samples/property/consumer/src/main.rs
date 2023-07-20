@@ -30,7 +30,7 @@ async fn subscribe_to_ambient_air_temperature(
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
     let request = tonic::Request::new(SubscribeRequest {
-        entity_id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        entity_id: sdv::hvac::ambient_air_temperature::ID.to_string(),
         consumer_uri: consumer_uri.to_string(),
     });
     let _response = client.subscribe(request).await?;
@@ -65,7 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Retrieve the provider URI.
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
         &invehicle_digital_twin_url,
-        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID,
+        sdv::hvac::ambient_air_temperature::ID,
         digital_twin_protocol::GRPC,
         &[digital_twin_operation::SUBSCRIBE.to_string()],
     )
@@ -79,7 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!(
         "Sending a subscribe request for entity id {} to provider URI {provider_uri}",
-        sdv::vehicle::cabin::hvac::ambient_air_temperature::ID
+        sdv::hvac::ambient_air_temperature::ID
     );
     retry_async_based_on_status(30, Duration::from_secs(1), || {
         subscribe_to_ambient_air_temperature(&provider_uri, &consumer_uri)

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "samples-property"
+name = "samples-seat-massager"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -14,7 +14,6 @@ digital-twin-model = { path = "../../digital-twin-model" }
 env_logger= { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
-prost = { workspace = true }
 samples-common = { path = "../common" }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
 serde = { workspace = true }
@@ -22,16 +21,14 @@ serde_derive = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
-url = { workspace = true }
-uuid = { workspace = true, features = ["v4", "fast-rng", "macro-diagnostics"] }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
 [[bin]]
-name = "property-provider"
+name = "seat-massager-provider"
 path = "provider/src/main.rs"
 
 [[bin]]
-name = "property-consumer"
+name = "seat-massager-consumer"
 path = "consumer/src/main.rs"

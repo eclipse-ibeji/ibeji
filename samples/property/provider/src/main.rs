@@ -4,7 +4,7 @@
 
 mod provider_impl;
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
@@ -16,6 +16,7 @@ use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessI
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
+use serde_derive::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -23,6 +24,14 @@ use tokio::time::{sleep, Duration};
 use tonic::{Status, transport::Server};
 
 use crate::provider_impl::{ProviderImpl, SubscriptionMap};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Property {
+    #[serde(rename = "AmbientAirTemperature")]
+    ambient_air_temperature: sdv::hvac::ambient_air_temperature::TYPE,
+    #[serde(rename = "$metadata")]
+    metadata: Metadata,
+}
 
 /// Register the ambient air temperature property's endpoint.
 ///
@@ -35,18 +44,15 @@ async fn register_ambient_air_temperature(
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
-        operations: vec![
-            digital_twin_operation::SUBSCRIBE.to_string(),
-            digital_twin_operation::UNSUBSCRIBE.to_string(),
-        ],
+        operations: vec![digital_twin_operation::SUBSCRIBE.to_string()],
         uri: provider_uri.to_string(),
-        context: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
+        context: sdv::hvac::ambient_air_temperature::ID.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
-        name: "AmbientAirTemperature".to_string(),
-        id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
-        description: "The immediate surroundings air temperature (in Fahrenheit).".to_string(),
+        name: sdv::hvac::ambient_air_temperature::NAME.to_string(),
+        id: sdv::hvac::ambient_air_temperature::ID.to_string(),
+        description: sdv::hvac::ambient_air_temperature::DESCRIPTION.to_string(),
         endpoint_info_list: vec![endpoint_info],
     };
 
@@ -60,6 +66,18 @@ async fn register_ambient_air_temperature(
     Ok(())
 }
 
+/// Create the JSON for the ambient air temperature property.
+///
+/// # Arguments
+/// * `ambient_air_temperature` - The ambient air temperature value.
+fn create_property(ambient_air_temperature: i32) -> String {
+    let metadata = Metadata { model: sdv::hvac::ambient_air_temperature::ID.to_string() };
+
+    let property: Property = Property { ambient_air_temperature, metadata };
+
+    serde_json::to_string(&property).unwrap()
+}
+
 /// Start the ambient air temperature data stream.
 ///
 /// # Arguments
@@ -67,7 +85,7 @@ async fn register_ambient_air_temperature(
 fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
     debug!("Starting the Provider's ambient air temperature data stream.");
     tokio::spawn(async move {
-        let mut temperature: u32 = 75;
+        let mut temperature: i32 = 75;
         let mut is_temperature_increasing: bool = true;
         loop {
             let urls;
@@ -75,16 +93,18 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
             // This block controls the lifetime of the lock.
             {
                 let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
-                let get_result = lock.get(sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
+                let get_result = lock.get(sdv::hvac::ambient_air_temperature::ID);
                 urls = match get_result {
                     Some(val) => val.clone(),
                     None => HashSet::new(),
                 };
             }
 
+            let property = create_property(temperature);
+
             for url in urls {
                 info!("Sending a publish request for {} with value {temperature} to consumer URI {url}",
-                    sdv::vehicle::cabin::hvac::ambient_air_temperature::ID);
+                    sdv::hvac::ambient_air_temperature::ID);
 
                 let client_result = DigitalTwinConsumerClient::connect(url).await;
                 if client_result.is_err() {
@@ -95,8 +115,8 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
                 let mut client = client_result.unwrap();
 
                 let request = tonic::Request::new(PublishRequest {
-                    entity_id: sdv::vehicle::cabin::hvac::ambient_air_temperature::ID.to_string(),
-                    value: temperature.to_string(),
+                    entity_id: sdv::hvac::ambient_air_temperature::ID.to_string(),
+                    value: property.clone(),
                 });
 
                 let _response = client.publish(request).await;

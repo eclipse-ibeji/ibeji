@@ -1,8 +1,53 @@
 @startuml
 
-participant "Provider"
-participant "Consumer"
+autonumber
 
-"Consumer" -> "Provider" : Invoke - request (entity id, consumer uri, response id, payload)
+"Digital Twin Consumer" -> "In-Vehicle Digital Twin Service" : FindById("dtmi:sdv:HMI:ShowNotification;1") - request
+"Digital Twin Consumer" <- "In-Vehicle Digital Twin Service" : FindById - response
+note left
+entityAccessInfo:
+{
+    name: "ShowNotification"
+    id: "dtmi:sdv:HMI:ShowNotifiation;1"
+    description: "..."
+    endpointInfoList: [
+        {
+            protocol: "grpc"
+            operations: ["Invoke"]
+            uri: "http://127.0.0.1:4000"
+            context: "dtmi:sdv:HMI:ShowNotifiation;1"
+        }
+    ]
+}
+end note
+
+"Digital Twin Consumer" -> "Digital Twin Provider" : Invoke - request
+note right
+{
+    entity_id: "dtmi:sdv:HMI:ShowNotification:request;1"
+    consumer_uri: "http://127.0.0.1:5000"
+    response_id: "123456789"
+    payload:
+    {
+        "Notification": "Show this sample notification",
+        "$metadata": {
+            "$model": "dtmi:sdv:HMI:ShowNotification:request;1"
+       }
+    }
+}
+end note
+
+"Digital Twin Consumer" <- "Digital Twin Provider" : Invoke - response
+
+"Digital Twin Consumer" <- "Digital Twin Provider" : Respond - request
+note left
+{
+    entity_id: "dtmi:sdv:HMI:ShowNotification;1"
+    response_id: "123456789"
+    payload: {}
+}
+end note
+
+"Digital Twin Consumer" -> "Digital Twin Provider" : Respond - response
 
 @enduml

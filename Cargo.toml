@@ -21,6 +21,7 @@ members = [
   "samples/command",
   "samples/mixed",
   "samples/property",
+  "samples/seat_massager",
 ]
 
 [workspace.dependencies]

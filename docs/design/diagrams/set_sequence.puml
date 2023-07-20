@@ -1,0 +1,40 @@
+@startuml
+
+autonumber
+
+"Digital Twin Consumer" -> "In-Vehicle Digital Twin Service" : FindById("dtmi:sdv:HVAC:IsAirConditioningActive;1") - request
+"Digital Twin Consumer" <- "In-Vehicle Digital Twin Service" : FindById - response
+note left
+entityAccessInfo:
+{
+    name: "IsAirConditioningActive"
+    id: "dtmi:sdv:HVAC:IsAirConditioningActive;1"
+    description: "Is air conditioning active?"
+    endpointInfoList: [
+        {
+            protocol: "grpc"
+            operations: ["Get", "Set", "Subscribe"]
+            uri: "http://127.0.0.1:4000"
+            context: "dtmi:sdv:HVAC:IsAirConditioningActive;1"
+        }
+    ]
+}
+end note
+
+"Digital Twin Consumer" -> "Digital Twin Provider" : Set - request
+note right
+{
+    entity_id: "dtmi:sdv:HVAC:IsAirConditioningActive;1"
+    value:
+    {
+        "IsAirConditioningActive": true
+        "$metadata": {
+            "$model": "dtmi:sdv:HVAC:IsAirConditioningActive;1"
+        }
+    }
+}
+end note
+
+"Digital Twin Consumer" <- "Digital Twin Provider" : Set - response
+
+@enduml

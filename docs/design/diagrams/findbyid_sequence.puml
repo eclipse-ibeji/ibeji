@@ -1,9 +1,24 @@
 @startuml
 
-participant "In-Vehicle Digital Twin Service"
-participant "Consumer"
+autonumber
 
-"Consumer" -> "In-Vehicle Digital Twin Service" : FindById - request (entity id)
-"In-Vehicle Digital Twin Service" --> "Consumer" : FindById - response (entity access info)
+"Digital Twin Consumer" -> "In-Vehicle Digital Twin Service" : FindById("dtmi:sdv:HVAC:AmbientAirTemperature;1") - request
+"Digital Twin Consumer" <- "In-Vehicle Digital Twin Service" : FindById - response
+note left
+entityAccessInfo:
+{
+    name: "AmbientAirTemperature"
+    id: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
+    description: "The immediate surroundings air temperature (in Fahrenheit)."
+    endpointInfoList: [
+        {
+            protocol: "grpc"
+            operations: ["Get", "Subscribe"]
+            uri: "http://127.0.0.1:4000"
+            context: dtmi:sdv:HVAC:AmbientAirTemperature;1"
+        }
+    ]
+}
+end note
 
 @enduml

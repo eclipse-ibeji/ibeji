@@ -9,11 +9,11 @@ entityAccessInfo:
 {
     name: "AmbientAirTemperature"
     id: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
-    description: "..."
+    description: "The immediate surroundings air temperature (in Fahrenheit)."
     endpointInfoList: [
         {
             protocol: "grpc"
-            operations: ["Get", "Subscribe"]
+            operations: ["Get", "Invoke"]
             uri: "http://127.0.0.1:4000"
             context: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
         }
@@ -21,7 +21,7 @@ entityAccessInfo:
 }
 end note
 
-"Digital Twin Consumer" -> "Digital Twin Provider" : Subscribe - request
+"Digital Twin Consumer" -> "Digital Twin Provider" : Get - request
 note right
 {
     entity_id: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
@@ -29,7 +29,7 @@ note right
 }
 end note
 
-"Digital Twin Consumer" <- "Digital Twin Provider" : Subscribe - response
+"Digital Twin Consumer" <- "Digital Twin Provider" : Get - response
 
 "Digital Twin Consumer" <- "Digital Twin Provider" : Publish - request
 note left
