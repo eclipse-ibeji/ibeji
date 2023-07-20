@@ -23,7 +23,7 @@ Ibeji has three main architectural concepts:
 
 The first Ibeji architectural concept that we will introduce is the Digital Twin Consumer. A Digital Twin Consumer is a software entity that utilizes Ibeji to interface with the digital representation of the In-Vehicle hardware components.
 
-Another Ibeji architectural concept is the Digital Twin Provider. A Digital Twin Provider is the access point to some/all of the vehicle's hardware resources. A Digital Twin Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Digital Twin Consumers. Each resource includes meta data so that Digital Twin Consumers know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Digital Twin Providers and accommodates overlapping resources offered by multiple Digital Twin Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths).
+Another Ibeji architectural concept is the Digital Twin Provider. A Digital Twin Provider is the access point to some/all of the vehicle's hardware resources. A Digital Twin Provider registers itself with the In-Vehicle Digital Twin Service. Once registered, the In-Vehicle Digital Twin Service can make the resources available to Digital Twin Consumers. Each resource includes metadata so that Digital Twin Consumers know how to interact with it. The In-Vehicle Digital Twin Service supports multiple simultaneous Digital Twin Providers and accommodates overlapping resources offered by multiple Digital Twin Providers. These overlaps offer multiple options for interacting with a resource and can improve the resource's availability (by supporting multiple access paths).
 
 The final architectural concept is the In-Vehicle Digital Twin Service. It has an interface that enables Digital Twin Consumers to discover the vehicle's resources and provides the details necessary to interact with those resources. The In-Vehicle Digital Twin Service has an interface that allows Digital Twin Providers to dynamically register their resources.
 
@@ -39,7 +39,7 @@ This initial contribution does not try to arrange the resources into a hierarchy
 
 DTDL can identify and specify each of the resources. Below is an example of a HVAC resource.
 
-```uml
+```json
 {
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",

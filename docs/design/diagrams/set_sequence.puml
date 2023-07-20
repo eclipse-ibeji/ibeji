@@ -13,7 +13,7 @@ entityAccessInfo:
     endpointInfoList: [
         {
             protocol: "grpc"
-            operationss: ["Get", "Set", "Subscribe"]
+            operations: ["Get", "Set", "Subscribe"]
             uri: "http://127.0.0.1:4000"
             context: "dtmi:sdv:HVAC:IsAirConditioningActive;1"
         }

@@ -118,11 +118,11 @@ impl DigitalTwinProvider for ProviderImpl {
         let is_air_conditioing_active_property_json: serde_json::Value =
             serde_json::from_str(&value)
                 .map_err(|error| Status::invalid_argument(error.to_string()))?;
-        let is_air_conditioing_active_json = is_air_conditioing_active_property_json
+        let is_air_conditioning_active_json = is_air_conditioing_active_property_json
             .get(sdv::hvac::is_air_conditioning_active::NAME)
             .unwrap();
         let is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE =
-            serde_json::from_value(is_air_conditioing_active_json.clone()).unwrap();
+            serde_json::from_value(is_air_conditioning_active_json.clone()).unwrap();
 
         info!("Received a set request for entity id {entity_id} with value '{value}'");
 
