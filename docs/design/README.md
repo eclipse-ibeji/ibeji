@@ -4,8 +4,8 @@
 - [Architecture](#architecture)
 - [DTDL](#dtdl)
 - [In-Vehicle Digital Twin Service](#in-vehicle-digital-twin-service)
-- [Digital Twin Provider](#digital-twin-provider)
-- [Digital Twin Consumer](#digital-twin-consumer)
+- [Sample Digital Twin Interactions](#sample-digital-twin-interactions)
+- [Appendix A – Digital Twin Interface](#appendix-a)
 
 ## <a name="introduction">Introduction</a>
 
@@ -27,7 +27,7 @@ Another Ibeji architectural concept is the Digital Twin Provider. A Digital Twin
 
 The final architectural concept is the In-Vehicle Digital Twin Service. It has an interface that enables Digital Twin Consumers to discover the vehicle's resources and provides the details necessary to interact with those resources. The In-Vehicle Digital Twin Service has an interface that allows Digital Twin Providers to dynamically register their resources.
 
-Below is the architectual diagram for Ibeji.
+Below is the architectural diagram for Ibeji.
 
 ![Component Diagram](diagrams/ibeji_component.svg)
 
@@ -108,7 +108,7 @@ The sequence diagram for a Digital Twin Consumer using the Invoke operation.
 
 ![Sequence Diagram](diagrams/invoke_sequence.svg)
 
-## <a name="appendix-b">Appendix A – Digital Twin Interface</a>
+## <a name="appendix-a">Appendix A – Digital Twin Interface</a>
 
 ### FindById
 

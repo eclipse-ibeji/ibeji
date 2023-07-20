@@ -6,6 +6,7 @@ DTDL
 dtmi
 ibeji
 Ibeji
+IsAirConditioningActive
 findbyid
 FindById
 gRPC
