@@ -1,9 +1,13 @@
 AmbientAirTemperature
+api
+com
 degreeFahrenheit
 dt
 dtdl
 DTDL
 dtmi
+github
+https
 ibeji
 Ibeji
 IsAirConditioningActive
@@ -12,16 +16,12 @@ FindById
 gRPC
 http
 HVAC
+json
 metadata
+opendigitaltwins
 org
 RemotelyAccessible
 sdv
 svg
-uml
 uri
-api
-com
-github
-https
-opendigitaltwins
 
