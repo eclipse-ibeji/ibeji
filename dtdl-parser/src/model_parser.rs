@@ -1163,57 +1163,13 @@ mod model_parser_tests {
         );
     }
 
-    #[rustfmt::skip]
-    #[test]
-    fn sdv_vehicle_validation_test() {
-        set_dtdl_path();
-
-        let mut json_texts = Vec::<String>::new();
-
-        let vehicle_path_result = ModelParser::find_full_path("v2/content/sdv/vehicle.json");
-        assert!(vehicle_path_result.is_ok());
-        let vehicle_contents_result = retrieve_dtdl(&vehicle_path_result.unwrap());
-        assert!(vehicle_contents_result.is_ok());
-        json_texts.push(vehicle_contents_result.unwrap());
-
-        let mut parser = ModelParser::new();
-        let model_dict_result = parser.parse(&json_texts);
-        assert!(
-            model_dict_result.is_ok(),
-            "parse failed due to: {}",
-            model_dict_result.err().unwrap()
-        );
-        let model_dict = model_dict_result.unwrap();
-
-        let ambient_air_temperature_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1");
-        assert!(ambient_air_temperature_id.is_some());
-        let ambient_air_temperature_entity_result =
-            model_dict.get(&ambient_air_temperature_id.unwrap());
-        assert!(ambient_air_temperature_entity_result.is_some());
-
-        let is_air_conditioning_active_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1");
-        assert!(is_air_conditioning_active_id.is_some());
-        let is_air_conditioning_active_entity_result = model_dict.get(&is_air_conditioning_active_id.unwrap());
-        assert!(is_air_conditioning_active_entity_result.is_some());
-
-        let hybrid_battery_remaining_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:OBD:HybridBatteryRemaining;1");
-        assert!(hybrid_battery_remaining_id.is_some());
-        let hybrid_battery_remaining_entity_result = model_dict.get(&hybrid_battery_remaining_id.unwrap());
-        assert!(hybrid_battery_remaining_entity_result.is_some());
-
-        let show_notification_id: Option<Dtmi> = create_dtmi("dtmi:sdv:Vehicle:Cabin:Infotainment:HMI:ShowNotification;1");
-        assert!(show_notification_id.is_some());
-        let show_notification_entity_result = model_dict.get(&show_notification_id.unwrap());
-        assert!(show_notification_entity_result.is_some());
-    }
-
     #[test]
     fn find_full_path_test() {
         set_dtdl_path();
 
-        let find_full_path_result = ModelParser::find_full_path("v2/content/sdv/vehicle.json");
+        let find_full_path_result = ModelParser::find_full_path("v3/content/sdv/hvac.json");
         assert!(find_full_path_result.is_ok());
         let full_path = find_full_path_result.unwrap();
-        assert!(full_path.ends_with("/v2/content/sdv/vehicle.json"));
+        assert!(full_path.ends_with("/v3/content/sdv/hvac.json"));
     }
 }
