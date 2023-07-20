@@ -1,8 +1,26 @@
 @startuml
 
-participant "Provider"
-participant "In-Vehicle Digital Twin Service"
+autonumber
 
-"Provider" -> "In-Vehicle Digital Twin Service" : Register - request (entity access info list)
+"In-Vehicle Digital Twin Service"  <- "Digital Twin Provider" : Register - request
+note left
+entityAccessInfoList: [
+    {
+        name: "AmbientAirTemperature"
+        id: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
+        description: "The immediate surroundings air temperature (in Fahrenheit)."
+        endpointInfoList: [
+            {
+                protocol: "grpc"
+                operationss: ["Get", "Subscribe"]
+                uri: "http://127.0.0.1:4000"
+                context: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
+            }
+        ]
+    }
+]
+end note
+
+"In-Vehicle Digital Twin Service" -> "Digital Twin Provider": Register - response
 
 @enduml

@@ -101,7 +101,7 @@ impl DigitalTwinProvider for ProviderImpl {
             let response_payload_json = serde_json::to_string(&response_payload).unwrap();
 
             let respond_request = tonic::Request::new(RespondRequest {
-                entity_id: entity_id.clone(),
+                entity_id: sdv::hmi::show_notification::response::ID.to_string(),
                 response_id,
                 payload: response_payload_json,
             });

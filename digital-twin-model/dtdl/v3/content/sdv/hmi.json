@@ -11,6 +11,7 @@
         "name": "ShowNotification",
         "description": "Show a notification on the HMI.",
         "request": {
+          "@id": "dtmi:sdv:HMI:ShowNotification:request;1",
           "name": "Notification",
           "displayName": "Notification",
           "description": "The notification to show on the HMI.",

@@ -6,7 +6,7 @@
 
 pub mod airbag_seat_massager {
     pub mod massage_airbags {
-        pub const ID: &str = "dtmi::sdv::airbag_seat_massager::massage_airbags";
+        pub const ID: &str = "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1";
         pub const NAME: &str = "MassageAirbags";
         pub const DESCRIPTION: &str = "The inflation level (0..100) for each massage airbag.";
         pub type TYPE = Vec<i32>;
@@ -24,6 +24,9 @@ pub mod hmi {
             pub const DESCRIPTION: &str = "The notification to show on the HMI.";
             pub type TYPE = String;
         }
+        pub mod response {
+            pub const ID: &str = "dtmi:sdv:HMI:ShowNotification::response;1";
+        }        
     }
 }
 
@@ -36,7 +39,7 @@ pub mod hvac {
     }
 
     pub mod is_air_conditioning_active {
-        pub const ID: &str = "dtmi:sdv:Vehicle:Cabin:HVAC:IsAirConditioningActive;1";
+        pub const ID: &str = "dtmi:sdv:HVAC:IsAirConditioningActive;1";
         pub const NAME: &str = "IsAirConditioningActive";
         pub const DESCRIPTION: &str = "Is air conditioning active?";
         pub type TYPE = bool;
