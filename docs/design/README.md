@@ -33,7 +33,7 @@ Below is the architectural diagram for Ibeji.
 
 ## <a name="dtdl">DTDL</a>
 
-Fundamental to the Ibeji solution is its use of Digital Twin Definition Language [DTDL](https://github.com/Azure/opendigitaltwins-dtdl) to identify and specify each of the vehicle's resources.
+Fundamental to the Ibeji solution is its use of Digital Twin Definition Language [DTDL](https://github.com/Azure/opendigitaltwins-dtdl) to identify and specify each of the vehicle's resources.  We are using Version 3 of DTDL.
 
 This initial contribution does not try to arrange the resources into a hierarchy or into a graph. It is expected that some future version will facilitate this.
 
