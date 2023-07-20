@@ -26,7 +26,7 @@ pub mod hmi {
         }
         pub mod response {
             pub const ID: &str = "dtmi:sdv:HMI:ShowNotification::response;1";
-        }        
+        }
     }
 }
 

@@ -43,7 +43,7 @@ fn start_seat_massage_sequence(provider_uri: String) {
 
     tokio::spawn(async move {
         loop {
-            // We assume that the seat has 5 rows with 2 airbags in each row.
+            // We assume that the seat has 6 rows with 3 airbags in each row.
             // The sequence will represent a wave with the crest_row representing the crest of the wave.
             property.massage_airbags = Vec::new();
             for airbag in 0..18 {

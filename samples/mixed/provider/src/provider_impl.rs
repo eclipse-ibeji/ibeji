@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::{sdv_v1 as sdv, Metadata};
+use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
@@ -12,20 +12,11 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
 };
-use serde_derive::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 use crate::vehicle::Vehicle;
-
-#[derive(Debug, Serialize, Deserialize)]
-struct IsAirConditioningActiveProperty {
-    #[serde(rename = "IsAirConditioningActive")]
-    massage_airbags: sdv::hvac::is_air_conditioning_active::TYPE,
-    #[serde(rename = "$metadata")]
-    metadata: Metadata,
-}
 
 pub type SubscriptionMap = HashMap<String, HashSet<String>>;
 
