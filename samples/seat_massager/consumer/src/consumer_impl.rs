@@ -24,11 +24,11 @@ impl DigitalTwinConsumer for ConsumerImpl {
         request: Request<PublishRequest>,
     ) -> Result<Response<PublishResponse>, Status> {
         let PublishRequest { entity_id, value } = request.into_inner();
-        let j: serde_json::Value = serde_json::from_str(&value).unwrap();
-        let j_prop = j.get(sdv::airbag_seat_massager::massage_airbags::NAME).unwrap();
+        let value_json: serde_json::Value = serde_json::from_str(&value).map_err(|error| Status::invalid_argument(error.to_string()))?;
+        let massage_airbags_json = value_json.get(sdv::airbag_seat_massager::massage_airbags::NAME).unwrap();
 
         let massage_airbags: sdv::airbag_seat_massager::massage_airbags::TYPE =
-            serde_json::from_value(j_prop.clone()).unwrap();
+            serde_json::from_value(massage_airbags_json.clone()).unwrap();
 
         info!("Received a publish for entity id {entity_id} with the value: {massage_airbags:?}");
 

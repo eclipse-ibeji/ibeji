@@ -116,7 +116,7 @@ impl DigitalTwinProvider for ProviderImpl {
         let value: String = request_inner.value;
 
         let is_air_conditioing_active_property_json: serde_json::Value =
-            serde_json::from_str(&value).unwrap();
+            serde_json::from_str(&value).map_err(|error| Status::invalid_argument(error.to_string()))?;
         let is_air_conditioing_active_json = is_air_conditioing_active_property_json
             .get(sdv::hvac::is_air_conditioning_active::NAME)
             .unwrap();

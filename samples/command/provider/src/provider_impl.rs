@@ -79,7 +79,7 @@ impl DigitalTwinProvider for ProviderImpl {
     ) -> Result<Response<InvokeResponse>, Status> {
         let InvokeRequest { entity_id, response_id, consumer_uri, payload } = request.into_inner();
 
-        let request_payload_json: serde_json::Value = serde_json::from_str(&payload).unwrap();
+        let request_payload_json: serde_json::Value = serde_json::from_str(&payload).map_err(|error| Status::invalid_argument(error.to_string()))?;
         let notification_json =
             request_payload_json.get(sdv::hmi::show_notification::request::NAME).unwrap();
 
