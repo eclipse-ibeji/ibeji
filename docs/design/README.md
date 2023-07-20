@@ -7,6 +7,7 @@
 - [Sample Digital Twin Interactions](#sample-digital-twin-interactions)
 - [Appendix A – Digital Twin Interface](#appendix-a)
 
+
 ## <a name="introduction">Introduction</a>
 
 Project Eclipse Ibeji delivers an In-Vehicle software component that provides a digital representation of vehicle hardware resources. The representation is usable by other software in the vehicle to monitor and control vehicle hardware resources in a standardized manner.
