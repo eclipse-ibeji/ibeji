@@ -26,7 +26,7 @@ jobs:
         uses: Swatinem/rust-cache@v1
       - name: Generate the Notice
         run: |
-          git config --global user.email "sdv-vdt@example.com"
+          git config --global user.email "noreply@github.com"
           git config --global user.name "Automated Notice Generation Pipeline"
           ./tools/notice_generation.sh
         shell: bash

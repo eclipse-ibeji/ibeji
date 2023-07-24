@@ -156,7 +156,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    let consumer_authority = settings.consumer_authority;
+    let consumer_authority = settings.consumer_authority.expect("consumer_authority must be specified in the config file");
 
     // Setup the HTTP server.
     let addr: SocketAddr = consumer_authority.parse().unwrap();

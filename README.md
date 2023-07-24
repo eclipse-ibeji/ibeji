@@ -57,6 +57,11 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 
 `sudo apt install -y protobuf-compiler`
 
+### <a name="install-mqtt-broker">Install MQTT Broker</a>
+
+If you plan to run any of the samnples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).
+Instuctions for installing Mosquitto can be found [here](https://github.com/eclipse/mosquitto).
+
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
 The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
@@ -103,7 +108,7 @@ The demos use config files and we have provided a templated version of each conf
 - {repo-root-dir}/core/invehicle_digital_twin/template
 - {repo-root-dir}/samples/common/template
 
-The following instructions are for the demo for the use of a property.
+The following instructions are for the demo for the use of a property.  This sample uses a MQTT Broker; please make sure that it is running.
 
 Steps:
 
@@ -115,12 +120,11 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `cd {repo-root-dir}/target/debug`<br>
 1. Create the three config files with the following contents, if they are not already there:<br><br>
 ---- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"`<br>
 `invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
 `invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
 ---- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"`<br>
+`provider_authority: "0.0.0.0:1883"`<br>
 `invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
 `./in-vehicle-digital-twin`<br>

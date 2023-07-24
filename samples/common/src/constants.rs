@@ -14,6 +14,7 @@ pub mod digital_twin_operation {
 // Supported digital twin protocols.
 pub mod digital_twin_protocol {
     pub const GRPC: &str = "grpc";
+    pub const MQTT: &str = "mqtt";
 }
 
 pub mod chariott {
