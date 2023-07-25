@@ -12,7 +12,12 @@
   - [DTDL Parser](#dtdl-parser)
 - [Building](#building)
 - [Running the Tests](#running-the-tests)
-- [Running the Demo](#running-the-demo)
+- [Running the Samples](#running-the-samples)
+   - [Property Sample](#property-sample)
+   - [Command Sample](#command-sample)
+   - [Mixed Sample](#mixed-sample)
+   - [Seat Massager Sample](#seat-massager-sample)
+   - [Using Chariott](#using-chariott)
 - [Trademarks](#trademarks)
 
 ## <a name="introduction">Introduction</a>
@@ -98,21 +103,25 @@ After successfully building Ibeji, you can run all of the unit tests. To do this
 
 Currently, we have no integration tests or end-to-end tests.
 
-## <a name="running-the-demo">Running the Demo</a>
+## <a name="running-the-samples">Running the Samples</a>
 
-There are currently three demos: one that demonstrates the use of a property, one that demonstrates the use of a command and one that
-demonstrates the mixed use of properties and commands.
+There are currently four samples: one that demonstrates the use of a property, one that demonstrates the use of a command, one that
+demonstrates the mixed use of properties and commands and one that demonstrates the use of get/set for a seat massager.
 
 The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
 
 - {repo-root-dir}/core/invehicle_digital_twin/template
 - {repo-root-dir}/samples/common/template
 
+Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
+
+### <a name="property-sample">Property Sample</a>
+
 The following instructions are for the demo for the use of a property.  This sample uses a MQTT Broker; please make sure that it is running.
 
 Steps:
 
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
@@ -134,11 +143,13 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./property-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
+### <a name="command-sample">Command Sample</a>
+
 The following instructions are for the demo for the use of a command.
 
 Steps:
 
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
@@ -161,11 +172,13 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./command-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
+### <a name="mixed-sample">Mixed Sample</a>
+
 The following instructions are for the demo for the mixed use of commands and properties.
 
 Steps:
 
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Provider and one running a Consumer.
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
 The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
@@ -187,6 +200,37 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 1. In the bottom window, run:<br><br>
 `./mixed-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
+
+### <a name="seat-massager-sample">Seat Massager Sample</a>
+
+The following instructions are for the demo for a seat massager.
+
+Steps:
+
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
+Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
+The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+1. In each window, change directory to the directory containing the build artifacts.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`cd {repo-root-dir}/target/debug`<br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
+---- consumer_settings.yaml ----<br>
+`consumer_authority: "0.0.0.0:6010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
+---- invehicle_digital_twin_settings.yaml ----<br>
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
+---- provider_settings.yaml ----<br>
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_url: "http://0.0.0.0:5010"`<br><br>
+1. In the top window, run:<br><br>
+`./in-vehicle-digital-twin`<br>
+1. In the middle window, run:<br><br>
+`./seat-massager-provider`<br>
+1. In the bottom window, run:<br><br>
+`./seat-massager-consumer`<br>
+1. Use control-c in each of the windows when you wish to stop the demo.
+
+### <a name="using-chariott">Using Chariott</a>
 
 If you want the consumers and providers for each demo to use Chariott to discover the URL for the In-Vehicle Digital Twin Service, rather than
 having it statically provided in their respective config file, then do the following before starting each demo:
