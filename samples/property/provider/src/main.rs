@@ -19,7 +19,6 @@ use tokio::time::{sleep, Duration};
 use tonic::Status;
 
 const MQTT_CLIENT_ID: &str = "property-subscriber";
-const MQTT_QOS: i32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Property {
@@ -94,7 +93,7 @@ fn start_ambient_air_temperature_data_stream(broker_uri: String, topic: String) 
                 sdv::hvac::ambient_air_temperature::ID
             );
             if let Err(err) = publish_message(&broker_uri, &topic, &content) {
-                warn!("Publish request failed due to '{:?}'", err);
+                warn!("Publish request failed due to '{err:?}'");
                 break;
             }
 
@@ -124,17 +123,17 @@ fn start_ambient_air_temperature_data_stream(broker_uri: String, topic: String) 
 /// Publish a message to a MQTT broker located.
 ///
 /// # Arguments
-/// `host` - The MQTT broker's URI.
+/// `broker_uri` - The MQTT broker's URI.
 /// `topic` - The topic to publish to.
 /// `content` - The message to publish.
-fn publish_message(host: &str, topic: &str, content: &str) -> Result<(), String> {
+fn publish_message(broker_uri: &str, topic: &str, content: &str) -> Result<(), String> {
     let create_opts = mqtt::CreateOptionsBuilder::new()
-        .server_uri(host)
+        .server_uri(broker_uri)
         .client_id(MQTT_CLIENT_ID.to_string())
         .finalize();
 
     let client = mqtt::Client::new(create_opts)
-        .map_err(|err| format!("Failed to create the client due to '{:?}'", err))?;
+        .map_err(|err| format!("Failed to create the client due to '{err:?}'"))?;
 
     let conn_opts = mqtt::ConnectOptionsBuilder::new()
         .keep_alive_interval(Duration::from_secs(30))
@@ -142,15 +141,16 @@ fn publish_message(host: &str, topic: &str, content: &str) -> Result<(), String>
         .finalize();
 
     let _connect_response =
-        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{:?}", err));
+        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{err:?}"));
 
-    let msg = mqtt::Message::new(topic, content, MQTT_QOS);
+    let msg = mqtt::Message::new(topic, content, mqtt::types::QOS_1);
     if let Err(err) = client.publish(msg) {
-        return Err(format!("Failed to publish message due to '{:?}", err));
+        return Err(format!("Failed to publish message due to '{err:?}"));
     }
 
-    let tok = client.disconnect(None);
-    tok.unwrap();
+    if let Err(err) = client.disconnect(None) {
+        warn!("Failed to disconnect from topic '{topic}' on broker {broker_uri} due to {err:?}");
+    }
 
     Ok(())
 }
@@ -199,7 +199,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     debug!("The Broker URI is {}", &broker_uri);
 
     let topic = convert_dtmi_to_topic(sdv::hvac::ambient_air_temperature::ID)?;
-    debug!("Topic is '{}'", topic);
+    debug!("Topic is '{topic}'");
 
     debug!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {

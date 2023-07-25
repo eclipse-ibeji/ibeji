@@ -15,7 +15,6 @@ use tokio::time::Duration;
 use tonic::Status;
 
 const MQTT_CLIENT_ID: &str = "property-consumer";
-const MQTT_QOS: i32 = 1;
 
 /// Receive Ambient Air Temperature updates.
 ///
@@ -29,7 +28,7 @@ fn receive_ambient_air_tempterature_updates(broker_uri: &str, topic: &str) -> Re
         .finalize();
 
     let client = mqtt::Client::new(create_opts)
-        .map_err(|err| format!("Failed to create the client due to '{:?}'", err))?;
+        .map_err(|err| format!("Failed to create the client due to '{err:?}'"))?;
 
     let receiver = client.start_consuming();
 
@@ -44,19 +43,19 @@ fn receive_ambient_air_tempterature_updates(broker_uri: &str, topic: &str) -> Re
         .finalize();
 
     let _connect_response =
-        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{:?}", err));
+        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{err:?}"));
 
     let mut _subscribe_response = client
-        .subscribe(topic, MQTT_QOS)
-        .map_err(|err| format!("Failed to subscribe to topic {topic} due to '{:?}'", err));
+        .subscribe(topic, mqtt::types::QOS_1)
+        .map_err(|err| format!("Failed to subscribe to topic {topic} due to '{err:?}'"));
 
     for msg in receiver.iter() {
         if let Some(msg) = msg {
             info!("{}", msg);
         } else if !client.is_connected() {
             if client.reconnect().is_ok() {
-                _subscribe_response = client.subscribe(topic, MQTT_QOS).map_err(|err| {
-                    format!("Failed to subscribe to topic {topic} due to '{:?}'", err)
+                _subscribe_response = client.subscribe(topic, mqtt::types::QOS_1).map_err(|err| {
+                    format!("Failed to subscribe to topic {topic} due to '{err:?}'")
                 });
             } else {
                 break;
@@ -103,7 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("The Topic for the AmbientAirTemperature property's provider is {topic})");
 
     let _receive_result = receive_ambient_air_tempterature_updates(&broker_uri, &topic)
-        .map_err(|err| Status::internal(format!("{:?}", err)));
+        .map_err(|err| Status::internal(format!("{err:?}")));
 
     info!("The Consumer has completed.");
 
