@@ -2,28 +2,23 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-mod provider_impl;
-
 use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
-use parking_lot::{Mutex, MutexGuard};
+use paho_mqtt as mqtt;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
 use samples_common::provider_config;
+use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
+use samples_protobuf_data_access::digital_twin::v1::{
+    EndpointInfo, EntityAccessInfo, RegisterRequest,
+};
 use serde_derive::{Deserialize, Serialize};
-use std::collections::HashSet;
-use std::net::SocketAddr;
-use std::sync::Arc;
+use tokio::signal;
 use tokio::time::{sleep, Duration};
-use tonic::{Status, transport::Server};
+use tonic::Status;
 
-use crate::provider_impl::{ProviderImpl, SubscriptionMap};
+const MQTT_CLIENT_ID: &str = "property-subscriber";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Property {
@@ -37,16 +32,18 @@ struct Property {
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
-/// * `provider_uri` - The provider's URI.
+/// * `broker_uri` - The broker's URI.
+/// * `topic` - The topic.
 async fn register_ambient_air_temperature(
     invehicle_digital_twin_url: &str,
-    provider_uri: &str,
+    broker_uri: &str,
+    topic: &str,
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
-        protocol: digital_twin_protocol::GRPC.to_string(),
+        protocol: digital_twin_protocol::MQTT.to_string(),
         operations: vec![digital_twin_operation::SUBSCRIBE.to_string()],
-        uri: provider_uri.to_string(),
-        context: sdv::hvac::ambient_air_temperature::ID.to_string(),
+        uri: broker_uri.to_string(),
+        context: topic.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
@@ -70,7 +67,7 @@ async fn register_ambient_air_temperature(
 ///
 /// # Arguments
 /// * `ambient_air_temperature` - The ambient air temperature value.
-fn create_property(ambient_air_temperature: i32) -> String {
+fn create_property_json(ambient_air_temperature: i32) -> String {
     let metadata = Metadata { model: sdv::hvac::ambient_air_temperature::ID.to_string() };
 
     let property: Property = Property { ambient_air_temperature, metadata };
@@ -81,48 +78,26 @@ fn create_property(ambient_air_temperature: i32) -> String {
 /// Start the ambient air temperature data stream.
 ///
 /// # Arguments
-/// `id_to_subscribers_map` - The id to subscribers map.
-fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<SubscriptionMap>>) {
+/// `broker_uri` - The host.
+/// `topic` - The topic.
+fn start_ambient_air_temperature_data_stream(broker_uri: String, topic: String) {
     debug!("Starting the Provider's ambient air temperature data stream.");
     tokio::spawn(async move {
         let mut temperature: i32 = 75;
         let mut is_temperature_increasing: bool = true;
         loop {
-            let urls;
+            let content = create_property_json(temperature);
 
-            // This block controls the lifetime of the lock.
-            {
-                let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
-                let get_result = lock.get(sdv::hvac::ambient_air_temperature::ID);
-                urls = match get_result {
-                    Some(val) => val.clone(),
-                    None => HashSet::new(),
-                };
+            info!(
+                "Sending a publish request for {} with value {temperature}",
+                sdv::hvac::ambient_air_temperature::ID
+            );
+            if let Err(err) = publish_message(&broker_uri, &topic, &content) {
+                warn!("Publish request failed due to '{err:?}'");
+                break;
             }
 
-            let property = create_property(temperature);
-
-            for url in urls {
-                info!("Sending a publish request for {} with value {temperature} to consumer URI {url}",
-                    sdv::hvac::ambient_air_temperature::ID);
-
-                let client_result = DigitalTwinConsumerClient::connect(url).await;
-                if client_result.is_err() {
-                    warn!("Unable to connect. We will retry in a moment.");
-                    sleep(Duration::from_secs(1)).await;
-                    continue;
-                }
-                let mut client = client_result.unwrap();
-
-                let request = tonic::Request::new(PublishRequest {
-                    entity_id: sdv::hvac::ambient_air_temperature::ID.to_string(),
-                    value: property.clone(),
-                });
-
-                let _response = client.publish(request).await;
-
-                debug!("Completed the publish request");
-            }
+            debug!("Completed the publish request");
 
             // Calculate the new temperature.
             // It bounces back and forth between 65 and 85 degrees.
@@ -145,6 +120,64 @@ fn start_ambient_air_temperature_data_stream(subscription_map: Arc<Mutex<Subscri
     });
 }
 
+/// Publish a message to a MQTT broker located.
+///
+/// # Arguments
+/// `broker_uri` - The MQTT broker's URI.
+/// `topic` - The topic to publish to.
+/// `content` - The message to publish.
+fn publish_message(broker_uri: &str, topic: &str, content: &str) -> Result<(), String> {
+    let create_opts = mqtt::CreateOptionsBuilder::new()
+        .server_uri(broker_uri)
+        .client_id(MQTT_CLIENT_ID.to_string())
+        .finalize();
+
+    let client = mqtt::Client::new(create_opts)
+        .map_err(|err| format!("Failed to create the client due to '{err:?}'"))?;
+
+    let conn_opts = mqtt::ConnectOptionsBuilder::new()
+        .keep_alive_interval(Duration::from_secs(30))
+        .clean_session(true)
+        .finalize();
+
+    let _connect_response =
+        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{err:?}"));
+
+    let msg = mqtt::Message::new(topic, content, mqtt::types::QOS_1);
+    if let Err(err) = client.publish(msg) {
+        return Err(format!("Failed to publish message due to '{err:?}"));
+    }
+
+    if let Err(err) = client.disconnect(None) {
+        warn!("Failed to disconnect from topic '{topic}' on broker {broker_uri} due to {err:?}");
+    }
+
+    Ok(())
+}
+
+/// Convert a DTMI to a MQTT topic name.
+/// The conversion will strip off the scheme (i.e. the "dtmi:" prefix)
+/// and replace all seprators (':' and ';') with a slash.
+///
+/// # Arguments
+/// `dtmi` - The DTMI.
+fn convert_dtmi_to_topic(dtmi: &str) -> Result<String, String> {
+    let parts: Vec<&str> = dtmi.split(&[':', ';']).collect();
+    if parts[0] != "dtmi" {
+        return Err("Invalid dtmi".to_string());
+    }
+    let mut topic: String = "".to_string();
+    // We will start at index 1 to skip the scheme.
+    for i in 1..parts.len() {
+        topic.push_str(parts[i]);
+        if i != (parts.len() - 1) {
+            topic.push('/');
+        }
+    }
+
+    Ok(topic)
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
@@ -162,28 +195,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    // Construct the provider URI from the provider authority.
-    let provider_uri = format!("http://{provider_authority}"); // Devskim: ignore DS137138
+    let broker_uri = format!("tcp://{provider_authority}"); // Devskim: ignore DS137138
+    debug!("The Broker URI is {}", &broker_uri);
 
-    // Setup the HTTP server.
-    let addr: SocketAddr = provider_authority.parse()?;
-    let subscription_map = Arc::new(Mutex::new(SubscriptionMap::new()));
-    let provider_impl = ProviderImpl { subscription_map: subscription_map.clone() };
-    let server_future =
-        Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
-    info!("The HTTP server is listening on address '{provider_authority}'");
+    let topic = convert_dtmi_to_topic(sdv::hvac::ambient_air_temperature::ID)?;
+    debug!("Topic is '{topic}'");
 
-    info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
+    debug!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_ambient_air_temperature(&invehicle_digital_twin_url, &provider_uri)
+        register_ambient_air_temperature(&invehicle_digital_twin_url, &broker_uri, &topic)
     })
     .await?;
 
-    start_ambient_air_temperature_data_stream(subscription_map.clone());
+    start_ambient_air_temperature_data_stream(broker_uri, topic);
 
-    server_future.await?;
+    signal::ctrl_c().await.expect("Failed to listen for control-c event");
 
-    debug!("The Provider has completed.");
+    info!("The Provider has completed.");
 
     Ok(())
 }

@@ -175,7 +175,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    let consumer_authority = settings.consumer_authority;
+    let consumer_authority = settings
+        .consumer_authority
+        .expect("consumer_authority must be specified in the config file");
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 

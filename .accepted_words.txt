@@ -33,6 +33,10 @@ ld
 LD
 microsoft
 minimalistic
+mosquitto
+Mosquitto
+mqtt
+MQTT
 opendigitaltwins
 plugandplay
 protobuf
