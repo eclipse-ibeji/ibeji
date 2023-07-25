@@ -59,8 +59,8 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>
 
-If you plan to run any of the samnples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).
-Instuctions for installing Mosquitto can be found [here](https://github.com/eclipse/mosquitto).
+If you plan to run any of the samples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).
+Instructions for installing Mosquitto can be found [here](https://github.com/eclipse/mosquitto).
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 

@@ -4,13 +4,15 @@
 
 use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
-use log::{debug, info, LevelFilter, warn};
+use log::{debug, info, warn, LevelFilter};
 use paho_mqtt as mqtt;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
 use samples_common::provider_config;
+use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
 use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_protobuf_data_access::digital_twin::v1::{
+    EndpointInfo, EntityAccessInfo, RegisterRequest,
+};
 use serde_derive::{Deserialize, Serialize};
 use tokio::signal;
 use tokio::time::{sleep, Duration};
@@ -36,7 +38,7 @@ struct Property {
 async fn register_ambient_air_temperature(
     invehicle_digital_twin_url: &str,
     broker_uri: &str,
-    topic: &str
+    topic: &str,
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::MQTT.to_string(),
@@ -87,7 +89,10 @@ fn start_ambient_air_temperature_data_stream(broker_uri: String, topic: String) 
         loop {
             let content = create_property_json(temperature);
 
-            info!("Sending a publish request for {} with value {temperature}", sdv::hvac::ambient_air_temperature::ID);
+            info!(
+                "Sending a publish request for {} with value {temperature}",
+                sdv::hvac::ambient_air_temperature::ID
+            );
             if let Err(err) = publish_message(&broker_uri, &topic, &content) {
                 warn!("Publish request failed due to '{:?}'", err);
                 break;
@@ -116,30 +121,30 @@ fn start_ambient_air_temperature_data_stream(broker_uri: String, topic: String) 
     });
 }
 
-
 /// Publish a message to a MQTT broker located.
 ///
 /// # Arguments
 /// `host` - The MQTT broker's URI.
 /// `topic` - The topic to publish to.
 /// `content` - The message to publish.
-fn publish_message(host: &str, topic: &str, content: &str) -> Result<(), String>
-{
+fn publish_message(host: &str, topic: &str, content: &str) -> Result<(), String> {
     let create_opts = mqtt::CreateOptionsBuilder::new()
         .server_uri(host)
         .client_id(MQTT_CLIENT_ID.to_string())
         .finalize();
 
-    let client = mqtt::Client::new(create_opts).map_err(|err| format!("Failed to create the client due to '{:?}'", err))?;
+    let client = mqtt::Client::new(create_opts)
+        .map_err(|err| format!("Failed to create the client due to '{:?}'", err))?;
 
     let conn_opts = mqtt::ConnectOptionsBuilder::new()
         .keep_alive_interval(Duration::from_secs(30))
         .clean_session(true)
         .finalize();
 
-    let _connect_response = client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{:?}", err));
+    let _connect_response =
+        client.connect(conn_opts).map_err(|err| format!("Failed to connect due to '{:?}", err));
 
-    let msg = mqtt::Message::new(topic, content.clone(), MQTT_QOS);
+    let msg = mqtt::Message::new(topic, content, MQTT_QOS);
     if let Err(err) = client.publish(msg) {
         return Err(format!("Failed to publish message due to '{:?}", err));
     }
@@ -153,7 +158,7 @@ fn publish_message(host: &str, topic: &str, content: &str) -> Result<(), String>
 /// Convert a DTMI to a MQTT topic name.
 /// The conversion will strip off the scheme (i.e. the "dtmi:" prefix)
 /// and replace all seprators (':' and ';') with a slash.
-/// 
+///
 /// # Arguments
 /// `dtmi` - The DTMI.
 fn convert_dtmi_to_topic(dtmi: &str) -> Result<String, String> {
@@ -165,11 +170,12 @@ fn convert_dtmi_to_topic(dtmi: &str) -> Result<String, String> {
     // We will start at index 1 to skip the scheme.
     for i in 1..parts.len() {
         topic.push_str(parts[i]);
-        if i != (parts.len() -1) {
+        if i != (parts.len() - 1) {
             topic.push('/');
         }
     }
-    return Ok(topic);
+
+    Ok(topic)
 }
 
 #[tokio::main]
