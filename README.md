@@ -13,11 +13,11 @@
 - [Building](#building)
 - [Running the Tests](#running-the-tests)
 - [Running the Samples](#running-the-samples)
-   - [Property Sample](#property-sample)
-   - [Command Sample](#command-sample)
-   - [Mixed Sample](#mixed-sample)
-   - [Seat Massager Sample](#seat-massager-sample)
-   - [Using Chariott](#using-chariott)
+  - [Property Sample](#property-sample)
+  - [Command Sample](#command-sample)
+  - [Mixed Sample](#mixed-sample)
+  - [Seat Massager Sample](#seat-massager-sample)
+  - [Using Chariott](#using-chariott)
 - [Trademarks](#trademarks)
 
 ## <a name="introduction">Introduction</a>
