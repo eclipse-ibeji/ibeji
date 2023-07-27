@@ -94,13 +94,9 @@ pub async fn discover_digital_twin_provider_using_ibeji(
     debug!("Received the response for the find_by_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info);
 
-    let entity_access_info = response_inner.entity_access_info;
-    if entity_access_info.is_none() {
-        return Err("Did not find the entity".to_string());
-    }
-
-    match entity_access_info
-        .unwrap()
+    match response_inner
+        .entity_access_info
+        .ok_or("Did not find the entity".to_string())?
         .endpoint_info_list
         .iter()
         .find(|endpoint_info| {

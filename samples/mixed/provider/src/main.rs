@@ -142,17 +142,15 @@ async fn register_entities(
 /// * `entity_id` - Entity id.
 /// * `value` - The value to publish.
 async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
-    let uris;
-
     // This block controls the lifetime of the lock.
-    {
+    let uris = {
         let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
         let get_result = lock.get(entity_id);
-        uris = match get_result {
+        match get_result {
             Some(val) => val.clone(),
             None => HashSet::new(),
-        };
-    }
+        }
+    };
 
     for uri in uris {
         debug!(
