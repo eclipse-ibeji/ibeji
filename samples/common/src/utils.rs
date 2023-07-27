@@ -118,14 +118,16 @@ pub async fn discover_digital_twin_provider_using_ibeji(
     }
 }
 
-/// Use Chariott to discover the endpoint for the digital twin service.
+/// Use Chariott to discover a service.
 ///
 /// # Arguments
 /// * `chariott_uri` - Chariott's URI.
-/// * `name` - Name.
-/// * `version` - Version.
-pub async fn discover_invehicle_digital_twin_service_using_chariott(
+/// * `namespace` - The service's namespace.
+/// * `name` - The service's name.
+/// * `version` - The service's version.
+pub async fn discover_service_using_chariott(
     chariott_uri: &str,
+    namespace: &str,
     name: &str,
     version: &str,
 ) -> Result<String, Status> {
@@ -134,7 +136,7 @@ pub async fn discover_invehicle_digital_twin_service_using_chariott(
         .map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(DiscoverRequest {
-        namespace: constants::chariott::NAMESPACE_FOR_IBEJI.to_string(),
+        namespace: namespace.to_string(),
         name: name.to_string(),
         version: version.to_string(),
     });
@@ -175,7 +177,11 @@ pub async fn retrieve_invehicle_digital_twin_uri(
             match chariott_uri {
                 Some(value) => {
                     info!("The URI for the in-vehicle digital twin service will be retrieved from Chariott.");
-                    match retry_async_based_on_status(30, Duration::from_secs(1), || discover_invehicle_digital_twin_service_using_chariott(&value, INVEHICLE_DIGITAL_TWIN_SERVICE_NAME, INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION)).await {
+                    match retry_async_based_on_status(
+                        30,
+                        Duration::from_secs(1),
+                        || discover_service_using_chariott(&value, constants::chariott::NAMESPACE_FOR_IBEJI, INVEHICLE_DIGITAL_TWIN_SERVICE_NAME, INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION)
+                    ).await {
                         Ok(value) => value,
                         Err(error) => Err(format!("Failed to discover the in-vehicle digital twin service's URI due to error: {error}"))?
                     }
