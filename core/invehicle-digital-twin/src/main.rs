@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
-use core_protobuf_data_access::chariott::service_discovery::core::v1::{RegisterRequest, ServiceMetadata};
+use core_protobuf_data_access::chariott::service_discovery::core::v1::{
+    RegisterRequest, ServiceMetadata,
+};
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
 use env_logger::{Builder, Target};
 use log::{debug, error, info, LevelFilter};
@@ -14,14 +16,15 @@ use std::sync::Arc;
 use tonic::transport::Server;
 use tonic::{Request, Status};
 
-mod invehicle_digital_twin_impl;
 mod invehicle_digital_twin_config;
+mod invehicle_digital_twin_impl;
 
 pub const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
 pub const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
 pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
 pub const CHARIOTT_COMMUNICATION_KIND_FOR_GRPC: &str = "grpc+proto";
-pub const CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE: &str = "invehicle_digital_twin.v1";
+pub const CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE: &str =
+    "invehicle_digital_twin.v1";
 
 /// Register the invehicle digital twin service with Chariott.
 ///
@@ -42,7 +45,8 @@ pub async fn register_invehicle_digital_twin_service_with_chariott(
         version: INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION.to_string(),
         uri: invehicle_digital_twin_uri.to_string(),
         communication_kind: CHARIOTT_COMMUNICATION_KIND_FOR_GRPC.to_string(),
-        communication_reference: CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE.to_string(),
+        communication_reference:
+            CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE.to_string(),
     });
 
     let request = Request::new(RegisterRequest { service });

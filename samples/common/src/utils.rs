@@ -82,9 +82,10 @@ pub async fn discover_digital_twin_provider_using_ibeji(
     operations: &[String],
 ) -> Result<EndpointInfo, String> {
     info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {invehicle_digitial_twin_servuce_uri}");
-    let mut client = InvehicleDigitalTwinClient::connect(invehicle_digitial_twin_servuce_uri.to_string())
-        .await
-        .map_err(|error| format!("{error}"))?;
+    let mut client =
+        InvehicleDigitalTwinClient::connect(invehicle_digitial_twin_servuce_uri.to_string())
+            .await
+            .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { id: entity_id.to_string() });
     let response = client.find_by_id(request).await.map_err(|error| error.to_string())?;
     let response_inner = response.into_inner();
@@ -96,7 +97,8 @@ pub async fn discover_digital_twin_provider_using_ibeji(
         return Err("Did not find the entity".to_string());
     }
 
-    match entity_access_info.unwrap()
+    match entity_access_info
+        .unwrap()
         .endpoint_info_list
         .iter()
         .find(|endpoint_info| {
@@ -125,7 +127,7 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 pub async fn discover_invehicle_digital_twin_service_using_chariott(
     chariott_uri: &str,
     name: &str,
-    version: &str
+    version: &str,
 ) -> Result<String, Status> {
     let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
         .await
@@ -137,7 +139,8 @@ pub async fn discover_invehicle_digital_twin_service_using_chariott(
         version: version.to_string(),
     });
 
-    let response = client.discover(request).await.map_err(|error| Status::internal(error.to_string()))?;
+    let response =
+        client.discover(request).await.map_err(|error| Status::internal(error.to_string()))?;
     let response_inner = response.into_inner();
 
     let service = response_inner.service;
