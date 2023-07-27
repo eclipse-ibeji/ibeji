@@ -145,14 +145,8 @@ pub async fn discover_service_using_chariott(
 
     let response =
         client.discover(request).await.map_err(|error| Status::internal(error.to_string()))?;
-    let response_inner = response.into_inner();
 
-    let service = match response_inner.service {
-        Some(value) => value,
-        None => {
-            return Err(Status::not_found("Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version}"));
-        }
-    };
+    let service = response.into_inner().service.ok_or(Status::not_found("Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version}"))?;
 
     if service.communication_kind != communication_kind
         && service.communication_reference != communication_reference
