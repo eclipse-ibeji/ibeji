@@ -18,6 +18,10 @@ pub mod digital_twin_protocol {
 }
 
 pub mod chariott {
-    pub const NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
-    pub const SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
+    // pub const SCHEMA_KIND_FOR_GRPC: &str = "grpc+proto";
+    pub const INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE: &str = "sdv.ibeji";
+    pub const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
+    pub const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
+    pub const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND: &str = "grpc+proto";
+    pub const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE: &str = "https://github.com/eclipse-ibeji/ibeji/blob/main/interfaces/digital_twin/v1/digital_twin.proto";
 }

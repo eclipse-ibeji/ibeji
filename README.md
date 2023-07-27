@@ -232,7 +232,8 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 
 ### <a name="using-chariott">Using Chariott</a>
 
-If you want the digital twin consumers and digital twin providers for each demo to use Chariott to discover the URI for the In-Vehicle Digital Twin Service, rather than having it statically provided in their respective config file, then do the following before starting each demo:
+If you want the digital twin consumers and digital twin providers for each demo to use Chariott to discover the URI for the In-Vehicle Digital Twin Service,
+rather than having it statically provided in their respective config file, then do the following before starting each demo:
 
 1. Clone a copy of Chariott from GitHub (`https://github.com/eclipse-chariott/chariott`).
 1. Build Chariott

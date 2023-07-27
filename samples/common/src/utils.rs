@@ -4,6 +4,11 @@
 
 use crate::constants;
 
+use constants::chariott::{
+    INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND,
+    INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE, INVEHICLE_DIGITAL_TWIN_SERVICE_NAME,
+    INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE, INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION,
+};
 use log::{debug, info};
 use samples_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use samples_protobuf_data_access::chariott::service_discovery::core::v1::DiscoverRequest;
@@ -13,15 +18,12 @@ use std::future::Future;
 use tokio::time::{sleep, Duration};
 use tonic::{Code, Request, Status};
 
-pub const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
-pub const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
-
 /// Is the provided subset a subset of the provided superset?
 ///
 /// # Arguments
 /// * `subset` - The provided subset.
 /// * `superset` - The provided superset.
-pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
+fn is_subset(subset: &[String], superset: &[String]) -> bool {
     subset.iter().all(|subset_member| {
         superset.iter().any(|supserset_member| subset_member == supserset_member)
     })
@@ -71,19 +73,19 @@ where
 /// Use Ibeji to discover the endpoint for a digital twin provider that satifies the requirements.
 ///
 /// # Arguments
-/// * `invehicle_digitial_twin_servuce_uri` - In-vehicle digital twin service URI.
+/// * `invehicle_digitial_twin_service_uri` - In-vehicle digital twin service URI.
 /// * `entity_id` - The matching entity id.
 /// * `protocol` - The required protocol.
 /// * `operations` - The required operations.
 pub async fn discover_digital_twin_provider_using_ibeji(
-    invehicle_digitial_twin_servuce_uri: &str,
+    invehicle_digitial_twin_service_uri: &str,
     entity_id: &str,
     protocol: &str,
     operations: &[String],
 ) -> Result<EndpointInfo, String> {
-    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {invehicle_digitial_twin_servuce_uri}");
+    info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {invehicle_digitial_twin_service_uri}");
     let mut client =
-        InvehicleDigitalTwinClient::connect(invehicle_digitial_twin_servuce_uri.to_string())
+        InvehicleDigitalTwinClient::connect(invehicle_digitial_twin_service_uri.to_string())
             .await
             .map_err(|error| format!("{error}"))?;
     let request = tonic::Request::new(FindByIdRequest { id: entity_id.to_string() });
@@ -125,11 +127,15 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 /// * `namespace` - The service's namespace.
 /// * `name` - The service's name.
 /// * `version` - The service's version.
+/// # `communication_kind` - The service's communication kind.
+/// # `communication_reference` - The service's communication reference.
 pub async fn discover_service_using_chariott(
     chariott_uri: &str,
     namespace: &str,
     name: &str,
     version: &str,
+    communication_kind: &str,
+    communication_reference: &str,
 ) -> Result<String, Status> {
     let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
         .await
@@ -145,17 +151,26 @@ pub async fn discover_service_using_chariott(
         client.discover(request).await.map_err(|error| Status::internal(error.to_string()))?;
     let response_inner = response.into_inner();
 
-    let service = response_inner.service;
-    if service.is_none() {
-        return Err(Status::not_found("Did not find the service"));
-    }
-    let uri = service.unwrap().uri;
+    let service = match response_inner.service {
+        Some(value) => value,
+        None => {
+            return Err(Status::not_found("Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version}"));
+        }
+    };
 
-    Ok(uri)
+    if service.communication_kind != communication_kind
+        && service.communication_reference != communication_reference
+    {
+        return Err(Status::not_found(
+            "Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version} that has communication kind '{communication_kind} and communication_reference '{communication_reference}''",
+        ));
+    }
+
+    Ok(service.uri)
 }
 
 /// Retrieve the In-Vehicle Digital Twin URI.
-/// If invehicle_digital_twin_uri is provided, then it's value is returned.
+/// If invehicle_digital_twin_uri is provided, then its value is returned.
 /// Otherwise, chariott_uri is used to retrieve it from Chariott.
 ///
 /// # Arguments
@@ -180,7 +195,13 @@ pub async fn retrieve_invehicle_digital_twin_uri(
                     match retry_async_based_on_status(
                         30,
                         Duration::from_secs(1),
-                        || discover_service_using_chariott(&value, constants::chariott::NAMESPACE_FOR_IBEJI, INVEHICLE_DIGITAL_TWIN_SERVICE_NAME, INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION)
+                        || discover_service_using_chariott(
+                            &value,
+                            INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE,
+                            INVEHICLE_DIGITAL_TWIN_SERVICE_NAME,
+                            INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION,
+                            INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND,
+                            INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE)
                     ).await {
                         Ok(value) => value,
                         Err(error) => Err(format!("Failed to discover the in-vehicle digital twin service's URI due to error: {error}"))?

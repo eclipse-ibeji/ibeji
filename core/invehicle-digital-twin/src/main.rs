@@ -19,19 +19,18 @@ use tonic::{Request, Status};
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
 
-pub const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
-pub const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
-pub const CHARIOTT_NAMESPACE_FOR_IBEJI: &str = "sdv.ibeji";
-pub const CHARIOTT_COMMUNICATION_KIND_FOR_GRPC: &str = "grpc+proto";
-pub const CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE: &str =
-    "invehicle_digital_twin.v1";
+const INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE: &str = "sdv.ibeji";
+const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
+const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
+const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND: &str = "grpc+proto";
+const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE: &str = "https://github.com/eclipse-ibeji/ibeji/blob/main/interfaces/digital_twin/v1/digital_twin.proto";
 
 /// Register the invehicle digital twin service with Chariott.
 ///
 /// # Arguments
 /// * `chariott_uri` - Chariott's URI.
 /// * `invehicle_digital_twin_uri` - In-vehicle Digital Twin Service's URI.
-pub async fn register_invehicle_digital_twin_service_with_chariott(
+async fn register_invehicle_digital_twin_service_with_chariott(
     chariott_uri: &str,
     invehicle_digital_twin_uri: &str,
 ) -> Result<(), Status> {
@@ -40,18 +39,17 @@ pub async fn register_invehicle_digital_twin_service_with_chariott(
         .map_err(|e| Status::internal(e.to_string()))?;
 
     let service = Some(ServiceMetadata {
-        namespace: CHARIOTT_NAMESPACE_FOR_IBEJI.to_string(),
+        namespace: INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE.to_string(),
         name: INVEHICLE_DIGITAL_TWIN_SERVICE_NAME.to_string(),
         version: INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION.to_string(),
         uri: invehicle_digital_twin_uri.to_string(),
-        communication_kind: CHARIOTT_COMMUNICATION_KIND_FOR_GRPC.to_string(),
-        communication_reference:
-            CHARIOTT_COMMUNICATION_REFERENCE_FOR_INVEHICLE_DIGITAL_TWIN_SERVICE.to_string(),
+        communication_kind: INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND.to_string(),
+        communication_reference: INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE.to_string(),
     });
 
     let request = Request::new(RegisterRequest { service });
 
-    let _response = client
+    client
         .register(request)
         .await
         .map_err(|_| Status::internal("Chariott register request failed"))?;
@@ -82,10 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .serve(addr);
     info!("The HTTP server is listening on address '{invehicle_digital_twin_address}'");
 
-    // Register the digital twin service with Chariott if Chariott's URI was provided in the config.
-    // Note: We are not using Chariott's announce, and therefore the digital twin serice will be forcibly unregistered
-    //       after 15 seconds unless the CHARIOTT_REGISTRY_TTL_SECS environment variable is set. Please make sure that
-    //       it is set (and exported) in the shell running Chariott before Chariott has started.
+    // Register the invehicle digital twin service with Chariott if Chariott's URI was provided in the config.
     if chariott_uri_option.is_some() {
         let response = register_invehicle_digital_twin_service_with_chariott(
             &chariott_uri_option.unwrap(),

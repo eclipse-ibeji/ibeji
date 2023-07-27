@@ -107,7 +107,7 @@ impl InvehicleDigitalTwinImpl {
 }
 
 #[cfg(test)]
-mod invehicle_digitaltwin_impl_tests {
+mod invehicle_digital_twin_impl_tests {
     use super::*;
     use core_protobuf_data_access::invehicle_digital_twin::v1::EndpointInfo;
 
