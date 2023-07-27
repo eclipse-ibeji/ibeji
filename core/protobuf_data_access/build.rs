@@ -7,16 +7,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .message_attribute("EndpointInfo", "#[derive(serde::Deserialize, serde::Serialize)]")
         .message_attribute("EntityAccessInfo", "#[derive(serde::Deserialize, serde::Serialize)]")
         .compile(
-            &["../../interfaces/digital_twin/v1/digital_twin.proto"],
-            &["../../interfaces/digital_twin/v1/"],
+            &["../../interfaces/invehicle_digital_twin/v1/invehicle_digital_twin.proto"],
+            &["../../interfaces/invehicle_digital_twin/v1/"],
         )?;
     tonic_build::configure().compile(
-        &["../../external/chariott/proto/chariott/runtime/v1/runtime.proto"],
-        &["../../external/chariott/proto"],
-    )?;
-    tonic_build::configure().compile(
-        &["../../external/chariott/proto/chariott/provider/v1/provider.proto"],
-        &["../../external/chariott/proto"],
+        &["../../external/chariott/service_discovery/proto/core/v1/service_registry.proto"],
+        &["../../external/chariott/service_discovery/proto/core/v1/"],
     )?;
 
     Ok(())

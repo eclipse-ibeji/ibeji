@@ -4,9 +4,6 @@
 [submodule "external/iot-plugandplay-models"]
 	path = external/iot-plugandplay-models
 	url = https://github.com/Azure/iot-plugandplay-models
-[submodule "external/--force"]
-	path = external/--force
-	url = https://github.com/eclipse-chariott/chariott
 [submodule "external/chariott"]
 	path = external/chariott
 	url = https://github.com/eclipse-chariott/chariott

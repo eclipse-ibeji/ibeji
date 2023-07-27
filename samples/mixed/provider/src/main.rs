@@ -10,10 +10,10 @@ use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
 use samples_common::provider_config;
-use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
+use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
@@ -54,10 +54,10 @@ struct IsAirConditioingActiveProperty {
 /// Register the entities endpoints.
 ///
 /// # Arguments
-/// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
+/// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
 /// * `provider_uri` - The provider's URI.
 async fn register_entities(
-    invehicle_digital_twin_url: &str,
+    invehicle_digital_twin_uri: &str,
     provider_uri: &str,
 ) -> Result<(), Status> {
     // AmbientAirTemperature
@@ -126,7 +126,7 @@ async fn register_entities(
         show_notification_access_info,
     ];
 
-    let mut client = DigitalTwinClient::connect(invehicle_digital_twin_url.to_string())
+    let mut client = InvehicleDigitalTwinClient::connect(invehicle_digital_twin_uri.to_string())
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
     let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
@@ -135,25 +135,29 @@ async fn register_entities(
     Ok(())
 }
 
+/// Publish.
+///
+/// # Arguments
+/// * `subscription_map` - Subscription map.
+/// * `entity_id` - Entity id.
+/// * `value` - The value to publish.
 async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str, value: &str) {
-    let urls;
-
     // This block controls the lifetime of the lock.
-    {
+    let uris = {
         let lock: MutexGuard<SubscriptionMap> = subscription_map.lock();
         let get_result = lock.get(entity_id);
-        urls = match get_result {
+        match get_result {
             Some(val) => val.clone(),
             None => HashSet::new(),
-        };
-    }
+        }
+    };
 
-    for url in urls {
+    for uri in uris {
         debug!(
-            "Sending a publish request for {entity_id} with value {value} to consumer URI {url}"
+            "Sending a publish request for {entity_id} with value {value} to consumer URI {uri}"
         );
 
-        let client_result = DigitalTwinConsumerClient::connect(url).await;
+        let client_result = DigitalTwinConsumerClient::connect(uri).await;
         if client_result.is_err() {
             warn!("Unable to connect. We will retry in a moment.");
             sleep(Duration::from_secs(1)).await;
@@ -256,9 +260,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let provider_authority = settings.provider_authority;
 
-    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
-        settings.invehicle_digital_twin_url,
-        settings.chariott_url,
+    let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
+        settings.invehicle_digital_twin_uri,
+        settings.chariott_uri,
     )
     .await?;
 
@@ -275,9 +279,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
-    info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
+    info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_entities(&invehicle_digital_twin_url, &provider_uri)
+        register_entities(&invehicle_digital_twin_uri, &provider_uri)
     })
     .await?;
 

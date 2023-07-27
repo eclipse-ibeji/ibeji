@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package digital_twin;
+package invehicle_digital_twin;
 
-service DigitalTwin {
+service InvehicleDigitalTwin {
     rpc FindById (FindByIdRequest) returns (FindByIdResponse);
     rpc Register (RegisterRequest) returns (RegisterResponse);
 }

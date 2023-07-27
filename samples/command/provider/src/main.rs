@@ -8,10 +8,10 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
 use samples_common::provider_config;
-use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_protobuf_data_access::digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
+use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
 use std::net::SocketAddr;
 use tokio::time::Duration;
@@ -22,10 +22,10 @@ use crate::provider_impl::ProviderImpl;
 /// Register the show notification command's endpoint.
 ///
 /// # Arguments
-/// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
+/// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
 /// * `provider_uri` - The provider's URI.
 async fn register_show_notification(
-    invehicle_digital_twin_url: &str,
+    invehicle_digital_twin_uri: &str,
     provider_uri: &str,
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
@@ -42,7 +42,7 @@ async fn register_show_notification(
         endpoint_info_list: vec![endpoint_info],
     };
 
-    let mut client = DigitalTwinClient::connect(invehicle_digital_twin_url.to_string())
+    let mut client = InvehicleDigitalTwinClient::connect(invehicle_digital_twin_uri.to_string())
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
     let request =
@@ -63,9 +63,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let provider_authority = settings.provider_authority;
 
-    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
-        settings.invehicle_digital_twin_url,
-        settings.chariott_url,
+    let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
+        settings.invehicle_digital_twin_uri,
+        settings.chariott_uri,
     )
     .await?;
 
@@ -79,9 +79,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
-    info!("Sending a register request to the In-Vehicle Digital Twin Service URL {invehicle_digital_twin_url}");
+    info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_show_notification(&invehicle_digital_twin_url, &provider_uri)
+        register_show_notification(&invehicle_digital_twin_uri, &provider_uri)
     })
     .await?;
 

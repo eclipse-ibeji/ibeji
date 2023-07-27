@@ -12,8 +12,8 @@ const CONFIG_FILENAME: &str = "consumer_settings";
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub consumer_authority: Option<String>,
-    pub chariott_url: Option<String>,
-    pub invehicle_digital_twin_url: Option<String>,
+    pub chariott_uri: Option<String>,
+    pub invehicle_digital_twin_uri: Option<String>,
 }
 
 /// Load the settings.

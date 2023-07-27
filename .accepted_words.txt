@@ -50,6 +50,7 @@ sudo
 timothee
 toml
 toolchain
-url
+uri
+URI
 www
 yaml
