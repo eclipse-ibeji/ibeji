@@ -236,8 +236,6 @@ If you want the digital twin consumers and digital twin providers for each demo 
 
 1. Clone a copy of Chariott from GitHub (`https://github.com/eclipse-chariott/chariott`).
 1. Build Chariott
-1. Set Chariott's CHARIOTT_REGISTRY_TTL_SECS environment variable to a high number (we suggest 86400 seconds), as Ibeji does not rely on Chariott's announce feature:<br><br>
-`export CHARIOTT_REGISTRY_TTL_SECS=86400`<br>
 1. Run Chariott:<br><br>
 `cargo run -p service_discovery`<br>
 1. In each of the the config files, add the setting:<br><br>
