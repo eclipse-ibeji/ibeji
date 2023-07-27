@@ -4,8 +4,8 @@
 
 extern crate iref;
 
-use core_protobuf_data_access::digital_twin::v1::digital_twin_server::DigitalTwin;
-use core_protobuf_data_access::digital_twin::v1::{
+use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwin;
+use core_protobuf_data_access::invehicle_digital_twin::v1::{
     EntityAccessInfo, FindByIdRequest, FindByIdResponse, RegisterRequest, RegisterResponse,
 };
 use log::{debug, info};
@@ -15,12 +15,12 @@ use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
-pub struct DigitalTwinImpl {
+pub struct InvehicleDigitalTwinImpl {
     pub entity_access_info_map: Arc<RwLock<HashMap<String, EntityAccessInfo>>>,
 }
 
 #[tonic::async_trait]
-impl DigitalTwin for DigitalTwinImpl {
+impl InvehicleDigitalTwin for InvehicleDigitalTwinImpl {
     /// Find-by-id implementation.
     ///
     /// # Arguments
@@ -79,7 +79,7 @@ impl DigitalTwin for DigitalTwinImpl {
     }
 }
 
-impl DigitalTwinImpl {
+impl InvehicleDigitalTwinImpl {
     /// Register the entity.
     ///
     /// # Arguments
@@ -107,9 +107,9 @@ impl DigitalTwinImpl {
 }
 
 #[cfg(test)]
-mod digitaltwin_impl_tests {
+mod invehicle_digitaltwin_impl_tests {
     use super::*;
-    use core_protobuf_data_access::digital_twin::v1::EndpointInfo;
+    use core_protobuf_data_access::invehicle_digital_twin::v1::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_id_test() {
@@ -131,8 +131,8 @@ mod digitaltwin_impl_tests {
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl =
-            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let invehicle_digital_twin_impl =
+            InvehicleDigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
@@ -144,7 +144,7 @@ mod digitaltwin_impl_tests {
         let request = tonic::Request::new(FindByIdRequest {
             id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
         });
-        let result = digital_twin_impl.find_by_id(request).await;
+        let result = invehicle_digital_twin_impl.find_by_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
         let response_inner = response.into_inner();
@@ -182,13 +182,13 @@ mod digitaltwin_impl_tests {
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let digital_twin_impl =
-            DigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let invehicle_digital_twin_impl =
+            InvehicleDigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         let request = tonic::Request::new(RegisterRequest {
             entity_access_info_list: vec![entity_access_info],
         });
-        let result = digital_twin_impl.register(request).await;
+        let result = invehicle_digital_twin_impl.register(request).await;
         assert!(result.is_ok(), "register result is not okay: {result:?}");
 
         // This block controls the lifetime of the lock.

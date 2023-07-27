@@ -8,7 +8,7 @@ use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
+use samples_common::utils::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
 use samples_common::consumer_config;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumerServer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
@@ -169,9 +169,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let settings = consumer_config::load_settings();
 
-    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
-        settings.invehicle_digital_twin_url,
-        settings.chariott_url,
+    let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
+        settings.invehicle_digital_twin_uri,
+        settings.chariott_uri,
     )
     .await?;
 
@@ -190,7 +190,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let show_notification_command_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            &invehicle_digital_twin_url,
+            &invehicle_digital_twin_uri,
             sdv::hmi::show_notification::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::INVOKE.to_string()],
@@ -202,7 +202,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let ambient_air_temperature_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            &invehicle_digital_twin_url,
+            &invehicle_digital_twin_uri,
             sdv::hvac::ambient_air_temperature::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::SUBSCRIBE.to_string()],
@@ -214,7 +214,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let is_air_conditioning_active_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            &invehicle_digital_twin_url,
+            &invehicle_digital_twin_uri,
             sdv::hvac::is_air_conditioning_active::ID,
             digital_twin_protocol::GRPC,
             &[
@@ -229,7 +229,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let hybrid_battery_remaining_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
-            &invehicle_digital_twin_url,
+            &invehicle_digital_twin_uri,
             sdv::obd::hybrid_battery_remaining::ID,
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::SUBSCRIBE.to_string()],

@@ -8,9 +8,9 @@ use log::{debug, info, warn, LevelFilter};
 use paho_mqtt as mqtt;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::provider_config;
-use samples_common::utils::{retrieve_invehicle_digital_twin_url, retry_async_based_on_status};
-use samples_protobuf_data_access::digital_twin::v1::digital_twin_client::DigitalTwinClient;
-use samples_protobuf_data_access::digital_twin::v1::{
+use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
+use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
+use samples_protobuf_data_access::invehicle_digital_twin::v1::{
     EndpointInfo, EntityAccessInfo, RegisterRequest,
 };
 use serde_derive::{Deserialize, Serialize};
@@ -31,11 +31,11 @@ struct Property {
 /// Register the ambient air temperature property's endpoint.
 ///
 /// # Arguments
-/// * `invehicle_digital_twin_url` - The In-Vehicle Digital Twin URL.
+/// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
 /// * `broker_uri` - The broker's URI.
 /// * `topic` - The topic.
 async fn register_ambient_air_temperature(
-    invehicle_digital_twin_url: &str,
+    invehicle_digital_twin_uri: &str,
     broker_uri: &str,
     topic: &str,
 ) -> Result<(), Status> {
@@ -53,7 +53,7 @@ async fn register_ambient_air_temperature(
         endpoint_info_list: vec![endpoint_info],
     };
 
-    let mut client = DigitalTwinClient::connect(invehicle_digital_twin_url.to_string())
+    let mut client = InvehicleDigitalTwinClient::connect(invehicle_digital_twin_uri.to_string())
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
     let request =
@@ -189,9 +189,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let provider_authority = settings.provider_authority;
 
-    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
-        settings.invehicle_digital_twin_url,
-        settings.chariott_url,
+    let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
+        settings.invehicle_digital_twin_uri,
+        settings.chariott_uri,
     )
     .await?;
 
@@ -201,9 +201,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let topic = convert_dtmi_to_topic(sdv::hvac::ambient_air_temperature::ID)?;
     debug!("Topic is '{topic}'");
 
-    debug!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_url}");
+    debug!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_ambient_air_temperature(&invehicle_digital_twin_url, &broker_uri, &topic)
+        register_ambient_air_temperature(&invehicle_digital_twin_uri, &broker_uri, &topic)
     })
     .await?;
 

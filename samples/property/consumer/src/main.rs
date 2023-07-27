@@ -9,7 +9,7 @@ use paho_mqtt as mqtt;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::consumer_config;
 use samples_common::utils::{
-    discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_url,
+    discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
 };
 use tokio::time::Duration;
 use tonic::Status;
@@ -81,15 +81,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let settings = consumer_config::load_settings();
 
-    let invehicle_digital_twin_url = retrieve_invehicle_digital_twin_url(
-        settings.invehicle_digital_twin_url,
-        settings.chariott_url,
+    let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
+        settings.invehicle_digital_twin_uri,
+        settings.chariott_uri,
     )
     .await?;
 
     // Retrieve the provider URI.
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
-        &invehicle_digital_twin_url,
+        &invehicle_digital_twin_uri,
         sdv::hvac::ambient_air_temperature::ID,
         digital_twin_protocol::MQTT,
         &[digital_twin_operation::SUBSCRIBE.to_string()],
