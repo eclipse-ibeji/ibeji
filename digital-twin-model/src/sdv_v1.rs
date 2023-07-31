@@ -48,7 +48,7 @@ pub mod hvac {
 
 pub mod obd {
     pub mod hybrid_battery_remaining {
-        pub const ID: &str = "dtmi:sdv::OBD:HybridBatteryRemaining;1";
+        pub const ID: &str = "dtmi:sdv:OBD:HybridBatteryRemaining;1";
         pub const NAME: &str = "HybridBatteryRemaining";
         pub const DESCRIPTION: &str = "The remaining hybrid battery life.";
         pub type TYPE = i32;
