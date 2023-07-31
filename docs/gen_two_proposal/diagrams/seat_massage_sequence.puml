@@ -2,7 +2,7 @@
 
 autonumber
 
-"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByModel("dtmi:svd:Vehicle;1") - request
+"Massage Controller" -> "In-Vehicle Digital Twin Service": FindByModel("dtmi:sdv:Vehicle;1") - request
 
 "Massage Controller" <- "In-Vehicle Digital Twin Service": FindByModel - response 
 note left
@@ -209,16 +209,16 @@ loop until stopped
   {
     "@dtid": "sample-front-right-seat-massager",
     "MassageAirBags": {
-      "0":  "25",
-      "1":  "25",
-      "2":  "50",
-      "3":  "50",
-      "4":  "75",
-      "5":  "75",
-      "6":  "100",
-      "7":  "100",
-      "8":  "75",
-      "9":  "75",
+      25,
+      25,
+      50,
+      50,
+      75,
+      75,
+      100,
+      100,
+      75,
+      75
     },
     "@metadata": {
       "model": "dtmi:sdv.PremiumAirbagSeatMassager;1"
