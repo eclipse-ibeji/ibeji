@@ -110,7 +110,7 @@ demonstrates the mixed use of properties and commands and one that demonstrates 
 
 The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
 
-- {repo-root-dir}/core/invehicle_digital_twin/template
+- {repo-root-dir}/core/invehicle-digital-twin/template
 - {repo-root-dir}/samples/common/template
 
 Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
@@ -136,7 +136,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `provider_authority: "0.0.0.0:1883"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
-`./in-vehicle-digital-twin`<br>
+`./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./property-provider`<br>
 1. In the bottom window, run:<br><br>
@@ -165,7 +165,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `provider_authority: "0.0.0.0:4010"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
-`./in-vehicle-digital-twin`<br>
+`./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./command-provider`<br>
 1. In the bottom window, run:<br><br>
@@ -194,7 +194,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `provider_authority: "0.0.0.0:4010"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
-`./in-vehicle-digital-twin`<br>
+`./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./mixed-provider`<br>
 1. In the bottom window, run:<br><br>
@@ -223,7 +223,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `provider_authority: "0.0.0.0:4010"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run:<br><br>
-`./in-vehicle-digital-twin`<br>
+`./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./seat-massager-provider`<br>
 1. In the bottom window, run:<br><br>

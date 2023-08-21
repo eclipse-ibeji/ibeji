@@ -2,51 +2,105 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::sdv_v1 as sdv;
-use log::{debug, info, warn};
-use parking_lot::{Mutex, MutexGuard};
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::RespondRequest;
+// use digital_twin_model::sdv_v1 as sdv;
+use core::iter::Iterator;
+use log::warn;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
     StreamRequest, StreamResponse,    
 };
-use std::collections::{HashMap, HashSet};
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 use std::pin::Pin;
-use std::sync::Arc;
-use tokio_stream::Stream;
+use std::vec::Vec;
+use tokio::sync::mpsc;
+use tokio_stream::{wrappers::ReceiverStream, Stream, StreamExt};
+use tokio::time::{sleep, Duration};
 use tonic::{Request, Response, Status};
+use uuencode::uuencode;
 
-use crate::vehicle::Vehicle;
+#[derive(Debug, Default)]
+struct ImageFileIterator {
+    image_directory: String,
+    image_filenames: Vec<String>,
+    current_index: usize,
+}
 
-pub type SubscriptionMap = HashMap<String, HashSet<String>>;
+impl ImageFileIterator {
+    pub fn new(image_directory: &str, image_filenames: Vec<String>) -> Self {
+        Self {
+            image_directory: image_directory.to_string(),
+            image_filenames,
+            current_index: 0
+        }
+    }
+
+    fn read_image_file(&self, filename: &str) -> Result<String, std::io::Error> {
+        let filepath = Path::new(&self.image_directory).join(filename);
+        println!("About to read_image from '{}'", filepath.display());
+        let mut file = File::open(filepath)?;
+        println!("About to setup the buf_reader");
+        println!("About to read_string");
+        let mut file_content = Vec::new();
+        file.read_to_end(&mut file_content).expect("Unable to read");        
+        println!("About to setup the uuencode");
+        let encoded = uuencode(filename, &file_content);
+        println!("Encode: {encoded}");
+        Ok(encoded)
+    }    
+}
+
+impl Iterator for ImageFileIterator {
+    type Item = StreamResponse;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let len = self.image_filenames.len() ;
+        if len == 0 {
+            return None
+        }
+
+        let current = &self.image_filenames[self.current_index];
+
+        self.current_index = (self.current_index + 1) % len;
+
+        let uuencoded_content = self.read_image_file(current).ok()?;
+        let result = StreamResponse { message: uuencoded_content };
+
+        Some(result)
+    }
+}
 
 #[derive(Debug, Default)]
 pub struct ProviderImpl {
-    pub subscription_map: Arc<Mutex<SubscriptionMap>>,
-    pub vehicle: Arc<Mutex<Vehicle>>,
+    image_directory: String
 }
 
 impl ProviderImpl {
-    fn set_is_air_conditioning_active(
-        vehicle: Arc<Mutex<Vehicle>>,
-        value: bool,
-    ) -> Result<(), String> {
-        // This block controls the lifetime of the lock.
-        {
-            let mut lock: MutexGuard<Vehicle> = vehicle.lock();
-
-            lock.is_air_conditioning_active = value;
+    pub fn new(image_directory: &str) -> Self {
+        Self {
+            image_directory: image_directory.to_string(),
         }
-
-        Ok(())
     }
 
-    fn show_notification(payload: &str) {
-        info!("Notification: '{payload}'");
-    }
+    fn get_filenames_from_image_directory(&self) -> Result<Vec<String>, std::io::Error> {
+        let mut images = vec![];
+        for entry in std::fs::read_dir(&self.image_directory)? {
+            let entry = entry?;
+            if !entry.file_type()?.is_file() {
+                continue;
+            }
+            images.push(entry.file_name().into_string().unwrap());
+        }
+    
+        if images.is_empty() {
+            panic!("No images");
+        }
+    
+        Ok(images)
+    }       
 }
 
 #[tonic::async_trait]
@@ -61,31 +115,9 @@ impl DigitalTwinProvider for ProviderImpl {
         &self,
         request: Request<SubscribeRequest>,
     ) -> Result<Response<SubscribeResponse>, Status> {
-        let request_inner = request.into_inner();
-        let entity_id: String = request_inner.entity_id.clone();
-        let consumer_uri: String = request_inner.consumer_uri;
+        warn!("Got a subscribe request: {request:?}");
 
-        info!("Received a subscribe request for id {entity_id} from consumer URI {consumer_uri}");
-
-        // This block controls the lifetime of the lock.
-        {
-            let mut lock: MutexGuard<HashMap<String, HashSet<String>>> =
-                self.subscription_map.lock();
-
-            let uris_option = lock.get(&entity_id);
-            let mut uris = match uris_option {
-                Some(get_value) => get_value.clone(),
-                None => HashSet::new(),
-            };
-            uris.insert(consumer_uri);
-            lock.insert(entity_id.clone(), uris);
-        }
-
-        debug!("Completed the subscribe request.");
-
-        let response = SubscribeResponse {};
-
-        Ok(Response::new(response))
+        Err(Status::unimplemented("subscribe has not been implemented"))
     }
 
     /// Unsubscribe implementation.
@@ -116,42 +148,9 @@ impl DigitalTwinProvider for ProviderImpl {
     /// # Arguments
     /// * `request` - Set request.
     async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {
-        let request_inner = request.into_inner();
-        let entity_id: String = request_inner.entity_id.clone();
-        let value: String = request_inner.value;
+        warn!("Got a set request: {request:?}");
 
-        let is_air_conditioing_active_property_json: serde_json::Value =
-            serde_json::from_str(&value)
-                .map_err(|error| Status::invalid_argument(error.to_string()))?;
-        let is_air_conditioning_active_json = is_air_conditioing_active_property_json
-            .get(sdv::hvac::is_air_conditioning_active::NAME)
-            .unwrap();
-        let is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE =
-            serde_json::from_value(is_air_conditioning_active_json.clone()).unwrap();
-
-        info!("Received a set request for entity id {entity_id} with value '{value}'");
-
-        let vehicle: Arc<Mutex<Vehicle>> = self.vehicle.clone();
-
-        tokio::spawn(async move {
-            if entity_id == sdv::hvac::is_air_conditioning_active::ID {
-                let result = ProviderImpl::set_is_air_conditioning_active(
-                    vehicle.clone(),
-                    is_air_conditioning_active,
-                );
-                if result.is_err() {
-                    warn!("Failed to set {} due to: {}", entity_id, result.unwrap_err());
-                }
-            } else {
-                warn!("Error: The entity id {entity_id} is not recognized.");
-            }
-        });
-
-        let response = SetResponse {};
-
-        debug!("Completed the set request.");
-
-        Ok(Response::new(response))
+        Err(Status::unimplemented("set has not been implemented"))
     }
 
     /// Invoke implementation.
@@ -162,51 +161,9 @@ impl DigitalTwinProvider for ProviderImpl {
         &self,
         request: Request<InvokeRequest>,
     ) -> Result<Response<InvokeResponse>, Status> {
-        debug!("Got an invoke request: {request:?}");
+        warn!("Got an invoke request: {request:?}");
 
-        let request_inner = request.into_inner();
-        let entity_id: String = request_inner.entity_id.clone();
-        let response_id: String = request_inner.response_id.clone();
-        let consumer_uri: String = request_inner.consumer_uri;
-        let payload: String = request_inner.payload;
-
-        info!(
-            "Received an invoke request from for entity id {entity_id} with payload '{payload}' from consumer URI {consumer_uri}"
-        );
-
-        tokio::spawn(async move {
-            let mut response_payload: String = format!("Successfully invoked {entity_id}");
-
-            if entity_id == sdv::hmi::show_notification::ID {
-                ProviderImpl::show_notification(&payload);
-            } else {
-                response_payload = format!("Error: The entity id {entity_id} is not recognized.");
-            }
-
-            info!(
-                "Sending an invoke response for entity id {entity_id} to consumer URI {consumer_uri} "
-            );
-
-            let client_result = DigitalTwinConsumerClient::connect(consumer_uri).await;
-            if client_result.is_err() {
-                return Err(Status::internal(format!("{:?}", client_result.unwrap_err())));
-            }
-            let mut client = client_result.unwrap();
-
-            let respond_request = tonic::Request::new(RespondRequest {
-                entity_id,
-                response_id,
-                payload: response_payload,
-            });
-
-            client.respond(respond_request).await
-        });
-
-        let response = InvokeResponse {};
-
-        debug!("Completed the invoke request.");
-
-        Ok(Response::new(response))
+        Err(Status::unimplemented("get has not been implemented"))
     }
 
     /// Stream implementation.
@@ -217,9 +174,60 @@ impl DigitalTwinProvider for ProviderImpl {
         &self,
         request: Request<StreamRequest>,    
     ) -> Result<Response<Self::StreamStream>, Status> {
-        warn!("Got a stream request: {request:?}");
+        let image_filenames = self.get_filenames_from_image_directory().map_err(|_| Status::internal("get filenames failed"))?;
 
-        Err(Status::unimplemented("stream has not been implemented"))
+        let image_file_iterator = ImageFileIterator::new(&self.image_directory, image_filenames);
+
+        let mut stream = Box::pin(tokio_stream::iter(image_file_iterator).throttle(Duration::from_millis(200)));
+
+        // spawn and channel are required if you want handle "disconnect" functionality
+        // the `out_stream` will not be polled after client disconnect
+        let (tx, rx) = mpsc::channel(128);
+        tokio::spawn(async move {
+            while let Some(item) = stream.next().await {
+                match tx.send(Result::<_, Status>::Ok(item)).await {
+                    Ok(_) => {
+                        // item (server response) was queued to be send to client
+                    }
+                    Err(_item) => {
+                        // output_stream was build from rx and both are dropped
+                        break;
+                    }
+                }
+                sleep(Duration::from_secs(1)).await;
+            }
+            println!("\tclient disconnected");
+        });        
+/*
+        // creating infinite stream with requested message
+        let repeat = std::iter::repeat(StreamResponse {
+            message: request.into_inner().message,
+        });
+        let mut stream = Box::pin(tokio_stream::iter(repeat).throttle(Duration::from_millis(200)));
+
+        // spawn and channel are required if you want handle "disconnect" functionality
+        // the `out_stream` will not be polled after client disconnect
+        let (tx, rx) = mpsc::channel(128);
+        tokio::spawn(async move {
+            while let Some(item) = stream.next().await {
+                match tx.send(Result::<_, Status>::Ok(item)).await {
+                    Ok(_) => {
+                        // item (server response) was queued to be send to client
+                    }
+                    Err(_item) => {
+                        // output_stream was build from rx and both are dropped
+                        break;
+                    }
+                }
+            }
+            println!("\tclient disconnected");
+        });
+*/
+
+        let output_stream = ReceiverStream::new(rx);
+        Ok(Response::new(
+            Box::pin(output_stream) as Self::StreamStream
+        ))
     }     
 }
 
@@ -228,6 +236,7 @@ mod provider_impl_tests {
     use super::*;
     use uuid::Uuid;
 
+/*
     #[tokio::test]
     async fn subscribe_test() {
         let subscription_map = Arc::new(Mutex::new(HashMap::new()));
@@ -299,4 +308,5 @@ mod provider_impl_tests {
 
         // Note: this test does not check that the response has successfully been sent.
     }
+*/
 }

@@ -84,6 +84,7 @@ pub async fn discover_digital_twin_provider_using_ibeji(
     operations: &[String],
 ) -> Result<EndpointInfo, String> {
     info!("Sending a find_by_id request for entity id {entity_id} to the In-Vehicle Digital Twin Service URI {invehicle_digitial_twin_service_uri}");
+
     let mut client =
         InvehicleDigitalTwinClient::connect(invehicle_digitial_twin_service_uri.to_string())
             .await
@@ -96,7 +97,7 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 
     match response_inner
         .entity_access_info
-        .ok_or_else(|| "Did not find the entity".to_string())?
+        .ok_or_else(|| "Did not find the entity".to_string())?        
         .endpoint_info_list
         .iter()
         .find(|endpoint_info| {
@@ -216,6 +217,7 @@ mod ibeji_common_utils_tests {
         assert!(is_subset(&[], &[]));
         assert!(is_subset(&[], &["one".to_string()]));
         assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string()]));
         assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
         assert!(is_subset(
             &["one".to_string(), "two".to_string()],

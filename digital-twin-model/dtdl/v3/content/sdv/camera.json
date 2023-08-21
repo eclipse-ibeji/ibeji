@@ -1,0 +1,20 @@
+[
+  {
+    "@context": [
+        "dtmi:dtdl:context;3",
+        "dtmi:dtdl:extension:streaming;1"
+    ],
+    "@type": "Interface",
+    "@id": "dtmi:sdv:Camera;1",
+    "description": "Cabin camera.",
+    "contents": [
+      {
+        "@type": ["Property", "Streaming"],
+        "@id": "dtmi:sdv:Camera:Feed;1",
+        "name": "Feed",
+        "schema": "string",
+        "description": "The cabin camera's feed for inside the cabin."
+      }
+    ]
+  }
+]

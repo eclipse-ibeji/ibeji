@@ -8,13 +8,15 @@ use parking_lot::{Mutex, MutexGuard};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     digital_twin_provider_server::DigitalTwinProvider, GetRequest, GetResponse, InvokeRequest,
     InvokeResponse, SetRequest, SetResponse, SubscribeRequest, SubscribeResponse,
-    UnsubscribeRequest, UnsubscribeResponse,
+    UnsubscribeRequest, UnsubscribeResponse, StreamRequest, StreamResponse,
 };
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_client::DigitalTwinConsumerClient;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::PublishRequest;
 use serde_derive::{Deserialize, Serialize};
+use std::pin::Pin;
 use std::sync::Arc;
 use std::vec::Vec;
+use tokio_stream::Stream;
 use tonic::{Request, Response, Status};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -92,6 +94,8 @@ impl ProviderImpl {
 
 #[tonic::async_trait]
 impl DigitalTwinProvider for ProviderImpl {
+    type StreamStream = Pin<Box<dyn Stream<Item = Result<StreamResponse, Status>> + Send>>;
+
     /// Subscribe implementation.
     ///
     /// # Arguments
@@ -209,4 +213,17 @@ impl DigitalTwinProvider for ProviderImpl {
 
         Err(Status::unimplemented("invoke has not been implemented"))
     }
+
+    /// Stream implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Stream request.
+    async fn stream(
+        &self,
+        request: Request<StreamRequest>,    
+    ) -> Result<Response<Self::StreamStream>, Status> {        
+        warn!("Got a stream request: {request:?}");
+
+        Err(Status::unimplemented("stream has not been implemented"))
+    }     
 }

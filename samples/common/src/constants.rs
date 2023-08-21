@@ -9,6 +9,7 @@ pub mod digital_twin_operation {
     pub const SUBSCRIBE: &str = "Subscribe";
     pub const UNSUBSCRIBE: &str = "Unsubscribe";
     pub const INVOKE: &str = "Invoke";
+    pub const STREAM: &str = "Stream";
 }
 
 // Supported digital twin protocols.

@@ -10,8 +10,11 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digita
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
+    StreamRequest, StreamResponse,
 };
 use serde_derive::{Deserialize, Serialize};
+use std::pin::Pin;
+use tokio_stream::Stream;
 use tonic::{Request, Response, Status};
 
 /// The reponse payload is empty.
@@ -23,6 +26,8 @@ pub struct ProviderImpl {}
 
 #[tonic::async_trait]
 impl DigitalTwinProvider for ProviderImpl {
+    type StreamStream = Pin<Box<dyn Stream<Item = Result<StreamResponse, Status>> + Send>>;
+
     /// Subscribe implementation.
     ///
     /// # Arguments
@@ -121,6 +126,19 @@ impl DigitalTwinProvider for ProviderImpl {
 
         Ok(Response::new(response))
     }
+
+    /// Stream implementation.
+    ///
+    /// # Arguments
+    /// * `request` - OpenStream request.
+    async fn stream(
+        &self,
+        request: Request<StreamRequest>,
+    ) -> Result<Response<Self::StreamStream>, Status> {
+        warn!("Got a stream request: {request:?}");
+
+        Err(Status::unimplemented("stream has not been implemented"))
+    }   
 }
 
 #[cfg(test)]
