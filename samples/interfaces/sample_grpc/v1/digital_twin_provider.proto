@@ -12,7 +12,7 @@ service DigitalTwinProvider {
     rpc Get (GetRequest) returns (GetResponse);
     rpc Set (SetRequest) returns (SetResponse);
     rpc Invoke (InvokeRequest) returns (InvokeResponse);
-    rpc Stream(StreamRequest) returns (stream StreamResponse); 
+    rpc Stream(StreamRequest) returns (stream StreamResponse);
 }
 
 message SubscribeRequest {

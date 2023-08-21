@@ -220,10 +220,10 @@ impl DigitalTwinProvider for ProviderImpl {
     /// * `request` - Stream request.
     async fn stream(
         &self,
-        request: Request<StreamRequest>,    
-    ) -> Result<Response<Self::StreamStream>, Status> {        
+        request: Request<StreamRequest>,
+    ) -> Result<Response<Self::StreamStream>, Status> {
         warn!("Got a stream request: {request:?}");
 
         Err(Status::unimplemented("stream has not been implemented"))
-    }     
+    }
 }

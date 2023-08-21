@@ -14,8 +14,6 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::Stream
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
 use show_image::{ImageView, ImageInfo, create_window, WindowProxy};
 use std::error::Error;
-use std::fs::File;
-use std::io::Write;
 use tokio_stream::StreamExt;
 use tonic::transport::Channel;
 use uuencode::uudecode;
@@ -24,15 +22,12 @@ use image::io::Reader as ImageReader;
 
 use std::io::Cursor;
 
-
-async fn streaming(client: &mut DigitalTwinProviderClient<Channel>, num: usize, window: &mut WindowProxy) {
-    let stream = client
-        .stream(StreamRequest {
-            message: "foo".into(),
-        })
-        .await
-        .unwrap()
-        .into_inner();
+async fn streaming(
+    client: &mut DigitalTwinProviderClient<Channel>,
+    num: usize,
+    window: &mut WindowProxy,
+) {
+    let stream = client.stream(StreamRequest { message: "foo".into() }).await.unwrap().into_inner();
 
     // stream is infinite - take just 5 elements and then disconnect
     let mut stream = stream.take(num);
@@ -40,7 +35,9 @@ async fn streaming(client: &mut DigitalTwinProviderClient<Channel>, num: usize, 
         let message = item.unwrap().message;
         println!("\treceived: {}", message);
         if let Some((contents, filename)) = uudecode(&message) {
-            if let loaded_image_result = ImageReader::new(Cursor::new(contents)).with_guessed_format() {
+            if let loaded_image_result =
+                ImageReader::new(Cursor::new(contents)).with_guessed_format()
+            {
                 if let decoded_image_result = loaded_image_result.unwrap().decode() {
                     let decoded_image = decoded_image_result.unwrap();
                     let pixel_data = decoded_image.to_bytes();
@@ -49,7 +46,7 @@ async fn streaming(client: &mut DigitalTwinProviderClient<Channel>, num: usize, 
                     // let (width, height) = pixel_data.dimensions();
                     let image = ImageView::new(ImageInfo::rgb8(width, height), &pixel_data);
                     window.set_image(filename, image);
-                }          
+                }
             }
         }
     }
@@ -70,7 +67,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         settings.invehicle_digital_twin_uri,
         settings.chariott_uri,
     )
-    .await.unwrap();
+    .await
+    .unwrap();
 
     // Retrieve the provider URI.
     let provider_endpoint_info = discover_digital_twin_provider_using_ibeji(
@@ -86,10 +84,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // show_image - https://docs.rs/show-image/latest/show_image/
 
-      // Create a window with default options and display the image.
+    // Create a window with default options and display the image.
     let mut window = create_window("image", Default::default())?;
 
-    let mut client= DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
+    let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
     streaming(&mut client, 20, &mut window).await;
 
     info!("The Consumer has completed.");

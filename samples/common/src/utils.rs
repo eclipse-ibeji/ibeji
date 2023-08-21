@@ -97,7 +97,7 @@ pub async fn discover_digital_twin_provider_using_ibeji(
 
     match response_inner
         .entity_access_info
-        .ok_or_else(|| "Did not find the entity".to_string())?        
+        .ok_or_else(|| "Did not find the entity".to_string())?
         .endpoint_info_list
         .iter()
         .find(|endpoint_info| {

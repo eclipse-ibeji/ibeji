@@ -11,7 +11,7 @@ use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digita
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
-    StreamRequest, StreamResponse,    
+    StreamRequest, StreamResponse,
 };
 use std::collections::{HashMap, HashSet};
 use std::pin::Pin;
@@ -215,12 +215,12 @@ impl DigitalTwinProvider for ProviderImpl {
     /// * `request` - OpenStream request.
     async fn stream(
         &self,
-        request: Request<StreamRequest>,    
+        request: Request<StreamRequest>,
     ) -> Result<Response<Self::StreamStream>, Status> {
         warn!("Got a stream request: {request:?}");
 
         Err(Status::unimplemented("stream has not been implemented"))
-    }     
+    }
 }
 
 #[cfg(test)]

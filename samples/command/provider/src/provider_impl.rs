@@ -138,7 +138,7 @@ impl DigitalTwinProvider for ProviderImpl {
         warn!("Got a stream request: {request:?}");
 
         Err(Status::unimplemented("stream has not been implemented"))
-    }   
+    }
 }
 
 #[cfg(test)]

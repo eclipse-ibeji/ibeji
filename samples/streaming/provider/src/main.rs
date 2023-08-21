@@ -2,8 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-mod provider_impl;
 mod provider_config;
+mod provider_impl;
 
 use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use env_logger::{Builder, Target};
@@ -67,11 +67,9 @@ async fn register_entities(
         endpoint_info_list: vec![camera_feed_endpoint_info],
     };
 
-    let entity_access_info_list = vec![
-        camera_feed_access_info,
-    ];
+    let entity_access_info_list = vec![camera_feed_access_info];
 
-   println!("Registering the list {:?}", entity_access_info_list);
+    println!("Registering the list {:?}", entity_access_info_list);
 
     let mut client = InvehicleDigitalTwinClient::connect(invehicle_digital_twin_uri.to_string())
         .await
@@ -104,8 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;
-    let provider_impl =
-        ProviderImpl::new(&settings.image_directory);
+    let provider_impl = ProviderImpl::new(&settings.image_directory);
     let server_future =
         Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
