@@ -17,6 +17,7 @@
   - [Command Sample](#command-sample)
   - [Mixed Sample](#mixed-sample)
   - [Seat Massager Sample](#seat-massager-sample)
+  - [Streaming Sample](#streaming-sample)  
   - [Using Chariott](#using-chariott)
 - [Trademarks](#trademarks)
 
@@ -123,7 +124,7 @@ Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
@@ -151,7 +152,7 @@ Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
@@ -180,7 +181,7 @@ Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
@@ -209,7 +210,7 @@ Steps:
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
 Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Provider. The bottom window can be used for a Consumer.<br>
+The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
 Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
 `cd {repo-root-dir}/target/debug`<br>
@@ -228,6 +229,36 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./seat-massager-provider`<br>
 1. In the bottom window, run:<br><br>
 `./seat-massager-consumer`<br>
+1. Use control-c in each of the windows when you wish to stop the demo.
+
+### <a name="streaming-sample">Sreaming Sample</a>
+
+The following instructions are for the demo for streaming.
+
+Steps:
+
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
+Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
+The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
+1. In each window, change directory to the directory containing the build artifacts.
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
+`cd {repo-root-dir}/target/debug`<br>
+1. Create the three config files with the following contents, if they are not already there:<br><br>
+---- streaming_consumer_settings.yaml ----<br>
+`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
+`number_of_images: 20`<br><br>
+---- invehicle_digital_twin_settings.yaml ----<br>
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
+---- streaming_provider_settings.yaml ----<br>
+`provider_authority: "0.0.0.0:4010"`<br>
+`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
+`image_directory: "<<chariott-repo-root>>/examples/applications/simulated-camera/images"`
+1. In the top window, run:<br><br>
+`./invehicle-digital-twin`<br>
+1. In the middle window, run:<br><br>
+`./streaming-provider`<br>
+1. In the bottom window, run:<br><br>
+`./streaming-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
 ### <a name="using-chariott">Using Chariott</a>
