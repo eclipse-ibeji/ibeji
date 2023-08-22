@@ -4,14 +4,14 @@
 
 // use digital_twin_model::sdv_v1 as sdv;
 use core::iter::Iterator;
-use log::warn;
+use log::{debug, info, warn};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
     GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
     StreamRequest, StreamResponse};
 use std::fs::File;
-use std::io::Read;
+use std::io::{Error, Read};
 use std::path::Path;
 use std::pin::Pin;
 use std::vec::Vec;
@@ -22,28 +22,42 @@ use tonic::{Request, Response, Status};
 use uuencode::uuencode;
 
 #[derive(Debug, Default)]
+/// Continuously iterates through a list of files.
+/// After it reaches the end of the list, it cycles back to the start of the list.
 struct ImageFileIterator {
+    /// The directory that contains the images.
     image_directory: String,
+    /// The filenames of the images that we want to stream.
     image_filenames: Vec<String>,
-    current_index: usize,
+    /// The index for the current image filename.
+    current_image_file_index: usize,
 }
 
 impl ImageFileIterator {
+    /// Create a new ImageFileIterator.
+    ///
+    /// # Arguments
+    /// * `image_directory` - The directory that contains the images.
+    /// * `image_filenames` - The filenames of the images that we want to stream.
     pub fn new(image_directory: &str, image_filenames: Vec<String>) -> Self {
-        Self { image_directory: image_directory.to_string(), image_filenames, current_index: 0 }
+        Self {
+            image_directory: image_directory.to_string(),
+            image_filenames,
+            current_image_file_index: 0,
+        }
     }
 
-    fn read_image_file(&self, filename: &str) -> Result<String, std::io::Error> {
+    /// Reads an image file and returns its uuencoded form.
+    ///
+    /// # Arguments
+    /// * `filenme` -The image's filename.
+    fn read_image_file(&self, filename: &str) -> Result<String, Error> {
         let filepath = Path::new(&self.image_directory).join(filename);
-        println!("About to read_image from '{}'", filepath.display());
+        debug!("Read_image from '{}'", filepath.display());
         let mut file = File::open(filepath)?;
-        println!("About to setup the buf_reader");
-        println!("About to read_string");
         let mut file_content = Vec::new();
         file.read_to_end(&mut file_content).expect("Unable to read");
-        println!("About to setup the uuencode");
         let encoded = uuencode(filename, &file_content);
-        println!("Encode: {encoded}");
         Ok(encoded)
     }
 }
@@ -51,18 +65,19 @@ impl ImageFileIterator {
 impl Iterator for ImageFileIterator {
     type Item = StreamResponse;
 
+    /// Get the next item from the iterator.
     fn next(&mut self) -> Option<Self::Item> {
         let len = self.image_filenames.len();
         if len == 0 {
             return None;
         }
 
-        let current = &self.image_filenames[self.current_index];
+        let current_image_filename = &self.image_filenames[self.current_image_file_index];
 
-        self.current_index = (self.current_index + 1) % len;
+        self.current_image_file_index = (self.current_image_file_index + 1) % len;
 
-        let uuencoded_content = self.read_image_file(current).ok()?;
-        let result = StreamResponse { message: uuencoded_content };
+        let uuencoded_content = self.read_image_file(current_image_filename).ok()?;
+        let result = StreamResponse { content: uuencoded_content };
 
         Some(result)
     }
@@ -74,6 +89,7 @@ pub struct ProviderImpl {
 }
 
 impl ProviderImpl {
+    /// Create a new ProviderImpl.
     pub fn new(image_directory: &str) -> Self {
         Self { image_directory: image_directory.to_string() }
     }
@@ -162,14 +178,14 @@ impl DigitalTwinProvider for ProviderImpl {
     /// Stream implementation.
     ///
     /// # Arguments
-    /// * `request` - OpenStream request.
+    /// * `request` - Stream request.
     async fn stream(
         &self,
-        request: Request<StreamRequest>,
+        _request: Request<StreamRequest>,
     ) -> Result<Response<Self::StreamStream>, Status> {
         let image_filenames = self
             .get_filenames_from_image_directory()
-            .map_err(|_| Status::internal("get filenames failed"))?;
+            .map_err(|_| Status::internal("Get filenames failed"))?;
 
         let image_file_iterator = ImageFileIterator::new(&self.image_directory, image_filenames);
 
@@ -192,7 +208,7 @@ impl DigitalTwinProvider for ProviderImpl {
                 }
                 sleep(Duration::from_secs(1)).await;
             }
-            println!("\tclient disconnected");
+            info!("Client disconnected");
         });
 
         let output_stream = ReceiverStream::new(rx);
@@ -202,10 +218,10 @@ impl DigitalTwinProvider for ProviderImpl {
 
 #[cfg(test)]
 mod provider_impl_tests {
+    /*
     use super::*;
     use uuid::Uuid;
 
-    /*
         #[tokio::test]
         async fn subscribe_test() {
             let subscription_map = Arc::new(Mutex::new(HashMap::new()));

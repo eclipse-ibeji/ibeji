@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-mod provider_config;
 mod provider_impl;
+mod streaming_provider_config;
 
-use digital_twin_model::{sdv_v1 as sdv, Metadata};
+use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 use log::{info, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
@@ -13,36 +13,11 @@ use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_bas
 use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
 use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
-use serde_derive::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use tokio::time::Duration;
 use tonic::{Status, transport::Server};
 
 use crate::provider_impl::ProviderImpl;
-
-#[derive(Debug, Serialize, Deserialize)]
-struct AmbientAirTemperatureProperty {
-    #[serde(rename = "AmbientAirTemperature")]
-    ambient_air_temperature: sdv::hvac::ambient_air_temperature::TYPE,
-    #[serde(rename = "$metadata")]
-    metadata: Metadata,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct HybridBatteryRemainingProperty {
-    #[serde(rename = "HybridBatteryRemainaing")]
-    hybrid_battery_remaining: sdv::obd::hybrid_battery_remaining::TYPE,
-    #[serde(rename = "$metadata")]
-    metadata: Metadata,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct IsAirConditioingActiveProperty {
-    #[serde(rename = "IsAirConditioingActive")]
-    is_air_conditioning_active: sdv::hvac::is_air_conditioning_active::TYPE,
-    #[serde(rename = "$metadata")]
-    metadata: Metadata,
-}
 
 /// Register the entities endpoints.
 ///
@@ -69,7 +44,7 @@ async fn register_entities(
 
     let entity_access_info_list = vec![camera_feed_access_info];
 
-    println!("Registering the list {:?}", entity_access_info_list);
+    info!("Registering the list {:?}", entity_access_info_list);
 
     let mut client = InvehicleDigitalTwinClient::connect(invehicle_digital_twin_uri.to_string())
         .await
@@ -87,7 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Provider has started.");
 
-    let settings = crate::provider_config::load_settings();
+    let settings = crate::streaming_provider_config::load_settings();
 
     let provider_authority = settings.provider_authority;
 

@@ -14,7 +14,6 @@ config = { workspace = true }
 digital-twin-model = { path = "../../digital-twin-model" }
 env_logger = { workspace = true }
 image = { workspace = true }
-jpeg-decoder = { workspace = true }
 log = { workspace = true }
 paho-mqtt = { workspace = true }
 parking_lot = { workspace = true }

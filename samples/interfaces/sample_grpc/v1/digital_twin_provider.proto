@@ -58,9 +58,8 @@ message InvokeResponse {
 }
 
 message StreamRequest {
-   string message = 1;
 }
 
 message StreamResponse {
-      string message = 1;
+      string content = 1;
 }

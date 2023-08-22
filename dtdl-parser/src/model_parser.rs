@@ -1167,9 +1167,9 @@ mod model_parser_tests {
     fn find_full_path_test() {
         set_dtdl_path();
 
-        let find_full_path_result = ModelParser::find_full_path("v3/content/sdv/hvac.json");
+        let find_full_path_result = ModelParser::find_full_path("v3/spec/sdv/hvac.json");
         assert!(find_full_path_result.is_ok());
         let full_path = find_full_path_result.unwrap();
-        assert!(full_path.ends_with("/v3/content/sdv/hvac.json"));
+        assert!(full_path.ends_with("/v3/spec/sdv/hvac.json"));
     }
 }

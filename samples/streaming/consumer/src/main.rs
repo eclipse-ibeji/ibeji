@@ -4,7 +4,7 @@
 
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::consumer_config;
 use samples_common::utils::{
@@ -26,31 +26,26 @@ async fn streaming(
     client: &mut DigitalTwinProviderClient<Channel>,
     num: usize,
     window: &mut WindowProxy,
-) {
-    let stream = client.stream(StreamRequest { message: "foo".into() }).await.unwrap().into_inner();
+) -> Result<(), Box<dyn Error>> {
+    let stream = client.stream(StreamRequest {}).await?.into_inner();
 
-    // stream is infinite - take just 5 elements and then disconnect
+    // stream is infinite - take just num elements and then disconnect
     let mut stream = stream.take(num);
     while let Some(item) = stream.next().await {
-        let message = item.unwrap().message;
-        println!("\treceived: {}", message);
-        if let Some((contents, filename)) = uudecode(&message) {
-            if let loaded_image_result =
-                ImageReader::new(Cursor::new(contents)).with_guessed_format()
-            {
-                if let decoded_image_result = loaded_image_result.unwrap().decode() {
-                    let decoded_image = decoded_image_result.unwrap();
-                    let pixel_data = decoded_image.to_bytes();
-                    let width = decoded_image.width();
-                    let height = decoded_image.height();
-                    // let (width, height) = pixel_data.dimensions();
-                    let image = ImageView::new(ImageInfo::rgb8(width, height), &pixel_data);
-                    window.set_image(filename, image);
-                }
-            }
+        let content = item.unwrap().content;
+        debug!("\treceived: {}", content);
+        if let Some((contents, filename)) = uudecode(&content) {
+            let image_reader = ImageReader::new(Cursor::new(contents)).with_guessed_format()?;
+            let image = image_reader.decode()?;
+            let image_data = image.as_bytes().to_vec();
+            let image_view =
+                ImageView::new(ImageInfo::rgb8(image.width(), image.height()), &image_data);
+            window.set_image(filename, image_view)?;
         }
     }
     // stream is droped here and the disconnect info is send to server
+
+    Ok(())
 }
 
 #[tokio::main]
@@ -80,15 +75,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     .await
     .unwrap();
     let provider_uri = provider_endpoint_info.uri;
-    info!("The provider URI for the AmbientAirTemperature property's provider is {provider_uri}");
-
-    // show_image - https://docs.rs/show-image/latest/show_image/
+    info!("The provider URI for the Cabin Camera Feed property's provider is {provider_uri}");
 
     // Create a window with default options and display the image.
     let mut window = create_window("image", Default::default())?;
 
     let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
-    streaming(&mut client, 20, &mut window).await;
+    streaming(&mut client, 20, &mut window).await?;
 
     info!("The Consumer has completed.");
 
