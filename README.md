@@ -17,7 +17,7 @@
   - [Command Sample](#command-sample)
   - [Mixed Sample](#mixed-sample)
   - [Seat Massager Sample](#seat-massager-sample)
-  - [Streaming Sample](#streaming-sample)  
+  - [Streaming Sample](#streaming-sample)
   - [Using Chariott](#using-chariott)
 - [Trademarks](#trademarks)
 
@@ -231,7 +231,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./seat-massager-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
-### <a name="streaming-sample">Sreaming Sample</a>
+### <a name="streaming-sample">Streaming Sample</a>
 
 The following instructions are for the demo for streaming.
 
