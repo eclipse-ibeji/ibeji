@@ -8,12 +8,14 @@ Chariott's
 chariott
 com
 config
+dev
 digitaltwins
 dir
 dt
 dtdl
 DTDL
 en
+fontconfig
 gcc
 gcc's
 github
@@ -31,6 +33,7 @@ json
 JSON
 ld
 LD
+libfontconfig
 microsoft
 minimalistic
 mosquitto
