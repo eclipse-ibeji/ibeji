@@ -6,6 +6,8 @@
   - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
+  - [Install fontconfig-dev library](#install-fontconfig-dev-lib)
+  - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Developer Notes](#developer-notes)
   - [JSON-LD Crate](#json-ld-crate)
@@ -61,12 +63,23 @@ The toolchain version is managed by the `rust-toolchain.toml` file. If you do no
 
 You will need to install the Protobuf Compiler. This can be done by executing:
 
-`sudo apt install -y protobuf-compiler`
+```shell
+sudo apt install -y protobuf-compiler
+```
+
+### <a name="install-fontconfig-dev-lib">Install fontconfig-dev library</a>
+
+You will need to install the fontconfig-dev library. This can be done by executing:
+
+```shell
+sudo apt install -y libfontconfig-dev
+```
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>
 
 If you plan to run any of the samples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).
 Instructions for installing Mosquitto can be found [here](https://github.com/eclipse/mosquitto).
+
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
