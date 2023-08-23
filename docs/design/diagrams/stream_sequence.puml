@@ -38,5 +38,4 @@ loop until Digital Twin Consumer disconnects
             end
     }
     end note
-
 @enduml
