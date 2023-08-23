@@ -80,7 +80,6 @@ sudo apt install -y libfontconfig-dev
 If you plan to run any of the samples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).
 Instructions for installing Mosquitto can be found [here](https://github.com/eclipse/mosquitto).
 
-
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
 The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
