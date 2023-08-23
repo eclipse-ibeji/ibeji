@@ -24,10 +24,12 @@ use uuencode::uudecode;
 
 async fn streaming(
     client: &mut DigitalTwinProviderClient<Channel>,
+    entity_id: &str,
     num: usize,
     window: &mut WindowProxy,
 ) -> Result<(), Box<dyn Error>> {
-    let stream = client.stream(StreamRequest {}).await?.into_inner();
+    let stream =
+        client.stream(StreamRequest { entity_id: entity_id.to_string() }).await?.into_inner();
 
     // The stream is infinite, so take just num elements and then disconnect.
     let mut stream = stream.take(num);
@@ -81,7 +83,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut window = create_window("image", Default::default())?;
 
     let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
-    streaming(&mut client, settings.number_of_images.into(), &mut window).await?;
+    streaming(&mut client, sdv::camera::feed::ID, settings.number_of_images.into(), &mut window)
+        .await?;
 
     info!("The Consumer has completed.");
 

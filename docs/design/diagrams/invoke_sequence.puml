@@ -9,7 +9,7 @@ entityAccessInfo:
 {
     name: "ShowNotification"
     id: "dtmi:sdv:HMI:ShowNotifiation;1"
-    description: "..."
+    description: "Show a notification on the HMI."
     endpointInfoList: [
         {
             protocol: "grpc"

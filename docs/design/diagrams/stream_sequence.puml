@@ -1,0 +1,42 @@
+@startuml
+
+autonumber
+
+"Digital Twin Consumer" -> "In-Vehicle Digital Twin Service" : FindById("dtmi:sdv:Camera:Feed;1") - request
+"Digital Twin Consumer" <- "In-Vehicle Digital Twin Service" : FindById - response
+note left
+entityAccessInfo:
+{
+    name: "Feed"
+    id: "dtmi:sdv:Camera:Feed;1"
+    description: "The cabin camera's feed for inside the cabin."
+    endpointInfoList: [
+        {
+            protocol: "grpc"
+            operations: ["Stream"]
+            uri: "http://127.0.0.1:4000"
+            context: "dtmi:sdv:Camera:Feed;1"
+        }
+    ]
+}
+end note
+
+"Digital Twin Consumer" -> "Digital Twin Provider" : Stream - request
+note right
+{
+    entity_id: "dtmi:sdv:Camera:Feed;1"
+}
+end note
+
+loop until Digital Twin Consumer disconnects
+    "Digital Twin Consumer" <- "Digital Twin Provider" : Stream - response
+    note left
+    {
+        content:
+            begin 644 image.jpeg
+            ....
+            end
+    }
+    end note
+
+@enduml

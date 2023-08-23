@@ -58,6 +58,7 @@ message InvokeResponse {
 }
 
 message StreamRequest {
+      string entity_id = 1;
 }
 
 message StreamResponse {

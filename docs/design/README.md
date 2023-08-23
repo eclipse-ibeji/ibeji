@@ -108,6 +108,12 @@ The sequence diagram for a Digital Twin Consumer using the Invoke operation.
 
 ![Sequence Diagram](diagrams/invoke_sequence.svg)
 
+#### Stream
+
+The sequence diagram for a Digital Twin Consumer using the Stream operation.
+
+![Sequence Diagram](diagrams/stream_sequence.svg)
+
 ## <a name="appendix-digital-twin-interface">Appendix: Digital Twin Interface</a>
 
 ### FindById
