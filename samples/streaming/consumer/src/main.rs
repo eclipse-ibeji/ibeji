@@ -22,17 +22,23 @@ use tokio_stream::StreamExt;
 use tonic::transport::Channel;
 use uuencode::uudecode;
 
+/// Perform the streaming.
+/// 
+/// # Arguments
+/// * `client` - The client connection to the service that will transfer the stream.
+/// * `num` - The number of images that we will stream.
+/// * `window` - The window where the streamed images will be shown.
 async fn streaming(
     client: &mut DigitalTwinProviderClient<Channel>,
     entity_id: &str,
-    num: usize,
+    number_of_images: usize,
     window: &mut WindowProxy,
 ) -> Result<(), Box<dyn Error>> {
     let stream =
         client.stream(StreamRequest { entity_id: entity_id.to_string() }).await?.into_inner();
 
-    // The stream is infinite, so take just num elements and then disconnect.
-    let mut stream = stream.take(num);
+    // The stream is infinite, so we will just take number_of_images elements and then disconnect.
+    let mut stream = stream.take(number_of_images);
     while let Some(item) = stream.next().await {
         let content = item.unwrap().content;
         if let Some((contents, filename)) = uudecode(&content) {
@@ -45,7 +51,7 @@ async fn streaming(
         }
     }
 
-    // The stream is droped here and the disconnect info is sent to the server.
+    // The stream is dropped here and the disconnect info is sent to the server.
 
     Ok(())
 }

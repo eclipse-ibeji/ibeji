@@ -4,6 +4,8 @@
 
 [workspace]
 
+# Use version 2 of the feature resolver.
+# This is needed by a dependency of the show-image crate.
 resolver = "2"
 
 members = [

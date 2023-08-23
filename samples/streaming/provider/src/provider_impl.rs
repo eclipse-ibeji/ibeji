@@ -199,7 +199,8 @@ impl DigitalTwinProvider for ProviderImpl {
                     Ok(_) => {
                         // item (server response) was queued to be sent to the client
                     }
-                    Err(_) => {
+                    Err(err) => {
+                        warn!("Failed to send the next item in the stream due to: {err}");
                         break;
                     }
                 }
