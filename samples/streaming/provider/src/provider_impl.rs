@@ -75,7 +75,10 @@ impl Iterator for ImageFileIterator {
         // Note: We will go back to the start of the list once we past the end.
         self.current_image_file_index = (self.current_image_file_index + 1) % len;
 
-        let media = Media { media_type: mime_type::JPEG_IMAGES.to_string(), media_content: self.read_image_file(current_image_filename).ok()? }; 
+        let media = Media {
+            media_type: mime_type::JPEG_IMAGES.to_string(),
+            media_content: self.read_image_file(current_image_filename).ok()?,
+        };
 
         Some(StreamResponse { media: Some(media) })
     }
