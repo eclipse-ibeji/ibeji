@@ -28,7 +28,6 @@ tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal", "
 tokio-stream = { workspace = true }
 tonic = { workspace = true }
 url = { workspace = true }
-uuencode = { workspace = true }
 uuid = { workspace = true, features = ["v4", "fast-rng", "macro-diagnostics"] }
 yaml-rust = { workspace = true, optional = true }
 

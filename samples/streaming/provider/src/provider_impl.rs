@@ -4,9 +4,10 @@
 
 use core::iter::Iterator;
 use log::{debug, info, warn};
+use samples_common::constants::mime_type;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{
-    GetRequest, GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
+    GetRequest, GetResponse, InvokeRequest, InvokeResponse, Media, SetRequest, SetResponse,
     SubscribeRequest, SubscribeResponse, UnsubscribeRequest, UnsubscribeResponse,
     StreamRequest, StreamResponse};
 use std::fs::File;
@@ -18,7 +19,6 @@ use tokio::sync::mpsc;
 use tokio_stream::{wrappers::ReceiverStream, Stream, StreamExt};
 use tokio::time::Duration;
 use tonic::{Request, Response, Status};
-use uuencode::uuencode;
 
 #[derive(Debug, Default)]
 /// Continuously iterates through a list of files.
@@ -50,14 +50,13 @@ impl ImageFileIterator {
     ///
     /// # Arguments
     /// * `filenme` -The image's filename.
-    fn read_image_file(&self, filename: &str) -> Result<String, Error> {
+    fn read_image_file(&self, filename: &str) -> Result<Vec<u8>, Error> {
         let filepath = Path::new(&self.image_directory).join(filename);
         debug!("Read_image from '{}'", filepath.display());
         let mut file = File::open(filepath)?;
         let mut file_content = Vec::new();
         file.read_to_end(&mut file_content).expect("Unable to read");
-        let encoded = uuencode(filename, &file_content);
-        Ok(encoded)
+        Ok(file_content)
     }
 }
 
@@ -76,7 +75,9 @@ impl Iterator for ImageFileIterator {
         // Note: We will go back to the start of the list once we past the end.
         self.current_image_file_index = (self.current_image_file_index + 1) % len;
 
-        Some(StreamResponse { content: self.read_image_file(current_image_filename).ok()? })
+        let media = Media { media_type: mime_type::JPEG_IMAGES.to_string(), media_content: self.read_image_file(current_image_filename).ok()? }; 
+
+        Some(StreamResponse { media: Some(media) })
     }
 }
 

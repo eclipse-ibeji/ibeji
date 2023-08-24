@@ -20,7 +20,6 @@ use std::error::Error;
 use std::io::Cursor;
 use tokio_stream::StreamExt;
 use tonic::transport::Channel;
-use uuencode::uudecode;
 
 /// Stream images from the server and display them in the provided window.
 ///
@@ -40,15 +39,13 @@ async fn stream_images(
     // The stream is infinite, so we will just take number_of_images elements and then disconnect.
     let mut stream = stream.take(number_of_images);
     while let Some(item) = stream.next().await {
-        let content = item.unwrap().content;
-        if let Some((contents, filename)) = uudecode(&content) {
-            let image_reader = ImageReader::new(Cursor::new(contents)).with_guessed_format()?;
-            let image = image_reader.decode()?;
-            let image_data = image.as_bytes().to_vec();
-            let image_view =
-                ImageView::new(ImageInfo::rgb8(image.width(), image.height()), &image_data);
-            window.set_image(filename, image_view)?;
-        }
+        let media_content = item.unwrap().media.unwrap().media_content;
+        let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;
+        let image = image_reader.decode()?;
+        let image_data = image.as_bytes().to_vec();
+        let image_view =
+            ImageView::new(ImageInfo::rgb8(image.width(), image.height()), &image_data);
+        window.set_image("some file", image_view)?;
     }
 
     // The stream is dropped here and the disconnect info is sent to the server.

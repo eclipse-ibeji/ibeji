@@ -58,9 +58,16 @@ message InvokeResponse {
 }
 
 message StreamRequest {
-      string entity_id = 1;
+   string entity_id = 1;
 }
 
 message StreamResponse {
-      string content = 1;
+   Media media = 1;
+}
+
+message Media {
+   // Media/MIME type. Common MIME types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+   string media_type = 1;
+
+   bytes media_content = 2;
 }
