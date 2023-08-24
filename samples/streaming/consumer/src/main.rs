@@ -22,13 +22,13 @@ use tokio_stream::StreamExt;
 use tonic::transport::Channel;
 use uuencode::uudecode;
 
-/// Perform the streaming.
+/// Stream images from the server and display them in the provided window.
 ///
 /// # Arguments
 /// * `client` - The client connection to the service that will transfer the stream.
-/// * `num` - The number of images that we will stream.
+/// * `number_of_images` - The number of images that we will stream.
 /// * `window` - The window where the streamed images will be shown.
-async fn streaming(
+async fn stream_images(
     client: &mut DigitalTwinProviderClient<Channel>,
     entity_id: &str,
     number_of_images: usize,
@@ -89,8 +89,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut window = create_window("image", Default::default())?;
 
     let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
-    streaming(&mut client, sdv::camera::feed::ID, settings.number_of_images.into(), &mut window)
-        .await?;
+    stream_images(
+        &mut client,
+        sdv::camera::feed::ID,
+        settings.number_of_images.into(),
+        &mut window,
+    )
+    .await?;
 
     info!("The Consumer has completed.");
 

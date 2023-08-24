@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// use digital_twin_model::sdv_v1 as sdv;
 use core::iter::Iterator;
 use log::{debug, info, warn};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProvider;
@@ -113,6 +112,8 @@ impl ProviderImpl {
 
 #[tonic::async_trait]
 impl DigitalTwinProvider for ProviderImpl {
+    // Note: The name "StreamStream" is not ideal, but it is what gRPC is forcing us to use.
+    //       gRPC generates the name by concatenating the rpc method name with "Stream".
     type StreamStream = Pin<Box<dyn Stream<Item = Result<StreamResponse, Status>> + Send>>;
 
     /// Subscribe implementation.
