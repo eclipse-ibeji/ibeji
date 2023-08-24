@@ -8,7 +8,7 @@ entityAccessInfoList: [
     {
         name: "AmbientAirTemperature"
         id: "dtmi:sdv:HVAC:AmbientAirTemperature;1"
-        description: "The immediate surroundings air temperature (in Fahrenheit)."
+        description: "The immediate surroundings' air temperature (in Fahrenheit)."
         endpointInfoList: [
             {
                 protocol: "grpc"

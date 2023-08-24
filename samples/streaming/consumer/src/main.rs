@@ -23,7 +23,7 @@ use tonic::transport::Channel;
 use uuencode::uudecode;
 
 /// Perform the streaming.
-/// 
+///
 /// # Arguments
 /// * `client` - The client connection to the service that will transfer the stream.
 /// * `num` - The number of images that we will stream.

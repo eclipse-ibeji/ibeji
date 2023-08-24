@@ -197,10 +197,10 @@ impl DigitalTwinProvider for ProviderImpl {
             while let Some(item) = stream.next().await {
                 match tx.send(Result::<_, Status>::Ok(item)).await {
                     Ok(_) => {
-                        // item (server response) was queued to be sent to the client
+                        debug!("The next item in the stream was successfully sent to the client.");
                     }
                     Err(err) => {
-                        warn!("Failed to send the next item in the stream due to: {err}");
+                        warn!("Failed to send the next item in the stream to the client due to: {err}");
                         break;
                     }
                 }
