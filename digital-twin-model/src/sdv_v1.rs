@@ -17,7 +17,7 @@ pub mod camera {
     pub mod feed {
         pub const ID: &str = "dtmi:sdv:Camera:Feed;1";
         pub const NAME: &str = "Feed";
-        pub const DESCRIPTION: &str = "The cabin camera's feed for inside the cabin.";
+        pub const DESCRIPTION: &str = "The camera feed inside of the cabin.";
         pub type TYPE = String;
     }
 }
