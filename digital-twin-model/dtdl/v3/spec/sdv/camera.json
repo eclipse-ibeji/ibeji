@@ -10,7 +10,7 @@
         "@id": "dtmi:sdv:Camera:Feed;1",
         "name": "Feed",
         "schema": "string",
-        "description": "The cabin camera's feed for inside the cabin."
+        "description": "The camera feed inside of the cabin."
       }
     ]
   }
