@@ -48,7 +48,7 @@ async fn stream_images(
         window.set_image("some file", image_view)?;
     }
 
-    // The stream is dropped here and the disconnect info is sent to the server.
+    // The stream is dropped when we exit the function and the disconnect info is sent to the server.
 
     Ok(())
 }

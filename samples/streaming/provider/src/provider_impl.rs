@@ -176,7 +176,7 @@ impl DigitalTwinProvider for ProviderImpl {
     ) -> Result<Response<InvokeResponse>, Status> {
         warn!("Got an invoke request: {request:?}");
 
-        Err(Status::unimplemented("get has not been implemented"))
+        Err(Status::unimplemented("invoke has not been implemented"))
     }
 
     /// Stream implementation.
