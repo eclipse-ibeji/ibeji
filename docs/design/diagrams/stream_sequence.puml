@@ -9,7 +9,7 @@ entityAccessInfo:
 {
     name: "Feed"
     id: "dtmi:sdv:Camera:Feed;1"
-    description: "The cabin camera's feed for inside the cabin."
+    description: "The camera feed inside of the cabin."
     endpointInfoList: [
         {
             protocol: "grpc"
