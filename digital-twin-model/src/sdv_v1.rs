@@ -4,6 +4,9 @@
 
 // Note: In the future this code should be generated from a DTDL spec.
 
+#[allow(unused_imports)]
+use std::vec::Vec;
+
 pub mod airbag_seat_massager {
     pub mod massage_airbags {
         pub const ID: &str = "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1";
@@ -13,12 +16,17 @@ pub mod airbag_seat_massager {
     }
 }
 
+#[allow(dead_code)]
 pub mod camera {
     pub mod feed {
         pub const ID: &str = "dtmi:sdv:Camera:Feed;1";
         pub const NAME: &str = "Feed";
         pub const DESCRIPTION: &str = "The camera feed inside of the cabin.";
-        pub type TYPE = String;
+        pub struct Media {
+            media_type: String,
+            media_content: Vec<u8>,
+        }
+        pub type TYPE = Media;
     }
 }
 

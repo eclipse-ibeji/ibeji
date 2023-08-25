@@ -1,4 +1,4 @@
-[
+[ 
   {
     "@context": "dtmi:dtdl:context;3",
     "@type": "Interface",
@@ -9,8 +9,24 @@
         "@type": "Property",
         "@id": "dtmi:sdv:Camera:Feed;1",
         "name": "Feed",
-        "schema": "string",
-        "description": "The camera feed inside of the cabin."
+        "description": "The camera feed inside of the cabin.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "MediaType",
+              "schema": "string"
+            },
+            {
+              "name": "MediaContent",
+              "description": "An array of bytes (represented by integers here).",
+              "schema": {
+                "@type": "Array",
+                "elementSchema": "integer"
+              }
+            }
+          ]
+        }        
       }
     ]
   }

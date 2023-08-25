@@ -8,7 +8,7 @@ use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
 
 use image::io::Reader as ImageReader;
-use log::{info, LevelFilter};
+use log::{info, LevelFilter, warn};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::utils::{
     discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
@@ -39,7 +39,12 @@ async fn stream_images(
     // The stream is infinite, so we will just take number_of_images elements and then disconnect.
     let mut stream = stream.take(number_of_images);
     while let Some(item) = stream.next().await {
-        let media_content = item.unwrap().media.unwrap().media_content;
+        let opt_media = item.unwrap().media;
+        if opt_media.is_none() {
+            warn!("No media value present in message");
+            break;
+        }
+        let media_content = opt_media.unwrap().media_content;
         let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;
         let image = image_reader.decode()?;
         let image_data = image.as_bytes().to_vec();
