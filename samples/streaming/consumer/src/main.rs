@@ -41,8 +41,8 @@ async fn stream_images(
     while let Some(item) = stream.next().await {
         let opt_media = item.unwrap().media;
         if opt_media.is_none() {
-            warn!("No media value present in message");
-            break;
+            warn!("No media value present, so ignoring this item.");
+            continue;
         }
         let media_content = opt_media.unwrap().media_content;
         let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;

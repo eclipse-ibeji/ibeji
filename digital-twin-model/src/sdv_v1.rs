@@ -4,9 +4,6 @@
 
 // Note: In the future this code should be generated from a DTDL spec.
 
-#[allow(unused_imports)]
-use std::vec::Vec;
-
 pub mod airbag_seat_massager {
     pub mod massage_airbags {
         pub const ID: &str = "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1";
