@@ -1,4 +1,4 @@
-[ 
+[
   {
     "@context": "dtmi:dtdl:context;3",
     "@type": "Interface",
@@ -26,7 +26,7 @@
               }
             }
           ]
-        }        
+        }
       }
     ]
   }
