@@ -6,7 +6,7 @@
   - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
-  - [Install fontconfig-dev library](#install-fontconfig-dev-lib)
+  - [Install fontconfig-dev library](#install-fontconfig-dev-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Developer Notes](#developer-notes)
@@ -67,7 +67,7 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 sudo apt install -y protobuf-compiler
 ```
 
-### <a name="install-fontconfig-dev-lib">Install fontconfig-dev library</a>
+### <a name="install-fontconfig-dev-library">Install fontconfig-dev library</a>
 
 You will need to install the fontconfig-dev library. This can be done by executing:
 
