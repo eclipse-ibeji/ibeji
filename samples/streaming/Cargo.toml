@@ -3,35 +3,45 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "samples-mixed"
+name = "samples-streaming"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
+config = { workspace = true }
 digital-twin-model = { path = "../../digital-twin-model" }
-env_logger= { workspace = true }
+env_logger = { workspace = true }
+image = { workspace = true }
 log = { workspace = true }
+paho-mqtt = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 samples-common = { path = "../common" }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
-serde = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+show-image = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal", "sync"] }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }
+url = { workspace = true }
 uuid = { workspace = true, features = ["v4", "fast-rng", "macro-diagnostics"] }
+yaml-rust = { workspace = true, optional = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
+[features]
+default = ["yaml"]
+yaml = ["yaml-rust"]
+
 [[bin]]
-name = "mixed-provider"
+name = "streaming-provider"
 path = "provider/src/main.rs"
 
 [[bin]]
-name = "mixed-consumer"
+name = "streaming-consumer"
 path = "consumer/src/main.rs"

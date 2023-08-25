@@ -9,6 +9,7 @@ pub mod digital_twin_operation {
     pub const SUBSCRIBE: &str = "Subscribe";
     pub const UNSUBSCRIBE: &str = "Unsubscribe";
     pub const INVOKE: &str = "Invoke";
+    pub const STREAM: &str = "Stream";
 }
 
 // Supported digital twin protocols.
@@ -24,4 +25,10 @@ pub mod chariott {
     pub const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
     pub const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND: &str = "grpc+proto";
     pub const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE: &str = "https://github.com/eclipse-ibeji/ibeji/blob/main/interfaces/digital_twin/v1/digital_twin.proto";
+}
+
+/// Media/MIME types.
+/// Common MIME types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+pub mod mime_type {
+    pub const JPEG_IMAGES: &str = "image/jpeg";
 }

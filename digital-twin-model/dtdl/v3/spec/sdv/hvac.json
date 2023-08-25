@@ -9,7 +9,7 @@
           "@type": "Property",
           "@id": "dtmi:sdv:HVAC:AmbientAirTemperature;1",
           "name": "AmbientAirTemperature",
-          "description": "The immediate surroundings air temperature (in Fahrenheit).",
+          "description": "The immediate surroundings' air temperature (in Fahrenheit).",
           "schema": "integer"
         },
         {

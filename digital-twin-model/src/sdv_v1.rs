@@ -13,6 +13,20 @@ pub mod airbag_seat_massager {
     }
 }
 
+#[allow(dead_code)]
+pub mod camera {
+    pub mod feed {
+        pub const ID: &str = "dtmi:sdv:Camera:Feed;1";
+        pub const NAME: &str = "Feed";
+        pub const DESCRIPTION: &str = "The camera feed inside of the cabin.";
+        pub struct Media {
+            media_type: String,
+            media_content: Vec<u8>,
+        }
+        pub type TYPE = Media;
+    }
+}
+
 pub mod hmi {
     pub mod show_notification {
         pub const ID: &str = "dtmi:sdv:HMI:ShowNotification;1";

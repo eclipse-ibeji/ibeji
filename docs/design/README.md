@@ -70,13 +70,13 @@ DTDL can identify and specify each of the resources. Below is an example of a HV
 
 #### Register
 
-Below is the sequence diagram for the Register activity.
+The sequence diagram for the Register activity is shown below.
 
 ![Sequence Diagram](diagrams/register_sequence.svg)
 
 #### Find by Id
 
-Below is the sequence diagram for the Find-By-Id activity.
+The sequence diagram for the Find-By-Id activity is shown below.
 
 ![Sequence Diagram](diagrams/findbyid_sequence.svg)
 
@@ -86,27 +86,33 @@ Below is the sequence diagram for the Find-By-Id activity.
 
 #### Get
 
-The sequence diagram for a Digital Twin Consumer using the Get operation.
+The sequence diagram for a Digital Twin Consumer using the Get operation is shown below.
 
 ![Sequence Diagram](diagrams/get_sequence.svg)
 
 #### Set
 
-The sequence diagram for a Digital Twin Consumer using the Set operation.
+The sequence diagram for a Digital Twin Consumer using the Set operation is shown below.
 
 ![Sequence Diagram](diagrams/set_sequence.svg)
 
 #### Subscribe
 
-The sequence diagram for a Digital Twin Consumer using the Subscribe operation.
+The sequence diagram for a Digital Twin Consumer using the Subscribe operation is shown below.
 
 ![Sequence Diagram](diagrams/subscribe_sequence.svg)
 
 #### Invoke
 
-The sequence diagram for a Digital Twin Consumer using the Invoke operation.
+The sequence diagram for a Digital Twin Consumer using the Invoke operation is shown below.
 
 ![Sequence Diagram](diagrams/invoke_sequence.svg)
+
+#### Stream
+
+The sequence diagram for a Digital Twin Consumer using the Stream operation is shown below.
+
+![Sequence Diagram](diagrams/stream_sequence.svg)
 
 ## <a name="appendix-digital-twin-interface">Appendix: Digital Twin Interface</a>
 

@@ -12,6 +12,7 @@ service DigitalTwinProvider {
     rpc Get (GetRequest) returns (GetResponse);
     rpc Set (SetRequest) returns (SetResponse);
     rpc Invoke (InvokeRequest) returns (InvokeResponse);
+    rpc Stream(StreamRequest) returns (stream StreamResponse);
 }
 
 message SubscribeRequest {
@@ -54,4 +55,19 @@ message InvokeRequest {
 }
 
 message InvokeResponse {
+}
+
+message StreamRequest {
+   string entity_id = 1;
+}
+
+message StreamResponse {
+   Media media = 1;
+}
+
+message Media {
+   // Media/MIME type. Common MIME types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+   string media_type = 1;
+
+   bytes media_content = 2;
 }
