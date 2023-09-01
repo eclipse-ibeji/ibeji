@@ -122,12 +122,12 @@ where
                 let stream = futures_util::stream::iter(new_body_chunks);
 
                 new_body = tonic::transport::Body::wrap_stream(stream);
+
             }
             else {
                 new_body = body;
             }
         } else {
-            info!("len = {}", uri_parts.len());
             new_body = body;
         }
   
