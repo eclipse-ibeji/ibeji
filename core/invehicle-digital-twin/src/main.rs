@@ -6,42 +6,21 @@ use core_protobuf_data_access::chariott::service_discovery::core::v1::service_re
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
 };
-// use core_protobuf_data_access::invehicle_digital_twin::v1;
+use core_protobuf_data_access::invehicle_digital_twin;
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
-// use core::task::Poll;
 use env_logger::{Builder, Target};
+use futures::StreamExt;
+use futures_core::task::Context;
+use futures_core::task::Poll;
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
+use prost::Message;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
-// use std::future::join;
-// use std::task::Context;
 use tonic::transport::Server;
 use tonic::{Request, Status};
 use tower::{Layer, Service, ServiceBuilder};
-
-use futures_core::task::Context;
-use futures_core::task::Poll;
-
-// use futures::StreamExt;
-// use futures::stream::StreamExt};
-// use hyper::body;
-// use hyper::body::to_bytes;
-// use futures::task::Poll;
-// use http_body::Body;
-// use std::pin::Pin;
-// use tokio::io::AsyncReadExt;
-// use tokio::runtime::Handle;
-// use tonic::body::BoxBody;
-
-use prost::Message;
-
-use core_protobuf_data_access::invehicle_digital_twin;
-
-// use bytes::buf::Buf;
-use futures::StreamExt;
-
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
@@ -80,15 +59,7 @@ pub struct MyService<S> {
 impl<S> MyService<S>
 {
 /*
-    /// Returns the underlying `Layer` implementation.
-    fn into_inner(self) -> S {
-        info!("into_inner called");
-        self.service
-    }
-*/
-
-/*
-    fn displayable_type_of<T>(_: &T) -> String {
+    fn type_to_string<T>(_: &T) -> String {
         format!("{}", std::any::type_name::<T>())
     }
 */
@@ -100,56 +71,7 @@ impl<S> MyService<S>
         }
         data
     }
-
-/*
-    async fn extract_body_data<T>(body: &mut T) -> Result<Vec<u8>, T::Error>
-    where
-        T: Body + Unpin,
-    {
-        let mut result = Vec::new();
-        let data = body.data();
-        info!("data is {} ", Self::displayable_type_of(&data));        
-        // let chunk = data.chunk();
-        // info!("chunk is {} ", Self::displayable_type_of(&chunk));
-        // result.extend_from_slice(&chunk?);
-
-        Ok(result)
-    }
-*/
-
-/*
-async fn body_to_string(req: Request<hyper::body::Body>) -> String {
-    let body_bytes = hyper::body::to_bytes(req.body()).await;
-    String::from_utf8(body_bytes.to_vec()).unwrap()
 }
-*/
-
-/*
-async fn read_data_from_body_stream<St>(mut stream: St) -> std::io::Result<Vec<u8>>
-    where
-        St: futures_core::stream::Stream,
-{
-    let mut data = Vec::new();
-    let mut cx = Context::from_waker(futures::task::noop_waker_ref());
-    loop {
-        match stream.poll_next(&mut cx) {
-            Poll::Ready(Some(Ok(chunk))) => data.extend_from_slice(&chunk),
-            Poll::Ready(None) => break,
-            Poll::Pending => tokio::task::yield_now().await,
-            _ => return Err(std::io::ErrorKind::Other.into()),
-        }
-    }
-    Ok(data)
-}
-*/
-
-}
-
-
-
-// https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-// https://stackoverflow.com/questions/76625360/how-can-i-get-grpc-status-code-in-rust-tonic-middleware?rq=2
-// https://github.com/hyperium/tonic/discussions/815
 
 impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
@@ -170,28 +92,30 @@ where
         let uri_parts: Vec<&str> = uri.split("/").collect();
         let (parts, body) = request.into_parts();
         let new_body;
-        if uri_parts.len() == 4 {
-            let interface_name = uri_parts[2];
-            let function_name = uri_parts[3];
-            info!("interface = {}    function = {}", interface_name, function_name);
-            if function_name == "Register" {
+        if uri_parts.len() == 5 {
+            let service_name = uri_parts[3];
+            let method_name = uri_parts[4];
+            info!("service name = {}", service_name);
+            info!("method name = {}", method_name);
+            if method_name == "Register" {
 
-                let mut body_bytes = futures::executor::block_on(Self::body_to_bytes(body));
-                // let body_bytes = futures::executor::block_on(hyper::body::to_bytes(body)).unwrap();
+                let mut body_buf = futures::executor::block_on(Self::body_to_bytes(body));
+                // let body_buf = futures::executor::block_on(hyper::body::to_bytes(body)).unwrap();
 
-                // https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-                let header_length: usize = 5;
-                let protobuf_message = body_bytes.split_off(header_length);
-                let grpc_header = body_bytes;
-                let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message[..]).unwrap();
+                // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+                let grpc_header_length: usize = 5;
+                let protobuf_message_buf = body_buf.split_off(grpc_header_length);
+                let grpc_header_buf = body_buf;
+                let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message_buf[..]).unwrap();
                 info!("register_request = {:?}", register_request);
 
+                // This article helped: https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
                 let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
                 new_protobuf_message_buf.reserve(register_request.encoded_len());
                 register_request.encode(&mut new_protobuf_message_buf).unwrap();
 
                 let new_body_chunks: Vec<Result<_, std::io::Error>> = vec![
-                    Ok(grpc_header),
+                    Ok(grpc_header_buf),
                     Ok(new_protobuf_message_buf),
                 ];
 
@@ -203,6 +127,7 @@ where
                 new_body = body;
             }
         } else {
+            info!("len = {}", uri_parts.len());
             new_body = body;
         }
   
