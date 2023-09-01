@@ -8,17 +8,40 @@ use core_protobuf_data_access::chariott::service_discovery::core::v1::{
 };
 // use core_protobuf_data_access::invehicle_digital_twin::v1;
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
-use core::task::Poll;
+// use core::task::Poll;
 use env_logger::{Builder, Target};
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use std::task::Context;
+// use std::future::join;
+// use std::task::Context;
 use tonic::transport::Server;
 use tonic::{Request, Status};
 use tower::{Layer, Service, ServiceBuilder};
+
+use futures_core::task::Context;
+use futures_core::task::Poll;
+
+// use futures::StreamExt;
+// use futures::stream::StreamExt};
+// use hyper::body;
+// use hyper::body::to_bytes;
+// use futures::task::Poll;
+// use http_body::Body;
+// use std::pin::Pin;
+// use tokio::io::AsyncReadExt;
+// use tokio::runtime::Handle;
+// use tonic::body::BoxBody;
+
+use prost::Message;
+
+use core_protobuf_data_access::invehicle_digital_twin;
+
+// use bytes::buf::Buf;
+use futures::StreamExt;
+
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
@@ -64,9 +87,62 @@ impl<S> MyService<S>
     }
 */
 
+/*
     fn displayable_type_of<T>(_: &T) -> String {
         format!("{}", std::any::type_name::<T>())
-    } 
+    }
+*/
+    async fn body_to_bytes(mut body:tonic::transport::Body) -> Vec<u8> {
+        // let mut body = request.into_body();
+        let mut data = Vec::new();
+        while let Some(chunk) = body.next().await {
+            data.extend_from_slice(&chunk.unwrap());
+        }
+        data
+    }
+
+/*
+    async fn extract_body_data<T>(body: &mut T) -> Result<Vec<u8>, T::Error>
+    where
+        T: Body + Unpin,
+    {
+        let mut result = Vec::new();
+        let data = body.data();
+        info!("data is {} ", Self::displayable_type_of(&data));        
+        // let chunk = data.chunk();
+        // info!("chunk is {} ", Self::displayable_type_of(&chunk));
+        // result.extend_from_slice(&chunk?);
+
+        Ok(result)
+    }
+*/
+
+/*
+async fn body_to_string(req: Request<hyper::body::Body>) -> String {
+    let body_bytes = hyper::body::to_bytes(req.body()).await;
+    String::from_utf8(body_bytes.to_vec()).unwrap()
+}
+*/
+
+/*
+async fn read_data_from_body_stream<St>(mut stream: St) -> std::io::Result<Vec<u8>>
+    where
+        St: futures_core::stream::Stream,
+{
+    let mut data = Vec::new();
+    let mut cx = Context::from_waker(futures::task::noop_waker_ref());
+    loop {
+        match stream.poll_next(&mut cx) {
+            Poll::Ready(Some(Ok(chunk))) => data.extend_from_slice(&chunk),
+            Poll::Ready(None) => break,
+            Poll::Pending => tokio::task::yield_now().await,
+            _ => return Err(std::io::ErrorKind::Other.into()),
+        }
+    }
+    Ok(data)
+}
+*/
+
 }
 
 
@@ -75,20 +151,9 @@ impl<S> MyService<S>
 // https://stackoverflow.com/questions/76625360/how-can-i-get-grpc-status-code-in-rust-tonic-middleware?rq=2
 // https://github.com/hyperium/tonic/discussions/815
 
-
-
-/*
-impl<S, Request> Service<Request> for MyService<S>
+impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
-    S: Service<Request>,
-    Request: Debug,
-*/
-impl<S, Body> Service<http::request::Request<Body>> for MyService<S>
-where
-    S: Service<http::request::Request<Body>>,
-    // Body: Debug
-    Body: http_body::Body + std::marker::Send + std::marker::Sync + 'static
-    // Note: Body has type tonic::transport::Body.
+    S: Service<http::request::Request<tonic::transport::Body>>,
 {
     type Response = S::Response;
     type Error = S::Error;
@@ -99,14 +164,51 @@ where
         self.service.poll_ready(cx)
     }
 
-    // fn call(&mut self, request: Request) -> Self::Future {
-    fn call(&mut self, request: http::request::Request<Body>) -> Self::Future {
-        info!("request = {:?}", request.method());
-        info!("request type = {}", Self::displayable_type_of(&request));
-        info!("method = {}", request.method());
+    fn call(&mut self, request: http::request::Request<tonic::transport::Body>) -> Self::Future {
         info!("uri = {}", request.uri());
-        // let boxed_body = request.body().boxed();
-        self.service.call(request)
+        let uri = request.uri().to_string();
+        let uri_parts: Vec<&str> = uri.split("/").collect();
+        let (parts, body) = request.into_parts();
+        let new_body;
+        if uri_parts.len() == 4 {
+            let interface_name = uri_parts[2];
+            let function_name = uri_parts[3];
+            info!("interface = {}    function = {}", interface_name, function_name);
+            if function_name == "Register" {
+
+                let mut body_bytes = futures::executor::block_on(Self::body_to_bytes(body));
+                // let body_bytes = futures::executor::block_on(hyper::body::to_bytes(body)).unwrap();
+
+                // https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+                let header_length: usize = 5;
+                let protobuf_message = body_bytes.split_off(header_length);
+                let grpc_header = body_bytes;
+                let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message[..]).unwrap();
+                info!("register_request = {:?}", register_request);
+
+                let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
+                new_protobuf_message_buf.reserve(register_request.encoded_len());
+                register_request.encode(&mut new_protobuf_message_buf).unwrap();
+
+                let new_body_chunks: Vec<Result<_, std::io::Error>> = vec![
+                    Ok(grpc_header),
+                    Ok(new_protobuf_message_buf),
+                ];
+
+                let stream = futures_util::stream::iter(new_body_chunks);
+
+                new_body = tonic::transport::Body::wrap_stream(stream);
+            }
+            else {
+                new_body = body;
+            }
+        } else {
+            new_body = body;
+        }
+  
+        let new_request = http::request::Request::from_parts(parts, new_body);
+
+        self.service.call(new_request)
     }   
 }
 
@@ -114,7 +216,8 @@ where
 ///
 /// # Arguments
 /// * `chariott_uri` - Chariott's URI.
-/// * `invehicle_digital_twin_uri` - In-vehicle Digital Twin Service's URI.
+/// * `invehicle_digital_twin_uri` - In-vehicle D
+/// igital Twin Service's URI.
 async fn register_invehicle_digital_twin_service_with_chariott(
     chariott_uri: &str,
     invehicle_digital_twin_uri: &str,

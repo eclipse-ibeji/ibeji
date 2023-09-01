@@ -10,8 +10,12 @@ license = "MIT"
 
 [dependencies]
 async-std = { workspace = true, features = ["attributes"] }
+bytes = { workspace = true }
 config = { workspace = true }
 env_logger= { workspace = true }
+futures = { workspace = true }
+futures-core = { workspace = true }
+futures-util = { workspace = true }
 http = { workspace = true }
 http-body = { workspace = true }
 hyper = { workspace = true }
