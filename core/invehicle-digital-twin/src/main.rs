@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use core::future::Future;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -15,8 +16,11 @@ use futures_core::task::Poll;
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use prost::Message;
+use std::boxed::Box;
 use std::collections::HashMap;
+// use std::fmt::Debug;
 use std::net::SocketAddr;
+use std::pin::Pin;
 use std::sync::Arc;
 use tonic::transport::Server;
 use tonic::{Request, Status};
@@ -30,6 +34,9 @@ const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND: &str = "grpc+proto";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE: &str = "https://github.com/eclipse-ibeji/ibeji/blob/main/interfaces/digital_twin/v1/digital_twin.proto";
+
+
+// https://docs.rs/tower/latest/tower/trait.Layer.html
 
 #[derive(Clone)]
 pub struct MyLayer {
@@ -58,13 +65,11 @@ pub struct MyService<S> {
 
 impl<S> MyService<S>
 {
-/*
     fn type_to_string<T>(_: &T) -> String {
         format!("{}", std::any::type_name::<T>())
     }
-*/
+    
     async fn body_to_bytes(mut body:tonic::transport::Body) -> Vec<u8> {
-        // let mut body = request.into_body();
         let mut data = Vec::new();
         while let Some(chunk) = body.next().await {
             data.extend_from_slice(&chunk.unwrap());
@@ -73,13 +78,23 @@ impl<S> MyService<S>
     }
 }
 
+// use hyper::{Body, http, Request, Response, Server};
+
+// impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
-    S: Service<http::request::Request<tonic::transport::Body>>,
+    // S: Service<http::request::Request<tonic::transport::Body>>,
+    S: Service<http::request::Request<tonic::transport::Body>> + Send,
+    S::Response: Send,
+    S::Error: Send,
+    S::Future: Send + 'static,
 {
+    // type Response = http::response::Response<tonic::transport::Body>;
+    // type Response = hyper::Response<hyper::Body>;
     type Response = S::Response;
+    // type Response = http::response::Response<tonic::body::BoxBody>;
     type Error = S::Error;
-    type Future = S::Future;
+    type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
 
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         info!("poll_ready");
@@ -106,6 +121,7 @@ where
                 let grpc_header_length: usize = 5;
                 let protobuf_message_buf = body_buf.split_off(grpc_header_length);
                 let grpc_header_buf = body_buf;
+
                 let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message_buf[..]).unwrap();
                 info!("register_request = {:?}", register_request);
 
@@ -113,6 +129,7 @@ where
                 let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
                 new_protobuf_message_buf.reserve(register_request.encoded_len());
                 register_request.encode(&mut new_protobuf_message_buf).unwrap();
+
 
                 let new_body_chunks: Vec<Result<_, std::io::Error>> = vec![
                     Ok(grpc_header_buf),
@@ -133,8 +150,29 @@ where
   
         let new_request = http::request::Request::from_parts(parts, new_body);
 
-        self.service.call(new_request)
-    }   
+        // Box::pin(self.service.call(new_request))
+
+        let fut = self.service.call(new_request);
+
+        // create a response in a future.
+        Box::pin(async move {
+            info!("fut type: {}", Self::type_to_string(&fut));            
+            match fut.await {
+                Ok(response) => {
+                    info!("response type: {}", Self::type_to_string(&response));
+                    Ok(response)
+                },
+                Err(err) => {
+                    Err(err)
+                }
+            }
+        })
+
+        // This article helped: https://docs.rs/tower/latest/tower/trait.Service.html
+
+        // https://github.com/tower-rs/tower/issues/727
+        // https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2     
+    }
 }
 
 /// Register the invehicle digital twin service with Chariott.
