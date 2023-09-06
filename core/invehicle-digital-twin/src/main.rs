@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+// use core::error::Error;
 use core::future::Future;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
@@ -53,7 +54,7 @@ impl<S> Layer<S> for MyLayer {
 
     fn layer(&self, service: S) -> Self::Service {
         MyService {
-            service
+            service,
         }
     }
 }
@@ -80,19 +81,20 @@ impl<S> MyService<S>
 
 // use hyper::{Body, http, Request, Response, Server};
 
-// impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
-    // S: Service<http::request::Request<tonic::transport::Body>>,
-    S: Service<http::request::Request<tonic::transport::Body>> + Send,
+    // S: Service<http::request::Request<tonic::transport::Body>> + Send,
+    S: Service<http::request::Request<tonic::transport::Body>,Response= http::response::Response<tonic::body::BoxBody>,Error=Box<dyn std::error::Error + Sync + Send>> + Send,
     S::Response: Send,
-    S::Error: Send,
+    // S::Error: std::error::Error,
     S::Future: Send + 'static,
 {
     // type Response = http::response::Response<tonic::transport::Body>;
     // type Response = hyper::Response<hyper::Body>;
     type Response = S::Response;
     // type Response = http::response::Response<tonic::body::BoxBody>;
+    // type Error = S::Error;
+    // type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
     type Error = S::Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
 
@@ -101,7 +103,7 @@ where
         self.service.poll_ready(cx)
     }
 
-    fn call(&mut self, request: http::request::Request<tonic::transport::Body>) -> Self::Future {
+   fn call(&mut self, request: http::request::Request<tonic::transport::Body>) -> Self::Future {           
         info!("uri = {}", request.uri());
         let uri = request.uri().to_string();
         let uri_parts: Vec<&str> = uri.split("/").collect();
@@ -159,7 +161,7 @@ where
             info!("fut type: {}", Self::type_to_string(&fut));            
             match fut.await {
                 Ok(response) => {
-                    info!("response type: {}", Self::type_to_string(&response));
+                    info!("response: {:?}", response);
                     Ok(response)
                 },
                 Err(err) => {
