@@ -83,18 +83,10 @@ impl<S> MyService<S>
 
 impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
-    // S: Service<http::request::Request<tonic::transport::Body>> + Send,
-    S: Service<http::request::Request<tonic::transport::Body>,Response= http::response::Response<tonic::body::BoxBody>,Error=Box<dyn std::error::Error + Sync + Send>> + Send,
-    S::Response: Send,
-    // S::Error: std::error::Error,
+    S: Service<http::request::Request<tonic::transport::Body>,Response=http::response::Response<tonic::body::BoxBody>,Error=Box<dyn std::error::Error + Sync + Send>> + Send,
     S::Future: Send + 'static,
 {
-    // type Response = http::response::Response<tonic::transport::Body>;
-    // type Response = hyper::Response<hyper::Body>;
     type Response = S::Response;
-    // type Response = http::response::Response<tonic::body::BoxBody>;
-    // type Error = S::Error;
-    // type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
     type Error = S::Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
 
@@ -152,8 +144,6 @@ where
   
         let new_request = http::request::Request::from_parts(parts, new_body);
 
-        // Box::pin(self.service.call(new_request))
-
         let fut = self.service.call(new_request);
 
         // create a response in a future.
@@ -161,8 +151,12 @@ where
             info!("fut type: {}", Self::type_to_string(&fut));            
             match fut.await {
                 Ok(response) => {
-                    info!("response: {:?}", response);
-                    Ok(response)
+                    info!("response: {:?}", &response);
+                    let (parts, body) = response.into_parts();
+                    info!("parts: {:?}", parts);
+                    let new_body = body;
+                    let new_response = http::response::Response::from_parts(parts, new_body);
+                    Ok(new_response)
                 },
                 Err(err) => {
                     Err(err)
