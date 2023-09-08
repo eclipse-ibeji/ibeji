@@ -27,6 +27,14 @@ use tonic::transport::Server;
 use tonic::{Request, Status};
 use tower::{Layer, Service, ServiceBuilder};
 
+use tonic::body::BoxBody;
+
+// use hyper::body::Body;
+
+use http_body::Body;
+
+use http_body::Full;
+
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
 
@@ -70,20 +78,66 @@ impl<S> MyService<S>
         format!("{}", std::any::type_name::<T>())
     }
     
-    async fn body_to_bytes(mut body:tonic::transport::Body) -> Vec<u8> {
+    async fn body_to_bytes(mut body:tonic::transport::Body) -> Vec<u8> {        
         let mut data = Vec::new();
         while let Some(chunk) = body.next().await {
             data.extend_from_slice(&chunk.unwrap());
         }
         data
     }
+
+    /*
+    fn create_box_body_from_bytes(bytes: Vec<u8>) -> tonic::body::BoxBody {
+        let body = bytes::Bytes::from(bytes);
+        let full_body = Full::new(body);
+        full_body.boxed_unsync()
+        // tonic::body::BoxBody::new(body)
+    }
+    */
+
+    /*
+    impl From<BoxBody<bytes::Bytes, Infallible>> for UnsyncBoxBody<bytes::Bytes, Status> {
+        fn from(body: BoxBody<bytes::Bytes, Infallible>) -> Self {
+            // Implement the conversion here
+        }
+    }
+    */
+
+    /* 
+    /// Convert a [`http_body::Body`] into a [`BoxBody`].
+    fn boxed<B>(body: B) -> BoxBody
+    where
+        B: http_body::Body<Data = bytes::Bytes> + Send + 'static,
+        B::Error: Into<Status>,
+    {
+        Self::try_downcast(body).unwrap_or_else(|body| body.map_err(Error::new).boxed_unsync())
+    }
+
+    fn try_downcast<T, K>(k: K) -> Result<T, K>
+where
+    T: 'static,
+    K: Send + 'static,
+{
+    let mut k = Some(k);
+    if let Some(k) = <dyn std::any::Any>::downcast_mut::<Option<T>>(&mut k) {
+        Ok(k.take().unwrap())
+    } else {
+        Err(k.unwrap())
+    }
 }
+*/
+}
+
+
+// https://github.com/hyperium/tonic/issues/733
+// https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+// https://github.com/hyperium/tonic/issues/481
 
 // use hyper::{Body, http, Request, Response, Server};
 
 impl<S> Service<http::request::Request<tonic::transport::Body>> for MyService<S>
 where
-    S: Service<http::request::Request<tonic::transport::Body>,Response=http::response::Response<tonic::body::BoxBody>,Error=Box<dyn std::error::Error + Sync + Send>> + Send,
+    S: Service<http::request::Request<tonic::transport::Body>,Response=http::response::Response<tonic::body::BoxBody>,Error=Box<dyn std::error::Error + Sync + Send>> + Send,     
     S::Future: Send + 'static,
 {
     type Response = S::Response;
@@ -154,8 +208,85 @@ where
                     info!("response: {:?}", &response);
                     let (parts, body) = response.into_parts();
                     info!("parts: {:?}", parts);
-                    let new_body = body;
-                    let new_response = http::response::Response::from_parts(parts, new_body);
+
+                    let body_buf_result = hyper::body::to_bytes(body).await;
+
+                    // std::error::Error 
+                    let mut new_body_chunks: Vec<Result<Vec<u8>, Status>> = vec![];
+                    // let mut new_body_chunks: Vec<Result<Vec<u8>, Box<dyn std::error::Error>>> = vec![];                    
+                    // let mut new_body_chunks: Vec<Result<Vec<u8>, std::io::Error>> = vec![];                 
+
+                    match body_buf_result {
+                        Ok(mut body_buf) => {
+                            info!("We have an okay body_buf");
+
+                            // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+                            let grpc_header_length: usize = 5;
+                            let protobuf_message_buf = body_buf.split_off(grpc_header_length);
+                            let grpc_header_buf = body_buf;
+            
+                            let register_response: invehicle_digital_twin::v1::RegisterResponse = Message::decode(&protobuf_message_buf[..]).unwrap();
+                            info!("register_response = {:?}", register_response);
+
+                            // This article helped: https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
+                            let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
+                            new_protobuf_message_buf.reserve(register_response.encoded_len());
+                            register_response.encode(&mut new_protobuf_message_buf).unwrap();
+
+                            // new_body_chunks: Vec<Result<_, std::io::Error>> = vec![
+                            new_body_chunks = vec![                                
+                                Ok(grpc_header_buf.to_vec()),
+                                Ok(new_protobuf_message_buf),
+                            ];
+
+                            info!("Successfully prepared new_body_chunks");                      
+                        },
+                        Err(_) => {
+                            // TODO: Do something here.
+                        }
+                    }
+
+                    let stream = futures_util::stream::iter(new_body_chunks);
+                    let new_body = tonic::transport::Body::wrap_stream(stream);
+
+                    info!("We now have a new_body");
+/*                    
+                    info!("TYPE = {}", Self::type_to_string(&new_body));
+                    let new_box_body: BoxBody = BoxBody::new(new_body);
+                    // let new_box_body: http_body::combinators::UnsyncBoxBody<HttpBody, Status> = http_body::combinators::UnsyncBoxBody::<HttpBody, Status>::new(new_body);
+*/
+
+/*
+                    let mut data = Vec::new();
+                    let mut  new_body_chunks_iter = new_body_chunks.into_iter();
+                    while let Some(chunk) = new_body_chunks_iter.next() {
+                        data.extend_from_slice(&chunk.unwrap());
+                    }
+
+                    let new_body = hyper::Body::from(data);
+
+*/                    
+/*                    
+                    // map_err(|err| Status::new(tonic::Code::Unknown, err.to_string()));
+                    let bytes = bytes::Bytes::from(data);
+                    // let new_body = tonic::body::Body::from(bytes);
+                    // let new_body = http_body::Full::new(bytes);
+                
+                    // pub type BoxBody = UnsyncBoxBody<Bytes, Status>;
+                    // let new_box_body = http_body::combinators::UnsyncBoxBody::new(new_body);
+                    // let new_box_body =  http_body::combinators::UnsyncBoxBody::<bytes::Bytes, Status>::new(new_body);
+
+                    let new_body = http_body::Full::new(bytes);
+                    // let new_box_body: BoxBody = Self::create_box_body_from_bytes(data);
+                    let new_box_body = new_body.boxed_unsync();
+*/
+                    // This Discord post helped: https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
+                    let new_box_body = new_body.map_err(|e| tonic::Status::from_error(Box::new(e))).boxed_unsync();
+                    info!("We now have a new_box_body");
+                    // let new_body = hyper::Body::from(bytes);
+                    // let new_box_body = BoxBody::new(new_body);
+                    let new_response = http::response::Response::from_parts(parts, new_box_body);
+                    info!("we now have a new_response");
                     Ok(new_response)
                 },
                 Err(err) => {
