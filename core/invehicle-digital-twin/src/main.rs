@@ -155,12 +155,15 @@ where
         let uri_parts: Vec<&str> = uri.split("/").collect();
         let (parts, body) = request.into_parts();
         let new_body;
+        let mut must_intercept: bool = false;
         if uri_parts.len() == 5 {
             let service_name = uri_parts[3];
             let method_name = uri_parts[4];
             info!("service name = {}", service_name);
             info!("method name = {}", method_name);
             if method_name == "Register" {
+
+                must_intercept = true;
 
                 let mut body_buf = futures::executor::block_on(Self::body_to_bytes(body));
                 // let body_buf = futures::executor::block_on(hyper::body::to_bytes(body)).unwrap();
@@ -202,9 +205,14 @@ where
 
         // create a response in a future.
         Box::pin(async move {
-            info!("fut type: {}", Self::type_to_string(&fut));            
+            info!("fut type: {}", Self::type_to_string(&fut));
+                   
             match fut.await {
                 Ok(response) => {
+                    if ! must_intercept {
+                        return Ok(response);
+                    } 
+
                     info!("response: {:?}", &response);
                     let (parts, body) = response.into_parts();
                     info!("parts: {:?}", parts);
@@ -250,6 +258,7 @@ where
                     let new_body = tonic::transport::Body::wrap_stream(stream);
 
                     info!("We now have a new_body");
+
 /*                    
                     info!("TYPE = {}", Self::type_to_string(&new_body));
                     let new_box_body: BoxBody = BoxBody::new(new_body);
