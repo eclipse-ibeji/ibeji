@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// use core::error::Error;
+use common::middleware::{GrpcInterceptingFilterLayer, sample_grpc_intercepting_filter_factory};
 use core::future::Future;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
@@ -12,8 +12,7 @@ use core_protobuf_data_access::invehicle_digital_twin;
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
 use env_logger::{Builder, Target};
 use futures::StreamExt;
-use futures_core::task::Context;
-use futures_core::task::Poll;
+use futures_core::task::{Context, Poll};
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use prost::Message;
@@ -27,13 +26,13 @@ use tonic::transport::Server;
 use tonic::{Request, Status};
 use tower::{Layer, Service, ServiceBuilder};
 
-use tonic::body::BoxBody;
+// use tonic::body::BoxBody;
 
 // use hyper::body::Body;
 
 use http_body::Body;
 
-use http_body::Full;
+// use http_body::Full;
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
@@ -405,7 +404,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let layer = ServiceBuilder::new()
-        .layer(MyLayer::new());
+        // .layer(MyLayer::new());
+        .layer(GrpcInterceptingFilterLayer::new(sample_grpc_intercepting_filter_factory));
 
     Server::builder()
         .layer(layer)
