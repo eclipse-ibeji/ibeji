@@ -12,13 +12,7 @@ use tower::{Layer, Service};
 
 const GRPC_HEADER_LENGTH: usize = 5;
 
-// https://github.com/hyperium/tonic/issues/733
-// https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
-// https://github.com/hyperium/tonic/issues/481
-// This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-// This Discord post helped: https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
-// https://github.com/tower-rs/tower/issues/727
-// https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2     
+  
 
 pub trait GrpcInterceptingFilter : Sync {
     /// Is this intercepting filter applicable?
@@ -61,6 +55,13 @@ type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Se
 /// * https://docs.rs/tower/latest/tower/trait.Service.html
 /// 
 /// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
+/// * https://github.com/hyperium/tonic/issues/733
+/// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+/// * https://github.com/hyperium/tonic/issues/481
+/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+/// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
+/// * https://github.com/tower-rs/tower/issues/727
+/// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2   
 #[derive(Clone)]
 pub struct GrpcInterceptingFilterLayer {
     intercepting_filter_factory: GrpcInterceptingFilterFactory,  
