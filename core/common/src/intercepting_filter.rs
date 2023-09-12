@@ -4,23 +4,28 @@
 
 use bytes::Bytes;
 use core::future::Future;
-use core_protobuf_data_access::invehicle_digital_twin;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
-use log::{info};
-use prost::Message;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
 const GRPC_HEADER_LENGTH: usize = 5;
 
+// https://github.com/hyperium/tonic/issues/733
+// https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+// https://github.com/hyperium/tonic/issues/481
+// This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+// This Discord post helped: https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
+// https://github.com/tower-rs/tower/issues/727
+// https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2     
+
 pub trait GrpcInterceptingFilter : Sync {
     /// Is this intercepting filter applicable?
     /// 
     /// # Arguments
-    /// * `service_name` - The request's associated service name.
-    /// * `method_name` - The requests's associated method name.
+    /// * `service_name` - The request's gRPC service name.
+    /// * `method_name` - The requests's gRPC method name.
     fn is_applicable(&self, service_name: &str, method_name: &str) -> bool;
 
     /// Indicates that the request must be handled.
@@ -30,22 +35,38 @@ pub trait GrpcInterceptingFilter : Sync {
     fn must_handle_response(&self) -> bool;
 
     /// Handle request.
-    fn handle_request(&self, protobuf_message: Bytes) -> Bytes;
+    /// 
+    /// # Arguments
+    /// * `service_name` - The request's gRPC service name.
+    /// * `method_name` - The requests's gRPC method name.
+    /// * `protobuf_message_bytes` - The request's protobuf messages as bytes.
+    fn handle_request(&self, service_name: &str, method_name: &str, protobuf_message: Bytes) -> Bytes;
 
     /// Handle response.
-    fn handle_response(&self, protobuf_message: Bytes) -> Bytes;
+    /// 
+    /// # Arguments
+    /// * `service_name` - The request's gRPC service name.
+    /// * `method_name` - The requests's gRPC method name.
+    /// * `protobuf_message_bytes` - The response's protobuf messages as bytes.
+    fn handle_response(&self, service_name: &str, method_name: &str, protobuf_message: Bytes) -> Bytes;
 }
 
 type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Send>;
 
+/// Intercepting Filters relies on the tower crate's Layer construct to inject the
+/// intercepting filter into the incoming and outgoing gRPC message paths.
+/// 
+/// These web articles related to Layer were very helpful in developing this solution:
+/// * https://docs.rs/tower/latest/tower/trait.Layer.html
+/// * https://docs.rs/tower/latest/tower/trait.Service.html
+/// 
+/// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
 #[derive(Clone)]
 pub struct GrpcInterceptingFilterLayer {
-    // intercepting_filter: &'static dyn GrpcInterceptingFilter,  
     intercepting_filter_factory: GrpcInterceptingFilterFactory,  
 }
 
-impl GrpcInterceptingFilterLayer {
-    // pub fn new(intercepting_filter: &'static (dyn GrpcInterceptingFilter + 'static)) -> Self {    
+impl GrpcInterceptingFilterLayer {  
     pub fn new(intercepting_filter_factory: GrpcInterceptingFilterFactory) -> Self {
         Self {
             intercepting_filter_factory: intercepting_filter_factory,
@@ -67,7 +88,6 @@ impl<S> Layer<S> for GrpcInterceptingFilterLayer  {
 #[derive(Clone)]
 pub struct GrpcInterceptingFilterService<S> {
     service: S,
-    // intercepting_filter: &'static dyn GrpcInterceptingFilter,
     intercepting_filter_factory: GrpcInterceptingFilterFactory,      
 }
 
@@ -115,7 +135,7 @@ where
             // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
-            let new_protobuf_message_bytes: Bytes = intercepting_filter.handle_request(protobuf_message_bytes);
+            let new_protobuf_message_bytes: Bytes = intercepting_filter.handle_request(&service_name, &method_name, protobuf_message_bytes);
             let new_body_chunks: Vec<Result<_, std::io::Error>> = vec![
                 Ok(grpc_header_bytes),
                 Ok(new_protobuf_message_bytes),
@@ -136,7 +156,7 @@ where
                         // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
                         let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
                         let grpc_header_bytes = body_bytes;
-                        let new_protobuf_message_bytes = intercepting_filter.handle_response(protobuf_message_bytes);
+                        let new_protobuf_message_bytes = intercepting_filter.handle_response(&service_name, &method_name, protobuf_message_bytes);
                         let new_body_chunks: Vec<Result<_, std::io::Error>> = vec![                                
                             Ok(grpc_header_bytes),
                             Ok(new_protobuf_message_bytes),
@@ -156,65 +176,4 @@ where
             }
         })
    }
-}
-
-#[derive(Clone)]
-pub struct SampleGrpcInterceptingFilter {
-}
-
-impl SampleGrpcInterceptingFilter
-{
-    const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "InvehicleDigitalTwin";
-    const REGISTER_METHOD_NAME: &str = "Register";
-}
-
-impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
-    /// Is this intercepting filter applicable?
-    /// 
-    /// # Arguments
-    /// * `service_name` - The request's associated service name.
-    /// * `method_name` - The requests's associated method name.
-    fn is_applicable(&self, service_name: &str, method_name: &str) -> bool {
-        info!("service_name = '{service_name}'  method_name = '{method_name}'");
-        service_name == Self::INVEHICLE_DIGITAL_TWIN_SERVICE_NAME && method_name == Self::REGISTER_METHOD_NAME
-    }
-
-    /// Indicates that the request must be handled.
-    fn must_handle_request(&self) -> bool {
-        true
-    }
-
-    /// Indicates that the response must be handled.
-    fn must_handle_response(&self) -> bool {
-        true
-    }
-
-    /// Handle request.
-    fn handle_request(&self, protobuf_message_bytes: Bytes) -> Bytes {
-        let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message_bytes[..]).unwrap();
-
-        info!("register_request = {:?}", register_request);
-
-        let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
-        new_protobuf_message_buf.reserve(register_request.encoded_len());
-        register_request.encode(&mut new_protobuf_message_buf).unwrap();
-        Bytes::from(new_protobuf_message_buf)
-    }
-
-    /// Handle response.
-    fn handle_response(&self, protobuf_message_bytes: Bytes) -> Bytes {
-        let register_response: invehicle_digital_twin::v1::RegisterResponse = Message::decode(&protobuf_message_bytes[..]).unwrap();
-
-        info!("register_response = {:?}", register_response);
-
-        // This article helped: https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
-        let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
-        new_protobuf_message_buf.reserve(register_response.encoded_len());
-        register_response.encode(&mut new_protobuf_message_buf).unwrap();  
-        Bytes::from(new_protobuf_message_buf      )
-    }
-}
-
-pub fn sample_grpc_intercepting_filter_factory() -> Box<dyn GrpcInterceptingFilter + Send> {
-    Box::new(SampleGrpcInterceptingFilter{})
 }
