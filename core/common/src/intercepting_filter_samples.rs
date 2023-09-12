@@ -10,11 +10,9 @@ use prost::Message;
 use crate::intercepting_filter::GrpcInterceptingFilter;
 
 #[derive(Clone)]
-pub struct SampleGrpcInterceptingFilter {
-}
+pub struct SampleGrpcInterceptingFilter {}
 
-impl SampleGrpcInterceptingFilter
-{
+impl SampleGrpcInterceptingFilter {
     const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "InvehicleDigitalTwin";
     const REGISTER_METHOD_NAME: &str = "Register";
 }
@@ -22,12 +20,13 @@ impl SampleGrpcInterceptingFilter
 #[allow(unused_variables)]
 impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
     /// Is this intercepting filter applicable?
-    /// 
+    ///
     /// # Arguments
     /// * `service_name` - The request's gRPC service name.
     /// * `method_name` - The requests's gRPC method name.
     fn is_applicable(&self, service_name: &str, method_name: &str) -> bool {
-        service_name == Self::INVEHICLE_DIGITAL_TWIN_SERVICE_NAME && method_name == Self::REGISTER_METHOD_NAME
+        service_name == Self::INVEHICLE_DIGITAL_TWIN_SERVICE_NAME
+            && method_name == Self::REGISTER_METHOD_NAME
     }
 
     /// Indicates that the request must be handled.
@@ -46,8 +45,14 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
     /// * `service_name` - The request's gRPC service name.
     /// * `method_name` - The requests's gRPC method name.
     /// * `protobuf_message_bytes` - The request's protobuf messages as bytes.
-    fn handle_request(&self, service_name: &str, method_name: &str, protobuf_message_bytes: Bytes) -> Bytes {
-        let register_request: invehicle_digital_twin::v1::RegisterRequest = Message::decode(&protobuf_message_bytes[..]).unwrap();
+    fn handle_request(
+        &self,
+        service_name: &str,
+        method_name: &str,
+        protobuf_message_bytes: Bytes,
+    ) -> Bytes {
+        let register_request: invehicle_digital_twin::v1::RegisterRequest =
+            Message::decode(&protobuf_message_bytes[..]).unwrap();
 
         info!("register_request = {:?}", register_request);
 
@@ -58,24 +63,30 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
     }
 
     /// Handle response.
-    /// 
+    ///
     /// # Arguments
     /// * `service_name` - The request's gRPC service name.
     /// * `method_name` - The requests's gRPC method name.
     /// * `protobuf_message_bytes` - The response's protobuf messages as bytes.
-    fn handle_response(&self, service_name: &str, method_name: &str, protobuf_message_bytes: Bytes) -> Bytes {
-        let register_response: invehicle_digital_twin::v1::RegisterResponse = Message::decode(&protobuf_message_bytes[..]).unwrap();
+    fn handle_response(
+        &self,
+        service_name: &str,
+        method_name: &str,
+        protobuf_message_bytes: Bytes,
+    ) -> Bytes {
+        let register_response: invehicle_digital_twin::v1::RegisterResponse =
+            Message::decode(&protobuf_message_bytes[..]).unwrap();
 
         info!("register_response = {:?}", register_response);
 
         let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
         new_protobuf_message_buf.reserve(register_response.encoded_len());
-        register_response.encode(&mut new_protobuf_message_buf).unwrap();  
+        register_response.encode(&mut new_protobuf_message_buf).unwrap();
         Bytes::from(new_protobuf_message_buf)
     }
 }
 
 /// The factory method for creating a SampleGrpcInterceptingFilter.
 pub fn sample_grpc_intercepting_filter_factory() -> Box<dyn GrpcInterceptingFilter + Send> {
-    Box::new(SampleGrpcInterceptingFilter{})
+    Box::new(SampleGrpcInterceptingFilter {})
 }

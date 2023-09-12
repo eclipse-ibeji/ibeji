@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use common::intercepting_filter::GrpcInterceptingFilterLayer;
-use common::intercepting_filter_samples::{sample_grpc_intercepting_filter_factory};
+use common::intercepting_filter_samples::sample_grpc_intercepting_filter_factory;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -95,17 +95,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         info!("This service is not using Chariott.");
     }
 
-    let sample_layer: Option<GrpcInterceptingFilterLayer> = Some(GrpcInterceptingFilterLayer::new(sample_grpc_intercepting_filter_factory)); 
-    // let sample_layer: Option<GrpcInterceptingFilterLayer> = None;    
+    let sample_layer: Option<GrpcInterceptingFilterLayer> =
+        Some(GrpcInterceptingFilterLayer::new(sample_grpc_intercepting_filter_factory));
+    // let sample_layer: Option<GrpcInterceptingFilterLayer> = None;
 
-    let layer = ServiceBuilder::new()
-        .option_layer(sample_layer);
+    let layer = ServiceBuilder::new().option_layer(sample_layer);
 
     let invehicle_digital_twin_impl = invehicle_digital_twin_impl::InvehicleDigitalTwinImpl {
         entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
-    };    
+    };
 
-    // Setup the HTTP server.        
+    // Setup the HTTP server.
     Server::builder()
         .layer(layer)
         .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
