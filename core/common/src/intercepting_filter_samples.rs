@@ -22,8 +22,8 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
     /// Is this intercepting filter applicable?
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     fn is_applicable(&self, service_name: &str, method_name: &str) -> bool {
         service_name == Self::INVEHICLE_DIGITAL_TWIN_SERVICE_NAME
             && method_name == Self::REGISTER_METHOD_NAME
@@ -39,11 +39,11 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         true
     }
 
-    /// Handle request.
+    /// Handle request. Return the new request.
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     /// * `protobuf_message_bytes` - The request's protobuf messages as bytes.
     fn handle_request(
         &self,
@@ -62,11 +62,11 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         Bytes::from(new_protobuf_message_buf)
     }
 
-    /// Handle response.
+    /// Handle response. Return the new response.
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     /// * `protobuf_message_bytes` - The response's protobuf messages as bytes.
     fn handle_response(
         &self,

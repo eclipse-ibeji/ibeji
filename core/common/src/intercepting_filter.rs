@@ -16,8 +16,8 @@ pub trait GrpcInterceptingFilter: Sync {
     /// Is this intercepting filter applicable?
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     fn is_applicable(&self, service_name: &str, method_name: &str) -> bool;
 
     /// Indicates that the request must be handled.
@@ -26,11 +26,11 @@ pub trait GrpcInterceptingFilter: Sync {
     /// Indicates that the response must be handled.
     fn must_handle_response(&self) -> bool;
 
-    /// Handle request.
+    /// Handle request. Return the new new request.
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     /// * `protobuf_message_bytes` - The request's protobuf messages as bytes.
     fn handle_request(
         &self,
@@ -39,11 +39,11 @@ pub trait GrpcInterceptingFilter: Sync {
         protobuf_message: Bytes,
     ) -> Bytes;
 
-    /// Handle response.
+    /// Handle response. Return the new response.
     ///
     /// # Arguments
-    /// * `service_name` - The request's gRPC service name.
-    /// * `method_name` - The requests's gRPC method name.
+    /// * `service_name` - The gRPC call's service name.
+    /// * `method_name` - The gRPC call's method name.
     /// * `protobuf_message_bytes` - The response's protobuf messages as bytes.
     fn handle_response(
         &self,
