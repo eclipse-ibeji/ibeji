@@ -10,6 +10,9 @@ use http_body::Body;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
+// https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+// https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
+// The gRPC header represents the Compress-Flag and Message-Length.
 const GRPC_HEADER_LENGTH: usize = 5;
 
 pub trait GrpcInterceptingFilter: Sync {
@@ -70,6 +73,7 @@ type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Se
 /// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
 /// * https://github.com/tower-rs/tower/issues/727
 /// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
+/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
 
 /// The layer that can host a service that can host intercepting filter for gRPC calls.
 #[derive(Clone)]
@@ -153,8 +157,14 @@ where
         if is_applicable && intercepting_filter.must_handle_request() {
             let (parts, body) = request.into_parts();
             let mut body_bytes: Bytes =
-                futures::executor::block_on(hyper::body::to_bytes(body)).unwrap();
-            // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+                match futures::executor::block_on(hyper::body::to_bytes(body)) {
+                    Ok(bytes) => bytes,
+                    Err(err) => {
+                        return Box::pin(async move {
+                            Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
+                        })
+                    }
+                };
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
             let new_protobuf_message_bytes: Bytes = intercepting_filter.handle_request(
@@ -176,8 +186,14 @@ where
                 Ok(response) => {
                     if is_applicable && intercepting_filter.must_handle_response() {
                         let (parts, body) = response.into_parts();
-                        let mut body_bytes = hyper::body::to_bytes(body).await.unwrap();
-                        // This article helped: https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+                        let mut body_bytes = match hyper::body::to_bytes(body).await {
+                            Ok(bytes) => bytes,
+                            Err(err) => {
+                                return Err(
+                                    Box::new(err) as Box<dyn std::error::Error + Sync + Send>
+                                )
+                            }
+                        };
                         let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
                         let grpc_header_bytes = body_bytes;
                         let new_protobuf_message_bytes = intercepting_filter.handle_response(
