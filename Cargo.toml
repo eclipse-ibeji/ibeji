@@ -23,6 +23,7 @@ members = [
   "samples/common",
   "samples/protobuf_data_access",
   "samples/command",
+  "samples/managed_subscribe",
   "samples/mixed",
   "samples/property",
   "samples/seat_massager",

@@ -1,0 +1,58 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+// Pub Sub Service definition
+//
+// The prototype definitions for the Pub Sub Service.
+
+syntax = "proto3";
+package pubsub;
+
+// The service entry point to the Pub Sub Service. Provides the ability to
+// dynamically create and manage topics.
+service PubSub {
+    // Method used to create a dynamically generated topic for a publisher.
+    rpc CreateTopic (CreateTopicRequest) returns (CreateTopicResponse);
+
+    // Method used to delete a dynamically generated topic for a publisher.
+    rpc DeleteTopic (DeleteTopicRequest) returns (DeleteTopicResponse);
+}
+
+// Representation of a request used to create a dynamically generated topic.
+message CreateTopicRequest {
+    // An id of the publisher used to identify all topics a publisher creates.
+    string publisher_id = 1;
+
+    // Callback uri for a publisher, used to communicate updates from the
+    // Pub Sub Service.
+    string managementCallback = 2;
+
+    // The protocol used to communicate over the management callback.
+    // (Currently expects the protocol to be gRPC).
+    string managementProtocol = 3;
+}
+
+// Object returned from `CreateTopic` that provides messaging broker context
+// and the dynamically generated topic. Publisher is expected to provide this
+// information to any interested subscribers.
+message CreateTopicResponse {
+    // The newly created topic name.
+    string generatedTopic = 1;
+
+    // URI of the messaging broker used to provide pub/sub functionality.
+    string brokerUri = 2;
+
+    // Communication protocol used by the messaging broker.
+    // An example protocol: "mqtt"
+    string brokerProtocol = 3;
+}
+
+// Representation of a request used to delete a topic for a publisher.
+message DeleteTopicRequest {
+    // The name of the dynamically generated topic.
+    string topic = 1;
+}
+
+// Empty object indicating a successfull call of `DeleteTopic`.
+message DeleteTopicResponse { }
