@@ -11,8 +11,6 @@ use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
-// https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-// https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
 // The gRPC header represents the Compress-Flag and Message-Length.
 const GRPC_HEADER_LENGTH: usize = 5;
 
@@ -61,20 +59,17 @@ type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Se
 
 /// Intercepting Filters relies on the tower crate's Layer construct to inject the
 /// intercepting filter into the incoming and outgoing gRPC message paths.
-///
-/// These web articles related to Layer were very helpful in developing this solution:
+
+/// These documents/code were very helpful in developing this solution:
 /// * https://docs.rs/tower/latest/tower/trait.Layer.html
 /// * https://docs.rs/tower/latest/tower/trait.Service.html
-///
 /// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
-/// * https://github.com/hyperium/tonic/issues/733
 /// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
-/// * https://github.com/hyperium/tonic/issues/481
 /// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+/// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
 /// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
 /// * https://github.com/tower-rs/tower/issues/727
 /// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
-/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
 
 /// The layer that can host a service that can host intercepting filter for gRPC calls.
 #[derive(Clone)]
