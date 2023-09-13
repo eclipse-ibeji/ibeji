@@ -148,7 +148,7 @@ where
         Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
 
     /// Implementation of tower's Service trait's poll_ready method.
-    /// See https://docs.rs/tower/latest/tower/trait.Service.html       
+    /// See https://docs.rs/tower/latest/tower/trait.Service.html
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.service.poll_ready(cx)
     }
