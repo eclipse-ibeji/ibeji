@@ -7,6 +7,7 @@ use core::future::Future;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
+use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
@@ -40,7 +41,7 @@ pub trait GrpcInterceptingFilter: Sync {
         service_name: &str,
         method_name: &str,
         protobuf_message: Bytes,
-    ) -> Bytes;
+    ) -> Result<Bytes, Box<dyn Error + Send + Sync>>;
 
     /// Handle response. Return the new response.
     ///
@@ -53,7 +54,7 @@ pub trait GrpcInterceptingFilter: Sync {
         service_name: &str,
         method_name: &str,
         protobuf_message: Bytes,
-    ) -> Bytes;
+    ) -> Result<Bytes, Box<dyn Error + Send + Sync>>;
 }
 
 type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Send>;
@@ -167,11 +168,14 @@ where
                 };
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
-            let new_protobuf_message_bytes: Bytes = intercepting_filter.handle_request(
+            let new_protobuf_message_bytes: Bytes = match intercepting_filter.handle_request(
                 &service_name,
                 &method_name,
                 protobuf_message_bytes,
-            );
+            ) {
+                Ok(bytes) => bytes,
+                Err(err) => return Box::pin(async move { Err(err) }),
+            };
             let new_body_chunks: Vec<Result<_, std::io::Error>> =
                 vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
             let stream = futures_util::stream::iter(new_body_chunks);
@@ -196,11 +200,14 @@ where
                         };
                         let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
                         let grpc_header_bytes = body_bytes;
-                        let new_protobuf_message_bytes = intercepting_filter.handle_response(
+                        let new_protobuf_message_bytes = match intercepting_filter.handle_response(
                             &service_name,
                             &method_name,
                             protobuf_message_bytes,
-                        );
+                        ) {
+                            Ok(bytes) => bytes,
+                            Err(err) => return Err(err),
+                        };
                         let new_body_chunks: Vec<Result<_, std::io::Error>> =
                             vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
                         let stream = futures_util::stream::iter(new_body_chunks);

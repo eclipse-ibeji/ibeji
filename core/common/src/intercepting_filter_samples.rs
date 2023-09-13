@@ -6,6 +6,7 @@ use bytes::Bytes;
 use core_protobuf_data_access::invehicle_digital_twin;
 use log::info;
 use prost::Message;
+use std::error::Error;
 
 use crate::intercepting_filter::GrpcInterceptingFilter;
 
@@ -50,7 +51,7 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         service_name: &str,
         method_name: &str,
         protobuf_message_bytes: Bytes,
-    ) -> Bytes {
+    ) -> Result<Bytes, Box<dyn Error + Send + Sync>> {
         let register_request: invehicle_digital_twin::v1::RegisterRequest =
             Message::decode(&protobuf_message_bytes[..]).unwrap();
 
@@ -59,7 +60,7 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
         new_protobuf_message_buf.reserve(register_request.encoded_len());
         register_request.encode(&mut new_protobuf_message_buf).unwrap();
-        Bytes::from(new_protobuf_message_buf)
+        Ok(Bytes::from(new_protobuf_message_buf))
     }
 
     /// Handle response. Return the new response.
@@ -73,7 +74,7 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         service_name: &str,
         method_name: &str,
         protobuf_message_bytes: Bytes,
-    ) -> Bytes {
+    ) -> Result<Bytes, Box<dyn Error + Send + Sync>> {
         let register_response: invehicle_digital_twin::v1::RegisterResponse =
             Message::decode(&protobuf_message_bytes[..]).unwrap();
 
@@ -82,7 +83,7 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
         let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
         new_protobuf_message_buf.reserve(register_response.encoded_len());
         register_response.encode(&mut new_protobuf_message_buf).unwrap();
-        Bytes::from(new_protobuf_message_buf)
+        Ok(Bytes::from(new_protobuf_message_buf))
     }
 }
 
