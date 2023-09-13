@@ -13,6 +13,9 @@ members = [
   "core/protobuf_data_access",
   "core/invehicle-digital-twin",
 
+  # extension
+  "core/extension",
+
   # digital twin model
   "digital-twin-model",
 

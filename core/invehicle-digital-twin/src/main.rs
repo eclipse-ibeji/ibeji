@@ -18,11 +18,12 @@ use std::sync::Arc;
 use tonic::transport::Server;
 use tonic::{Request, Status};
 
-use crate::managed_subscribe_ext::{EntityMetadata, CallbackInfo, SubscriptionStore};
+use core_extension::managed_subscribe::managed_subscribe_ext::{
+    self, CallbackInfo, EntityMetadata, SubscriptionStore
+};
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
-mod managed_subscribe_ext;
 
 const INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE: &str = "sdv.ibeji";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";

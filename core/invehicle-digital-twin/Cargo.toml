@@ -15,6 +15,7 @@ env_logger= { workspace = true }
 iref = { workspace = true }
 json-ld  = { git = "https://github.com/blast-hardcheese/json-ld", branch = "resolve-issue-40" }
 log = { workspace = true }
+core-extension = { path = "../extension", features = ["managed_subscribe"] }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
