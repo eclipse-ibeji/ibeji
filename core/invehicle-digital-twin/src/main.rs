@@ -2,8 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use common::intercepting_filter::GrpcInterceptingFilterLayer;
-use common::intercepting_filter_samples::sample_grpc_intercepting_filter_factory;
+use common::grpc_interceptor::GrpcInterceptorLayer;
+use common::grpc_interceptor_samples::sample_grpc_interceptor_factory;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -95,9 +95,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         info!("This service is not using Chariott.");
     }
 
-    let sample_layer: Option<GrpcInterceptingFilterLayer> =
-        Some(GrpcInterceptingFilterLayer::new(sample_grpc_intercepting_filter_factory));
-    // let sample_layer: Option<GrpcInterceptingFilterLayer> = None;
+    // sample_layer can be set to None if you wish to disable it
+    let sample_layer: Option<GrpcInterceptorLayer> =
+        Some(GrpcInterceptorLayer::new(sample_grpc_interceptor_factory));
 
     let layer = ServiceBuilder::new().option_layer(sample_layer);
 

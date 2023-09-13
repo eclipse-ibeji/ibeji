@@ -2,5 +2,5 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-pub mod intercepting_filter;
-pub mod intercepting_filter_samples;
+pub mod grpc_interceptor;
+pub mod grpc_interceptor_samples;

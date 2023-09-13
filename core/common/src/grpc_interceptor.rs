@@ -11,11 +11,33 @@ use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
-// The gRPC header represents the Compress-Flag and Message-Length.
+/// This module provides the gRPC Interceptor construct. It can be used to
+/// intercept gRPC calls, and examine/modify their requests and responses.
+
+/// This construct is based on the interceptor pattern. Details on the
+/// interceptor pattern can be found in wikipedia:
+/// https://en.wikipedia.org/wiki/Interceptor_pattern.
+
+/// gRPC Interceptors rely on the tower crate's Layer construct to inject the
+/// interceptor into the incoming and outgoing gRPC message paths.
+
+/// These documents/code were very helpful in developing this solution:
+/// * https://docs.rs/tower/latest/tower/trait.Layer.html
+/// * https://docs.rs/tower/latest/tower/trait.Service.html
+/// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
+/// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+/// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
+/// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
+/// * https://github.com/tower-rs/tower/issues/727
+/// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
+
+/// The gRPC header represents the gRPC call's Compress-Flag and Message-Length.
 const GRPC_HEADER_LENGTH: usize = 5;
 
-pub trait GrpcInterceptingFilter: Sync {
-    /// Is this intercepting filter applicable?
+/// This is the trait that a gRPC Interceptor needs to imnplement.
+pub trait GrpcInterceptor: Sync {
+    /// Is this interceptor applicable?
     ///
     /// # Arguments
     /// * `service_name` - The gRPC call's service name.
@@ -55,53 +77,41 @@ pub trait GrpcInterceptingFilter: Sync {
     ) -> Result<Bytes, Box<dyn Error + Send + Sync>>;
 }
 
-type GrpcInterceptingFilterFactory = fn() -> Box<dyn GrpcInterceptingFilter + Send>;
+/// This is the type that represents the factory method for gRPC Interceptors.
+type GrpcInterceptorFactory = fn() -> Box<dyn GrpcInterceptor + Send>;
 
-/// Intercepting Filters relies on the tower crate's Layer construct to inject the
-/// intercepting filter into the incoming and outgoing gRPC message paths.
-
-/// These documents/code were very helpful in developing this solution:
-/// * https://docs.rs/tower/latest/tower/trait.Layer.html
-/// * https://docs.rs/tower/latest/tower/trait.Service.html
-/// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
-/// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
-/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-/// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
-/// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
-/// * https://github.com/tower-rs/tower/issues/727
-/// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
-
-/// The layer that can host a service that can host intercepting filter for gRPC calls.
+/// The tower layer that hosts a service that hosts a gRPC Interceptor.
 #[derive(Clone)]
-pub struct GrpcInterceptingFilterLayer {
-    intercepting_filter_factory: GrpcInterceptingFilterFactory,
+pub struct GrpcInterceptorLayer {
+    interceptor_factory: GrpcInterceptorFactory,
 }
 
-impl GrpcInterceptingFilterLayer {
-    pub fn new(intercepting_filter_factory: GrpcInterceptingFilterFactory) -> Self {
-        Self { intercepting_filter_factory }
+impl GrpcInterceptorLayer {
+    /// Create the tower layer for a gRPC Interceptor.
+    ///
+    /// # Arguments
+    /// * `interceptor_factory` - The factory method for creating the desired gRPC Interceptor.
+    pub fn new(interceptor_factory: GrpcInterceptorFactory) -> Self {
+        Self { interceptor_factory }
     }
 }
 
-impl<S> Layer<S> for GrpcInterceptingFilterLayer {
-    type Service = GrpcInterceptingFilterService<S>;
+impl<S> Layer<S> for GrpcInterceptorLayer {
+    type Service = GrpcInterceptorService<S>;
 
     fn layer(&self, service: S) -> Self::Service {
-        GrpcInterceptingFilterService {
-            service,
-            intercepting_filter_factory: self.intercepting_filter_factory,
-        }
+        GrpcInterceptorService { service, interceptor_factory: self.interceptor_factory }
     }
 }
 
-/// The service that can host an intercepting filter for gRPC calls.
+/// The tower service that hosts a gRPC Interceptor.
 #[derive(Clone)]
-pub struct GrpcInterceptingFilterService<S> {
+pub struct GrpcInterceptorService<S> {
     service: S,
-    intercepting_filter_factory: GrpcInterceptingFilterFactory,
+    interceptor_factory: GrpcInterceptorFactory,
 }
 
-impl<S> GrpcInterceptingFilterService<S> {
+impl<S> GrpcInterceptorService<S> {
     /// Retrieve the gRPC service name and method name from a URI.
     ///
     /// * `uri` - The uri used for the gRPC call.
@@ -123,7 +133,7 @@ impl<S> GrpcInterceptingFilterService<S> {
     }
 }
 
-impl<S> Service<http::request::Request<tonic::transport::Body>> for GrpcInterceptingFilterService<S>
+impl<S> Service<http::request::Request<tonic::transport::Body>> for GrpcInterceptorService<S>
 where
     S: Service<
             http::request::Request<tonic::transport::Body>,
@@ -137,20 +147,24 @@ where
     type Future =
         Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + 'static>>;
 
+    /// Implementation of tower's Service trait's poll_ready method.
+    /// See https://docs.rs/tower/latest/tower/trait.Service.html       
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.service.poll_ready(cx)
     }
 
+    /// Implementation of tower's Service trait's call method.
+    /// See https://docs.rs/tower/latest/tower/trait.Service.html
     fn call(
         &mut self,
         mut request: http::request::Request<tonic::transport::Body>,
     ) -> Self::Future {
-        let intercepting_filter = (self.intercepting_filter_factory)();
+        let interceptor = (self.interceptor_factory)();
 
         let (service_name, method_name) = Self::retrieve_grpc_names_from_uri(request.uri());
-        let is_applicable = intercepting_filter.is_applicable(&service_name, &method_name);
+        let is_applicable = interceptor.is_applicable(&service_name, &method_name);
 
-        if is_applicable && intercepting_filter.must_handle_request() {
+        if is_applicable && interceptor.must_handle_request() {
             let (parts, body) = request.into_parts();
             let mut body_bytes: Bytes =
                 match futures::executor::block_on(hyper::body::to_bytes(body)) {
@@ -163,7 +177,7 @@ where
                 };
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
-            let new_protobuf_message_bytes: Bytes = match intercepting_filter.handle_request(
+            let new_protobuf_message_bytes: Bytes = match interceptor.handle_request(
                 &service_name,
                 &method_name,
                 protobuf_message_bytes,
@@ -183,7 +197,7 @@ where
         Box::pin(async move {
             match fut.await {
                 Ok(response) => {
-                    if is_applicable && intercepting_filter.must_handle_response() {
+                    if is_applicable && interceptor.must_handle_response() {
                         let (parts, body) = response.into_parts();
                         let mut body_bytes = match hyper::body::to_bytes(body).await {
                             Ok(bytes) => bytes,
@@ -195,7 +209,7 @@ where
                         };
                         let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
                         let grpc_header_bytes = body_bytes;
-                        let new_protobuf_message_bytes = match intercepting_filter.handle_response(
+                        let new_protobuf_message_bytes = match interceptor.handle_response(
                             &service_name,
                             &method_name,
                             protobuf_message_bytes,

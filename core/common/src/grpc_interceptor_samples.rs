@@ -8,19 +8,20 @@ use log::info;
 use prost::Message;
 use std::error::Error;
 
-use crate::intercepting_filter::GrpcInterceptingFilter;
+use crate::grpc_interceptor::GrpcInterceptor;
 
+/// Sample gRPC interceptor.
 #[derive(Clone)]
-pub struct SampleGrpcInterceptingFilter {}
+pub struct SampleGrpcInterceptor {}
 
-impl SampleGrpcInterceptingFilter {
+impl SampleGrpcInterceptor {
     const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "InvehicleDigitalTwin";
     const REGISTER_METHOD_NAME: &str = "Register";
 }
 
 #[allow(unused_variables)]
-impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
-    /// Is this intercepting filter applicable?
+impl GrpcInterceptor for SampleGrpcInterceptor {
+    /// Is this interceptor applicable?
     ///
     /// # Arguments
     /// * `service_name` - The gRPC call's service name.
@@ -87,7 +88,7 @@ impl GrpcInterceptingFilter for SampleGrpcInterceptingFilter {
     }
 }
 
-/// The factory method for creating a SampleGrpcInterceptingFilter.
-pub fn sample_grpc_intercepting_filter_factory() -> Box<dyn GrpcInterceptingFilter + Send> {
-    Box::new(SampleGrpcInterceptingFilter {})
+/// The factory method for creating a SampleGrpcInterceptor.
+pub fn sample_grpc_interceptor_factory() -> Box<dyn GrpcInterceptor + Send> {
+    Box::new(SampleGrpcInterceptor {})
 }
