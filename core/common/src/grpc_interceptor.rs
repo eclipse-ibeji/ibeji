@@ -28,6 +28,7 @@ use tower::{Layer, Service};
 // * https://docs.rs/tower/latest/tower/trait.Service.html
 // * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
 // * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/server.rs
 // * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
 // * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
 // * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
@@ -123,14 +124,15 @@ impl<S> GrpcInterceptorService<S> {
         let mut method_name = String::new();
         // A gRPC URI path looks like this "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
         match Regex::new(r"^/[^/\.]+\.([^/]+)/(.+)$") {
-            Ok(regex_pattern) => match regex_pattern.captures(uri.path()) {
-                Some(caps) => {
-                    if caps.len() == 3 {
-                        service_name = caps.get(1).unwrap().as_str().to_string();
-                        method_name = caps.get(2).unwrap().as_str().to_string();
-                    }
+            Ok(regex_pattern) => if let Some(caps) = regex_pattern.captures(uri.path()) {
+                // Note: caps.get(0) represents the entire string that matched.
+                //       In the earlier gRPC URI path example it would be
+                //       "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
+                //       caps.get(1) and caps.get(2) represent the sub-parts that matched.
+                if caps.len() == 3 {
+                    service_name = caps.get(1).unwrap().as_str().to_string();
+                    method_name = caps.get(2).unwrap().as_str().to_string();
                 }
-                None => {}
             },
             Err(err) => warn!("Regex pattern for gRPC names is not valid: {err}"),
         }
@@ -201,44 +203,40 @@ where
         let fut = self.service.call(request);
 
         Box::pin(async move {
-            match fut.await {
-                Ok(response) => {
-                    if is_applicable && interceptor.must_handle_response() {
-                        let (parts, body) = response.into_parts();
-                        let mut body_bytes = match hyper::body::to_bytes(body).await {
-                            Ok(bytes) => bytes,
-                            Err(err) => {
-                                return Err(
-                                    Box::new(err) as Box<dyn std::error::Error + Sync + Send>
-                                )
-                            }
-                        };
-                        let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
-                        let grpc_header_bytes = body_bytes;
-                        let new_protobuf_message_bytes = match interceptor.handle_response(
-                            &service_name,
-                            &method_name,
-                            protobuf_message_bytes,
-                        ) {
-                            Ok(bytes) => bytes,
-                            Err(err) => return Err(err),
-                        };
-                        let new_body_chunks: Vec<Result<_, std::io::Error>> =
-                            vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
-                        let stream = futures_util::stream::iter(new_body_chunks);
-                        let new_body = tonic::transport::Body::wrap_stream(stream);
-                        let new_box_body = new_body
-                            .map_err(|e| tonic::Status::from_error(Box::new(e)))
-                            .boxed_unsync();
-                        let new_response =
-                            http::response::Response::from_parts(parts, new_box_body);
-                        Ok(new_response)
-                    } else {
-                        Ok(response)
+            let mut response = fut.await?;
+
+            if is_applicable && interceptor.must_handle_response() {
+                let (parts, body) = response.into_parts();
+                let mut body_bytes = match hyper::body::to_bytes(body).await {
+                    Ok(bytes) => bytes,
+                    Err(err) => {
+                        return Err(
+                            Box::new(err) as Box<dyn std::error::Error + Sync + Send>
+                        )
                     }
-                }
-                Err(err) => Err(err),
+                };
+                let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
+                let grpc_header_bytes = body_bytes;
+                let new_protobuf_message_bytes = match interceptor.handle_response(
+                    &service_name,
+                    &method_name,
+                    protobuf_message_bytes,
+                ) {
+                    Ok(bytes) => bytes,
+                    Err(err) => return Err(err),
+                };
+                let new_body_chunks: Vec<Result<_, std::io::Error>> =
+                    vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
+                let stream = futures_util::stream::iter(new_body_chunks);
+                let new_body = tonic::transport::Body::wrap_stream(stream);
+                let new_box_body = new_body
+                    .map_err(|e| tonic::Status::from_error(Box::new(e)))
+                    .boxed_unsync();
+                response =
+                    http::response::Response::from_parts(parts, new_box_body);
             }
+
+            Ok(response)
         })
     }
 }

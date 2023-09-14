@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use common::grpc_interceptor::GrpcInterceptorLayer;
-use common::sample_grpc_interceptor::SampleGrpcInterceptor;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -18,7 +16,6 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use tonic::transport::Server;
 use tonic::{Request, Status};
-use tower::ServiceBuilder;
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
@@ -95,19 +92,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         info!("This service is not using Chariott.");
     }
 
-    // sample_layer can be set to None if you wish to disable it
-    let sample_layer: Option<GrpcInterceptorLayer> =
-        Some(GrpcInterceptorLayer::new(SampleGrpcInterceptor::sample_grpc_interceptor_factory));
-
-    let layer = ServiceBuilder::new().option_layer(sample_layer);
-
     let invehicle_digital_twin_impl = invehicle_digital_twin_impl::InvehicleDigitalTwinImpl {
         entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
     };
 
     // Setup the HTTP server.
     Server::builder()
-        .layer(layer)
         .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
         .serve(addr)
         .await?;
