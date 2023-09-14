@@ -16,25 +16,6 @@ use tower::{Layer, Service};
 // This module provides the gRPC Interceptor construct. It can be used to
 // intercept gRPC calls, and examine/modify their requests and responses.
 
-// This construct is based on the interceptor pattern. Details on the
-// interceptor pattern can be found on wikipedia:
-// https://en.wikipedia.org/wiki/Interceptor_pattern.
-
-// gRPC Interceptors rely on the tower crate's Layer construct to inject the
-// interceptor into the incoming and outgoing gRPC message paths.
-
-// These documents/code were very helpful in developing this solution:
-// * https://docs.rs/tower/latest/tower/trait.Layer.html
-// * https://docs.rs/tower/latest/tower/trait.Service.html
-// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
-// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
-// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/server.rs
-// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
-// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
-// * https://github.com/tower-rs/tower/issues/727
-// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
-
 /// The gRPC header represents the gRPC call's Compress-Flag and Message-Length.
 const GRPC_HEADER_LENGTH: usize = 5;
 
@@ -124,16 +105,18 @@ impl<S> GrpcInterceptorService<S> {
         let mut method_name = String::new();
         // A gRPC URI path looks like this "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
         match Regex::new(r"^/[^/\.]+\.([^/]+)/(.+)$") {
-            Ok(regex_pattern) => if let Some(caps) = regex_pattern.captures(uri.path()) {
-                // Note: caps.get(0) represents the entire string that matched.
-                //       In the earlier gRPC URI path example it would be
-                //       "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
-                //       caps.get(1) and caps.get(2) represent the sub-parts that matched.
-                if caps.len() == 3 {
-                    service_name = caps.get(1).unwrap().as_str().to_string();
-                    method_name = caps.get(2).unwrap().as_str().to_string();
+            Ok(regex_pattern) => {
+                if let Some(caps) = regex_pattern.captures(uri.path()) {
+                    // Note: caps.get(0) represents the entire string that matched.
+                    //       In the earlier gRPC URI path example it would be
+                    //       "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
+                    //       caps.get(1) and caps.get(2) represent the sub-parts that matched.
+                    if caps.len() == 3 {
+                        service_name = caps.get(1).unwrap().as_str().to_string();
+                        method_name = caps.get(2).unwrap().as_str().to_string();
+                    }
                 }
-            },
+            }
             Err(err) => warn!("Regex pattern for gRPC names is not valid: {err}"),
         }
 
@@ -210,9 +193,7 @@ where
                 let mut body_bytes = match hyper::body::to_bytes(body).await {
                     Ok(bytes) => bytes,
                     Err(err) => {
-                        return Err(
-                            Box::new(err) as Box<dyn std::error::Error + Sync + Send>
-                        )
+                        return Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
                     }
                 };
                 let protobuf_message_bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
@@ -229,11 +210,9 @@ where
                     vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
                 let stream = futures_util::stream::iter(new_body_chunks);
                 let new_body = tonic::transport::Body::wrap_stream(stream);
-                let new_box_body = new_body
-                    .map_err(|e| tonic::Status::from_error(Box::new(e)))
-                    .boxed_unsync();
-                response =
-                    http::response::Response::from_parts(parts, new_box_body);
+                let new_box_body =
+                    new_body.map_err(|e| tonic::Status::from_error(Box::new(e))).boxed_unsync();
+                response = http::response::Response::from_parts(parts, new_box_body);
             }
 
             Ok(response)
