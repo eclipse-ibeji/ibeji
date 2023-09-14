@@ -1,0 +1,28 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+bytes = { workspace = true }
+futures = { workspace = true }
+futures-core = { workspace = true }
+futures-util = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+hyper = { workspace = true }
+log = { workspace = true }
+prost = { workspace = true }
+core-protobuf-data-access = { path = "../protobuf_data_access" }
+regex = {workspace = true }
+tonic = { workspace = true }
+tower = { workspace = true }
+url = { workspace = true }
+
+[build-dependencies]
+tonic-build = { workspace = true }

@@ -10,6 +10,7 @@ use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twi
 use env_logger::{Builder, Target};
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
+use std::boxed::Box;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -69,15 +70,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let invehicle_digital_twin_authority = settings.invehicle_digital_twin_authority;
     let chariott_uri_option = settings.chariott_uri;
 
-    // Setup the HTTP server.
     let addr: SocketAddr = invehicle_digital_twin_authority.parse()?;
-    let invehicle_digital_twin_impl = invehicle_digital_twin_impl::InvehicleDigitalTwinImpl {
-        entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
-    };
+
     let invehicle_digital_twin_address = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138
-    let server_future = Server::builder()
-        .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
-        .serve(addr);
     info!("The HTTP server is listening on address '{invehicle_digital_twin_address}'");
 
     // Register the invehicle digital twin service with Chariott if Chariott's URI was provided in the config.
@@ -96,7 +91,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         info!("This service is not using Chariott.");
     }
 
-    server_future.await?;
+    let invehicle_digital_twin_impl = invehicle_digital_twin_impl::InvehicleDigitalTwinImpl {
+        entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
+    };
+
+    // Setup the HTTP server.
+    Server::builder()
+        .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
+        .serve(addr)
+        .await?;
 
     debug!("The Digital Twin Service has completed.");
 
