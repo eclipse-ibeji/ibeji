@@ -30,8 +30,7 @@ const INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE: &str = "https://gi
 ///
 /// # Arguments
 /// * `chariott_uri` - Chariott's URI.
-/// * `invehicle_digital_twin_uri` - In-vehicle D
-/// igital Twin Service's URI.
+/// * `invehicle_digital_twin_uri` - In-vehicle Digital Twin Service's URI.
 async fn register_invehicle_digital_twin_service_with_chariott(
     chariott_uri: &str,
     invehicle_digital_twin_uri: &str,
