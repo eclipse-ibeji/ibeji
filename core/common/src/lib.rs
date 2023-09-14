@@ -3,4 +3,4 @@
 // SPDX-License-Identifier: MIT
 
 pub mod grpc_interceptor;
-pub mod grpc_interceptor_samples;
+pub mod sample_grpc_interceptor;

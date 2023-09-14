@@ -7,30 +7,32 @@ use core::future::Future;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
+use log::warn;
+use regex::Regex;
 use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
-/// This module provides the gRPC Interceptor construct. It can be used to
-/// intercept gRPC calls, and examine/modify their requests and responses.
+// This module provides the gRPC Interceptor construct. It can be used to
+// intercept gRPC calls, and examine/modify their requests and responses.
 
-/// This construct is based on the interceptor pattern. Details on the
-/// interceptor pattern can be found in wikipedia:
-/// https://en.wikipedia.org/wiki/Interceptor_pattern.
+// This construct is based on the interceptor pattern. Details on the
+// interceptor pattern can be found on wikipedia:
+// https://en.wikipedia.org/wiki/Interceptor_pattern.
 
-/// gRPC Interceptors rely on the tower crate's Layer construct to inject the
-/// interceptor into the incoming and outgoing gRPC message paths.
+// gRPC Interceptors rely on the tower crate's Layer construct to inject the
+// interceptor into the incoming and outgoing gRPC message paths.
 
-/// These documents/code were very helpful in developing this solution:
-/// * https://docs.rs/tower/latest/tower/trait.Layer.html
-/// * https://docs.rs/tower/latest/tower/trait.Service.html
-/// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
-/// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
-/// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
-/// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
-/// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
-/// * https://github.com/tower-rs/tower/issues/727
-/// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
+// These documents/code were very helpful in developing this solution:
+// * https://docs.rs/tower/latest/tower/trait.Layer.html
+// * https://docs.rs/tower/latest/tower/trait.Service.html
+// * https://stackoverflow.com/questions/68203821/prost-the-encode-method-cannot-be-invoked-on-a-trait-object
+// * https://github.com/hyperium/tonic/blob/master/examples/src/tower/client.rs
+// * https://stackoverflow.com/questions/76758914/parse-grpc-orginal-body-with-tonic-prost
+// * https://stackoverflow.com/questions/57632558/grpc-server-complaining-that-message-is-larger-than-max-size-when-its-not
+// * https://discord.com/channels/500028886025895936/628706823104626710/1086425720709992602
+// * https://github.com/tower-rs/tower/issues/727
+// * https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
 
 /// The gRPC header represents the gRPC call's Compress-Flag and Message-Length.
 const GRPC_HEADER_LENGTH: usize = 5;
@@ -113,22 +115,26 @@ pub struct GrpcInterceptorService<S> {
 
 impl<S> GrpcInterceptorService<S> {
     /// Retrieve the gRPC service name and method name from a URI.
+    /// If it cannot succesfully be parsed, then an empty service name and/or method name will be returned.
     ///
     /// * `uri` - The uri used for the gRPC call.
     fn retrieve_grpc_names_from_uri(uri: &Uri) -> (String, String) {
-        let uri_string = uri.to_string();
-        let uri_parts: Vec<&str> = uri_string.split('/').collect();
         let mut service_name = String::new();
         let mut method_name = String::new();
-        if uri_parts.len() == 5 {
-            method_name = uri_parts[4].to_string();
-            let qualified_service_name = uri_parts[3].to_string();
-            let qualified_service_name_parts: Vec<&str> =
-                qualified_service_name.split('.').collect();
-            if qualified_service_name_parts.len() == 2 {
-                service_name = qualified_service_name_parts[1].to_string();
-            }
+        // A gRPC URI path looks like this "/invehicle_digital_twin.InvehicleDigitalTwin/FindById".
+        match Regex::new(r"^/[^/\.]+\.([^/]+)/(.+)$") {
+            Ok(regex_pattern) => match regex_pattern.captures(uri.path()) {
+                Some(caps) => {
+                    if caps.len() == 3 {
+                        service_name = caps.get(1).unwrap().as_str().to_string();
+                        method_name = caps.get(2).unwrap().as_str().to_string();
+                    }
+                }
+                None => {}
+            },
+            Err(err) => warn!("Regex pattern for gRPC names is not valid: {err}"),
         }
+
         (service_name, method_name)
     }
 }

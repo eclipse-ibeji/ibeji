@@ -17,9 +17,13 @@ pub struct SampleGrpcInterceptor {}
 impl SampleGrpcInterceptor {
     const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "InvehicleDigitalTwin";
     const REGISTER_METHOD_NAME: &str = "Register";
+
+    /// The factory method for creating a SampleGrpcInterceptor.
+    pub fn sample_grpc_interceptor_factory() -> Box<dyn GrpcInterceptor + Send> {
+        Box::new(SampleGrpcInterceptor {})
+    }
 }
 
-#[allow(unused_variables)]
 impl GrpcInterceptor for SampleGrpcInterceptor {
     /// Is this interceptor applicable?
     ///
@@ -49,8 +53,8 @@ impl GrpcInterceptor for SampleGrpcInterceptor {
     /// * `protobuf_message_bytes` - The request's protobuf messages as bytes.
     fn handle_request(
         &self,
-        service_name: &str,
-        method_name: &str,
+        _service_name: &str,
+        _method_name: &str,
         protobuf_message_bytes: Bytes,
     ) -> Result<Bytes, Box<dyn Error + Send + Sync>> {
         let register_request: invehicle_digital_twin::v1::RegisterRequest =
@@ -72,8 +76,8 @@ impl GrpcInterceptor for SampleGrpcInterceptor {
     /// * `protobuf_message_bytes` - The response's protobuf messages as bytes.
     fn handle_response(
         &self,
-        service_name: &str,
-        method_name: &str,
+        _service_name: &str,
+        _method_name: &str,
         protobuf_message_bytes: Bytes,
     ) -> Result<Bytes, Box<dyn Error + Send + Sync>> {
         let register_response: invehicle_digital_twin::v1::RegisterResponse =
@@ -86,9 +90,4 @@ impl GrpcInterceptor for SampleGrpcInterceptor {
         register_response.encode(&mut new_protobuf_message_buf).unwrap();
         Ok(Bytes::from(new_protobuf_message_buf))
     }
-}
-
-/// The factory method for creating a SampleGrpcInterceptor.
-pub fn sample_grpc_interceptor_factory() -> Box<dyn GrpcInterceptor + Send> {
-    Box::new(SampleGrpcInterceptor {})
 }

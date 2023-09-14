@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use common::grpc_interceptor::GrpcInterceptorLayer;
-use common::grpc_interceptor_samples::sample_grpc_interceptor_factory;
+use common::sample_grpc_interceptor::SampleGrpcInterceptor;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -97,7 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // sample_layer can be set to None if you wish to disable it
     let sample_layer: Option<GrpcInterceptorLayer> =
-        Some(GrpcInterceptorLayer::new(sample_grpc_interceptor_factory));
+        Some(GrpcInterceptorLayer::new(SampleGrpcInterceptor::sample_grpc_interceptor_factory));
 
     let layer = ServiceBuilder::new().option_layer(sample_layer);
 
