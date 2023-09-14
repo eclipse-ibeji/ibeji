@@ -2,7 +2,7 @@
 
 ## gRPC Interceptor
 
-gRPC Interceptor is a concept that intercepts gRPC calls received by a tonic http server, so that they can be examine and modified.
+gRPC Interceptor is a concept that intercepts gRPC calls received by a tonic http server, so that they can be examined and modified.
 
 gRPC Interceptor is based on the interceptor pattern. Details on the interceptor pattern can be found on [wikipedia](https://en.wikipedia.org/wiki/Interceptor_pattern).
 
