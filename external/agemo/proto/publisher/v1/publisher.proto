@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// Publisher Service definition
+// Publisher Callback Service definition
 //
 // The prototype definitions for a Publisher utilizing the Pub Sub Service.
 
@@ -10,41 +10,12 @@ syntax = "proto3";
 package publisher;
 
 // The service that a publisher implements to provide necessary functionality
-// for communication with the Pub Sub Service and to provide data to interested
-// subscribers.
-service Publisher {
-    // Method used by a subscriber to get topic and messaging broker
-    // information.
-    rpc GetSubscriptionInfo (SubscriptionInfoRequest) returns (SubscriptionInfoResponse);
-
+// for communication from the Pub Sub Service.
+service PublisherCallback {
     // Method used by the Pub Sub Service to provide the publisher with topic
     // information so the publisher can make informed choices with topic
     // management.
     rpc ManageTopicCallback (ManageTopicRequest) returns (ManageTopicResponse);
-}
-
-// Representation of a request to get subscrption information about a specific
-// subject from a publisher.
-message SubscriptionInfoRequest {
-    // A field describing the topic or data a subscriber is interested in.
-    // An example subject: "GPS"
-    string subject = 1;
-}
-
-// Object returned by `GetSubscriptionInfo` containing necessary context for
-// subscribing to information provided by a publisher.
-message SubscriptionInfoResponse {
-    // Protocol used for subscription messages.
-    // An example protocol: "mqtt"
-    string protocolKind = 1;
-
-    // URI that a subscriber will connect to for a subscription.
-    string subscriptionUri = 2;
-
-    // In addition to providing the topic to connect to, this can in the future
-    // can provide other information for how to connect to a topic in the
-    // broker, like a connection token, etc.
-    string subscriptionMetadata = 3;
 }
 
 // Representation of a request that provides context for a publisher to manage

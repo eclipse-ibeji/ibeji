@@ -2,9 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use core_protobuf_data_access::agemo::publisher;
 use core_protobuf_data_access::agemo::publisher::v1::{ManageTopicRequest, ManageTopicResponse};
-use core_protobuf_data_access::agemo::publisher::v1::publisher_server::Publisher;
+use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::PublisherCallback;
 use core_protobuf_data_access::agemo::pubsub::v1::pub_sub_client::PubSubClient;
 use core_protobuf_data_access::agemo::pubsub::v1::{CreateTopicRequest, CreateTopicResponse, DeleteTopicResponse, DeleteTopicRequest};
 use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
@@ -137,7 +136,7 @@ impl SubscriptionStore {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ManagedSubscribeExt {
     pub managed_subscribe_uri: String,
     pub extension_uri: String,
@@ -274,15 +273,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 }
 
 #[tonic::async_trait]
-impl Publisher for ManagedSubscribeExt {
-    /// Not implemented - this will be removed with a future iteration of the publisher proto file.
-    async fn get_subscription_info(
-        &self,
-        _request: Request<publisher::v1::SubscriptionInfoRequest>,
-    ) -> Result<Response<publisher::v1::SubscriptionInfoResponse>, Status> {
-        Err(Status::unimplemented("This get_subscription_info call is not implemented"))
-    }
-
+impl PublisherCallback for ManagedSubscribeExt {
     /// Callback for managing a topic based on subscriptions.
     ///
     /// # Arguments

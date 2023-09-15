@@ -2,6 +2,9 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+pub mod extension_builder;
+pub mod extension_config;
+
 #[cfg(feature = "managed_subscribe")]
 /// Extension that communicates with a managed subscribe service to offer dynamically created
 /// subscriptions on demand for Ibeji providers.

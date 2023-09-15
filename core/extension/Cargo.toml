@@ -9,16 +9,22 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+config = { workspace = true }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
 log = { workspace = true }
 parking_lot = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_derive = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
+yaml-rust = { workspace = true, optional = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
 [features]
+default = ["yaml"]
+yaml = ["yaml-rust"]
 managed_subscribe = []
