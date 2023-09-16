@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use core_extension::extension_builder:: service_extension_builder;
+use core_extension::extension;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -15,7 +15,6 @@ use std::boxed::Box;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tonic::transport::Server;
 use tonic::{Request, Status};
 
 mod invehicle_digital_twin_config;
@@ -96,11 +95,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
     };
 
-    // Setup the HTTP server.
-    Server::builder()
-        .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
-        .serve(addr)
-        .await?;
+    let base_service = InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl);
+
+    extension::serve_with_extensions(addr, base_service).await?;
 
     debug!("The Digital Twin Service has completed.");
 

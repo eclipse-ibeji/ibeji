@@ -3,24 +3,30 @@
 // SPDX-License-Identifier: MIT
 
 use core_protobuf_data_access::agemo::publisher::v1::{ManageTopicRequest, ManageTopicResponse};
-use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::PublisherCallback;
+use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::{PublisherCallback, PublisherCallbackServer};
 use core_protobuf_data_access::agemo::pubsub::v1::pub_sub_client::PubSubClient;
 use core_protobuf_data_access::agemo::pubsub::v1::{CreateTopicRequest, CreateTopicResponse, DeleteTopicResponse, DeleteTopicRequest};
 use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
-use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_server::ManagedSubscribe;
+use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_server::{ManagedSubscribe, ManagedSubscribeServer};
 use core_protobuf_data_access::extensions::managed_subscribe::v1::{
     Constraint, SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
 };
 
 use log::{debug, error, info};
 use parking_lot::RwLock;
+use serde_derive::Deserialize;
+use tonic::transport::server::Router;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
 use tonic::{Request, Response, Status};
 
+use crate::extension::ExtensionService;
+use crate::extension_config::load_settings;
+
 pub const AGEMO_ENDPOINT: &str = "http://0.0.0.0:50051";
+const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
 pub const MS_PROTOCOL: &str = "grpc";
 
 /// Actions that are returned from the Pub Sub Service.
@@ -38,6 +44,12 @@ pub enum TopicAction {
     /// Enum correlating to a DELETE action from the Pub Sub Service.
     #[strum(serialize = "DELETE")]
     Delete,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ConfigSettings {
+    pub invehicle_digital_twin_authority: String,
+    pub chariott_uri: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -150,10 +162,26 @@ impl ManagedSubscribeExt {
     /// # Arguments
     /// * `extension_uri` - The uri where the extension service will be hosted.
     /// * `subscription_store` - Handle to the shared subscription store for the extension.
-    pub fn new(
-        extension_uri: &str,
-        subscription_store: Arc<RwLock<SubscriptionStore>>,
-    ) -> Self {
+    pub fn new() -> Self {
+        let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
+        let endpoint = config.invehicle_digital_twin_authority;
+        let extension_uri = format!("http://{endpoint}");
+
+        let subscription_store = Arc::new(RwLock::new(SubscriptionStore::new()));
+
+        let entity_metadata = EntityMetadata {
+            callback: CallbackInfo {
+                uri: String::from("http://0.0.0.0:4010"),
+                protocol: String::from("grpc"),
+            },
+            topics: HashMap::new(),
+        };
+    
+        // Add entity to subscription store.
+        {
+            subscription_store.write().add_entity("dtmi:sdv:HVAC:AmbientAirTemperature;1", entity_metadata);
+        }
+
         ManagedSubscribeExt {
             managed_subscribe_uri: AGEMO_ENDPOINT.to_string(),
             extension_uri: extension_uri.to_string(),
@@ -212,6 +240,18 @@ impl ManagedSubscribeExt {
 
         // Call managed subscribe service.
         ms_client.delete_topic(request).await
+    }
+}
+
+impl ExtensionService for ManagedSubscribeExt {
+    fn add_services<L>(&self, builder: Router<L>) -> Router<L> where L: Clone {
+        let ext_builder = builder;
+        let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
+        let managed_subscribe_callback_service = PublisherCallbackServer::new(self.clone());
+
+        ext_builder
+            .add_service(managed_subscribe_service)
+            .add_service(managed_subscribe_callback_service)
     }
 }
 
