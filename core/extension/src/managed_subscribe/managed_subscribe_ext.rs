@@ -26,7 +26,7 @@ use crate::extension::ExtensionService;
 use crate::extension_config::load_settings;
 
 pub const AGEMO_ENDPOINT: &str = "http://0.0.0.0:50051";
-const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
+pub const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
 pub const MS_PROTOCOL: &str = "grpc";
 
 /// Actions that are returned from the Pub Sub Service.

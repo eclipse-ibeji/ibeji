@@ -25,8 +25,6 @@ use tonic::transport::Server;
 
 use crate::provider_impl::ProviderImpl;
 
-const EXTENSION_URI: &str = "http://0.0.0.0:5010";
-
 /// Register the ambient air temperature property's endpoint.
 ///
 /// # Arguments
@@ -35,11 +33,12 @@ const EXTENSION_URI: &str = "http://0.0.0.0:5010";
 /// * `topic` - The topic.
 async fn register_ambient_air_temperature(
     invehicle_digital_twin_uri: &str,
+    provider_uri: &str,
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![digital_twin_operation::MANAGEDSUBSCRIBE.to_string()],
-        uri: EXTENSION_URI.to_string(),
+        uri: provider_uri.to_string(),
         context: "GetSubscriptionInfo".to_string(),
     };
 
@@ -116,6 +115,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let settings = provider_config::load_settings();
 
     let provider_authority = settings.provider_authority;
+    let provider_uri = format!("http://{provider_authority}"); 
 
     let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
         settings.invehicle_digital_twin_uri,
@@ -137,7 +137,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     debug!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_ambient_air_temperature(&invehicle_digital_twin_uri)
+        register_ambient_air_temperature(&invehicle_digital_twin_uri, &provider_uri)
     })
     .await?;
 

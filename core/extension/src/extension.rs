@@ -19,13 +19,14 @@ pub trait ExtensionService {
     fn add_services<L>(&self, builder: Router<L>) -> Router<L> where L: Clone;
 }
 
+/// Trait for a tonic Router to add all the grpc extension services at once.
 trait ExtensionServer<L> {
     fn add_extension_services(self) -> Router<L> where L: Clone;
 }
 
 impl <L> ExtensionServer<L> for Router<L> {
     /// Helper function to add extension services to main hosted service.
-    #[allow(unused_mut)]
+    #[allow(unused_mut)] // Necessary when no extensions are built.
     fn add_extension_services(self) -> Router<L> where L: Clone {
         let mut builder = self;
 
@@ -43,7 +44,7 @@ impl <L> ExtensionServer<L> for Router<L> {
 /// # Arguments
 /// * `addr` - Socket address to host the services on.
 /// * `base_service` - Core service that will be hosted.
-#[allow(unused_assignments, unused_mut)]
+#[allow(unused_assignments, unused_mut)] // Necessary when no interceptors are built.
 pub fn serve_with_extensions<S>(
     addr: SocketAddr,
     base_service: S,
