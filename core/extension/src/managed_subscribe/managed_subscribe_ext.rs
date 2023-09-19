@@ -133,6 +133,10 @@ impl ManagedSubscribeExt {
 }
 
 impl GrpcExtensionService for ManagedSubscribeExt {
+    // fn get_services(&self) -> tonic::transport::server::Routes {
+    //     let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
+    //     let managed_subscribe_callback_service = PublisherCallbackServer::new(self.clone());
+    // }
     fn add_services<L>(&self, builder: Router<L>) -> Router<L> {
         let ext_builder = builder;
         let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());

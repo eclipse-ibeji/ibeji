@@ -13,6 +13,7 @@ bytes = { workspace = true }
 config = { workspace = true }
 common = { path = "../common" }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
+dyn-clone = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }

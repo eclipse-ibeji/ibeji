@@ -20,32 +20,20 @@ use std::sync::Arc;
 #[cfg(feature = "managed_subscribe")]
 use crate::managed_subscribe::{self, managed_subscribe_interceptor::ManagedSubscribeInterceptor};
 
-// Placeholder type used for option object of an extension when the feature flag is not enabled.
 #[allow(dead_code)]
 type NoneType = String;
 
 #[cfg(not(feature = "managed_subscribe"))]
-type ManagedSubscribeStore = NoneType;
-#[cfg(not(feature = "managed_subscribe"))]
 type ManagedSubscribeExt = NoneType;
 
 #[cfg(feature = "managed_subscribe")]
-type ManagedSubscribeStore = managed_subscribe::managed_subscribe_store::SubscriptionStore;
-#[cfg(feature = "managed_subscribe")]
 type ManagedSubscribeExt = managed_subscribe::managed_subscribe_ext::ManagedSubscribeExt;
 
-
 /// Trait that must be implemented for an extension to add a grpc service to the hosted server.
-pub trait GrpcExtensionService {
-    /// Function to add necessary extension services to the server builder.
+pub trait GrpcExtensionService: Send {
+    // fn get_services(&self) -> Routes;
+    // Function to add necessary extension services to the server builder.
     fn add_services<L>(&self, builder: Router<L>) -> Router<L>;
-}
-
-/// Implementation for NoneType that is a passthrough. This is to make the compiler happy.
-impl GrpcExtensionService for NoneType {
-    fn add_services<L>(&self, builder: Router<L>) -> Router<L> {
-        builder
-    }
 }
 
 /// Trait that extends the tonic::Router struct to add an optional GrpcExtensionService.
@@ -87,8 +75,8 @@ where
     S::Future: Send + 'static,
 {
     // Add option for an interceptor layer. This will default to none if the feature for the extension is not enabled.
-    let mut managed_subscribe_layer: Option<GrpcInterceptorLayer<ManagedSubscribeStore>> = None;
-    
+    let mut managed_subscribe_layer: Option<GrpcInterceptorLayer> = None;
+
     // Add option for an extension. This will default to none if the feature for the extension is not enabled.
     let mut managed_subscribe_ext: Option<ManagedSubscribeExt> = None;
 
@@ -98,7 +86,8 @@ where
         let store = managed_subscribe::managed_subscribe_store::SubscriptionStore::new();
         let store_handle = Arc::new(RwLock::new(store));
 
-        managed_subscribe_layer = Some(GrpcInterceptorLayer::new(ManagedSubscribeInterceptor::sample_grpc_interceptor_factory, Some(store_handle.clone())));
+        managed_subscribe_layer = Some(GrpcInterceptorLayer::new(Box::new(ManagedSubscribeInterceptor::new(store_handle.clone()))));
+        
         managed_subscribe_ext = Some(ManagedSubscribeExt::new(store_handle));
     }
 

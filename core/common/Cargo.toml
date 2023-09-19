@@ -10,6 +10,7 @@ license = "MIT"
 
 [dependencies]
 bytes = { workspace = true }
+dyn-clone = { workspace = true }
 futures = { workspace = true }
 futures-core = { workspace = true }
 futures-util = { workspace = true }

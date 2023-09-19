@@ -27,15 +27,16 @@ impl ManagedSubscribeInterceptor {
     const REGISTER_METHOD_NAME: &str = "Register";
     const MANAGED_SUBSCRIBE_OPERATION: &str = "ManagedSubscribe";
 
-    /// The factory method for creating a ManagedSubscribeInterceptor.
-    pub fn sample_grpc_interceptor_factory(store: Option<Arc<RwLock<SubscriptionStore>>>) -> Box<dyn GrpcInterceptor + Send> {
+    pub fn new(extension_store: Arc<RwLock<SubscriptionStore>>) -> Self {
+        // Load config to get extension endpoint.
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.invehicle_digital_twin_authority;
         let extension_uri = format!("http://{endpoint}");
 
-        let extension_store = store.unwrap();
-
-        Box::new(ManagedSubscribeInterceptor { extension_uri, extension_store })
+        ManagedSubscribeInterceptor {
+            extension_uri,
+            extension_store,
+        }
     }
 }
 
