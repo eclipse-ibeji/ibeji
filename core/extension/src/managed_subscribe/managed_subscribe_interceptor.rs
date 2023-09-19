@@ -11,15 +11,13 @@ use std::{error::Error, sync::Arc, collections::HashMap};
 
 use common::grpc_interceptor::GrpcInterceptor;
 
-use crate::{extension_config::load_settings, managed_subscribe::managed_subscribe_store::{CallbackInfo, EntityMetadata}};
-
-use super::{managed_subscribe_ext::{ConfigSettings, CONFIG_FILENAME}, managed_subscribe_store::SubscriptionStore};
+use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, EntityMetadata, ManagedSubscribeStore};
 
 /// Interceptor for injecting a managed subscribe endpoint for providers.
 #[derive(Clone)]
 pub struct ManagedSubscribeInterceptor {
     extension_uri: String,
-    extension_store: Arc<RwLock<SubscriptionStore>>,
+    extension_store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
 impl ManagedSubscribeInterceptor {
@@ -27,14 +25,9 @@ impl ManagedSubscribeInterceptor {
     const REGISTER_METHOD_NAME: &str = "Register";
     const MANAGED_SUBSCRIBE_OPERATION: &str = "ManagedSubscribe";
 
-    pub fn new(extension_store: Arc<RwLock<SubscriptionStore>>) -> Self {
-        // Load config to get extension endpoint.
-        let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
-        let endpoint = config.invehicle_digital_twin_authority;
-        let extension_uri = format!("http://{endpoint}");
-
+    pub fn new(extension_uri: &str, extension_store: Arc<RwLock<ManagedSubscribeStore>>) -> Self {
         ManagedSubscribeInterceptor {
-            extension_uri,
+            extension_uri: extension_uri.to_string(),
             extension_store,
         }
     }

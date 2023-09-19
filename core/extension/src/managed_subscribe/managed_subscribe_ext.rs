@@ -15,7 +15,7 @@ use core_protobuf_data_access::extensions::managed_subscribe::v1::{
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
-use tonic::transport::server::Router;
+use tonic::transport::server::RoutesBuilder;
 use std::str::FromStr;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
@@ -23,7 +23,9 @@ use tonic::{Request, Response, Status};
 
 use crate::extension::GrpcExtensionService;
 use crate::extension_config::load_settings;
-use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, SubscriptionStore, TopicInfo};
+use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, ManagedSubscribeStore, TopicInfo};
+
+use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
 pub const AGEMO_ENDPOINT: &str = "http://0.0.0.0:50051";
 pub const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
@@ -57,26 +59,31 @@ pub struct ManagedSubscribeExt {
     pub managed_subscribe_uri: String,
     pub extension_uri: String,
     pub extension_protocol: String,
-    pub subscription_store: Arc<RwLock<SubscriptionStore>>,
+    pub extension_store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
 impl ManagedSubscribeExt {
     /// Creates a new managed subscribe extension object.
-    ///
-    /// # Arguments
-    /// * `extension_uri` - The uri where the extension service will be hosted.
-    /// * `subscription_store` - Handle to the shared subscription store for the extension.
-    pub fn new(subscription_store: Arc<RwLock<SubscriptionStore>>) -> Self {
+    pub fn new() -> Self {
+        // Get extension information from the configuration settings.
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.invehicle_digital_twin_authority;
         let extension_uri = format!("http://{endpoint}");
+
+        let extension_store = Arc::new(RwLock::new(ManagedSubscribeStore::new()));
 
         ManagedSubscribeExt {
             managed_subscribe_uri: AGEMO_ENDPOINT.to_string(),
             extension_uri: extension_uri.to_string(),
             extension_protocol: MS_PROTOCOL.to_string(),
-            subscription_store,
+            extension_store,
         }
+    }
+
+    /// Creates a new managed subscribe interceptor that shares data with the current instance of
+    /// this extension.
+    pub fn create_interceptor(&self) -> ManagedSubscribeInterceptor {
+        ManagedSubscribeInterceptor::new(&self.extension_uri, self.extension_store.clone())
     }
 
     /// Calls the external managed subscription service to create a new topic.
@@ -133,18 +140,15 @@ impl ManagedSubscribeExt {
 }
 
 impl GrpcExtensionService for ManagedSubscribeExt {
-    // fn get_services(&self) -> tonic::transport::server::Routes {
-    //     let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
-    //     let managed_subscribe_callback_service = PublisherCallbackServer::new(self.clone());
-    // }
-    fn add_services<L>(&self, builder: Router<L>) -> Router<L> {
-        let ext_builder = builder;
+    /// Adds the gRPC services for this extension to the server builder.
+    fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
+        // Create the gRPC services.
         let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
         let managed_subscribe_callback_service = PublisherCallbackServer::new(self.clone());
 
-        ext_builder
+        builder
             .add_service(managed_subscribe_service)
-            .add_service(managed_subscribe_callback_service)
+            .add_service(managed_subscribe_callback_service);
     }
 }
 
@@ -166,14 +170,12 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 
         // Check if store contains entity.
         {
-            let contains_entity = self.subscription_store.read().contains_entity(&entity_id);
+            let contains_entity = self.extension_store.read().contains_entity(&entity_id);
 
             if !contains_entity {
                 return Err(Status::not_found("Unable to get dynamic subscription for {entity_id}"));
             };
         } 
-
-        // See if there is a topic that matches requested constraints
 
         // Get managed subscribe topic information.
         let created_topic = self.create_managed_topic(&entity_id).await?.into_inner();
@@ -189,7 +191,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 
         // Add topic to store.
         {
-            self.subscription_store.write().add_topic(&entity_id, &generated_topic, topic_info.clone());
+            self.extension_store.write().add_topic(&entity_id, &generated_topic, topic_info.clone());
         }
 
         // Respond with subscription information.
@@ -230,7 +232,7 @@ impl PublisherCallback for ManagedSubscribeExt {
 
         // Get entity information from topic.
         {
-            let store = self.subscription_store.read();
+            let store = self.extension_store.read();
 
             // Get associated entity id with the topic name.
             entity_id = match store.get_entity_id(&topic) {
@@ -310,7 +312,7 @@ impl PublisherCallback for ManagedSubscribeExt {
 
             // Remove topic from store.
             {
-                self.subscription_store.write().remove_topic(&topic);
+                self.extension_store.write().remove_topic(&topic);
             }
         }
 

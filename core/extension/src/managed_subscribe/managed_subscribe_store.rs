@@ -26,15 +26,15 @@ pub struct EntityMetadata {
 }
 
 #[derive(Clone, Debug)]
-pub struct SubscriptionStore {
+pub struct ManagedSubscribeStore {
     topic_entity_map: HashMap<String, String>,
     entity_metadata_map: HashMap<String, EntityMetadata>,
 }
 
-impl SubscriptionStore {
+impl ManagedSubscribeStore {
     /// Creates a new instance of a subscription store.
     pub fn new() -> Self {
-        SubscriptionStore {
+        ManagedSubscribeStore {
             topic_entity_map: HashMap::new(),
             entity_metadata_map: HashMap::new(),
         }
