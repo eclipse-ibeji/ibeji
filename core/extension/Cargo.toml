@@ -23,12 +23,11 @@ strum_macros = { workspace = true }
 tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 tower = { workspace = true }
-yaml-rust = { workspace = true, optional = true }
+yaml-rust = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
 [features]
-default = ["yaml"]
-yaml = ["yaml-rust"]
+default = []
 managed_subscribe = []

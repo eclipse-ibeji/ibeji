@@ -11,4 +11,5 @@ pub mod extension_config;
 pub mod managed_subscribe {
     pub mod managed_subscribe_ext;
     pub mod managed_subscribe_interceptor;
+    pub mod managed_subscribe_store;
 }

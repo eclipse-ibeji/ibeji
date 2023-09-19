@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-#![cfg(feature = "yaml")]
-
 use config::{Config, File, FileFormat};
 
 /// Load the settings.

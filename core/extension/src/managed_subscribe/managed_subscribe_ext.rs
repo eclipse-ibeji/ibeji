@@ -9,21 +9,21 @@ use core_protobuf_data_access::agemo::pubsub::v1::{CreateTopicRequest, CreateTop
 use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
 use core_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_server::{ManagedSubscribe, ManagedSubscribeServer};
 use core_protobuf_data_access::extensions::managed_subscribe::v1::{
-    Constraint, SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
+    SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
 };
 
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
 use tonic::transport::server::Router;
-use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
 use tonic::{Request, Response, Status};
 
-use crate::extension::ExtensionService;
+use crate::extension::GrpcExtensionService;
 use crate::extension_config::load_settings;
+use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, SubscriptionStore, TopicInfo};
 
 pub const AGEMO_ENDPOINT: &str = "http://0.0.0.0:50051";
 pub const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
@@ -53,102 +53,6 @@ pub struct ConfigSettings {
 }
 
 #[derive(Clone, Debug)]
-pub struct CallbackInfo {
-    pub uri: String,
-    pub protocol: String,
-}
-
-#[derive(Clone, Debug)]
-pub struct TopicInfo {
-    pub uri: String,
-    protocol: String,
-    pub constraints: Vec<Constraint>,
-}
-
-#[derive(Clone, Debug)]
-pub struct EntityMetadata {
-    pub callback: CallbackInfo,
-    pub topics: HashMap<String, TopicInfo>,
-}
-
-#[derive(Debug)]
-pub struct SubscriptionStore {
-    topic_entity_map: HashMap<String, String>,
-    entity_metadata_map: HashMap<String, EntityMetadata>,
-}
-
-impl SubscriptionStore {
-    /// Creates a new instance of a subscription store.
-    pub fn new() -> Self {
-        SubscriptionStore {
-            topic_entity_map: HashMap::new(),
-            entity_metadata_map: HashMap::new(),
-        }
-    }
-
-    /// Adds an entity id with associated metadata to the store.
-    ///
-    /// # Arguments
-    /// * `entity_id` - The entity to add.
-    /// * `metadata` - The relevant metadata for the entity.
-    pub fn add_entity(&mut self, entity_id: &str, metadata: EntityMetadata) {
-        self.entity_metadata_map.insert(entity_id.to_string(), metadata);
-    }
-
-    /// Returns whether a specific entity is in the store.
-    ///
-    /// # Arguments
-    /// * `entity_id` - The entity to find.
-    pub fn contains_entity(&self, entity_id: &str) -> bool {
-        self.entity_metadata_map.contains_key(entity_id)
-    }
-
-    /// Gets a specific entity's metadata from the store.
-    ///
-    /// # Arguments
-    /// * `entity_id` - The entity to get information about.
-    pub fn get_entity_metadata(&self, entity_id: &str) -> Option<&EntityMetadata> {
-        self.entity_metadata_map.get(entity_id)
-    }
-
-    /// Gets the entity id associated with a specific topic.
-    ///
-    /// # Arguments
-    /// * `topic` - The topic to get an entity id for.
-    pub fn get_entity_id(&self, topic: &str) -> Option<&String> {
-        self.topic_entity_map.get(topic)
-    }
-
-    /// Adds a topic to the store.
-    ///
-    /// # Arguments
-    /// * `entity_id` - The entity id to associate with the topic.
-    /// * `topic` - The topic to add.
-    /// * `topic_info` - The associated topic info to add.
-    pub fn add_topic(&mut self, entity_id: &str, topic: &str, topic_info: TopicInfo) {
-        // Add map between topic and entity.
-        self.topic_entity_map.insert(topic.to_string(), entity_id.to_string());
-
-        // Add topic information to entity metadata.
-        let metadata = self.entity_metadata_map.get_mut(entity_id).unwrap();
-        metadata.topics.insert(topic.to_string(), topic_info);
-    }
-
-    /// Removes a topic from the store.
-    ///
-    /// # Arguments
-    /// * `topic` - The topic to remove.
-    pub fn remove_topic(&mut self, topic: &str) {
-        // remove topic from topic and entity map.
-        let entity_id = self.topic_entity_map.remove(topic).unwrap();
-
-        // remove topic and info from entity metadata map.
-        let metadata = self.entity_metadata_map.get_mut(&entity_id).unwrap();
-        metadata.topics.remove(topic);
-    }
-}
-
-#[derive(Clone, Debug)]
 pub struct ManagedSubscribeExt {
     pub managed_subscribe_uri: String,
     pub extension_uri: String,
@@ -162,25 +66,10 @@ impl ManagedSubscribeExt {
     /// # Arguments
     /// * `extension_uri` - The uri where the extension service will be hosted.
     /// * `subscription_store` - Handle to the shared subscription store for the extension.
-    pub fn new() -> Self {
+    pub fn new(subscription_store: Arc<RwLock<SubscriptionStore>>) -> Self {
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.invehicle_digital_twin_authority;
         let extension_uri = format!("http://{endpoint}");
-
-        let subscription_store = Arc::new(RwLock::new(SubscriptionStore::new()));
-
-        let entity_metadata = EntityMetadata {
-            callback: CallbackInfo {
-                uri: String::from("http://0.0.0.0:4010"),
-                protocol: String::from("grpc"),
-            },
-            topics: HashMap::new(),
-        };
-    
-        // Add entity to subscription store.
-        {
-            subscription_store.write().add_entity("dtmi:sdv:HVAC:AmbientAirTemperature;1", entity_metadata);
-        }
 
         ManagedSubscribeExt {
             managed_subscribe_uri: AGEMO_ENDPOINT.to_string(),
@@ -243,8 +132,8 @@ impl ManagedSubscribeExt {
     }
 }
 
-impl ExtensionService for ManagedSubscribeExt {
-    fn add_services<L>(&self, builder: Router<L>) -> Router<L> where L: Clone {
+impl GrpcExtensionService for ManagedSubscribeExt {
+    fn add_services<L>(&self, builder: Router<L>) -> Router<L> {
         let ext_builder = builder;
         let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
         let managed_subscribe_callback_service = PublisherCallbackServer::new(self.clone());

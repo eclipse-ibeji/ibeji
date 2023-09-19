@@ -5,19 +5,21 @@
 use bytes::Bytes;
 use core_protobuf_data_access::invehicle_digital_twin::{self, v1::RegisterRequest};
 use log::{info, warn};
+use parking_lot::RwLock;
 use prost::Message;
-use std::error::Error;
+use std::{error::Error, sync::Arc, collections::HashMap};
 
 use common::grpc_interceptor::GrpcInterceptor;
 
-use crate::extension_config::load_settings;
+use crate::{extension_config::load_settings, managed_subscribe::managed_subscribe_store::{CallbackInfo, EntityMetadata}};
 
-use super::managed_subscribe_ext::{ConfigSettings, CONFIG_FILENAME};
+use super::{managed_subscribe_ext::{ConfigSettings, CONFIG_FILENAME}, managed_subscribe_store::SubscriptionStore};
 
 /// Interceptor for injecting a managed subscribe endpoint for providers.
 #[derive(Clone)]
 pub struct ManagedSubscribeInterceptor {
     extension_uri: String,
+    extension_store: Arc<RwLock<SubscriptionStore>>,
 }
 
 impl ManagedSubscribeInterceptor {
@@ -26,12 +28,14 @@ impl ManagedSubscribeInterceptor {
     const MANAGED_SUBSCRIBE_OPERATION: &str = "ManagedSubscribe";
 
     /// The factory method for creating a ManagedSubscribeInterceptor.
-    pub fn sample_grpc_interceptor_factory() -> Box<dyn GrpcInterceptor + Send> {
+    pub fn sample_grpc_interceptor_factory(store: Option<Arc<RwLock<SubscriptionStore>>>) -> Box<dyn GrpcInterceptor + Send> {
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.invehicle_digital_twin_authority;
         let extension_uri = format!("http://{endpoint}");
 
-        Box::new(ManagedSubscribeInterceptor { extension_uri })
+        let extension_store = store.unwrap();
+
+        Box::new(ManagedSubscribeInterceptor { extension_uri, extension_store })
     }
 }
 
@@ -83,6 +87,7 @@ impl GrpcInterceptor for ManagedSubscribeInterceptor {
             for j in 0..endpoints.len() {
                 if endpoints[j].operations.contains(&Self::MANAGED_SUBSCRIBE_OPERATION.to_string()) {
                     let entity_callback = endpoints[j].uri.clone();
+                    let callback_protocol = endpoints[j].protocol.clone();
 
                     // Set endpoint information to the managed subscribe extension.
                     endpoints[j].uri = self.extension_uri.clone();
@@ -91,7 +96,19 @@ impl GrpcInterceptor for ManagedSubscribeInterceptor {
                     endpoints[j].context = "GetSubscriptionInfo".to_string();
 
                     // Pass the callback with relevant endpoint information to extension.
-                    info!("id: {entity_id}, callback: {entity_callback}");
+                    let entity_metadata = EntityMetadata {
+                        callback: CallbackInfo {
+                            uri: entity_callback.clone(),
+                            protocol: callback_protocol.clone(),
+                        },
+                        topics: HashMap::new(),
+                    };
+
+                    info!("add entity metadata with id: {entity_id}, callback: {entity_callback}");
+                    {
+                        let mut store_lock = self.extension_store.write();
+                        store_lock.add_entity(&entity_id, entity_metadata);
+                    }
 
                     break;
                 }

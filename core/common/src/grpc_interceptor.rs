@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use bytes::Bytes;
+use parking_lot::RwLock;
 use core::future::Future;
+use std::sync::Arc;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
@@ -61,41 +63,45 @@ pub trait GrpcInterceptor: Sync {
     ) -> Result<Bytes, Box<dyn Error + Send + Sync>>;
 }
 
+type GrpcInterceptorStore<T> = Arc<RwLock<T>>;
+
 /// This is the type that represents the factory method for gRPC Interceptors.
-type GrpcInterceptorFactory = fn() -> Box<dyn GrpcInterceptor + Send>;
+type GrpcInterceptorFactory<T> = fn(store: Option<GrpcInterceptorStore<T>>) -> Box<dyn GrpcInterceptor + Send>;
 
 /// The tower layer that hosts a service that hosts a gRPC Interceptor.
 #[derive(Clone)]
-pub struct GrpcInterceptorLayer {
-    interceptor_factory: GrpcInterceptorFactory,
+pub struct GrpcInterceptorLayer<T> {
+    interceptor_factory: GrpcInterceptorFactory<T>,
+    interceptor_store: Option<GrpcInterceptorStore<T>>,
 }
 
-impl GrpcInterceptorLayer {
+impl <T> GrpcInterceptorLayer<T> {
     /// Create the tower layer for a gRPC Interceptor.
     ///
     /// # Arguments
     /// * `interceptor_factory` - The factory method for creating the desired gRPC Interceptor.
-    pub fn new(interceptor_factory: GrpcInterceptorFactory) -> Self {
-        Self { interceptor_factory }
+    pub fn new(interceptor_factory: GrpcInterceptorFactory<T>, interceptor_store: Option<GrpcInterceptorStore<T>>) -> Self {
+        Self { interceptor_factory, interceptor_store }
     }
 }
 
-impl<S> Layer<S> for GrpcInterceptorLayer {
-    type Service = GrpcInterceptorService<S>;
+impl<S,T> Layer<S> for GrpcInterceptorLayer<T> {
+    type Service = GrpcInterceptorService<S, T>;
 
     fn layer(&self, service: S) -> Self::Service {
-        GrpcInterceptorService { service, interceptor_factory: self.interceptor_factory }
+        GrpcInterceptorService { service, interceptor_factory: self.interceptor_factory, interceptor_store: self.interceptor_store.clone() }
     }
 }
 
 /// The tower service that hosts a gRPC Interceptor.
 #[derive(Clone)]
-pub struct GrpcInterceptorService<S> {
+pub struct GrpcInterceptorService<S, T> {
     service: S,
-    interceptor_factory: GrpcInterceptorFactory,
+    interceptor_factory: GrpcInterceptorFactory<T>,
+    interceptor_store: Option<GrpcInterceptorStore<T>>,
 }
 
-impl<S> GrpcInterceptorService<S> {
+impl<S, T> GrpcInterceptorService<S, T> {
     /// Retrieve the gRPC service name and method name from a URI.
     /// If it cannot succesfully be parsed, then an empty service name and/or method name will be returned.
     ///
@@ -124,7 +130,7 @@ impl<S> GrpcInterceptorService<S> {
     }
 }
 
-impl<S> Service<http::request::Request<tonic::transport::Body>> for GrpcInterceptorService<S>
+impl<S, T> Service<http::request::Request<tonic::transport::Body>> for GrpcInterceptorService<S, T>
 where
     S: Service<
             http::request::Request<tonic::transport::Body>,
@@ -150,7 +156,7 @@ where
         &mut self,
         mut request: http::request::Request<tonic::transport::Body>,
     ) -> Self::Future {
-        let interceptor = (self.interceptor_factory)();
+        let interceptor = (self.interceptor_factory)(self.interceptor_store.clone());
 
         let (service_name, method_name) = Self::retrieve_grpc_names_from_uri(request.uri());
         let is_applicable = interceptor.is_applicable(&service_name, &method_name);

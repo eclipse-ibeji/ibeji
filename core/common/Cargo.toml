@@ -17,6 +17,7 @@ http = { workspace = true }
 http-body = { workspace = true }
 hyper = { workspace = true }
 log = { workspace = true }
+parking_lot = { workspace = true }
 prost = { workspace = true }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
 regex = {workspace = true }
