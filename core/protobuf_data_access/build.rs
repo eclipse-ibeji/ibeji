@@ -15,8 +15,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .message_attribute("CallbackPayload", "#[derive(serde::Deserialize, serde::Serialize)]")
         .message_attribute("SubscriptionInfo", "#[derive(serde::Deserialize, serde::Serialize)]")
         .compile(
-            &["../../interfaces/extensions/managed_subscribe/v1/managed_subscribe.proto"],
-            &["../../interfaces/extensions/managed_subscribe/v1/"],
+            &["../../interfaces/extension/managed_subscribe/v1/managed_subscribe.proto"],
+            &["../../interfaces/extension/managed_subscribe/v1/"],
         )?;
     tonic_build::configure().compile(
         &["../../external/chariott/service_discovery/proto/core/v1/service_registry.proto"],

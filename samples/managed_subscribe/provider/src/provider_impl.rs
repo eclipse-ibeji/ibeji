@@ -6,8 +6,8 @@ use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::Arc;
 
-use samples_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_callback_server::ManagedSubscribeCallback;
-use samples_protobuf_data_access::extensions::managed_subscribe::v1::{
+use samples_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_callback_server::ManagedSubscribeCallback;
+use samples_protobuf_data_access::extension::managed_subscribe::v1::{
     CallbackPayload, TopicManagementRequest, TopicManagementResponse,
 };
 

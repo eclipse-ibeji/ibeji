@@ -11,8 +11,8 @@ use samples_common::consumer_config;
 use samples_common::utils::{
     discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
 };
-use samples_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_client::ManagedSubscribeClient;
-use samples_protobuf_data_access::extensions::managed_subscribe::v1::{
+use samples_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_client::ManagedSubscribeClient;
+use samples_protobuf_data_access::extension::managed_subscribe::v1::{
     Constraint, SubscriptionInfoRequest, SubscriptionInfoResponse,
 };
 use tokio::signal;

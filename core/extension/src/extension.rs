@@ -4,7 +4,6 @@
 
 use std::{convert::Infallible, future::Future, net::SocketAddr};
 
-use common::grpc_interceptor::GrpcInterceptorLayer;
 use tonic::codegen::http::{request::Request, response::Response};
 use tonic::{
     body::BoxBody,
@@ -15,16 +14,15 @@ use tower::{Service, ServiceBuilder};
 // Extension references behind feature flags. Add any necessary extension references here.
 // Start: Extension references.
 
+// Add a new feature to all() so the use statement is active for the feature.
+// ex. #[cfg(all(feature = "feature_1", feature = "feature_2"))]
+#[cfg(all(feature = "managed_subscribe"))]
+use common::{grpc_interceptor::GrpcInterceptorLayer, grpc_service::GrpcService};
+
 #[cfg(feature = "managed_subscribe")]
 use crate::managed_subscribe::managed_subscribe_ext::ManagedSubscribeExt;
 
 // End: Extension references.
-
-/// Trait that must be implemented for an extension to add a grpc service to the hosted server.
-pub trait GrpcExtensionService {
-    /// Function to add necessary extension services to the routers builder.
-    fn add_grpc_services(&self, builder: &mut RoutesBuilder);
-}
 
 /// Create and serve a tonic server with extensions enabled through the feature flags.
 ///
@@ -33,14 +31,15 @@ pub trait GrpcExtensionService {
 /// * `base_service` - Core service that will be hosted.
 ///
 /// # How to add an Extension service to this method:
-/// 1. Add a mutable option for the extension `GrpcInterceptorLayer` - if applicable.
-/// 2. Add a block of code with the appropriate cfg feature flag. Create the `GrpcExtensionService`
-/// object and `GrpcInterceptorLayer` object within the block. Call `.add_grpc_services()` to add
-/// the gRPC server components to the server builder.
-/// 3. Add an `.option_layer()` to the middleware `ServiceBuilder` with the option created in (1).
-/// Add this new layer before the `.into_inner()` call at the end of the statement.
+/// 1. Add a block of code with the appropriate cfg feature flag.
+/// 2. Create the `GrpcService` object within the block - if applicable.
+/// 3. Create the `GrpocInterceptorLayer` object(s) within the block - if applicable.
+/// 4. Call `.add_grpc_services()` on the `GrpcService` to add the gRPC server components to the
+/// server builder.
+/// 5. Call layer() for each `GrpcInterceptorLayer` object on the middleware chain and return that
+/// from the block.
 ///
-/// Note: It is expected that there is an extension service the implements `GrpcExtensionService`
+/// Note: It is expected that there is an extension service the implements `GrpcService`
 /// (if there is a gRPC server component) and that a feature flag created for the extension.
 #[allow(unused_assignments, unused_mut)] // Necessary when no interceptors are built.
 pub fn serve_with_extensions<S>(
@@ -55,32 +54,32 @@ where
         + 'static,
     S::Future: Send + 'static,
 {
+    // Initialize services builder.
     let mut extensions_builder = RoutesBuilder::default();
 
-    // (1) Add option for an interceptor layer. This will default to none if the feature for the
-    // extension is not enabled.
-    let mut managed_subscribe_layer: Option<GrpcInterceptorLayer> = None;
+    // Initialize middleware stack.
+    let middleware = ServiceBuilder::new();
 
-    // (2) Initialize the extension (interceptor and services) if the feature is enabled.
+    // (1) Initialize the extension (interceptor and services) if the feature is enabled.
     #[cfg(feature = "managed_subscribe")]
-    {
-        // Initialize a new managed subscribe extension.
+    let middleware = {
+        // (2) Initialize a new managed subscribe extension.
         let managed_subscribe_ext = ManagedSubscribeExt::new();
 
-        // Create interceptor layer to be added to the server.
-        managed_subscribe_layer =
-            Some(GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor())));
+        // (3) Create interceptor layer to be added to the server.
+        let managed_subscribe_layer =
+            GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor()));
 
-        // Add extension services to routes builder.
+        // (4) Add extension services to routes builder.
         managed_subscribe_ext.add_grpc_services(&mut extensions_builder);
-    }
 
-    // (3) Build the middleware for the server.
-    let middleware = ServiceBuilder::new().option_layer(managed_subscribe_layer).into_inner(); // Unwraps the ServiceBuilder for less decoration.
+        // (5) Add layer(s) to middleware and return result.
+        middleware.layer(managed_subscribe_layer)
+    };
 
     // Construct the server.
     let mut builder = Server::builder()
-        .layer(middleware)
+        .layer(middleware.into_inner())
         .add_routes(extensions_builder.routes())
         .add_service(base_service);
 

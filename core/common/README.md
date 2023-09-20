@@ -22,6 +22,12 @@ These documents/code were very helpful in developing this solution:
   <li> https://github.com/linkerd/linkerd2-proxy/blob/0814a154ba8c8cc7af394ac3fa6f940bd01755ae/linkerd/stack/src/fail_on_error.rs#LL30-L69C2
 </ul>
 
+## gRPC Service
+
+gRPC Service is a concept that allows for a service that implements it to add its gRPC services to a builder which is used to construct a gRPC server that hosts the services.
+
+gRPC Service relies on the Tonic crate's RoutesBuilder construct to add the gRPC services when building the gRPC server instance.
+
 ## Sample gRPC Interceptor
 
 A simple gRPC Interceptor sample has been provided.  To use it with Ibeji:

@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use core_protobuf_data_access::extensions::managed_subscribe::v1::Constraint;
+use core_protobuf_data_access::extension::managed_subscribe::v1::Constraint;
 
 #[derive(Clone, Debug)]
 pub struct CallbackInfo {
