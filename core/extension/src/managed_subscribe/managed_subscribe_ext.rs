@@ -13,6 +13,7 @@ use core_protobuf_data_access::extension::managed_subscribe::v1::{
 };
 
 use common::grpc_extension::GrpcExtension;
+use common::utils::retry_async_based_on_status;
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -31,6 +32,10 @@ use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
 const CONFIG_FILENAME: &str = "managed_subscribe_settings";
 const EXTENSION_PROTOCOL: &str = "grpc";
+
+// Managed Subscribe action constants.
+const PUBLISH_ACTION: &str = "PUBLISH";
+const STOP_PUBLISH_ACTION: &str = "STOP_PUBLISH";
 
 /// Actions that are returned from the Pub Sub Service.
 #[derive(Clone, EnumString, Eq, Display, Debug, PartialEq)]
@@ -145,6 +150,9 @@ impl ManagedSubscribeExt {
 
 impl GrpcExtension for ManagedSubscribeExt {
     /// Adds the gRPC services for this extension to the server builder.
+    ///
+    /// # Arguments
+    /// * `builder` - A tonic::RoutesBuilder that contains the grpc services to build.
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
         // Create the gRPC services.
         let managed_subscribe_service = ManagedSubscribeServer::new(self.clone());
@@ -154,6 +162,31 @@ impl GrpcExtension for ManagedSubscribeExt {
             .add_service(managed_subscribe_service)
             .add_service(managed_subscribe_callback_service);
     }
+}
+
+/// Calls a provider's callback endpoint with a management request.
+///
+/// # Arguments
+/// * `provider_cb_uri` - The provider's callback uri.
+/// * `management_request` - The topic management request to send.
+async fn call_provider_management_cb(
+    provider_cb_uri: &str,
+    management_request: TopicManagementRequest,
+) -> Result<(), Status> {
+    let mut provider_cb_client =
+        ManagedSubscribeCallbackClient::connect(provider_cb_uri.to_string()).await.map_err(
+            |e| {
+                error!("Error connecting to provider cb client: {e:?}");
+                Status::from_error(Box::new(e))
+            },
+        )?;
+
+    let _res = provider_cb_client.topic_management_cb(management_request).await.map_err(|e| {
+        error!("Error calling to provider cb client: {e:?}");
+        Status::from_error(Box::new(e))
+    })?;
+
+    Ok(())
 }
 
 #[tonic::async_trait]
@@ -184,7 +217,12 @@ impl ManagedSubscribe for ManagedSubscribeExt {
         }
 
         // Get managed subscribe topic information.
-        let created_topic = self.create_managed_topic(&entity_id).await?.into_inner();
+        let created_topic =
+            retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
+                self.create_managed_topic(&entity_id)
+            })
+            .await?
+            .into_inner();
 
         let generated_topic = created_topic.generated_topic;
 
@@ -263,7 +301,7 @@ impl PublisherCallback for ManagedSubscribeExt {
         // Construct management request.
         let management_request = match topic_action {
             TopicAction::Start => {
-                let action = String::from("PUBLISH");
+                let action = String::from(PUBLISH_ACTION);
                 let payload = CallbackPayload {
                     entity_id,
                     topic: topic.clone(),
@@ -277,7 +315,7 @@ impl PublisherCallback for ManagedSubscribeExt {
                 TopicManagementRequest { action, payload: Some(payload) }
             }
             TopicAction::Stop => {
-                let action = String::from("STOP_PUBLISH");
+                let action = String::from(STOP_PUBLISH_ACTION);
                 let payload = CallbackPayload {
                     entity_id,
                     topic: topic.clone(),
@@ -296,21 +334,17 @@ impl PublisherCallback for ManagedSubscribeExt {
         };
 
         // Send management request to provider.
-        let mut provider_cb_client =
-            ManagedSubscribeCallbackClient::connect(callback_info.uri).await.map_err(|e| {
-                error!("Error connecting to provider cb client: {e:?}");
-                Status::from_error(Box::new(e))
-            })?;
-
-        let _res =
-            provider_cb_client.topic_management_cb(management_request).await.map_err(|e| {
-                error!("Error calling to provider cb client: {e:?}");
-                Status::from_error(Box::new(e))
-            })?;
+        retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
+            call_provider_management_cb(&callback_info.uri, management_request.clone())
+        })
+        .await?;
 
         if delete_topic {
             // Delete topic from managed subscribe service.
-            self.delete_managed_topic(&topic).await?;
+            retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
+                self.delete_managed_topic(&topic)
+            })
+            .await?;
 
             // Remove topic from store.
             {

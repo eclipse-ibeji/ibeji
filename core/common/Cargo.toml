@@ -22,6 +22,7 @@ parking_lot = { workspace = true }
 prost = { workspace = true }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
 regex = {workspace = true }
+tokio = { workspace = true }
 tonic = { workspace = true }
 tower = { workspace = true }
 url = { workspace = true }
