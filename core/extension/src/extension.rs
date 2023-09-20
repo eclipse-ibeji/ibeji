@@ -2,12 +2,15 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use std::{convert::Infallible, net::SocketAddr, future::Future};
+use std::{convert::Infallible, future::Future, net::SocketAddr};
 
 use common::grpc_interceptor::GrpcInterceptorLayer;
-use tonic::{transport::{Server, NamedService, Body, server::RoutesBuilder}, body::BoxBody};
 use tonic::codegen::http::{request::Request, response::Response};
-use tower::{ServiceBuilder, Service};
+use tonic::{
+    body::BoxBody,
+    transport::{server::RoutesBuilder, Body, NamedService, Server},
+};
+use tower::{Service, ServiceBuilder};
 
 // Extension references behind feature flags. Add any necessary extension references here.
 // Start: Extension references.
@@ -35,6 +38,7 @@ pub trait GrpcExtensionService {
 /// object and `GrpcInterceptorLayer` object within the block. Call `.add_grpc_services()` to add
 /// the gRPC server components to the server builder.
 /// 3. Add an `.option_layer()` to the middleware `ServiceBuilder` with the option created in (1).
+/// Add this new layer before the `.into_inner()` call at the end of the statement.
 ///
 /// Note: It is expected that there is an extension service the implements `GrpcExtensionService`
 /// (if there is a gRPC server component) and that a feature flag created for the extension.
@@ -64,16 +68,15 @@ where
         let managed_subscribe_ext = ManagedSubscribeExt::new();
 
         // Create interceptor layer to be added to the server.
-        managed_subscribe_layer = Some(GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor())));
+        managed_subscribe_layer =
+            Some(GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor())));
 
         // Add extension services to routes builder.
         managed_subscribe_ext.add_grpc_services(&mut extensions_builder);
     }
 
     // (3) Build the middleware for the server.
-    let middleware = ServiceBuilder::new()
-        .option_layer(managed_subscribe_layer)
-        .into_inner(); // Unwraps the ServiceBuilder for less decoration.
+    let middleware = ServiceBuilder::new().option_layer(managed_subscribe_layer).into_inner(); // Unwraps the ServiceBuilder for less decoration.
 
     // Construct the server.
     let mut builder = Server::builder()

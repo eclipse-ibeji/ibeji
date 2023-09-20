@@ -31,6 +31,12 @@ pub struct ManagedSubscribeStore {
     entity_metadata_map: HashMap<String, EntityMetadata>,
 }
 
+impl Default for ManagedSubscribeStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ManagedSubscribeStore {
     /// Creates a new instance of a subscription store.
     pub fn new() -> Self {

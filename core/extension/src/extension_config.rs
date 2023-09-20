@@ -5,7 +5,10 @@
 use config::{Config, File, FileFormat};
 
 /// Load the settings.
-pub fn load_settings<T>(config_filename: &str) -> T where T: for<'de> serde::Deserialize<'de> {
+pub fn load_settings<T>(config_filename: &str) -> T
+where
+    T: for<'de> serde::Deserialize<'de>,
+{
     let config =
         Config::builder().add_source(File::new(config_filename, FileFormat::Yaml)).build().unwrap();
 

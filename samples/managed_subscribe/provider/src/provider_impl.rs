@@ -32,7 +32,7 @@ struct Property {
 }
 
 /// Actions that are returned from the Pub Sub Service.
-#[derive(Clone, EnumString, Display, Debug, PartialEq)]
+#[derive(Clone, EnumString, Eq, Display, Debug, PartialEq)]
 pub enum ProviderAction {
     #[strum(serialize = "PUBLISH")]
     Publish,
@@ -115,11 +115,7 @@ impl ProviderImpl {
         entity_map.insert(sdv::hvac::ambient_air_temperature::ID.to_string(), Vec::new());
 
         // Create new instance.
-        ProviderImpl {
-            data_stream, 
-            min_interval_ms,
-            entity_map: Arc::new(RwLock::new(entity_map)),
-        }
+        ProviderImpl { data_stream, min_interval_ms, entity_map: Arc::new(RwLock::new(entity_map)) }
     }
 
     /// Handles the 'PUBLISH' action from the callback.
@@ -130,7 +126,7 @@ impl ProviderImpl {
         // Get payload information.
         let topic = payload.topic;
         let constraints = payload.constraints;
-        let min_interval_ms = self.min_interval_ms.clone();
+        let min_interval_ms = self.min_interval_ms;
 
         // This should not be empty.
         let subscription_info = payload.subscription_info.unwrap();
@@ -139,10 +135,7 @@ impl ProviderImpl {
         let (sender, mut reciever) = mpsc::channel(10);
 
         // Create topic info.
-        let topic_info = TopicInfo {
-            topic: topic.clone(),
-            stop_channel: sender,
-        };
+        let topic_info = TopicInfo { topic: topic.clone(), stop_channel: sender };
 
         // Record new topic in entity map.
         {
@@ -159,10 +152,10 @@ impl ProviderImpl {
             let mut frequency_ms = min_interval_ms;
 
             for constraint in constraints {
-                if constraint.r#type == String::from("frequency") {
+                if constraint.r#type == *"frequency" {
                     frequency_ms = u64::from_str(&constraint.value).unwrap();
                 };
-            };
+            }
 
             loop {
                 // See if we need to shutdown.
@@ -171,7 +164,7 @@ impl ProviderImpl {
                         info!("Shutdown thread for {topic}.");
                         return;
                     }
-                    Err(mpsc::error::TryRecvError::Empty) => {},
+                    Err(mpsc::error::TryRecvError::Empty) => {}
                     Err(mpsc::error::TryRecvError::Disconnected) => {
                         info!("Shutdown thread for {topic}.");
                         return;
@@ -179,7 +172,7 @@ impl ProviderImpl {
                 };
 
                 // Get data from stream at the current instant.
-                let data = data_stream.borrow().clone();
+                let data = *data_stream.borrow();
                 let content = create_property_json(data);
                 let broker_uri = subscription_info.uri.clone();
 
@@ -188,11 +181,12 @@ impl ProviderImpl {
                     "Sending a publish request for {} with value {data}",
                     sdv::hvac::ambient_air_temperature::ID
                 );
+
                 if let Err(err) = publish_message(&broker_uri, &topic, &content) {
                     warn!("Publish request failed due to '{err:?}'");
                     break;
                 }
-    
+
                 debug!("Completed the publish request");
 
                 // Sleep for requested amount of time.
@@ -238,7 +232,7 @@ impl ManagedSubscribeCallback for ProviderImpl {
     /// * `request` - The request with the action and associated payload.
     async fn topic_management_cb(
         &self,
-        request: Request<TopicManagementRequest>
+        request: Request<TopicManagementRequest>,
     ) -> Result<Response<TopicManagementResponse>, Status> {
         let inner = request.into_inner();
         let action = inner.action;
@@ -247,10 +241,10 @@ impl ManagedSubscribeCallback for ProviderImpl {
         let provider_action = ProviderAction::from_str(&action).unwrap();
 
         match provider_action {
-            ProviderAction::Publish => Self::handle_publish_action(&self, payload),
-            ProviderAction::StopPublish => Self::handle_stop_publish_action(&self, payload),
+            ProviderAction::Publish => Self::handle_publish_action(self, payload),
+            ProviderAction::StopPublish => Self::handle_stop_publish_action(self, payload),
         }
 
-        Ok(Response::new(TopicManagementResponse{}))
+        Ok(Response::new(TopicManagementResponse {}))
     }
 }

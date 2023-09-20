@@ -115,7 +115,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let settings = provider_config::load_settings();
 
     let provider_authority = settings.provider_authority;
-    let provider_uri = format!("http://{provider_authority}"); 
+    let provider_uri = format!("http://{provider_authority}"); // Devskim: ignore DS137138
 
     let invehicle_digital_twin_uri = retrieve_invehicle_digital_twin_uri(
         settings.invehicle_digital_twin_uri,

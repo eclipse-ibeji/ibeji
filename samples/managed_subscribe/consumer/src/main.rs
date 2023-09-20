@@ -11,13 +11,15 @@ use samples_common::consumer_config;
 use samples_common::utils::{
     discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
 };
-use samples_protobuf_data_access::extensions::managed_subscribe::v1::{SubscriptionInfoRequest, Constraint, SubscriptionInfoResponse};
 use samples_protobuf_data_access::extensions::managed_subscribe::v1::managed_subscribe_client::ManagedSubscribeClient;
+use samples_protobuf_data_access::extensions::managed_subscribe::v1::{
+    Constraint, SubscriptionInfoRequest, SubscriptionInfoResponse,
+};
 use tokio::signal;
-use tokio::sync::mpsc::{self, Sender};
 use tokio::sync::mpsc::error::TryRecvError;
+use tokio::sync::mpsc::{self, Sender};
 use tokio::time::Duration;
-use tonic::{Status, Request};
+use tonic::{Request, Status};
 
 const MQTT_CLIENT_ID: &str = "managed-subscribe-consumer";
 
@@ -41,9 +43,8 @@ async fn get_ambient_air_temperature_subscription_info(
     });
 
     let response = client.get_subscription_info(request).await?;
-    let subscription_info = response.into_inner().clone();
 
-    Ok(subscription_info)
+    Ok(response.into_inner())
 }
 
 /// Receive Ambient Air Temperature updates.
@@ -51,7 +52,10 @@ async fn get_ambient_air_temperature_subscription_info(
 /// # Arguments
 /// * `broker_uri` - The broker URI.
 /// * `topic` - The topic.
-fn receive_ambient_air_temperature_updates(broker_uri: &str, topic: &str) -> Result<Sender<bool>, String> {
+fn receive_ambient_air_temperature_updates(
+    broker_uri: &str,
+    topic: &str,
+) -> Result<Sender<bool>, String> {
     let create_opts = mqtt::CreateOptionsBuilder::new()
         .server_uri(broker_uri)
         .client_id(MQTT_CLIENT_ID.to_string())
@@ -86,24 +90,23 @@ fn receive_ambient_air_temperature_updates(broker_uri: &str, topic: &str) -> Res
 
     tokio::spawn(async move {
         for msg in receiver.iter().take_while(|_| {
-            match shutdown_receiver.try_recv() {
-                Err(TryRecvError::Disconnected) => false,
-                _ => true,
-            }
+            !matches!(shutdown_receiver.try_recv(), Err(TryRecvError::Disconnected))
         }) {
             if let Some(msg) = msg {
                 info!("{}", msg);
             } else if !client.is_connected() {
                 if client.reconnect().is_ok() {
-                    _subscribe_response = client.subscribe(topic_string.as_str(), mqtt::types::QOS_1).map_err(|err| {
-                        format!("Failed to subscribe to topic {topic_string} due to '{err:?}'")
-                    });
+                    _subscribe_response = client
+                        .subscribe(topic_string.as_str(), mqtt::types::QOS_1)
+                        .map_err(|err| {
+                            format!("Failed to subscribe to topic {topic_string} due to '{err:?}'")
+                        });
                 } else {
                     break;
                 }
             }
         }
-    
+
         if client.is_connected() {
             debug!("Disconnecting");
             client.unsubscribe(topic_string.as_str()).unwrap();
@@ -145,16 +148,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create constraint for the managed subscribe call.
     let frequency_ms: u64 = 10000;
 
-    let frequency_constraint = Constraint {
-        r#type: String::from("frequency"),
-        value: frequency_ms.to_string(),
-    };
+    let frequency_constraint =
+        Constraint { r#type: String::from("frequency"), value: frequency_ms.to_string() };
 
     // Get the subscription information for a managed topic with constraints.
     let subscription_info = get_ambient_air_temperature_subscription_info(
         &managed_subscribe_uri,
         vec![frequency_constraint],
-    ).await?;
+    )
+    .await?;
 
     // Deconstruct subscription information.
     let broker_uri = subscription_info.uri;

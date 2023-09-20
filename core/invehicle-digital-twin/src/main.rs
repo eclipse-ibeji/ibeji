@@ -13,11 +13,11 @@ use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twi
 use env_logger::{Builder, Target};
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
-use tonic::transport::Server;
 use std::boxed::Box;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use tonic::transport::Server;
 use tonic::{Request, Status};
 
 mod invehicle_digital_twin_config;
@@ -108,10 +108,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Serve the core grpc server without extensions.
     else {
         // Setup the HTTP server.
-        Server::builder()
-            .add_service(base_service)
-            .serve(addr)
-            .await?;
+        Server::builder().add_service(base_service).serve(addr).await?;
     }
 
     debug!("The Digital Twin Service has completed.");

@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use bytes::Bytes;
-use dyn_clone::DynClone;
 use core::future::Future;
+use dyn_clone::DynClone;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
@@ -68,16 +68,16 @@ dyn_clone::clone_trait_object!(GrpcInterceptor);
 /// The tower layer that hosts a service that hosts a gRPC Interceptor.
 #[derive(Clone)]
 pub struct GrpcInterceptorLayer {
-    interceptor: Box::<dyn GrpcInterceptor + Send>,
+    interceptor: Box<dyn GrpcInterceptor + Send>,
 }
 
-impl  GrpcInterceptorLayer {
+impl GrpcInterceptorLayer {
     /// Create the tower layer for a gRPC Interceptor.
     ///
     /// # Arguments
     /// * `interceptor` - The boxed gRPC Interceptor.
-    pub fn new(interceptor: Box::<dyn GrpcInterceptor + Send>) -> Self {
-        Self {interceptor }
+    pub fn new(interceptor: Box<dyn GrpcInterceptor + Send>) -> Self {
+        Self { interceptor }
     }
 }
 
@@ -93,7 +93,7 @@ impl<S> Layer<S> for GrpcInterceptorLayer {
 /// The tower service that hosts a gRPC Interceptor.
 pub struct GrpcInterceptorService<S> {
     service: S,
-    interceptor: Box::<dyn GrpcInterceptor + Send>,
+    interceptor: Box<dyn GrpcInterceptor + Send>,
 }
 
 impl<S> GrpcInterceptorService<S> {

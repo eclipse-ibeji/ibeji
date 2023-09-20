@@ -7,11 +7,13 @@ use core_protobuf_data_access::invehicle_digital_twin::{self, v1::RegisterReques
 use log::{info, warn};
 use parking_lot::RwLock;
 use prost::Message;
-use std::{error::Error, sync::Arc, collections::HashMap};
+use std::{collections::HashMap, error::Error, sync::Arc};
 
 use common::grpc_interceptor::GrpcInterceptor;
 
-use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, EntityMetadata, ManagedSubscribeStore};
+use crate::managed_subscribe::managed_subscribe_store::{
+    CallbackInfo, EntityMetadata, ManagedSubscribeStore,
+};
 
 /// Interceptor for injecting a managed subscribe endpoint for providers.
 #[derive(Clone)]
@@ -26,10 +28,7 @@ impl ManagedSubscribeInterceptor {
     const MANAGED_SUBSCRIBE_OPERATION: &str = "ManagedSubscribe";
 
     pub fn new(extension_uri: &str, extension_store: Arc<RwLock<ManagedSubscribeStore>>) -> Self {
-        ManagedSubscribeInterceptor {
-            extension_uri: extension_uri.to_string(),
-            extension_store,
-        }
+        ManagedSubscribeInterceptor { extension_uri: extension_uri.to_string(), extension_store }
     }
 }
 
@@ -73,21 +72,21 @@ impl GrpcInterceptor for ManagedSubscribeInterceptor {
 
         let mut entities = register_request.entity_access_info_list;
 
-        for i in 0..entities.len() {
-            let entity_id = entities[i].id.clone();
+        for entity in &mut entities {
+            let entity_id = entity.id.clone();
 
-            let mut endpoints = entities[i].endpoint_info_list.clone();
+            let mut endpoints = entity.endpoint_info_list.clone();
 
-            for j in 0..endpoints.len() {
-                if endpoints[j].operations.contains(&Self::MANAGED_SUBSCRIBE_OPERATION.to_string()) {
-                    let entity_callback = endpoints[j].uri.clone();
-                    let callback_protocol = endpoints[j].protocol.clone();
+            for endpoint in &mut endpoints {
+                if endpoint.operations.contains(&Self::MANAGED_SUBSCRIBE_OPERATION.to_string()) {
+                    let entity_callback = endpoint.uri.clone();
+                    let callback_protocol = endpoint.protocol.clone();
 
                     // Set endpoint information to the managed subscribe extension.
-                    endpoints[j].uri = self.extension_uri.clone();
-                    endpoints[j].protocol = "grpc".to_string();
-                    endpoints[j].operations = vec![Self::MANAGED_SUBSCRIBE_OPERATION.to_string()];
-                    endpoints[j].context = "GetSubscriptionInfo".to_string();
+                    endpoint.uri = self.extension_uri.clone();
+                    endpoint.protocol = "grpc".to_string();
+                    endpoint.operations = vec![Self::MANAGED_SUBSCRIBE_OPERATION.to_string()];
+                    endpoint.context = "GetSubscriptionInfo".to_string();
 
                     // Pass the callback with relevant endpoint information to extension.
                     let entity_metadata = EntityMetadata {
@@ -109,13 +108,11 @@ impl GrpcInterceptor for ManagedSubscribeInterceptor {
             }
 
             // Add the modified endpoint info list back to the entity access info object.
-            entities[i].endpoint_info_list = endpoints;
+            entity.endpoint_info_list = endpoints;
         }
 
         // Construct modified register request.
-        let updated_register_request = RegisterRequest {
-            entity_access_info_list: entities,
-        };
+        let updated_register_request = RegisterRequest { entity_access_info_list: entities };
 
         let mut new_protobuf_message_buf: Vec<u8> = Vec::new();
         new_protobuf_message_buf.reserve(updated_register_request.encoded_len());

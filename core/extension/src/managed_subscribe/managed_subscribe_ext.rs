@@ -15,15 +15,17 @@ use core_protobuf_data_access::extensions::managed_subscribe::v1::{
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
-use tonic::transport::server::RoutesBuilder;
 use std::str::FromStr;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
+use tonic::transport::server::RoutesBuilder;
 use tonic::{Request, Response, Status};
 
 use crate::extension::GrpcExtensionService;
 use crate::extension_config::load_settings;
-use crate::managed_subscribe::managed_subscribe_store::{CallbackInfo, ManagedSubscribeStore, TopicInfo};
+use crate::managed_subscribe::managed_subscribe_store::{
+    CallbackInfo, ManagedSubscribeStore, TopicInfo,
+};
 
 use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
@@ -32,7 +34,7 @@ pub const CONFIG_FILENAME: &str = "invehicle_digital_twin_settings";
 pub const MS_PROTOCOL: &str = "grpc";
 
 /// Actions that are returned from the Pub Sub Service.
-#[derive(Clone, EnumString, Display, Debug, PartialEq)]
+#[derive(Clone, EnumString, Eq, Display, Debug, PartialEq)]
 pub enum TopicAction {
     /// Enum for the intitial state of a topic.
     #[strum(serialize = "INIT")]
@@ -62,19 +64,25 @@ pub struct ManagedSubscribeExt {
     pub extension_store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
+impl Default for ManagedSubscribeExt {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ManagedSubscribeExt {
     /// Creates a new managed subscribe extension object.
     pub fn new() -> Self {
         // Get extension information from the configuration settings.
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.invehicle_digital_twin_authority;
-        let extension_uri = format!("http://{endpoint}");
+        let extension_uri = format!("http://{endpoint}"); // Devskim: ignore DS137138
 
         let extension_store = Arc::new(RwLock::new(ManagedSubscribeStore::new()));
 
         ManagedSubscribeExt {
             managed_subscribe_uri: AGEMO_ENDPOINT.to_string(),
-            extension_uri: extension_uri.to_string(),
+            extension_uri,
             extension_protocol: MS_PROTOCOL.to_string(),
             extension_store,
         }
@@ -95,20 +103,19 @@ impl ManagedSubscribeExt {
         entity_id: &str,
     ) -> Result<Response<CreateTopicResponse>, Status> {
         // Connect to managed subscribe service.
-        let mut ms_client = PubSubClient::connect(self.managed_subscribe_uri.to_string())
-            .await
-            .map_err(|e| {
+        let mut ms_client =
+            PubSubClient::connect(self.managed_subscribe_uri.to_string()).await.map_err(|e| {
                 error!("Error connecting to pub sub client: {e:?}");
                 Status::from_error(Box::new(e))
             })?;
-    
+
         // Construct request.
         let request = Request::new(CreateTopicRequest {
             publisher_id: entity_id.to_string(),
             management_callback: self.extension_uri.clone(),
             management_protocol: self.extension_protocol.clone(),
         });
-    
+
         // Call managed subscribe service.
         ms_client.create_topic(request).await
     }
@@ -122,17 +129,14 @@ impl ManagedSubscribeExt {
         topic: &str,
     ) -> Result<Response<DeleteTopicResponse>, Status> {
         // Connect to managed subscribe service.
-        let mut ms_client = PubSubClient::connect(self.managed_subscribe_uri.to_string())
-            .await
-            .map_err(|e| {
+        let mut ms_client =
+            PubSubClient::connect(self.managed_subscribe_uri.to_string()).await.map_err(|e| {
                 error!("Error connecting to pub sub client: {e:?}");
                 Status::from_error(Box::new(e))
             })?;
-        
+
         // Construct request.
-        let request = Request::new(DeleteTopicRequest {
-            topic: topic.to_string()
-        });
+        let request = Request::new(DeleteTopicRequest { topic: topic.to_string() });
 
         // Call managed subscribe service.
         ms_client.delete_topic(request).await
@@ -173,25 +177,31 @@ impl ManagedSubscribe for ManagedSubscribeExt {
             let contains_entity = self.extension_store.read().contains_entity(&entity_id);
 
             if !contains_entity {
-                return Err(Status::not_found("Unable to get dynamic subscription for {entity_id}"));
+                return Err(Status::not_found(
+                    "Unable to get dynamic subscription for {entity_id}",
+                ));
             };
-        } 
+        }
 
         // Get managed subscribe topic information.
         let created_topic = self.create_managed_topic(&entity_id).await?.into_inner();
-    
+
         let generated_topic = created_topic.generated_topic;
 
         // Save topic information.
         let topic_info = TopicInfo {
             uri: created_topic.broker_uri,
             protocol: created_topic.broker_protocol,
-            constraints
+            constraints,
         };
 
         // Add topic to store.
         {
-            self.extension_store.write().add_topic(&entity_id, &generated_topic, topic_info.clone());
+            self.extension_store.write().add_topic(
+                &entity_id,
+                &generated_topic,
+                topic_info.clone(),
+            );
         }
 
         // Respond with subscription information.
@@ -202,7 +212,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
         };
 
         debug!("Responded to the get_subscription_info request.");
-    
+
         Ok(Response::new(response))
     }
 }
@@ -235,20 +245,15 @@ impl PublisherCallback for ManagedSubscribeExt {
             let store = self.extension_store.read();
 
             // Get associated entity id with the topic name.
-            entity_id = match store.get_entity_id(&topic) {
-                Some(id) => id.clone(),
-                None => {
-                    return Err(Status::not_found(format!("No mapping found for {topic}.")));
-                }
-            };
+            entity_id = store
+                .get_entity_id(&topic)
+                .ok_or_else(|| Status::not_found(format!("No mapping found for {topic}.")))?
+                .to_string();
 
             // Get the associated provider and entity metadata using entity id.
-            let entity_metadata = match store.get_entity_metadata(&entity_id) {
-                Some(metadata) => metadata,
-                None => {
-                    return Err(Status::not_found(format!("No mapping found for {entity_id}.")));
-                }
-            };
+            let entity_metadata = store
+                .get_entity_metadata(&entity_id)
+                .ok_or_else(|| Status::not_found(format!("No mapping found for {entity_id}.")))?;
 
             // Pull out necessary topic information.
             callback_info = entity_metadata.callback.clone();
@@ -268,10 +273,8 @@ impl PublisherCallback for ManagedSubscribeExt {
                         uri: topic_info.uri,
                     }),
                 };
-                TopicManagementRequest {
-                    action,
-                    payload: Some(payload),
-                }
+
+                TopicManagementRequest { action, payload: Some(payload) }
             }
             TopicAction::Stop => {
                 let action = String::from("STOP_PUBLISH");
@@ -284,10 +287,7 @@ impl PublisherCallback for ManagedSubscribeExt {
 
                 delete_topic = true;
 
-                TopicManagementRequest {
-                    action,
-                    payload: Some(payload),
-                }
+                TopicManagementRequest { action, payload: Some(payload) }
             }
             _ => {
                 info!("action is: {topic_action}");
@@ -296,15 +296,17 @@ impl PublisherCallback for ManagedSubscribeExt {
         };
 
         // Send management request to provider.
-        let mut provider_cb_client = ManagedSubscribeCallbackClient::connect(callback_info.uri).await.map_err(|e| {
-            error!("Error connecting to provider cb client: {e:?}");
-            Status::from_error(Box::new(e))
-        })?;
-    
-        let _res = provider_cb_client.topic_management_cb(management_request).await.map_err(|e| {
-            error!("Error calling to provider cb client: {e:?}");
-            Status::from_error(Box::new(e))
-        })?;
+        let mut provider_cb_client =
+            ManagedSubscribeCallbackClient::connect(callback_info.uri).await.map_err(|e| {
+                error!("Error connecting to provider cb client: {e:?}");
+                Status::from_error(Box::new(e))
+            })?;
+
+        let _res =
+            provider_cb_client.topic_management_cb(management_request).await.map_err(|e| {
+                error!("Error calling to provider cb client: {e:?}");
+                Status::from_error(Box::new(e))
+            })?;
 
         if delete_topic {
             // Delete topic from managed subscribe service.
