@@ -17,7 +17,7 @@ use tower::{Service, ServiceBuilder};
 // Add a new feature to all() so the use statement is active for the feature.
 // ex. #[cfg(all(feature = "feature_1", feature = "feature_2"))]
 #[cfg(all(feature = "managed_subscribe"))]
-use common::{grpc_interceptor::GrpcInterceptorLayer, grpc_service::GrpcService};
+use common::{grpc_interceptor::GrpcInterceptorLayer, grpc_extension::GrpcExtension};
 
 #[cfg(feature = "managed_subscribe")]
 use crate::managed_subscribe::managed_subscribe_ext::ManagedSubscribeExt;

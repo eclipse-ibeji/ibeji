@@ -12,7 +12,7 @@ use core_protobuf_data_access::extension::managed_subscribe::v1::{
     SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
 };
 
-use common::grpc_service::GrpcService;
+use common::grpc_extension::GrpcExtension;
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -143,7 +143,7 @@ impl ManagedSubscribeExt {
     }
 }
 
-impl GrpcService for ManagedSubscribeExt {
+impl GrpcExtension for ManagedSubscribeExt {
     /// Adds the gRPC services for this extension to the server builder.
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
         // Create the gRPC services.
