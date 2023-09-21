@@ -29,8 +29,7 @@ use crate::provider_impl::ProviderImpl;
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
-/// * `broker_uri` - The broker's URI.
-/// * `topic` - The topic.
+/// * `provider_uri` - The provider's URI.
 async fn register_ambient_air_temperature(
     invehicle_digital_twin_uri: &str,
     provider_uri: &str,

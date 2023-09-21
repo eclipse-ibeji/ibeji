@@ -204,23 +204,19 @@ impl ProviderImpl {
 
         let mut entity_lock = self.entity_map.write();
         let get_result = entity_lock.get_mut(&payload.entity_id);
+
         let topics = get_result.unwrap();
 
         // Check to see if topic exists.
-        let index_opt = topics.iter_mut().position(|t| t.topic == payload.topic);
-        let index = match index_opt {
-            Some(i) => i,
-            None => {
-                warn!("No topic found matching {}", payload.topic);
-                return;
-            }
-        };
+        if let Some(index) = topics.iter_mut().position(|t| t.topic == payload.topic) {
+            // Remove topic.
+            topic_info = topics.swap_remove(index);
 
-        // Remove topic.
-        topic_info = topics.swap_remove(index);
-
-        // Stop publishing to removed topic.
-        drop(topic_info.stop_channel);
+            // Stop publishing to removed topic.
+            drop(topic_info.stop_channel);
+        } else {
+            warn!("No topic found matching {}", payload.topic);
+        }
     }
 }
 

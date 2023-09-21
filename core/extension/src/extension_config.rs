@@ -5,6 +5,9 @@
 use config::{Config, File, FileFormat};
 
 /// Load the settings.
+///
+/// # Arguments
+/// * `config_filename` - Name of the config file to load settings from.
 pub fn load_settings<T>(config_filename: &str) -> T
 where
     T: for<'de> serde::Deserialize<'de>,

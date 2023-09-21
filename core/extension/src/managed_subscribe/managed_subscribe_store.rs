@@ -5,6 +5,7 @@
 use std::collections::HashMap;
 
 use core_protobuf_data_access::extension::managed_subscribe::v1::Constraint;
+use log::warn;
 
 #[derive(Clone, Debug)]
 pub struct CallbackInfo {
@@ -100,10 +101,15 @@ impl ManagedSubscribeStore {
     /// * `topic` - The topic to remove.
     pub fn remove_topic(&mut self, topic: &str) {
         // remove topic from topic and entity map.
-        let entity_id = self.topic_entity_map.remove(topic).unwrap();
-
-        // remove topic and info from entity metadata map.
-        let metadata = self.entity_metadata_map.get_mut(&entity_id).unwrap();
-        metadata.topics.remove(topic);
+        if let Some(entity_id) = self.topic_entity_map.remove(topic) {
+            // remove topic and info from entity metadata map;
+            if let Some(metadata) = self.entity_metadata_map.get_mut(&entity_id) {
+                metadata.topics.remove(topic);
+            } else {
+                warn!("Unable to find an entry for {entity_id}");
+            }
+        } else {
+            warn!("Unable to find an entry for {topic}.");
+        }
     }
 }
