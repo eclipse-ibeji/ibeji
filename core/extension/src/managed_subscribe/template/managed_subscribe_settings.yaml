@@ -1,0 +1,14 @@
+#
+# Managed Subscribe Extension Settings
+#
+
+# The IP address and port number that the base service listens on for the gRPC requests.
+# Example: "0.0.0.0:80"
+base_authority: <<value>>
+
+# The URL that the Managed Subscribe service listens on for requests.
+managed_subscribe_uri: <<value>>
+
+# The URL that the Chariott service listens on for requests.
+# If you wish to use Chariott to discover Agemo, then uncomment this setting.
+# chariott_url: <<value>>

@@ -3,40 +3,32 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "invehicle-digital-twin"
+name = "core-extension"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
-async-std = { workspace = true, features = ["attributes"] }
 bytes = { workspace = true }
 config = { workspace = true }
-core-protobuf-data-access = { path = "../protobuf_data_access" }
-env_logger= { workspace = true }
-futures = { workspace = true }
-http = { workspace = true }
-iref = { workspace = true }
-log = { workspace = true }
 common = { path = "../common" }
-core-extension = { path = "../extension", features = ["managed_subscribe"], optional = true }
+core-protobuf-data-access = { path = "../protobuf_data_access" }
+dyn-clone = { workspace = true }
+log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
-serde_json = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 tower = { workspace = true }
-url = { workspace = true }
-yaml-rust = { workspace = true, optional = true }
+yaml-rust = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
 [features]
-default = ["extension", "yaml"]
-extension = ["core-extension"]
-yaml = ["yaml-rust"]
+default = []
+managed_subscribe = []

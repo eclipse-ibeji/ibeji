@@ -8,6 +8,14 @@ pub mod invehicle_digital_twin {
     }
 }
 
+pub mod extension {
+    pub mod managed_subscribe {
+        pub mod v1 {
+            tonic::include_proto!("managed_subscribe");
+        }
+    }
+}
+
 pub mod chariott {
     pub mod service_discovery {
         pub mod core {

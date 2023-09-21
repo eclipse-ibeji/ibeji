@@ -2,6 +2,9 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+#[cfg(feature = "extension")]
+use core_extension::extension;
+
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
@@ -95,11 +98,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         entity_access_info_map: Arc::new(RwLock::new(HashMap::new())),
     };
 
-    // Setup the HTTP server.
-    Server::builder()
-        .add_service(InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl))
-        .serve(addr)
-        .await?;
+    let base_service = InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl);
+
+    // If the extension feature is enabled, serve the grpc server with extensions.
+    if cfg!(feature = "extension") {
+        #[cfg(feature = "extension")]
+        extension::serve_with_extensions(addr, base_service).await?;
+    }
+    // Serve the core grpc server without extensions.
+    else {
+        // Setup the HTTP server.
+        Server::builder().add_service(base_service).serve(addr).await?;
+    }
 
     debug!("The Digital Twin Service has completed.");
 
