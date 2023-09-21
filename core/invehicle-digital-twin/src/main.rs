@@ -83,11 +83,11 @@ async fn register_invehicle_digital_twin_service_with_chariott(
 /// * `addr` - The address the server will be hosted on.
 /// * `base_service` - The core service that will be hosted.
 ///
-/// # How to add an Module to this method:
+/// # How to add a Module to this method:
 /// 1. Add a block of code with the appropriate cfg feature flag.
 /// 2. Create the `GrpcModule` object within the block - if applicable.
 /// 3. Create the `GrpcInterceptorLayer` object(s) within the block - if applicable.
-/// 4. Add the interceptors to the middleware stack with `.layer()`.
+/// 4. Add the grpc interceptors to the middleware stack with `.layer()`.
 /// 5. Call and return from the block `.add_module()` on the server with the updated middleware and
 /// module.
 #[allow(unused_assignments, unused_mut)] // Necessary when no extra modules are built.

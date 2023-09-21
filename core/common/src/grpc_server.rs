@@ -29,7 +29,7 @@ impl GrpcServer<Identity> {
 }
 
 impl<L> GrpcServer<L> {
-    /// Adds a module (collection of grpc services and interceptors) for the server to host.
+    /// Adds a module (collection of grpc services and grpc interceptors) for the server to host.
     /// Returns a newly decorated GrpcServer with the added module.
     ///
     /// # Arguments
