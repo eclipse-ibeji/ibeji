@@ -2,23 +2,39 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-#[cfg(feature = "extension")]
-use core_extension::extension;
+// Module references behind feature flags. Add any necessary module references here.
+// Start: Module references.
 
+// Add a new feature to all() so the use statement is active for the feature.
+// ex. #[cfg(all(feature = "feature_1", feature = "feature_2"))]
+#[cfg(all(feature = "managed_subscribe"))]
+use common::grpc_interceptor::GrpcInterceptorLayer;
+
+#[cfg(feature = "managed_subscribe")]
+use managed_subscribe::managed_subscribe_ext::ManagedSubscribeExt;
+
+// End: Module references.
+
+use common::grpc_server::GrpcServer;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     RegisterRequest, ServiceMetadata,
 };
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
 use env_logger::{Builder, Target};
+use futures::Future;
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use std::boxed::Box;
 use std::collections::HashMap;
+use std::convert::Infallible;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tonic::transport::Server;
+use tonic::body::BoxBody;
+use tonic::transport::{Body, NamedService};
 use tonic::{Request, Status};
+use tower::layer::util::Identity;
+use tower::Service;
 
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
@@ -61,6 +77,59 @@ async fn register_invehicle_digital_twin_service_with_chariott(
     Ok(())
 }
 
+/// Builds the enabled modules for the grpc server and starts the server.
+///
+/// # Arguments
+/// * `addr` - The address the server will be hosted on.
+/// * `base_service` - The core service that will be hosted.
+///
+/// # How to add an Module to this method:
+/// 1. Add a block of code with the appropriate cfg feature flag.
+/// 2. Create the `GrpcModule` object within the block - if applicable.
+/// 3. Create the `GrpcInterceptorLayer` object(s) within the block - if applicable.
+/// 4. Add the interceptors to the middleware stack with `.layer()`.
+/// 5. Call and return from the block `.add_module()` on the server with the updated middleware and
+/// module.
+#[allow(unused_assignments, unused_mut)] // Necessary when no extra modules are built.
+fn build_server_and_serve<S>(
+    addr: SocketAddr,
+    base_service: S,
+) -> impl Future<Output = Result<(), tonic::transport::Error>>
+where
+    S: Service<http::Request<Body>, Response = http::Response<BoxBody>, Error = Infallible>
+        + NamedService
+        + Clone
+        + Send
+        + 'static,
+    S::Future: Send + 'static,
+{
+    let mut server: GrpcServer<Identity> = GrpcServer::new(addr);
+
+    #[cfg(feature = "managed_subscribe")]
+    // (1) Adds the Managed Subscribe module to the service.
+    let server = {
+        // (2) Initialize the Managed Subscribe module, which implements GrpcModule.
+        let managed_subscribe_ext = ManagedSubscribeExt::new();
+
+        // (3) Create interceptor layer to be added to the server.
+        let managed_subscribe_layer =
+            GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor()));
+
+        // (4) Add the interceptor(s) to the middleware stack.
+        let current_middleware = server.middleware.clone();
+        let new_middleware = current_middleware.layer(managed_subscribe_layer);
+
+        // (5) Add the module with the updated middleware stack to the server.
+        server.add_module(new_middleware, Box::new(managed_subscribe_ext))
+    };
+
+    // Construct the server.
+    let builder = server.construct_server().add_service(base_service);
+
+    // Start the server.
+    builder.serve(addr)
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup logging.
@@ -100,16 +169,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let base_service = InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl);
 
-    // If the extension feature is enabled, serve the grpc server with extensions.
-    if cfg!(feature = "extension") {
-        #[cfg(feature = "extension")]
-        extension::serve_with_extensions(addr, base_service).await?;
-    }
-    // Serve the core grpc server without extensions.
-    else {
-        // Setup the HTTP server.
-        Server::builder().add_service(base_service).serve(addr).await?;
-    }
+    build_server_and_serve(addr, base_service).await?;
 
     debug!("The Digital Twin Service has completed.");
 

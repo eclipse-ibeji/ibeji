@@ -2,18 +2,25 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::{
+    PublisherCallback, PublisherCallbackServer,
+};
 use core_protobuf_data_access::agemo::publisher::v1::{ManageTopicRequest, ManageTopicResponse};
-use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::{PublisherCallback, PublisherCallbackServer};
 use core_protobuf_data_access::agemo::pubsub::v1::pub_sub_client::PubSubClient;
-use core_protobuf_data_access::agemo::pubsub::v1::{CreateTopicRequest, CreateTopicResponse, DeleteTopicResponse, DeleteTopicRequest};
-use core_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
-use core_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_server::{ManagedSubscribe, ManagedSubscribeServer};
-use core_protobuf_data_access::extension::managed_subscribe::v1::{
-    SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
+use core_protobuf_data_access::agemo::pubsub::v1::{
+    CreateTopicRequest, CreateTopicResponse, DeleteTopicRequest, DeleteTopicResponse,
+};
+use core_protobuf_data_access::module::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
+use core_protobuf_data_access::module::managed_subscribe::v1::managed_subscribe_server::{
+    ManagedSubscribe, ManagedSubscribeServer,
+};
+use core_protobuf_data_access::module::managed_subscribe::v1::{
+    CallbackPayload, SubscriptionInfo, SubscriptionInfoRequest, SubscriptionInfoResponse,
+    TopicManagementRequest,
 };
 
-use common::grpc_extension::GrpcExtension;
-use common::utils::execute_with_retry;
+use common::grpc_module::GrpcModule;
+use common::utils::{execute_with_retry, load_settings};
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -23,10 +30,7 @@ use strum_macros::{Display, EnumString};
 use tonic::transport::server::RoutesBuilder;
 use tonic::{Request, Response, Status};
 
-use crate::extension_config::load_settings;
-use crate::managed_subscribe::managed_subscribe_store::{
-    CallbackInfo, ManagedSubscribeStore, TopicInfo,
-};
+use crate::managed_subscribe_store::{CallbackInfo, ManagedSubscribeStore, TopicInfo};
 
 use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
@@ -148,7 +152,7 @@ impl ManagedSubscribeExt {
     }
 }
 
-impl GrpcExtension for ManagedSubscribeExt {
+impl GrpcModule for ManagedSubscribeExt {
     /// Adds the gRPC services for this extension to the server builder.
     ///
     /// # Arguments

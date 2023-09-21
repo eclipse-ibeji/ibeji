@@ -15,7 +15,7 @@ members = [
   "core/invehicle-digital-twin",
 
   # extension
-  "core/extension",
+  "core/module/managed_subscribe",
 
   # digital twin model
   "digital-twin-model",

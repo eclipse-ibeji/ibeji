@@ -11,9 +11,7 @@ use std::{collections::HashMap, error::Error, sync::Arc};
 
 use common::grpc_interceptor::GrpcInterceptor;
 
-use crate::managed_subscribe::managed_subscribe_store::{
-    CallbackInfo, EntityMetadata, ManagedSubscribeStore,
-};
+use crate::managed_subscribe_store::{CallbackInfo, EntityMetadata, ManagedSubscribeStore};
 
 /// Interceptor for injecting a managed subscribe endpoint for providers.
 #[derive(Clone)]
