@@ -1,3 +1,5 @@
+Agemo
+agemo
 br
 build
 cargo
@@ -52,6 +54,7 @@ snapd
 sudo
 timothee
 toml
+Tonic
 toolchain
 uri
 URI
