@@ -11,7 +11,7 @@
 use common::grpc_interceptor::GrpcInterceptorLayer;
 
 #[cfg(feature = "managed_subscribe")]
-use managed_subscribe::managed_subscribe_ext::ManagedSubscribeExt;
+use managed_subscribe::managed_subscribe_module::ManagedSubscribeModule;
 
 // End: Module references.
 
@@ -109,18 +109,18 @@ where
     // (1) Adds the Managed Subscribe module to the service.
     let server = {
         // (2) Initialize the Managed Subscribe module, which implements GrpcModule.
-        let managed_subscribe_ext = ManagedSubscribeExt::new();
+        let managed_subscribe_module = ManagedSubscribeModule::new();
 
         // (3) Create interceptor layer to be added to the server.
         let managed_subscribe_layer =
-            GrpcInterceptorLayer::new(Box::new(managed_subscribe_ext.create_interceptor()));
+            GrpcInterceptorLayer::new(Box::new(managed_subscribe_module.create_interceptor()));
 
         // (4) Add the interceptor(s) to the middleware stack.
         let current_middleware = server.middleware.clone();
         let new_middleware = current_middleware.layer(managed_subscribe_layer);
 
         // (5) Add the module with the updated middleware stack to the server.
-        server.add_module(new_middleware, Box::new(managed_subscribe_ext))
+        server.add_module(new_middleware, Box::new(managed_subscribe_module))
     };
 
     // Construct the server.
