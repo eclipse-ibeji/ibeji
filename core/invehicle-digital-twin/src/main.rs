@@ -169,6 +169,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let base_service = InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl);
 
+    // Build and start the grpc server.
     build_server_and_serve(addr, base_service).await?;
 
     debug!("The Digital Twin Service has completed.");
