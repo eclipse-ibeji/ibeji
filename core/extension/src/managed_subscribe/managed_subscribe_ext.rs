@@ -13,7 +13,7 @@ use core_protobuf_data_access::extension::managed_subscribe::v1::{
 };
 
 use common::grpc_extension::GrpcExtension;
-use common::utils::retry_async_based_on_status;
+use common::utils::execute_with_retry;
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -217,12 +217,14 @@ impl ManagedSubscribe for ManagedSubscribeExt {
         }
 
         // Get managed subscribe topic information.
-        let created_topic =
-            retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
-                self.create_managed_topic(&entity_id)
-            })
-            .await?
-            .into_inner();
+        let created_topic = execute_with_retry(
+            30,
+            tokio::time::Duration::from_secs(1),
+            || self.create_managed_topic(&entity_id),
+            Some(format!("create_managed_topic({entity_id})")),
+        )
+        .await?
+        .into_inner();
 
         let generated_topic = created_topic.generated_topic;
 
@@ -334,16 +336,22 @@ impl PublisherCallback for ManagedSubscribeExt {
         };
 
         // Send management request to provider.
-        retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
-            call_provider_management_cb(&callback_info.uri, management_request.clone())
-        })
+        execute_with_retry(
+            30,
+            tokio::time::Duration::from_secs(1),
+            || call_provider_management_cb(&callback_info.uri, management_request.clone()),
+            Some("call_provider_management_cb".to_string()),
+        )
         .await?;
 
         if delete_topic {
             // Delete topic from managed subscribe service.
-            retry_async_based_on_status(30, tokio::time::Duration::from_secs(1), || {
-                self.delete_managed_topic(&topic)
-            })
+            execute_with_retry(
+                30,
+                tokio::time::Duration::from_secs(1),
+                || self.delete_managed_topic(&topic),
+                Some(format!("delete_managed_topic{topic}")),
+            )
             .await?;
 
             // Remove topic from store.
