@@ -2,7 +2,7 @@
 # Managed Subscribe Extension Settings
 #
 
-# The IP address and port number that the base service listens on for gRPC requests.
+# The IP address and port number that the base service listens on for the gRPC requests.
 # Example: "0.0.0.0:80"
 base_authority: <<value>>
 
