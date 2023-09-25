@@ -33,3 +33,8 @@ pub mod chariott {
 pub mod mime_type {
     pub const JPEG_IMAGES: &str = "image/jpeg";
 }
+
+/// Recognized constraint types for subscribe requests.
+pub mod constraint_type {
+    pub const FREQUENCY_MS: &str = "frequency_ms";
+}

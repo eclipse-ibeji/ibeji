@@ -15,6 +15,7 @@ use digital_twin_model::{sdv_v1 as sdv, Metadata};
 use log::{debug, info, warn};
 use paho_mqtt as mqtt;
 use parking_lot::RwLock;
+use samples_common::constants::constraint_type;
 use serde_derive::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 use tokio::sync::{mpsc, watch};
@@ -152,24 +153,17 @@ impl ProviderImpl {
             let mut frequency_ms = min_interval_ms;
 
             for constraint in constraints {
-                if constraint.r#type == *"frequency" {
+                if constraint.r#type == *constraint_type::FREQUENCY_MS {
                     frequency_ms = u64::from_str(&constraint.value).unwrap();
                 };
             }
 
             loop {
                 // See if we need to shutdown.
-                match reciever.try_recv() {
-                    Ok(_) => {
-                        info!("Shutdown thread for {topic}.");
-                        return;
-                    }
-                    Err(mpsc::error::TryRecvError::Empty) => {}
-                    Err(mpsc::error::TryRecvError::Disconnected) => {
-                        info!("Shutdown thread for {topic}.");
-                        return;
-                    }
-                };
+                if reciever.try_recv() == Err(mpsc::error::TryRecvError::Disconnected) {
+                    info!("Shutdown thread for {topic}.");
+                    return;
+                }
 
                 // Get data from stream at the current instant.
                 let data = *data_stream.borrow();
@@ -178,16 +172,16 @@ impl ProviderImpl {
 
                 // Publish message to broker.
                 info!(
-                    "Sending a publish request for {} with value {data}",
-                    sdv::hvac::ambient_air_temperature::ID
+                    "Publish to {topic} for {} with value {data}",
+                    sdv::hvac::ambient_air_temperature::NAME
                 );
 
                 if let Err(err) = publish_message(&broker_uri, &topic, &content) {
-                    warn!("Publish request failed due to '{err:?}'");
+                    warn!("Publish failed due to '{err:?}'");
                     break;
                 }
 
-                debug!("Completed the publish request");
+                debug!("Completed publish to {topic}.");
 
                 // Sleep for requested amount of time.
                 sleep(Duration::from_millis(frequency_ms)).await;
