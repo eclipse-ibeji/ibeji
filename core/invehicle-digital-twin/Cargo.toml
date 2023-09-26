@@ -19,7 +19,7 @@ http = { workspace = true }
 iref = { workspace = true }
 log = { workspace = true }
 common = { path = "../common" }
-core-extension = { path = "../extension", features = ["managed_subscribe"], optional = true }
+managed_subscribe = { path = "../module/managed_subscribe", optional = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
@@ -37,6 +37,6 @@ yaml-rust = { workspace = true, optional = true }
 tonic-build = { workspace = true }
 
 [features]
-default = ["extension", "yaml"]
-extension = ["core-extension"]
+default = ["managed_subscribe", "yaml"]
+managed_subscribe = ["dep:managed_subscribe"]
 yaml = ["yaml-rust"]

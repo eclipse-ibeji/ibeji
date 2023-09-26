@@ -10,6 +10,8 @@ license = "MIT"
 
 [dependencies]
 bytes = { workspace = true }
+config = { workspace = true }
+core-protobuf-data-access = { path = "../protobuf_data_access" }
 dyn-clone = { workspace = true }
 futures = { workspace = true }
 futures-core = { workspace = true }
@@ -20,7 +22,8 @@ hyper = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
-core-protobuf-data-access = { path = "../protobuf_data_access" }
+serde = { workspace = true, features = ["derive"] }
+serde_derive = { workspace = true }
 regex = {workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
