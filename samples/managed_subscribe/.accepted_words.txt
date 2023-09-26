@@ -11,9 +11,9 @@ gRPC
 github
 http
 https
-ibeji
+Ibeji
 invehicle
-mqtt
+MQTT
 repo
 svg
 uri

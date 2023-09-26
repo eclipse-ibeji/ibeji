@@ -1,15 +1,15 @@
 @startuml Managed Subscribe Module
 title Managed Subscribe Module Sequence
-participant DTProvider
+participant "Digital Twin Provider" as DTProvider
 participant Ibeji
-participant ManagedSubscribeModule
-participant DTConsumer
+participant "Managed Subscribe Module" as ManagedSubscribeModule
+participant "Digital Twin Consumer" as DTConsumer
 participant Agemo
 participant Broker
 
 autonumber
 
-DTConsumer -> Ibeji: FindById (Temp)
+DTConsumer -> Ibeji: FindById (entity_id)
 DTConsumer <- Ibeji: FindById - response
 DTConsumer -> ManagedSubscribeModule: GetSubscriptionInfo (entity_id, constraints {freq, acc, etc})
 ManagedSubscribeModule -> Agemo: CreateTopic - request
