@@ -1,5 +1,5 @@
 #
-# Managed Subscribe Extension Settings
+# Managed Subscribe Module Settings
 #
 
 # The IP address and port number that the base service listens on for the gRPC requests.

@@ -2,10 +2,26 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use std::future::Future;
-
+use config::{Config, File, FileFormat};
 use log::debug;
+use std::future::Future;
 use tokio::time::{sleep, Duration};
+
+/// Load the settings.
+///
+/// # Arguments
+/// * `config_filename` - Name of the config file to load settings from.
+pub fn load_settings<T>(config_filename: &str) -> T
+where
+    T: for<'de> serde::Deserialize<'de>,
+{
+    let config =
+        Config::builder().add_source(File::new(config_filename, FileFormat::Yaml)).build().unwrap();
+
+    let settings: T = config.try_deserialize().unwrap();
+
+    settings
+}
 
 /// Retry a function that returns an error.
 ///

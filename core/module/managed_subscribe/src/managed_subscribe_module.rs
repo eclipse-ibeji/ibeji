@@ -2,18 +2,25 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::{
+    PublisherCallback, PublisherCallbackServer,
+};
 use core_protobuf_data_access::agemo::publisher::v1::{ManageTopicRequest, ManageTopicResponse};
-use core_protobuf_data_access::agemo::publisher::v1::publisher_callback_server::{PublisherCallback, PublisherCallbackServer};
 use core_protobuf_data_access::agemo::pubsub::v1::pub_sub_client::PubSubClient;
-use core_protobuf_data_access::agemo::pubsub::v1::{CreateTopicRequest, CreateTopicResponse, DeleteTopicResponse, DeleteTopicRequest};
-use core_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
-use core_protobuf_data_access::extension::managed_subscribe::v1::managed_subscribe_server::{ManagedSubscribe, ManagedSubscribeServer};
-use core_protobuf_data_access::extension::managed_subscribe::v1::{
-    SubscriptionInfoRequest, SubscriptionInfoResponse, CallbackPayload, TopicManagementRequest, SubscriptionInfo,
+use core_protobuf_data_access::agemo::pubsub::v1::{
+    CreateTopicRequest, CreateTopicResponse, DeleteTopicRequest, DeleteTopicResponse,
+};
+use core_protobuf_data_access::module::managed_subscribe::v1::managed_subscribe_callback_client::ManagedSubscribeCallbackClient;
+use core_protobuf_data_access::module::managed_subscribe::v1::managed_subscribe_server::{
+    ManagedSubscribe, ManagedSubscribeServer,
+};
+use core_protobuf_data_access::module::managed_subscribe::v1::{
+    CallbackPayload, SubscriptionInfo, SubscriptionInfoRequest, SubscriptionInfoResponse,
+    TopicManagementRequest,
 };
 
-use common::grpc_extension::GrpcExtension;
-use common::utils::execute_with_retry;
+use common::grpc_module::GrpcModule;
+use common::utils::{execute_with_retry, load_settings};
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -23,15 +30,12 @@ use strum_macros::{Display, EnumString};
 use tonic::transport::server::RoutesBuilder;
 use tonic::{Request, Response, Status};
 
-use crate::extension_config::load_settings;
-use crate::managed_subscribe::managed_subscribe_store::{
-    CallbackInfo, ManagedSubscribeStore, TopicInfo,
-};
+use crate::managed_subscribe_store::{CallbackInfo, ManagedSubscribeStore, TopicInfo};
 
 use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
 const CONFIG_FILENAME: &str = "managed_subscribe_settings";
-const EXTENSION_PROTOCOL: &str = "grpc";
+const SERVICE_PROTOCOL: &str = "grpc";
 
 // Managed Subscribe action constants.
 const PUBLISH_ACTION: &str = "PUBLISH";
@@ -62,41 +66,41 @@ pub struct ConfigSettings {
 }
 
 #[derive(Clone, Debug)]
-pub struct ManagedSubscribeExt {
+pub struct ManagedSubscribeModule {
     pub managed_subscribe_uri: String,
-    pub extension_uri: String,
-    pub extension_protocol: String,
-    pub extension_store: Arc<RwLock<ManagedSubscribeStore>>,
+    pub service_uri: String,
+    pub service_protocol: String,
+    pub store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
-impl Default for ManagedSubscribeExt {
+impl Default for ManagedSubscribeModule {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl ManagedSubscribeExt {
-    /// Creates a new managed subscribe extension object.
+impl ManagedSubscribeModule {
+    /// Creates a new managed subscribe module object.
     pub fn new() -> Self {
-        // Get extension information from the configuration settings.
+        // Get module information from the configuration settings.
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.base_authority;
-        let extension_uri = format!("http://{endpoint}"); // Devskim: ignore DS137138
+        let service_uri = format!("http://{endpoint}"); // Devskim: ignore DS137138
 
-        let extension_store = Arc::new(RwLock::new(ManagedSubscribeStore::new()));
+        let store = Arc::new(RwLock::new(ManagedSubscribeStore::new()));
 
-        ManagedSubscribeExt {
+        ManagedSubscribeModule {
             managed_subscribe_uri: config.managed_subscribe_uri,
-            extension_uri,
-            extension_protocol: EXTENSION_PROTOCOL.to_string(),
-            extension_store,
+            service_uri,
+            service_protocol: SERVICE_PROTOCOL.to_string(),
+            store,
         }
     }
 
     /// Creates a new managed subscribe interceptor that shares data with the current instance of
-    /// this extension.
+    /// this module.
     pub fn create_interceptor(&self) -> ManagedSubscribeInterceptor {
-        ManagedSubscribeInterceptor::new(&self.extension_uri, self.extension_store.clone())
+        ManagedSubscribeInterceptor::new(&self.service_uri, self.store.clone())
     }
 
     /// Calls the external managed subscription service to create a new topic.
@@ -117,8 +121,8 @@ impl ManagedSubscribeExt {
         // Construct request.
         let request = Request::new(CreateTopicRequest {
             publisher_id: entity_id.to_string(),
-            management_callback: self.extension_uri.clone(),
-            management_protocol: self.extension_protocol.clone(),
+            management_callback: self.service_uri.clone(),
+            management_protocol: self.service_protocol.clone(),
         });
 
         // Call managed subscribe service.
@@ -148,8 +152,8 @@ impl ManagedSubscribeExt {
     }
 }
 
-impl GrpcExtension for ManagedSubscribeExt {
-    /// Adds the gRPC services for this extension to the server builder.
+impl GrpcModule for ManagedSubscribeModule {
+    /// Adds the gRPC services for this module to the server builder.
     ///
     /// # Arguments
     /// * `builder` - A tonic::RoutesBuilder that contains the grpc services to build.
@@ -190,7 +194,7 @@ async fn call_provider_management_cb(
 }
 
 #[tonic::async_trait]
-impl ManagedSubscribe for ManagedSubscribeExt {
+impl ManagedSubscribe for ManagedSubscribeModule {
     /// Get the subscription information for a specific entity id.
     ///
     /// # Arguments
@@ -207,7 +211,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 
         // Check if store contains entity.
         {
-            let contains_entity = self.extension_store.read().contains_entity(&entity_id);
+            let contains_entity = self.store.read().contains_entity(&entity_id);
 
             if !contains_entity {
                 return Err(Status::not_found(
@@ -237,11 +241,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 
         // Add topic to store.
         {
-            self.extension_store.write().add_topic(
-                &entity_id,
-                &generated_topic,
-                topic_info.clone(),
-            );
+            self.store.write().add_topic(&entity_id, &generated_topic, topic_info.clone());
         }
 
         // Respond with subscription information.
@@ -258,7 +258,7 @@ impl ManagedSubscribe for ManagedSubscribeExt {
 }
 
 #[tonic::async_trait]
-impl PublisherCallback for ManagedSubscribeExt {
+impl PublisherCallback for ManagedSubscribeModule {
     /// Callback for managing a topic based on subscriptions.
     ///
     /// # Arguments
@@ -282,7 +282,7 @@ impl PublisherCallback for ManagedSubscribeExt {
 
         // Get entity information from topic.
         {
-            let store = self.extension_store.read();
+            let store = self.store.read();
 
             // Get associated entity id with the topic name.
             entity_id = store
@@ -356,7 +356,7 @@ impl PublisherCallback for ManagedSubscribeExt {
 
             // Remove topic from store.
             {
-                self.extension_store.write().remove_topic(&topic);
+                self.store.write().remove_topic(&topic);
             }
         }
 

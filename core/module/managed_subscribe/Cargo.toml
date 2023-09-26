@@ -3,16 +3,15 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "core-extension"
+name = "managed_subscribe"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 bytes = { workspace = true }
-config = { workspace = true }
-common = { path = "../common" }
-core-protobuf-data-access = { path = "../protobuf_data_access" }
+common = { path = "../../common" }
+core-protobuf-data-access = { path = "../../protobuf_data_access" }
 dyn-clone = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
@@ -28,7 +27,3 @@ yaml-rust = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
-
-[features]
-default = []
-managed_subscribe = []

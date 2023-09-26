@@ -4,9 +4,9 @@
 
 use tonic::transport::server::RoutesBuilder;
 
-/// Trait that must be implemented for an extension to add a grpc service to the hosted server.
-/// Note: This trait may be renamed in the future.
-pub trait GrpcExtension {
+/// Trait that must be implemented for a module to add one or more grpc services to the hosted
+/// server. A GrpcModule may also implement one or more GrpcInterceptor objects and share state.
+pub trait GrpcModule {
     /// Function to add necessary services to the server builder.
     ///
     /// # Arguments
