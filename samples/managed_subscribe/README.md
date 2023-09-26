@@ -59,7 +59,7 @@ where you are running the demo.<br><br>
 1. To shutdown, use control-c on the consumer first. This will show the topic thread being shutdown
 in the provider. Then control-c the other windows when you wish to stop the demo.
 
-### Managed Subscribe Module Sequence
+### Managed Subscribe Module
 
 The managed subscribe module utilizes the [Agemo](https://github.com/eclipse-chariott/Agemo)
 service to provide dynamic topic creation and subscription management. The module checks a
@@ -70,4 +70,16 @@ is frequency. Once a consumer has requested a subscription, the module will crea
 through Agemo and tell the relevant provider to start publishing to that topic with the specific
 constraints.
 
-![managed_subscribe_sequence_diagram](../../docs/design/diagrams/managed_subscribe_sequence.svg)
+#### Register Interceptor Sequence
+
+This diagram shows the portion of the module that handles the modification of a provider's
+registration data.
+
+![interceptor_sequence_diagram](../../docs/design/diagrams/managed_subscribe_interceptor_sequence.svg)
+
+#### Managed Subscribe Module Sequence
+
+This diagram shows the portion of the module that handles the managed topic creation and management
+through Agemo for the providers.
+
+![managed_subscribe_sequence_diagram](../../docs/design/diagrams/managed_subscribe_module_sequence.svg)
