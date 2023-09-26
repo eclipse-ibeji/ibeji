@@ -26,7 +26,7 @@ disconnects it will stop publishing to that dynamically generated topic.
 
 ### Running the Sample
 
-#### Steps:
+#### Steps
 
 This sample uses [Agemo](https://github.com/eclipse-chariott/Agemo); please make sure that it is
 running.
