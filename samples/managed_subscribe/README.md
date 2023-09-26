@@ -3,8 +3,8 @@
 ### Introduction
 
 The managed subscribe sample shows how ibeji can extend its functionality with modules to give
-providers and consumers more functionality. This sample utilizes the 'Managed Subscribe' module to
-allow a consumer to get an mqtt subscription to the AmbientAirTemperature value of a vehicle at a
+providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to
+allow a consumer to get an mqtt subscription for the AmbientAirTemperature value of a vehicle at a
 specific frequency in milliseconds. The provider, through the module, will publish the temperature
 value at the requested frequency for each consumer on its own topic and once the consumer
 disconnects it will stop publishing to that dynamically generated topic.
@@ -56,8 +56,8 @@ where you are running the demo.<br><br>
     provider can serve the same value in different ways dynamically. If one consumer is stopped,
     the other consumers will still receive the data.
 
-1. To shutdown, use control-c on the consumer first. This will show the topic thread being shutdown in the provider. Then control-c the other windows
-when you wish to stop the demo.
+1. To shutdown, use control-c on the consumer first. This will show the topic thread being shutdown
+in the provider. Then control-c the other windows when you wish to stop the demo.
 
 ### Managed Subscribe Module Sequence
 
