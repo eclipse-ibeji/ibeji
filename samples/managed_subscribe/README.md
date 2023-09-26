@@ -9,25 +9,9 @@ specific frequency in milliseconds. The provider, through the module, will publi
 value at the requested frequency for each consumer on its own topic and once the consumer
 disconnects it will stop publishing to that dynamically generated topic.
 
-### Managed Subscribe Module Sequence
-
-The managed subscribe module utilizes the [Agemo](https://github.com/eclipse-chariott/Agemo)
-service to provide dynamic topic creation and subscription management. The module checks a
-providers registration request to see if the provider is requesting the use of the module. If so,
-the module will inject the module's gRPC service endpoint for consumers to communicate with to
-request a subscription for an entity id with specific constraints. In this example, the constraint
-is frequency. Once a consumer has requested a subscription, the module will >create a dynamic topic
-through Agemo and tell the relevant provider to start publishing to that topic with the specific
-constraints.
-
-[managed_subscribe_sequence_diagram](../../docs/design/diagrams/managed_subscribe_sequence.svg)
-
 ### Setup
 
-This sample uses [Agemo](https://github.com/eclipse-chariott/Agemo); please make sure that it is
-running.
-
-Create the four config files with the following contents, if they are not already there:<br><br>
+1. Create the four config files with the following contents, if they are not already there:<br><br>
 ---- consumer_settings.yaml ----<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
@@ -38,9 +22,14 @@ Create the four config files with the following contents, if they are not alread
 ---- provider_settings.yaml ----<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 
+1. Build the invehicle_digital_twin service with the `managed_subscribe` feature enabled.
+
 ### Running the Sample
 
 #### Steps:
+
+This sample uses [Agemo](https://github.com/eclipse-chariott/Agemo); please make sure that it is
+running.
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin,
 one running the Digital Twin Provider and one running the Digital Twin Consumer.
@@ -69,3 +58,16 @@ where you are running the demo.<br><br>
 
 1. To shutdown, use control-c on the consumer first. This will show the topic thread being shutdown in the provider. Then control-c the other windows
 when you wish to stop the demo.
+
+### Managed Subscribe Module Sequence
+
+The managed subscribe module utilizes the [Agemo](https://github.com/eclipse-chariott/Agemo)
+service to provide dynamic topic creation and subscription management. The module checks a
+provider's registration request to see if the provider is requesting the use of the module. If so,
+the module will inject the module's gRPC service endpoint for consumers to communicate with to
+request a subscription for an entity id with specific constraints. In this example, the constraint
+is frequency. Once a consumer has requested a subscription, the module will create a dynamic topic
+through Agemo and tell the relevant provider to start publishing to that topic with the specific
+constraints.
+
+![managed_subscribe_sequence_diagram](../../docs/design/diagrams/managed_subscribe_sequence.svg)
