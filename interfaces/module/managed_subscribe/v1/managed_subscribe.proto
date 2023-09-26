@@ -6,45 +6,73 @@ syntax = "proto3";
 
 package managed_subscribe;
 
+// The entry point for the Managed Subscribe Module gRPC service.
 service ManagedSubscribe {
+    // Method to get the subscription information needed for a consumer to subscribe to an entity
+    // id with custom constraints.
     rpc GetSubscriptionInfo (SubscriptionInfoRequest) returns (SubscriptionInfoResponse);
 }
 
+// Representation of a subscription constraint that can be requested for by a consumer.
 message Constraint {
+    // The type of constraint. ex. "frequency_ms"
     string type = 1;
+    // The value for the constraint. ex. "10000"
     string value = 2;
 }
 
+// Request used to get subscription info for an entity id.
 message SubscriptionInfoRequest {
+    // The entity id the consumer is interested in subscribing to.
     string entityId = 1;
+    // List of constraints for the subscription.
     repeated Constraint constraints = 2;
 }
 
+// Response providing the necessary information for a consumer to subscribe to an entity id.
 message SubscriptionInfoResponse {
+    // The protocol used for the subscription. ex. "mqtt_v5".
     string protocol = 1;
+    // The uri to call to subscribe. ex. "mqtt://0.0.0.0:1883".
     string uri = 2;
+    // Any other necessary context for the subscription. ex. "topic name".
     string context = 3;
 }
 
+// The callback service implemented by a provider that is using the Managed Subscribe Module.
 service ManagedSubscribeCallback {
+    // Callback method used by the Managed Subscribe Module to inform the provider about
+    // subscription updates.
     rpc TopicManagementCB (TopicManagementRequest) returns (TopicManagementResponse);
 }
 
+// Representation of where a provider should be publishing to for an entity id and topic.
 message SubscriptionInfo {
+    // The protocol to use.
     string protocol = 1;
+    // The uri to publish to.
     string uri = 2;
 }
 
+// Callback information provided by the Managed Subscribe Module.
 message CallbackPayload {
+    // The entity id that an update is being provided for.
     string entityId = 1;
+    // The managed topic that is associated with the entity id.
     string topic = 2;
+    // The list of constraints associated with the managed topic.
     repeated Constraint constraints = 3;
-    SubscriptionInfo subscriptionInfo = 4; // Only used for a start publish action.
+    // Field used when a 'PUBLISH' action is called to provide information about where to publish.
+    SubscriptionInfo subscriptionInfo = 4;
 }
 
+// Callback request made by the Managed Subscribe Module back to a provider.
 message TopicManagementRequest {
+    // The action to be performed.
     string action = 1;
+    // The payload associated with the callback request.
     CallbackPayload payload = 2;
 }
 
+// Response from a provider on success.
 message TopicManagementResponse { }

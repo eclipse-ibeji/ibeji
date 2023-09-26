@@ -1,0 +1,38 @@
+@startuml Managed Subscribe Interceptor
+title Managed Subscribe Interceptor Sequence
+participant "Digital Twin Provider" as DTProvider
+participant "Managed Subscribe Module" as ManagedSubscribeModule
+participant Ibeji
+
+autonumber
+
+DTProvider -> ManagedSubscribeModule: Register - request
+ManagedSubscribeModule -> ManagedSubscribeModule: Intercepts Register request
+
+alt contains `ManagedSubscribe` Entry
+note right of DTProvider
+// Entry that indicates to Ibeji that the Provider
+// wants to utilize the Managed Subscribe Module.
+{
+    protocol: "grpc"
+    operations: ["ManagedSubscribe"]
+    uri: "Provider callback uri"
+    context: ""
+}
+end note
+ManagedSubscribeModule -> ManagedSubscribeModule: Store provider callback.
+ManagedSubscribeModule -> ManagedSubscribeModule: Modify the request's `ManagedSubscribe` endpointInfo.
+note right of ManagedSubscribeModule
+// Points to the Managed Subscribe gRPC endpoint
+{
+    protocol: "grpc"
+    operations: ["ManagedSubscribe"]
+    uri: "Ibeji uri"
+    context: "GetSubscriptionInfo"
+}
+end note
+end
+
+Ibeji <- ManagedSubscribeModule: Passes on Register request
+Ibeji -> DTProvider: Register - response
+@enduml

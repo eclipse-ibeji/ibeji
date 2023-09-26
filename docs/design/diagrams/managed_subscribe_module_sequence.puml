@@ -1,0 +1,65 @@
+@startuml Managed Subscribe Module
+title Managed Subscribe Module Sequence
+participant "Digital Twin Provider" as DTProvider
+participant Ibeji
+participant "Managed Subscribe Module" as ManagedSubscribeModule
+participant "Digital Twin Consumer" as DTConsumer
+participant Agemo
+participant Broker
+
+autonumber
+
+DTConsumer -> Ibeji: FindById (entity_id)
+DTConsumer <- Ibeji: FindById - response
+DTConsumer -> ManagedSubscribeModule: GetSubscriptionInfo (entity_id, constraints {freq, acc, etc})
+ManagedSubscribeModule -> Agemo: CreateTopic - request
+Agemo -> ManagedSubscribeModule: CreateTopic - response
+note right of ManagedSubscribeModule: SubInfo {topic, broker endpoint info}
+ManagedSubscribeModule -> ManagedSubscribeModule: Store entity_id and SubInfo metadata
+ManagedSubscribeModule -> DTConsumer: GetSubscriptionInfo - response
+note left of DTConsumer: SubInfo {topic, broker endpoint info}
+DTConsumer -> Broker: Subscribe (SubInfo.topic)
+Broker -> Agemo: Sub notification for SubInfo.topic
+Agemo -> ManagedSubscribeModule: ManageTopicCallback (SubInfo.topic, action)
+ManagedSubscribeModule -> DTProvider: TopicManagementCB (action, payload)
+note right of DTProvider
+// Tells provider to start publishing
+// entity id data on provided topic
+// with the given constraints.
+
+action: PUBLISH
+payload: {
+    entity_id,
+    topic,
+    constraints, // (type, value)
+    subscription_info: {
+        protocol, // MQTT
+        uri, // MQTT Broker
+    },
+}
+end note
+DTProvider -> Broker: data
+DTConsumer <- Broker : data
+DTConsumer -> Broker: Unsubscribe (SubInfo.topic)
+DTConsumer x<- Broker: data
+Broker -> Agemo: Unsub notification for SubInfo.topic
+Agemo -> ManagedSubscribeModule: ManageTopicCallback (SubInfo.topic, action)
+DTProvider <- ManagedSubscribeModule: TopicManagementCB (action, payload)
+note right of DTProvider
+// Tells provider to stop publishing
+// entity id data on provided topic.
+
+action: STOP_PUBLISH
+payload: {
+    entity_id,
+    topic,
+    constraints, // (type, value)
+    subscription_info: None,
+}
+end note
+DTProvider ->x Broker: data
+DTProvider -> DTProvider: Remove topic mapping
+ManagedSubscribeModule -> Agemo: DeleteTopic (SubInfo.topic)
+ManagedSubscribeModule <- Agemo: DeleteTopic - response
+ManagedSubscribeModule -> ManagedSubscribeModule: Remove topic mapping
+@enduml
