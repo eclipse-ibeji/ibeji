@@ -6,9 +6,9 @@
 # Example: "0.0.0.0:80"
 consumer_authority: <<value>>
 
-# The URL that the in-vehicle digital twin service listens on for digital twin requests.
-invehicle_digital_twin_url: <<value>>
+# The URI that the in-vehicle digital twin service listens on for digital twin requests.
+invehicle_digital_twin_uri: <<value>>
 
-# The URL that the Chariott service listens on for requests.
-# If you wish to use Chariott, then uncomment this setting and comment out the invehicle_digital_twin_url setting.
-# chariott_url: <<value>>
+# The URI that the Chariott service listens on for requests.
+# If you wish to use Chariott, then uncomment this setting and comment out the invehicle_digital_twin_uri setting.
+# chariott_uri: <<value>>

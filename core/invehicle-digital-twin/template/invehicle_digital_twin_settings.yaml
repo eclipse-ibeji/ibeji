@@ -6,6 +6,6 @@
 # Example: "0.0.0.0:80"
 invehicle_digital_twin_authority: <<value>>
 
-# The URL that the Chariott service listens on for requests.
+# The URI that the Chariott service listens on for requests.
 # If you wish to use Chariott, then uncomment this setting.
-# chariott_url: <<value>>
+# chariott_uri: <<value>>
