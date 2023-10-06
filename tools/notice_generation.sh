@@ -38,7 +38,7 @@ cargo about generate --workspace devops/cg/about.hbs --config devops/cg/about.to
 
 DOTNET_SRC_DIRECTORY="dtdl-tools/"
 echo "Appending .NET Third Party licenses to $NOTICE_FILENAME"
-./tools/dotnet_notice_generation.sh $NOTICE_FILENAME $CLOUD_CONNECTORS_AZURE_DIRECTORY ./devops/cg/license_url_to_type.json
+./tools/dotnet_notice_generation.sh $NOTICE_FILENAME $DOTNET_SRC_DIRECTORY ./devops/cg/license_url_to_type.json
 
 if [ -z "$(git diff --name-only $NOTICE_FILENAME)" ]
 then
