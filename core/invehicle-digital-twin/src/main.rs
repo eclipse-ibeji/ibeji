@@ -5,8 +5,6 @@
 // Module references behind feature flags. Add any necessary module references here.
 // Start: Module references.
 
-// Add a new feature to all() so the use statement is active for the feature.
-// ex. #[cfg(all(feature = "feature_1", feature = "feature_2"))]
 #[cfg(feature = "managed_subscribe")]
 use common::grpc_interceptor::GrpcInterceptorLayer;
 

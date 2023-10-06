@@ -41,7 +41,7 @@ mod digital_twins_connector_dotnet_tests {
             io::stdout().write_all(&dtdl_validator_output.stdout).unwrap();
         }
 
-        return dtdl_validator_output.status.success();
+        dtdl_validator_output.status.success()
     }
 
     #[test]
