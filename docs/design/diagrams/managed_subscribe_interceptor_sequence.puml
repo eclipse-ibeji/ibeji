@@ -1,8 +1,10 @@
 @startuml Managed Subscribe Interceptor
 title Managed Subscribe Interceptor Sequence
 participant "Digital Twin Provider" as DTProvider
+box "Ibeji"
 participant "Managed Subscribe Module" as ManagedSubscribeModule
-participant Ibeji
+participant "InVehicle Digital Twin" as Ibeji
+end box
 
 autonumber
 

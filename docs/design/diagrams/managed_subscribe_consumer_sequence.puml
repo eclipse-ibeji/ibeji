@@ -1,0 +1,18 @@
+@startuml Managed Subscribe Consumer
+title Managed Subscribe Sequence from Consumer's Perspective
+participant "Digital Twin Consumer" as DTConsumer
+participant Ibeji
+participant Broker
+
+autonumber
+
+DTConsumer -> Ibeji: FindById - request
+DTConsumer <- Ibeji: FindById - response
+DTConsumer -> Ibeji: GetSubscriptionInfo (entity_id, constraints {freq, acc, etc})
+Ibeji -> DTConsumer: GetSubscriptionInfo - response
+note right of DTConsumer: SubInfo {topic, broker endpoint info}
+DTConsumer -> Broker: Subscribe (SubInfo.topic)
+DTConsumer <- Broker : data
+DTConsumer -> Broker: Unsubscribe (SubInfo.topic)
+DTConsumer x<- Broker: data
+@enduml

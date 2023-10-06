@@ -1,8 +1,10 @@
 @startuml Managed Subscribe Module
 title Managed Subscribe Module Sequence
 participant "Digital Twin Provider" as DTProvider
-participant Ibeji
+box "Ibeji"
+participant "InVehicle Digital Twin" as Ibeji
 participant "Managed Subscribe Module" as ManagedSubscribeModule
+end box
 participant "Digital Twin Consumer" as DTConsumer
 participant Agemo
 participant Broker
