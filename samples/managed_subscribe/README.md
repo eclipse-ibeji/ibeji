@@ -107,6 +107,6 @@ the managed subscribe module. We can see that the provider needs to signal to Ib
 registering that it would like to leverage the managed subscribe module if it is available. This
 also means that the provider has implemented the `TopicManagementCB` endpoint so that the module
 can communicate with it. The provider then acts when directed to from a `TopicManagementCB` call,
-offloading some of the topic managment to the module.
+offloading some of the topic management to the module.
 
 ![managed_subscribe_provider_sequence_diagram](../../docs/design/diagrams/managed_subscribe_provider_sequence.svg)
