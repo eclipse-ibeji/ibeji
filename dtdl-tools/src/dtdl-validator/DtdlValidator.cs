@@ -58,7 +58,7 @@ class Program
             {
                 Console.WriteLine($"{file} - failed");
                 foreach (var error in ex.Errors) {
-                    Console.WriteLine($"  {error}");                        
+                    Console.WriteLine($"  {error}");
                 }
                 failureOccured = true;
             }
@@ -81,7 +81,7 @@ class Program
                 "-d",
                 getDefaultValue: () => new DirectoryInfo(Directory.GetCurrentDirectory()),
                 description: "The directory that contains the DTDL files.");
-        var extensionOption = 
+        var extensionOption =
             new Option<string>(
                 "-e",
                 getDefaultValue: () => "json",
@@ -92,11 +92,11 @@ class Program
         var cmd = new RootCommand();
         cmd.AddOption(directoryOption);
         cmd.AddOption(extensionOption);
-        cmd.SetHandler((directory, extension) => 
-            { 
-                exitCode = ValidateDtdl(directory!, extension!); 
+        cmd.SetHandler((directory, extension) =>
+            {
+                exitCode = ValidateDtdl(directory!, extension!);
             },
-            directoryOption, extensionOption);  
+            directoryOption, extensionOption);
 
         await cmd.InvokeAsync(args);
 

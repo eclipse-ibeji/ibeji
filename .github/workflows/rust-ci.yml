@@ -27,7 +27,7 @@ jobs:
           rustup component add rustfmt clippy
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-      - run: cargo check --workspace --locked
+      - run: cargo check --workspace
       - run: cargo clippy --all-targets --all-features --workspace --no-deps -- -D warnings
       - run: cargo fmt --all -- --check
       - name: Run doctest only
