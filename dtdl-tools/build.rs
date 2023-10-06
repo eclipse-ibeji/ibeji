@@ -10,16 +10,11 @@ fn main() {
     const DOTNET_COMMAND: &str = "dotnet";
     const DOTNET_BUILD_ARG: &str = "build";
 
-    const CSPROJ_PATHS: &[&str] = &[
-        "src/dtdl-validator/dtdl-validator.csproj",
-    ];
+    const CSPROJ_PATHS: &[&str] = &["src/dtdl-validator/dtdl-validator.csproj"];
 
     for csproj in CSPROJ_PATHS {
-        let output = Command::new(DOTNET_COMMAND)
-            .arg(DOTNET_BUILD_ARG)
-            .arg(csproj)
-            .output()
-            .unwrap();
+        let output =
+            Command::new(DOTNET_COMMAND).arg(DOTNET_BUILD_ARG).arg(csproj).output().unwrap();
 
         if !output.status.success() {
             panic!("Failed to run due to {output:?}");

@@ -7,7 +7,7 @@
 #[cfg(test)]
 mod digital_twins_connector_dotnet_tests {
     use std::io::{self, Write};
-    use std::path::Path;    
+    use std::path::Path;
     use std::process::Command;
 
     // The manifest directory is the directory that contains the Cargo.toml file for this crate.
@@ -16,22 +16,24 @@ mod digital_twins_connector_dotnet_tests {
     const DTDL_VALIDATOR_FILENAME: &str = "dtdl-validator";
     const DTDL_VALIDATOR_BIN_DIR: &str = "target/debug/dtdl-validator/bin/Debug/net7.0";
     const DTDL_VALIDATOR_DIR_OPTION: &str = "-d";
-    const DTDL_VALIDATOR_EXT_OPTION: &str = "-e";  
+    const DTDL_VALIDATOR_EXT_OPTION: &str = "-e";
 
     /// Validate DTDL files.
-    /// 
+    ///
     /// # Arguments
     /// * `directory` - The directory that contains the DTDL files that you wish to validate.
     /// * `extension` - The file extension that the DTDL files use.
     fn validate_dtdl_files(directory: &str, extension: &str) -> bool {
+        let dtdl_validator_command_path = Path::new(MANIFEST_DIR)
+            .join("..")
+            .join(DTDL_VALIDATOR_BIN_DIR)
+            .join(DTDL_VALIDATOR_FILENAME);
 
-        let dtdl_validator_command_path = Path::new(MANIFEST_DIR).join("..").join(DTDL_VALIDATOR_BIN_DIR).join(DTDL_VALIDATOR_FILENAME);
-    
         let dtdl_validator_output = Command::new(dtdl_validator_command_path)
             .arg(DTDL_VALIDATOR_DIR_OPTION)
             .arg(directory)
             .arg(DTDL_VALIDATOR_EXT_OPTION)
-            .arg(extension)            
+            .arg(extension)
             .output()
             .unwrap();
 
