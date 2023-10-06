@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <BaseOutputPath>../../../target/debug/dtdl-validator/bin</BaseOutputPath>
+    <BaseIntermediateOutputPath>../../../target/debug/dtdl-validator/obj</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>../../../target/debug/dtdl-validator/obj</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>
