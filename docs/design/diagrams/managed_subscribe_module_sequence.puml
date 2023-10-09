@@ -13,7 +13,7 @@ autonumber
 
 DTConsumer -> Ibeji: FindById (entity_id)
 DTConsumer <- Ibeji: FindById - response
-DTConsumer -> ManagedSubscribeModule: GetSubscriptionInfo (entity_id, constraints {freq, acc, etc})
+DTConsumer -> ManagedSubscribeModule: GetSubscriptionInfo (entity_id, constraints)
 ManagedSubscribeModule -> Agemo: CreateTopic - request
 Agemo -> ManagedSubscribeModule: CreateTopic - response
 note right of ManagedSubscribeModule: SubInfo {topic, broker endpoint info}
@@ -25,9 +25,9 @@ Broker -> Agemo: Sub notification for SubInfo.topic
 Agemo -> ManagedSubscribeModule: ManageTopicCallback (SubInfo.topic, action)
 ManagedSubscribeModule -> DTProvider: TopicManagementCB (action, payload)
 note right of DTProvider
-// Tells provider to start publishing
-// entity id data on provided topic
-// with the given constraints.
+Tells provider to start publishing
+entity id data on provided topic
+with the given constraints.
 
 action: PUBLISH
 payload: {
@@ -48,8 +48,8 @@ Broker -> Agemo: Unsub notification for SubInfo.topic
 Agemo -> ManagedSubscribeModule: ManageTopicCallback (SubInfo.topic, action)
 DTProvider <- ManagedSubscribeModule: TopicManagementCB (action, payload)
 note right of DTProvider
-// Tells provider to stop publishing
-// entity id data on provided topic.
+Tells provider to stop publishing
+entity id data on provided topic.
 
 action: STOP_PUBLISH
 payload: {

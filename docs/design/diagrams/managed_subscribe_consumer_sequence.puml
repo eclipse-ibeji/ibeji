@@ -8,7 +8,7 @@ autonumber
 
 DTConsumer -> Ibeji: FindById - request
 DTConsumer <- Ibeji: FindById - response
-DTConsumer -> Ibeji: GetSubscriptionInfo (entity_id, constraints {freq, acc, etc})
+DTConsumer -> Ibeji: GetSubscriptionInfo (entity_id, constraints)
 Ibeji -> DTConsumer: GetSubscriptionInfo - response
 note right of DTConsumer: SubInfo {topic, broker endpoint info}
 DTConsumer -> Broker: Subscribe (SubInfo.topic)
