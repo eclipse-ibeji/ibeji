@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// This lib.rs is for running the .NET unit tests in this digital_twins_connector folder.
+// This lib.rs is for running the .NET unit tests in this dtdl-tools folder.
 // Running 'cargo test' will run all the .NET unit tests and the Rust unit tests.
 #[cfg(test)]
-mod digital_twins_connector_dotnet_tests {
+mod dtdl_tools_tests {
     use std::io::{self, Write};
     use std::path::Path;
     use std::process::Command;

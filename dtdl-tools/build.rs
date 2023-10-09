@@ -4,7 +4,7 @@
 
 use std::process::Command;
 
-// This build script builds all the .NET projects in this digital_twins_connector folder.
+// This build script builds all the .NET projects in this dtdl-tools folder.
 // Running 'cargo build' will build the .NET projects and the Rust crates.
 fn main() {
     const DOTNET_COMMAND: &str = "dotnet";
