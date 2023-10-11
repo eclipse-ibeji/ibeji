@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use std::io::{self, Write};
 use std::process::Command;
 
 // This build script builds all the .NET projects in this dtdl-tools folder.
@@ -19,5 +20,7 @@ fn main() {
         if !output.status.success() {
             panic!("Failed to run due to {output:?}");
         }
+
+        io::stdout().write_all(&output.stdout).unwrap();
     }
 }

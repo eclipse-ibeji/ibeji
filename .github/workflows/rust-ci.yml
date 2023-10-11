@@ -21,6 +21,10 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0
       - name: Install stable Rust toolchain
         run: |
           rustup show
@@ -51,6 +55,10 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0
       - name: Install stable Rust toolchain
         run: rustup show
       - name: Cache Dependencies

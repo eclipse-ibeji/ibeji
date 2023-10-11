@@ -13,16 +13,8 @@
     <PackageReference Include="DTDLParser" Version="1.0.52" />
   </ItemGroup> 
 
-  <!-- If the dtdl-validator was built and the CARGO_HOME environemnt variables is set, then install
-       the dtdl-validator executable under the CARGO_HOME directory's bin subdirectory. -->
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(OutputPath)/dtdl-validator') and '$(CARGO_HOME)' != ''">
-    <Message Text="Installing the dtdl-validator executable under $(CARGO_HOME)/bin" Importance="high" />  
-    <ItemGroup>
-      <DllFiles Include="$(OutputPath)/*.dll"/>
-    </ItemGroup>
-    <MakeDir Directories="$(CARGO_HOME)/bin" Condition="!Exists('$(CARGO_HOME)/bin')" ContinueOnError="false" />
-    <Copy SourceFiles="$(OutputPath)/dtdl-validator" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
-    <Copy SourceFiles="@(DllFiles)" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
-    <Copy SourceFiles="$(OutputPath)/dtdl-validator.runtimeconfig.json" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent"> <!-- Condition="Exists('$(OutputPath)/dtdl-validator')" -->
+    <Message Text="You can now install the dtdl-validator in the directory $(HOME)/.cargo/bin/dtdl-validator by running:" Importance="high" />
+    <Message Text="$(CARGO_MANIFEST_DIR)/scripts/install-dtdl-validator.sh -s $(OutputPath)" Importance="high" />  
   </Target>
 </Project>
