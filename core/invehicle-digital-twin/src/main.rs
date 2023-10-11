@@ -5,15 +5,13 @@
 // Module references behind feature flags. Add any necessary module references here.
 // Start: Module references.
 
-// Add a new feature to any() so the use statement is active for the feature.
-// ex. #[cfg(any(feature = "feature_1", feature = "feature_2"))]
-#[cfg(feature = "managed_subscribe")]
-use common::grpc_interceptor::GrpcInterceptorLayer;
-
 #[cfg(feature = "managed_subscribe")]
 use managed_subscribe::managed_subscribe_module::ManagedSubscribeModule;
 
 // End: Module references.
+
+#[allow(unused_imports)]
+use common::grpc_interceptor::GrpcInterceptorLayer;
 
 use common::grpc_server::GrpcServer;
 use core_protobuf_data_access::chariott::service_discovery::core::v1::service_registry_client::ServiceRegistryClient;

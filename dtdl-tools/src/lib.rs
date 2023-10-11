@@ -6,16 +6,16 @@
 // Running 'cargo test' will run all the .NET unit tests and the Rust unit tests.
 #[cfg(test)]
 mod dtdl_tools_tests {
+    use std::env;
     use std::io::{self, Write};
     use std::path::Path;
     use std::process::Command;
 
-    // The manifest directory is the directory that contains the Cargo.toml file for this crate.
-    const MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
+    // The out directory is the directory that contains the build artifacts.
+    const OUT_DIR: &str = env!("OUT_DIR");
 
     const DTDL_VALIDATOR_FILENAME: &str = "dtdl-validator";
-    const DTDL_VALIDATOR_BIN_DIR: &str = "target/debug/dtdl-validator/bin/Debug/net7.0";
-    const DTDL_VALIDATOR_DIR_OPTION: &str = "-d";
+    const DTDL_VALIDATOR_BIN_DIR: &str = "dtdl-validator/bin/Debug/net7.0";
     const DTDL_VALIDATOR_EXT_OPTION: &str = "-e";
 
     /// Validate DTDL files.
@@ -24,13 +24,11 @@ mod dtdl_tools_tests {
     /// * `directory` - The directory that contains the DTDL files that you wish to validate.
     /// * `extension` - The file extension that the DTDL files use.
     fn validate_dtdl_files(directory: &str, extension: &str) -> bool {
-        let dtdl_validator_command_path = Path::new(MANIFEST_DIR)
-            .join("..")
+        let dtdl_validator_command_path = Path::new(OUT_DIR)
             .join(DTDL_VALIDATOR_BIN_DIR)
             .join(DTDL_VALIDATOR_FILENAME);
 
         let dtdl_validator_output = Command::new(dtdl_validator_command_path)
-            .arg(DTDL_VALIDATOR_DIR_OPTION)
             .arg(directory)
             .arg(DTDL_VALIDATOR_EXT_OPTION)
             .arg(extension)

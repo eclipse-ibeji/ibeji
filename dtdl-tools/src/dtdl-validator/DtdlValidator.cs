@@ -79,10 +79,9 @@ class Program
 
     static async Task<int> Main(string[] args)
     {
-        var directoryOption =
-            new Option<DirectoryInfo>(
-                "-d",
-                getDefaultValue: () => new DirectoryInfo(Directory.GetCurrentDirectory()),
+        var directoryArgument =
+            new Argument<DirectoryInfo>(
+                "directory",
                 description: "The directory that contains the DTDL files.");
         var extensionOption =
             new Option<string>(
@@ -93,13 +92,13 @@ class Program
         int exitCode = EXIT_SUCCESS;
 
         var cmd = new RootCommand();
-        cmd.AddOption(directoryOption);
+        cmd.AddArgument(directoryArgument);
         cmd.AddOption(extensionOption);
         cmd.SetHandler((directory, extension) =>
             {
                 exitCode = ValidateDtdl(directory!, extension!);
             },
-            directoryOption, extensionOption);
+            directoryArgument, extensionOption);
 
         await cmd.InvokeAsync(args);
 

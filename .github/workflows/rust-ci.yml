@@ -31,7 +31,6 @@ jobs:
       - run: cargo clippy --all-targets --all-features --workspace --no-deps -- -D warnings
       - run: cargo fmt --all -- --check
       - name: Run doctest only
-        # we run doctest here as cargo tarpaulin (our test runner)
         uses: actions-rs/cargo@v1
         with:
           command: test

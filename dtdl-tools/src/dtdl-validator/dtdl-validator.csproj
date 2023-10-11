@@ -1,4 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <!-- For help on using Microsoft.NET.Sdk in project files, see https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview -->
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,8 +9,20 @@
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
-
-    <!-- https://www.nuget.org/packages/DTDLParser -->
+    <!-- The web page for the DTDLParser can be found here: https://www.nuget.org/packages/DTDLParser -->
     <PackageReference Include="DTDLParser" Version="1.0.52" />
-  </ItemGroup>
+  </ItemGroup> 
+
+  <!-- If the dtdl-validator was built and the CARGO_HOME environemnt variables is set, then install
+       the dtdl-validator executable under the CARGO_HOME directory's bin subdirectory. -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(OutputPath)/dtdl-validator') and '$(CARGO_HOME)' != ''">
+    <Message Text="Installing the dtdl-validator executable under $(CARGO_HOME)/bin" Importance="high" />  
+    <ItemGroup>
+      <DllFiles Include="$(OutputPath)/*.dll"/>
+    </ItemGroup>
+    <MakeDir Directories="$(CARGO_HOME)/bin" Condition="!Exists('$(CARGO_HOME)/bin')" ContinueOnError="false" />
+    <Copy SourceFiles="$(OutputPath)/dtdl-validator" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
+    <Copy SourceFiles="@(DllFiles)" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
+    <Copy SourceFiles="$(OutputPath)/dtdl-validator.runtimeconfig.json" DestinationFolder="$(CARGO_HOME)/bin" ContinueOnError="false" />
+  </Target>
 </Project>
