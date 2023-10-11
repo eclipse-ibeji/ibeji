@@ -24,9 +24,8 @@ mod dtdl_tools_tests {
     /// * `directory` - The directory that contains the DTDL files that you wish to validate.
     /// * `extension` - The file extension that the DTDL files use.
     fn validate_dtdl_files(directory: &str, extension: &str) -> bool {
-        let dtdl_validator_command_path = Path::new(OUT_DIR)
-            .join(DTDL_VALIDATOR_BIN_DIR)
-            .join(DTDL_VALIDATOR_FILENAME);
+        let dtdl_validator_command_path =
+            Path::new(OUT_DIR).join(DTDL_VALIDATOR_BIN_DIR).join(DTDL_VALIDATOR_FILENAME);
 
         let dtdl_validator_output = Command::new(dtdl_validator_command_path)
             .arg(directory)

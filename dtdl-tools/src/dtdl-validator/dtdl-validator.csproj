@@ -11,10 +11,10 @@
     <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
     <!-- The web page for the DTDLParser can be found here: https://www.nuget.org/packages/DTDLParser -->
     <PackageReference Include="DTDLParser" Version="1.0.52" />
-  </ItemGroup> 
+  </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent"> <!-- Condition="Exists('$(OutputPath)/dtdl-validator')" -->
     <Message Text="You can now install the dtdl-validator in the directory $(HOME)/.cargo/bin/dtdl-validator by running:" Importance="high" />
-    <Message Text="$(CARGO_MANIFEST_DIR)/scripts/install-dtdl-validator.sh -s $(OutputPath)" Importance="high" />  
+    <Message Text="$(CARGO_MANIFEST_DIR)/scripts/install-dtdl-validator.sh -s $(OutputPath)" Importance="high" />
   </Target>
 </Project>
