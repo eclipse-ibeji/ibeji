@@ -1,0 +1,57 @@
+@startuml Managed Subscribe Provider
+title Managed Subscribe Sequence from Provider's Perspective
+participant "Digital Twin Provider" as DTProvider
+participant Ibeji
+participant Broker
+
+autonumber
+
+DTProvider -> Ibeji: Register - request
+note right of DTProvider
+Entry that indicates to Ibeji that
+the Provider wants to utilize the
+Managed Subscribe Module.
+
+{
+    protocol: "grpc"
+    operations: ["ManagedSubscribe"]
+    uri: "Provider callback uri"
+    context: ""
+}
+end note
+Ibeji -> DTProvider: Register - response
+
+Ibeji -> DTProvider: TopicManagementCB (action, payload)
+note right of DTProvider
+Tells provider to start publishing
+entity id data on provided topic
+with the given constraints.
+
+action: PUBLISH
+payload: {
+    entity_id,
+    topic,
+    constraints, // (type, value)
+    subscription_info: {
+        protocol, // MQTT
+        uri, // MQTT Broker
+    },
+}
+end note
+DTProvider -> Broker: data
+DTProvider <- Ibeji: TopicManagementCB (action, payload)
+note right of DTProvider
+Tells provider to stop publishing
+entity id data on provided topic.
+
+action: STOP_PUBLISH
+payload: {
+    entity_id,
+    topic,
+    constraints, // (type, value)
+    subscription_info: None,
+}
+end note
+DTProvider ->x Broker: data
+DTProvider -> DTProvider: Remove topic mapping
+@enduml
