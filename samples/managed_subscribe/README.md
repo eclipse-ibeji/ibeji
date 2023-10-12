@@ -83,7 +83,7 @@ in the provider. Then control-c the other windows when you wish to stop the demo
 
 If you want to use Chariott with this sample:
 
-1. update following settings:
+1. Update the following settings:
 
     ---- invehicle_digital_twin_settings.yaml ----
 
