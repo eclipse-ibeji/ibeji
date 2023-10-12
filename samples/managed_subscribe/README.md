@@ -12,28 +12,28 @@ disconnects it will stop publishing to that dynamically generated topic.
 ### Setup
 
 1. Create the four config files with the following contents, if they are not already there:
-    
+
     ---- consumer_settings.yaml ----
-    
+
     ```yaml
     invehicle_digital_twin_uri: "http://0.0.0.0:5010"
     ```
 
     ---- invehicle_digital_twin_settings.yaml ----
-    
+
     ```yaml
     invehicle_digital_twin_authority: "0.0.0.0:5010"
     ```
 
     ---- managed_subscribe_settings.yaml ----
-    
+
     ```yaml
     base_authority: "0.0.0.0:5010"
     managed_subscribe_uri: "http://0.0.0.0:50051"
     ```
 
     ---- provider_settings.yaml ----
-    
+
     ```yaml
     invehicle_digital_twin_uri: "http://0.0.0.0:5010"
     ```
@@ -86,14 +86,14 @@ If you want to use Chariott with this sample:
 1. update following settings:
 
     ---- invehicle_digital_twin_settings.yaml ----
-    
+
     ```yaml
     invehicle_digital_twin_authority: "0.0.0.0:5010"
     chariott_uri: "http://0.0.0.0:50000"
     ```
 
     ---- managed_subscribe_settings.yaml ----
-    
+
     ```yaml
     base_authority: "0.0.0.0:5010"
     chariott_uri: "http://0.0.0.0:50000"
