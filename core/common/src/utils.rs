@@ -3,9 +3,21 @@
 // SPDX-License-Identifier: MIT
 
 use config::{Config, File, FileFormat};
-use log::debug;
+use core_protobuf_data_access::chariott::service_discovery::core::v1::{
+    service_registry_client::ServiceRegistryClient, DiscoverRequest,
+};
+use log::{debug, info};
+use serde_derive::Deserialize;
 use std::future::Future;
 use tokio::time::{sleep, Duration};
+use tonic::{Request, Status};
+
+#[derive(Debug, Deserialize)]
+pub struct ServiceIdentifier {
+    pub namespace: String,
+    pub name: String,
+    pub version: String,
+}
 
 /// Load the settings.
 ///
@@ -62,6 +74,105 @@ where
         }
     }
     last_error
+}
+
+/// Use Chariott to discover a service.
+///
+/// # Arguments
+/// * `chariott_uri` - Chariott's URI.
+/// * `namespace` - The service's namespace.
+/// * `name` - The service's name.
+/// * `version` - The service's version.
+/// # `communication_kind` - The service's communication kind.
+/// # `communication_reference` - The service's communication reference.
+pub async fn discover_service_using_chariott(
+    chariott_uri: &str,
+    namespace: &str,
+    name: &str,
+    version: &str,
+    communication_kind: &str,
+    communication_reference: &str,
+) -> Result<String, Status> {
+    let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
+        .await
+        .map_err(|e| Status::internal(e.to_string()))?;
+
+    let request = Request::new(DiscoverRequest {
+        namespace: namespace.to_string(),
+        name: name.to_string(),
+        version: version.to_string(),
+    });
+
+    let response = client.discover(request).await?;
+
+    let service = response.into_inner().service.ok_or_else(|| Status::not_found("Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version}"))?;
+
+    if service.communication_kind != communication_kind
+        && service.communication_reference != communication_reference
+    {
+        return Err(Status::not_found(
+            "Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version} that has communication kind '{communication_kind} and communication_reference '{communication_reference}''",
+        ));
+    }
+
+    Ok(service.uri)
+}
+
+/// Get a service's URI from settings or from Chariott.
+/// Will first try to use the URI defined in the service's settings file. If that is not set, will
+/// call Chariott to obtain it.
+///
+/// # Arguments
+/// * `service_uri` - Optional, desired service's URI.
+/// * `chariott_uri` - Optional, Chariott's URI.
+/// * `service_identifier` - Optional, The service's identifiers (name, namespace, version).
+/// # `communication_kind` - Optional, The service's communication kind.
+/// # `communication_reference` - Optional, The service's communication reference.
+pub async fn get_service_uri(
+    service_uri: Option<String>,
+    chariott_uri: Option<String>,
+    service_identifier: Option<ServiceIdentifier>,
+    communication_kind: &str,
+    communication_reference: &str,
+) -> Result<String, Status> {
+    let result = match service_uri {
+        Some(value) => {
+            info!("URI set in settings.");
+            value
+        }
+        None => match chariott_uri {
+            Some(value) => {
+                info!("Retrieving URI from Chariott.");
+
+                let service_identifier = service_identifier.ok_or_else(|| Status::invalid_argument("The settings file must set the service_identifier when the chariott_uri is set."))?;
+
+                execute_with_retry(
+                    30,
+                    Duration::from_secs(1),
+                    || {
+                        discover_service_using_chariott(
+                            &value,
+                            &service_identifier.namespace,
+                            &service_identifier.name,
+                            &service_identifier.version,
+                            communication_kind,
+                            communication_reference,
+                        )
+                    },
+                    Some(format!(
+                        "Attempting to discover service '{}' with chariott.",
+                        service_identifier.name
+                    )),
+                )
+                .await?
+            }
+            None => Err(Status::invalid_argument(
+                "The settings file must set the chariott_uri when the service_uri is not set.",
+            ))?,
+        },
+    };
+
+    Ok(result)
 }
 
 #[cfg(test)]

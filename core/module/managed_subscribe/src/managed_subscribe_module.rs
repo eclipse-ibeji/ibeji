@@ -20,7 +20,7 @@ use core_protobuf_data_access::module::managed_subscribe::v1::{
 };
 
 use common::grpc_module::GrpcModule;
-use common::utils::{execute_with_retry, load_settings};
+use common::utils::{execute_with_retry, get_service_uri, load_settings, ServiceIdentifier};
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -36,6 +36,9 @@ use super::managed_subscribe_interceptor::ManagedSubscribeInterceptor;
 
 const CONFIG_FILENAME: &str = "managed_subscribe_settings";
 const SERVICE_PROTOCOL: &str = "grpc";
+
+const MANAGED_SUBSCRIBE_COMMUNICATION_KIND: &str = "mqtt_v5";
+const MANAGED_SUBSCRIBE_COMMUNICATION_REFERENCE: &str = "pubsub.v1.pubsub.proto";
 
 // Managed Subscribe action constants.
 const PUBLISH_ACTION: &str = "PUBLISH";
@@ -61,8 +64,9 @@ pub enum TopicAction {
 #[derive(Debug, Deserialize)]
 pub struct ConfigSettings {
     pub base_authority: String,
-    pub managed_subscribe_uri: String,
+    pub managed_subscribe_uri: Option<String>,
     pub chariott_uri: Option<String>,
+    pub managed_subscribe_service_identifier: Option<ServiceIdentifier>,
 }
 
 #[derive(Clone, Debug)]
@@ -73,15 +77,9 @@ pub struct ManagedSubscribeModule {
     pub store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
-impl Default for ManagedSubscribeModule {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl ManagedSubscribeModule {
     /// Creates a new managed subscribe module object.
-    pub fn new() -> Self {
+    pub async fn new() -> Result<Self, Status> {
         // Get module information from the configuration settings.
         let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
         let endpoint = config.base_authority;
@@ -89,12 +87,24 @@ impl ManagedSubscribeModule {
 
         let store = Arc::new(RwLock::new(ManagedSubscribeStore::new()));
 
-        ManagedSubscribeModule {
-            managed_subscribe_uri: config.managed_subscribe_uri,
+        info!("Getting Managed Subscribe URI.");
+
+        // Get the uri of the managed subscribe service from settings or Chariott.
+        let managed_subscribe_uri = get_service_uri(
+            config.managed_subscribe_uri,
+            config.chariott_uri,
+            config.managed_subscribe_service_identifier,
+            MANAGED_SUBSCRIBE_COMMUNICATION_KIND,
+            MANAGED_SUBSCRIBE_COMMUNICATION_REFERENCE,
+        )
+        .await?;
+
+        Ok(ManagedSubscribeModule {
+            managed_subscribe_uri,
             service_uri,
             service_protocol: SERVICE_PROTOCOL.to_string(),
             store,
-        }
+        })
     }
 
     /// Creates a new managed subscribe interceptor that shares data with the current instance of
