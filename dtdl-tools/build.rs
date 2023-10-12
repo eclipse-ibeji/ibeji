@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use std::env;
 use std::io::{self, Write};
 use std::process::Command;
 
@@ -10,8 +11,8 @@ use std::process::Command;
 fn main() {
     const DOTNET_COMMAND: &str = "dotnet";
     const DOTNET_BUILD_ARG: &str = "build";
-
     const CSPROJ_PATHS: &[&str] = &["src/dtdl-validator/dtdl-validator.csproj"];
+    const CARGO_MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
     for csproj in CSPROJ_PATHS {
         let output =
@@ -23,4 +24,6 @@ fn main() {
 
         io::stdout().write_all(&output.stdout).unwrap();
     }
+
+    println!("cargo:rerun-if-changed={CARGO_MANIFEST_DIR}/src/dtdl-validator");
 }
