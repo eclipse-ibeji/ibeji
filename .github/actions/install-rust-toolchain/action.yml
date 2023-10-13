@@ -1,6 +1,6 @@
 name: Install Rust Toolchain
 description: |
-  Installs the rust toolchain.
+  Installs the Rust toolchain.
   Relies on the fact that rustup show will install a toolchain. The installed version is based on a toolchain file, or stable if no such file is found.
 inputs:
   components:
