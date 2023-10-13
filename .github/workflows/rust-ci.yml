@@ -25,10 +25,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0
-      - name: Install stable Rust toolchain
-        run: |
-          rustup show
-          rustup component add rustfmt clippy
+      - name: Install Rust toolchain
+        uses: ./.github/actions/install-rust-toolchain
+        with:
+          components: clippy rustfmt
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - run: cargo check --workspace
@@ -59,8 +59,8 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0
-      - name: Install stable Rust toolchain
-        run: rustup show
+      - name: Install Rust toolchain
+        uses: ./.github/actions/install-rust-toolchain
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - name: Build
