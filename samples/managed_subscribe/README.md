@@ -29,7 +29,9 @@ disconnects it will stop publishing to that dynamically generated topic.
 
     ```yaml
     base_authority: "0.0.0.0:5010"
-    managed_subscribe_uri: "http://0.0.0.0:50051"
+    managed_subscribe_uri_source:
+      Local:
+        service_uri: "http://0.0.0.0:50051"
     ```
 
     ---- provider_settings.yaml ----
@@ -96,11 +98,13 @@ If you want to use Chariott with this sample:
 
     ```yaml
     base_authority: "0.0.0.0:5010"
-    chariott_uri: "http://0.0.0.0:50000"
-    managed_subscribe_service_identifier:
-      namespace: "sdv.pubsub"
-      name: "dynamic.pubsub"
-      version: "0.1.0"
+    managed_subscribe_uri_source:
+      Chariott:
+        chariott_uri: "http://0.0.0.0:50000"
+        service_identifier:
+          namespace: "sdv.pubsub"
+          name: "dynamic.pubsub"
+          version: "0.1.0"
     ```
 
 1. Ensure Chariott is [running](../../README.md#using-chariott).
