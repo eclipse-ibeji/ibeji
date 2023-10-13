@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
+    <!--BaseOutputPath and BaseIntermediateOutputPath are adjusted when the project is run by a Cargo build. -->
     <BaseOutputPath Condition="$(OUT_DIR) != ''">$(OUT_DIR)/$(BaseOutputPath)</BaseOutputPath>
     <BaseIntermediateOutputPath Condition="$(OUT_DIR) != ''">$(OUT_DIR)/$(BaseIntermediateOutputPath)</BaseIntermediateOutputPath>
-    <!-- MSBuildProjectExtensionsPath Condition="$(OUT_DIR) != ''">$(OUT_DIR)/$(MSBuildProjectExtensionsPath)</MSBuildProjectExtensionsPath -->
   </PropertyGroup>
 </Project>
