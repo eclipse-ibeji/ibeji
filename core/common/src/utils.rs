@@ -115,12 +115,12 @@ pub async fn discover_service_using_chariott(
     if service.communication_kind != expected_communication_kind
         && service.communication_reference != expected_communication_reference
     {
-        return Err(Status::not_found(
+        Err(Status::not_found(
             "Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version} that has communication kind '{communication_kind} and communication_reference '{communication_reference}''",
-        ));
+        ))
+    } else {
+        Ok(service.uri)
     }
-
-    Ok(service.uri)
 }
 
 /// Get a service's URI from settings or from Chariott.
