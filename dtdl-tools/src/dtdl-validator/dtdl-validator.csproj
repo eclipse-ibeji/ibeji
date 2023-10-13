@@ -4,7 +4,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <IntermediateOutputPath Condition="$(OUT_DIR) == ''">/tmp</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
