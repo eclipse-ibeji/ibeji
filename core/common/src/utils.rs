@@ -13,16 +13,23 @@ use strum_macros::Display;
 use tokio::time::{sleep, Duration};
 use tonic::{Request, Status};
 
+/// An identifier used when discovering a service through Chariott.
 #[derive(Debug, Deserialize)]
 pub struct ServiceIdentifier {
+    /// The namespace of the service.
     pub namespace: String,
+    /// The name of the service.
     pub name: String,
+    /// The version of the service.
     pub version: String,
 }
 
+/// An enum representing where to discover a service's URI.
 #[derive(Display, Debug, Deserialize)]
 pub enum ServiceUriSource {
+    /// Use the local configuration settings to find the service's URI.
     Local { service_uri: String },
+    /// Use Chariott to discover the service's URI.
     Chariott { chariott_uri: String, service_identifier: ServiceIdentifier },
 }
 

@@ -61,17 +61,25 @@ pub enum TopicAction {
     Delete,
 }
 
+/// Settings retrieved from a configuration file.
 #[derive(Debug, Deserialize)]
 pub struct ConfigSettings {
+    /// Where to host the Managed Subscribe module.
     pub base_authority: String,
+    /// Where to retrieve the Managed Subscribe Service URI from.
     pub managed_subscribe_uri_source: ServiceUriSource,
 }
 
+/// Struct that handles communication with the Managed Subscribe service.
 #[derive(Clone, Debug)]
 pub struct ManagedSubscribeModule {
+    /// The URI of the Managed Subscribe service.
     pub managed_subscribe_uri: String,
+    /// The URI of the Managed Subscribe module.
     pub service_uri: String,
+    /// The protocol used to communicate with the Managed Subscribe module.
     pub service_protocol: String,
+    /// Shared store for the Managed Subscribe module.
     pub store: Arc<RwLock<ManagedSubscribeStore>>,
 }
 
