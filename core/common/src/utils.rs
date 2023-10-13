@@ -2,13 +2,14 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use config::{Config, File, FileFormat};
+use config::{Config, ConfigError, File, FileFormat};
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     service_registry_client::ServiceRegistryClient, DiscoverRequest,
 };
 use log::{debug, info};
 use serde_derive::Deserialize;
 use std::future::Future;
+use strum_macros::Display;
 use tokio::time::{sleep, Duration};
 use tonic::{Request, Status};
 
@@ -19,20 +20,24 @@ pub struct ServiceIdentifier {
     pub version: String,
 }
 
+#[derive(Display, Debug, Deserialize)]
+pub enum ServiceUriSource {
+    Local { service_uri: String },
+    Chariott { chariott_uri: String, service_identifier: ServiceIdentifier },
+}
+
 /// Load the settings.
 ///
 /// # Arguments
 /// * `config_filename` - Name of the config file to load settings from.
-pub fn load_settings<T>(config_filename: &str) -> T
+pub fn load_settings<T>(config_filename: &str) -> Result<T, ConfigError>
 where
     T: for<'de> serde::Deserialize<'de>,
 {
     let config =
-        Config::builder().add_source(File::new(config_filename, FileFormat::Yaml)).build().unwrap();
+        Config::builder().add_source(File::new(config_filename, FileFormat::Yaml)).build()?;
 
-    let settings: T = config.try_deserialize().unwrap();
-
-    settings
+    config.try_deserialize()
 }
 
 /// Retry a function that returns an error.
@@ -83,15 +88,15 @@ where
 /// * `namespace` - The service's namespace.
 /// * `name` - The service's name.
 /// * `version` - The service's version.
-/// # `communication_kind` - The service's communication kind.
-/// # `communication_reference` - The service's communication reference.
+/// # `expected_communication_kind` - The service's expected communication kind.
+/// # `expected_communication_reference` - The service's expected communication reference.
 pub async fn discover_service_using_chariott(
     chariott_uri: &str,
     namespace: &str,
     name: &str,
     version: &str,
-    communication_kind: &str,
-    communication_reference: &str,
+    expected_communication_kind: &str,
+    expected_communication_reference: &str,
 ) -> Result<String, Status> {
     let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
         .await
@@ -107,8 +112,8 @@ pub async fn discover_service_using_chariott(
 
     let service = response.into_inner().service.ok_or_else(|| Status::not_found("Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version}"))?;
 
-    if service.communication_kind != communication_kind
-        && service.communication_reference != communication_reference
+    if service.communication_kind != expected_communication_kind
+        && service.communication_reference != expected_communication_reference
     {
         return Err(Status::not_found(
             "Did not find a service in Chariott with namespace '{namespace}', name '{name}' and version {version} that has communication kind '{communication_kind} and communication_reference '{communication_reference}''",
@@ -119,57 +124,44 @@ pub async fn discover_service_using_chariott(
 }
 
 /// Get a service's URI from settings or from Chariott.
-/// Will first try to use the URI defined in the service's settings file. If that is not set, will
-/// call Chariott to obtain it.
 ///
 /// # Arguments
-/// * `service_uri` - Optional, desired service's URI.
-/// * `chariott_uri` - Optional, Chariott's URI.
-/// * `service_identifier` - Optional, The service's identifiers (name, namespace, version).
-/// # `communication_kind` - Optional, The service's communication kind.
-/// # `communication_reference` - Optional, The service's communication reference.
+/// * `service_uri_source` - Enum providing information on how to get the service URI.
+/// # `expected_communication_kind` - The service's expected communication kind.
+/// # `expected_communication_reference` - The service's expected communication reference.
 pub async fn get_service_uri(
-    service_uri: Option<String>,
-    chariott_uri: Option<String>,
-    service_identifier: Option<ServiceIdentifier>,
-    communication_kind: &str,
-    communication_reference: &str,
+    service_uri_source: ServiceUriSource,
+    expected_communication_kind: &str,
+    expected_communication_reference: &str,
 ) -> Result<String, Status> {
-    let result = match service_uri {
-        Some(value) => {
+    let result = match service_uri_source {
+        ServiceUriSource::Local { service_uri } => {
             info!("URI set in settings.");
-            value
+            service_uri
         }
-        None => match chariott_uri {
-            Some(value) => {
-                info!("Retrieving URI from Chariott.");
+        ServiceUriSource::Chariott { chariott_uri, service_identifier } => {
+            info!("Retrieving URI from Chariott.");
 
-                let service_identifier = service_identifier.ok_or_else(|| Status::invalid_argument("The settings file must set the service_identifier when the chariott_uri is set."))?;
-
-                execute_with_retry(
-                    30,
-                    Duration::from_secs(1),
-                    || {
-                        discover_service_using_chariott(
-                            &value,
-                            &service_identifier.namespace,
-                            &service_identifier.name,
-                            &service_identifier.version,
-                            communication_kind,
-                            communication_reference,
-                        )
-                    },
-                    Some(format!(
-                        "Attempting to discover service '{}' with chariott.",
-                        service_identifier.name
-                    )),
-                )
-                .await?
-            }
-            None => Err(Status::invalid_argument(
-                "The settings file must set the chariott_uri when the service_uri is not set.",
-            ))?,
-        },
+            execute_with_retry(
+                30,
+                Duration::from_secs(1),
+                || {
+                    discover_service_using_chariott(
+                        &chariott_uri,
+                        &service_identifier.namespace,
+                        &service_identifier.name,
+                        &service_identifier.version,
+                        expected_communication_kind,
+                        expected_communication_reference,
+                    )
+                },
+                Some(format!(
+                    "Attempting to discover service '{}' with chariott.",
+                    service_identifier.name
+                )),
+            )
+            .await?
+        }
     };
 
     Ok(result)

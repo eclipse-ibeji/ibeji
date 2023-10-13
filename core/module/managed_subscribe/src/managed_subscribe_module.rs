@@ -20,7 +20,7 @@ use core_protobuf_data_access::module::managed_subscribe::v1::{
 };
 
 use common::grpc_module::GrpcModule;
-use common::utils::{execute_with_retry, get_service_uri, load_settings, ServiceIdentifier};
+use common::utils::{execute_with_retry, get_service_uri, load_settings, ServiceUriSource};
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use serde_derive::Deserialize;
@@ -64,9 +64,7 @@ pub enum TopicAction {
 #[derive(Debug, Deserialize)]
 pub struct ConfigSettings {
     pub base_authority: String,
-    pub managed_subscribe_uri: Option<String>,
-    pub chariott_uri: Option<String>,
-    pub managed_subscribe_service_identifier: Option<ServiceIdentifier>,
+    pub managed_subscribe_uri_source: ServiceUriSource,
 }
 
 #[derive(Clone, Debug)]
@@ -81,7 +79,11 @@ impl ManagedSubscribeModule {
     /// Creates a new managed subscribe module object.
     pub async fn new() -> Result<Self, Status> {
         // Get module information from the configuration settings.
-        let config = load_settings::<ConfigSettings>(CONFIG_FILENAME);
+        let config = load_settings::<ConfigSettings>(CONFIG_FILENAME).map_err(|error| {
+            Status::internal(format!(
+                "Unable to load 'Managed Subscribe' config with error: {error}."
+            ))
+        })?;
         let endpoint = config.base_authority;
         let service_uri = format!("http://{endpoint}"); // Devskim: ignore DS137138
 
@@ -91,9 +93,7 @@ impl ManagedSubscribeModule {
 
         // Get the uri of the managed subscribe service from settings or Chariott.
         let managed_subscribe_uri = get_service_uri(
-            config.managed_subscribe_uri,
-            config.chariott_uri,
-            config.managed_subscribe_service_identifier,
+            config.managed_subscribe_uri_source,
             MANAGED_SUBSCRIBE_COMMUNICATION_KIND,
             MANAGED_SUBSCRIBE_COMMUNICATION_REFERENCE,
         )

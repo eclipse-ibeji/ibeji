@@ -6,17 +6,22 @@
 # Example: "0.0.0.0:80"
 base_authority: <<value>>
 
-# The URI that the Managed Subscribe service listens on for requests.
-# Comment out this setting if you wish to use Chariott to discover the service.
-managed_subscribe_uri: <<value>>
+# Information for how to get the Managed Subscribe URI. Only one source can be uncommented at a time.
+managed_subscribe_uri_source:
 
-# The URI that the Chariott service listens on for requests.
-# If you wish to use Chariott to discover the Managed Subscribe service, then uncomment this setting.
-# chariott_uri: <<value>>
-
-# The service identifier for the Managed Subscribe service. This will be used when calling Chariott.
-# This setting should be uncommented when the chariott_uri setting is uncommented.
-# managed_subscribe_service_identifier:
-#   namespace: <<value>>
-#   name: <<value>>
-#   version: <<value>>
+  # The Managed Subscribe URI will be retrieved from this settings file.
+  #
+  # 'service_uri' - The URI that the Managed Subscribe service listens on for requests.
+  Local:
+    service_uri: <<value>>
+  
+  # The Managed Subscribe URI will be discovered through Chariott.
+  # 
+  # 'chariott_uri' - The URI that the Chariott service listens on for requests.
+  # 'service_identifier - The service identifier for the Managed Subscribe service.
+  # Chariott:
+  #   chariott_uri: <<value>>
+  #   service_identifier:
+  #     namespace: <<value>>
+  #     name: <<value>>
+  #     version: <<value>>
