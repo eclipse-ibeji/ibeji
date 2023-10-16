@@ -1,0 +1,19 @@
+FROM rust:1.70.0 as builder
+
+WORKDIR /ibeji
+COPY . .
+
+RUN apt-get update && apt-get install -y protobuf-compiler
+
+RUN cargo build
+#RUN cargo build --release
+
+FROM debian:bullseye
+
+WORKDIR /ibeji/target/debug
+COPY --from=builder /ibeji/target/debug/agritechnica-digital-twin* ./
+COPY --from=builder /ibeji/config/agritechnica_digital_twin_settings.yaml .
+
+EXPOSE 5011
+
+CMD ["./agritechnica-digital-twin"]

@@ -1,0 +1,19 @@
+FROM rust:1.70.0 as builder
+
+WORKDIR /ibeji
+COPY . .
+
+RUN apt-get update && apt-get install -y protobuf-compiler
+
+RUN cargo build
+#RUN cargo build --release
+
+FROM debian:bullseye
+
+WORKDIR /ibeji/target/debug
+COPY --from=builder /ibeji/target/debug/agritechnica-consumer* ./
+COPY --from=builder /ibeji/config/agritechnica_consumer_settings.yaml .
+
+EXPOSE 6011
+
+CMD ["./agritechnica-consumer"]
