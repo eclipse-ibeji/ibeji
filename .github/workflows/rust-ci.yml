@@ -21,23 +21,20 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
-      - name: Install nightly Rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3
         with:
-          toolchain: nightly-2022-08-11
-          default: true
-          override: true
-          components: clippy, rustfmt
+          dotnet-version: 7.0
+      - name: Install Rust toolchain
+        uses: ./.github/actions/install-rust-toolchain
+        with:
+          components: clippy rustfmt
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - run: cargo check --workspace
-        # Note: cargo check should use the --locked option
-        #       Excluding it because of this known issue: https://github.com/mozilla/uniffi-rs/issues/1032
       - run: cargo clippy --all-targets --all-features --workspace --no-deps -- -D warnings
       - run: cargo fmt --all -- --check
       - name: Run doctest only
-        # we run doctests here as cargo tarpaulin (our test runner)
-        # requires nightly toolchain to do so
         uses: actions-rs/cargo@v1
         with:
           command: test
@@ -58,12 +55,12 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
-      - name: Install nightly Rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3
         with:
-          toolchain: nightly-2022-08-11
-          default: true
-          override: true
+          dotnet-version: 7.0
+      - name: Install Rust toolchain
+        uses: ./.github/actions/install-rust-toolchain
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - name: Build

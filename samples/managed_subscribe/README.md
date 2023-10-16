@@ -73,13 +73,40 @@ constraints.
 #### Register Interceptor Sequence
 
 This diagram shows the portion of the module that handles the modification of a provider's
-registration data.
+registration data. As seen in the diagram, both `Managed Subscribe Module` and
+`InVehicle Digital Twin` are under the same overall service of `Ibeji`. From the provider's
+perspective, it is registering with Ibeji and the other steps are internal to Ibeji.
 
 ![interceptor_sequence_diagram](../../docs/design/diagrams/managed_subscribe_interceptor_sequence.svg)
 
 #### Managed Subscribe Module Sequence
 
 This diagram shows the portion of the module that handles the managed topic creation and management
-through Agemo for the providers.
+through Agemo for the providers. Similar to the above diagram, both `Managed Subscribe Module` and
+`InVehicle Digital Twin` are both internal to `Ibeji`. Neither the provider or the consumer
+directly communicate with Agemo. Simplified views of the consumer's interaction and provider's
+interaction can be seen in the diagrams under
+[From the Consumer's Perspective](#from-the-consumers-perspective) and
+[From the Provider's Perspective](#from-the-providers-perspective).
 
 ![managed_subscribe_sequence_diagram](../../docs/design/diagrams/managed_subscribe_module_sequence.svg)
+
+#### From the Consumer's Perspective
+
+The above diagrams show the full sequence of events that happen and how the module interacts with
+the requests to deliver dynamic topics on demand. Below is a diagram that shows only what is
+expected of a consumer. Through this diagram we can see that only one additional call is added
+compared to a Subscribe request that does not need to be customized.
+
+![managed_subscribe_consumer_sequence_diagram](../../docs/design/diagrams/managed_subscribe_consumer_sequence.svg)
+
+#### From the Provider's Perspective
+
+Similar to the consumer diagram, this shows what is expected of a provider that wants to leverage
+the managed subscribe module. We can see that the provider needs to signal to Ibeji when
+registering that it would like to leverage the managed subscribe module if it is available. This
+also means that the provider has implemented the `TopicManagementCB` endpoint so that the module
+can communicate with it. The provider then acts when directed to from a `TopicManagementCB` call,
+offloading some of the topic management to the module.
+
+![managed_subscribe_provider_sequence_diagram](../../docs/design/diagrams/managed_subscribe_provider_sequence.svg)
