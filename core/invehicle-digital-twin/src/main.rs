@@ -20,7 +20,6 @@ use core_protobuf_data_access::chariott::service_discovery::core::v1::{
 };
 use core_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_server::InvehicleDigitalTwinServer;
 use env_logger::{Builder, Target};
-use futures::Future;
 use log::{debug, error, info, LevelFilter};
 use parking_lot::RwLock;
 use std::boxed::Box;
@@ -89,10 +88,10 @@ async fn register_invehicle_digital_twin_service_with_chariott(
 /// 5. Call and return from the block `.add_module()` on the server with the updated middleware and
 /// module.
 #[allow(unused_assignments, unused_mut)] // Necessary when no extra modules are built.
-fn build_server_and_serve<S>(
+async fn build_server_and_serve<S>(
     addr: SocketAddr,
     base_service: S,
-) -> impl Future<Output = Result<(), tonic::transport::Error>>
+) -> Result<(), Box<dyn std::error::Error>>
 where
     S: Service<http::Request<Body>, Response = http::Response<BoxBody>, Error = Infallible>
         + NamedService
@@ -107,7 +106,10 @@ where
     // (1) Adds the Managed Subscribe module to the service.
     let server = {
         // (2) Initialize the Managed Subscribe module, which implements GrpcModule.
-        let managed_subscribe_module = ManagedSubscribeModule::new();
+        let managed_subscribe_module = ManagedSubscribeModule::new().await.map_err(|error| {
+            error!("Unable to create Managed Subscribe module.");
+            error
+        })?;
 
         // (3) Create interceptor layer to be added to the server.
         let managed_subscribe_layer =
@@ -117,6 +119,8 @@ where
         let current_middleware = server.middleware.clone();
         let new_middleware = current_middleware.layer(managed_subscribe_layer);
 
+        info!("Initialized Managed Subscribe module.");
+
         // (5) Add the module with the updated middleware stack to the server.
         server.add_module(new_middleware, Box::new(managed_subscribe_module))
     };
@@ -125,7 +129,7 @@ where
     let builder = server.construct_server().add_service(base_service);
 
     // Start the server.
-    builder.serve(addr)
+    builder.serve(addr).await.map_err(|error| error.into())
 }
 
 #[tokio::main]
