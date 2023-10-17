@@ -17,11 +17,11 @@ members = [
   # extension
   "core/module/managed_subscribe",
 
+  # DTDL tools
+  "dtdl-tools",
+
   # digital twin model
   "digital-twin-model",
-
-  # DTDL parser
-  "dtdl-parser",
 
   # samples
   "samples/common",
@@ -31,7 +31,7 @@ members = [
   "samples/mixed",
   "samples/property",
   "samples/seat_massager",
-  "samples/streaming",
+  # "samples/streaming",
 ]
 
 [workspace.dependencies]
