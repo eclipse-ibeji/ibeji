@@ -4,7 +4,7 @@ DTDL is fundamental to Ibeji. These tools will help developers to use DTDL to bu
 
 ## DTDL Validator
 
-DTDL Validator is an application that validates DTDL files. It uses the .NET DTDLParser.
+The DTDL Validator is an application that validates DTDL files. It uses the .NET DTDLParser.
 
 The DTDL Validator application is built by Cargo. It can be found here: ibeji/target/debug/dtdl-validator/bin/Debug/net7.0/dtdl-validator.
 It takes two command line arguments:
