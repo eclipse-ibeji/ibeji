@@ -14,16 +14,17 @@ config = { workspace = true }
 digital-twin-model = { path = "../../digital-twin-model" }
 env_logger = { workspace = true }
 image = { workspace = true }
+imageproc = { workspace = true, features = ["display-window"] }
 log = { workspace = true }
 paho-mqtt = { workspace = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
 samples-common = { path = "../common" }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
+sdl2 = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-show-image = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal", "sync"] }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }

@@ -75,6 +75,14 @@ You will need to install the fontconfig-dev library. This can be done by executi
 sudo apt install -y libfontconfig-dev
 ```
 
+### <a name="install-fontconfig-dev-library">Install libsdl2-2.0-0 library</a>
+
+You will need to install the libsdl2-2.0-0 library. This can be done by executing:
+
+```shell
+sudo apt install libsdl2-2.0-0
+```
+
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>
 
 If you plan to run any of the samples that use MQTT, then you will need to install a MQTT Broker, like [Mosquitto](https://github.com/eclipse/mosquitto).

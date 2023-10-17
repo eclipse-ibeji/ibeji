@@ -37,6 +37,7 @@ yaml-rust = { workspace = true, optional = true }
 tonic-build = { workspace = true }
 
 [features]
-default = ["managed_subscribe", "yaml"]
-managed_subscribe = ["dep:managed_subscribe"]
+default = ["yaml"]
+# default = ["managed_subscribe", "yaml"]
+# managed_subscribe = ["dep:managed_subscribe"]
 yaml = ["yaml-rust"]
