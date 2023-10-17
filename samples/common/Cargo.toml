@@ -16,8 +16,4 @@ serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
-yaml-rust = { workspace = true, optional = true }
-
-[features]
-default = ["yaml"]
-yaml = ["yaml-rust"]
+yaml-rust = { workspace = true }
