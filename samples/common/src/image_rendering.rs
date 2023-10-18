@@ -89,7 +89,7 @@ pub fn render_image_to_canvas(
         image_pitch,
         PixelFormatEnum::RGB24,
     )
-    .map_err(|err| format!("{}", err.to_string()))?;
+    .map_err(|err| err.to_string())?;
 
     let texture_creator = canvas.texture_creator();
     let texture = texture_creator.create_texture_from_surface(surface).unwrap();
