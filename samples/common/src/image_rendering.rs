@@ -92,7 +92,9 @@ pub fn render_image_to_canvas(
     .map_err(|err| err.to_string())?;
 
     let texture_creator = canvas.texture_creator();
-    let texture = texture_creator.create_texture_from_surface(surface).map_err(|err| format!("Failed to create texture from surface due to: {err}"))?;
+    let texture = texture_creator
+        .create_texture_from_surface(surface)
+        .map_err(|err| format!("Failed to create texture from surface due to: {err}"))?;
 
     // Render the image.
     canvas.clear();
