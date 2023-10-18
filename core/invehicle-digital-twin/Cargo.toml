@@ -31,13 +31,10 @@ tokio = { workspace = true , features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 tower = { workspace = true }
 url = { workspace = true }
-yaml-rust = { workspace = true, optional = true }
+yaml-rust = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
 
 [features]
-default = ["yaml"]
-# default = ["managed_subscribe", "yaml"]
-# managed_subscribe = ["dep:managed_subscribe"]
-yaml = ["yaml-rust"]
+managed_subscribe = ["dep:managed_subscribe"]
