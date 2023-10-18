@@ -36,6 +36,7 @@ JSON
 ld
 LD
 libfontconfig
+libsdl
 microsoft
 minimalistic
 mosquitto
@@ -50,6 +51,8 @@ repo
 Repo
 rustup
 sdk
+sdl
+SDL
 snapd
 sudo
 timothee

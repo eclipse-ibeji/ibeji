@@ -6,7 +6,7 @@
   - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
-  - [Install SDL2 library](#install-sdl2-library")
+  - [Install SDL2 library](#install-sdl2-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Developer Notes](#developer-notes)
