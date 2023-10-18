@@ -22,7 +22,9 @@ jobs:
       - name: Install SDL2
         run: sudo apt-get install -y libsdl2-2.0-0            
       - name: Install protobuf-compiler
-        run: sudo apt-get install -y protobuf-compiler     
+        run: sudo apt-get install -y protobuf-compiler
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3          
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -61,7 +63,9 @@ jobs:
       - name: Install SDL2
         run: sudo apt-get install -y libsdl2-2.0-0           
       - name: Install protobuf-compiler
-        run: sudo apt-get install -y protobuf-compiler         
+        run: sudo apt-get install -y protobuf-compiler
+      - name: Install .NET 7.0
+        uses: actions/setup-dotnet@v3              
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
