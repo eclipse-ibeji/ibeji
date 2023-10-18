@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 use image::{DynamicImage, imageops::FilterType};
-use sdl2::Sdl;
 use sdl2::pixels::{Color, PixelFormatEnum};
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
+use sdl2::Sdl;
 use sdl2::surface::Surface;
 
 pub fn create_canvas(sdl_context: &mut Sdl, window_title: &str, window_width: u32, window_height: u32) -> WindowCanvas{

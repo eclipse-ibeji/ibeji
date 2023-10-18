@@ -21,10 +21,6 @@ use std::io::Cursor;
 use tokio_stream::StreamExt;
 use tonic::transport::Channel;
 
-
-// use image::GrayImage;
-
-
 /// Stream images from the server and display them in the provided window.
 ///
 /// # Arguments
