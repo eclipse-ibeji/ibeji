@@ -11,7 +11,6 @@
 - [Cloning the Repo](#cloning-the-repo)
 - [Developer Notes](#developer-notes)
   - [JSON-LD Crate](#json-ld-crate)
-  - [DTDL Parser](#dtdl-parser)
 - [Building](#building)
 - [Running the Tests](#running-the-tests)
 - [Running the Samples](#running-the-samples)
@@ -95,10 +94,6 @@ Ideally, we should be using the json_ld 0.6.1 crate, which takes its source from
 However, it currently has a build issue that is discussed [here](https://github.com/timothee-haudebourg/json-ld/issues/40).
 To work around this issue you will need to use git clone to obtain the source from [here](https://github.com/blast-hardcheese/json-ld)
 and checkout its "resolve-issue-40" branch. It should be cloned to a directory that is a sibling to ibeji.
-
-### <a name="dtdl-parser">DTDL Parser</a>
-
-There is no existing DTDL Parser for Rust, so we have provided a minimalistic one for DTDL v2 that is based on the [JavaScript DTDL Parser](https://github.com/Azure/azure-sdk-for-js/tree/%40azure/dtdl-parser_1.0.0-beta.2/sdk/digitaltwins/dtdl-parser).
 
 ## <a name="building">Building</a>
 

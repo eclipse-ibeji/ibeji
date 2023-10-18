@@ -11,18 +11,40 @@ disconnects it will stop publishing to that dynamically generated topic.
 
 ### Setup
 
-1. Create the four config files with the following contents, if they are not already there:<br><br>
----- consumer_settings.yaml ----<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- managed_subscribe_settings.yaml ----<br>
-`base_authority: "0.0.0.0:5010"`<br>
-`managed_subscribe_uri: "http://0.0.0.0:50051"`<br><br>
----- provider_settings.yaml ----<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
+1. Create the four config files with the following contents, if they are not already there:
 
-1. Build the invehicle_digital_twin service with the `managed_subscribe` feature enabled.
+    ---- consumer_settings.yaml ----
+
+    ```yaml
+    invehicle_digital_twin_uri: "http://0.0.0.0:5010"
+    ```
+
+    ---- invehicle_digital_twin_settings.yaml ----
+
+    ```yaml
+    invehicle_digital_twin_authority: "0.0.0.0:5010"
+    ```
+
+    ---- managed_subscribe_settings.yaml ----
+
+    ```yaml
+    base_authority: "0.0.0.0:5010"
+    managed_subscribe_uri_source:
+      Local:
+        service_uri: "http://0.0.0.0:50051"
+    ```
+
+    ---- provider_settings.yaml ----
+
+    ```yaml
+    invehicle_digital_twin_uri: "http://0.0.0.0:5010"
+    ```
+
+1. Build the project with the `managed_subscribe` feature enabled.
+
+    ```shell
+    cargo build --features managed_subscribe
+    ```
 
 ### Running the Sample
 
@@ -58,6 +80,38 @@ where you are running the demo.<br><br>
 
 1. To shutdown, use control-c on the consumer first. This will show the topic thread being shutdown
 in the provider. Then control-c the other windows when you wish to stop the demo.
+
+#### Running with Chariott
+
+If you want to use Chariott with this sample:
+
+1. Update the following settings:
+
+    ---- invehicle_digital_twin_settings.yaml ----
+
+    ```yaml
+    invehicle_digital_twin_authority: "0.0.0.0:5010"
+    chariott_uri: "http://0.0.0.0:50000"
+    ```
+
+    ---- managed_subscribe_settings.yaml ----
+
+    ```yaml
+    base_authority: "0.0.0.0:5010"
+    managed_subscribe_uri_source:
+      Chariott:
+        chariott_uri: "http://0.0.0.0:50000"
+        service_identifier:
+          namespace: "sdv.pubsub"
+          name: "dynamic.pubsub"
+          version: "0.1.0"
+    ```
+
+1. Ensure Chariott is [running](../../README.md#using-chariott).
+
+1. Start Agemo with [Chariott enabled](https://github.com/eclipse-chariott/Agemo/tree/main/pub-sub-service#running-with-chariott).
+
+1. Follow the [Running the Sample Steps](#steps) as normal.
 
 ### Managed Subscribe Module
 
