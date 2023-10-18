@@ -21,6 +21,8 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
+      - name: Install SDL2
+        run: sudo apt-get install -y libsdl2-2.0-0       
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -58,6 +60,8 @@ jobs:
           submodules: recursive
       - name: Install protobuf-compiler
         run: sudo apt-get install -y protobuf-compiler
+      - name: Install SDL2
+        run: sudo apt-get install -y libsdl2-2.0-0          
       - name: Install nightly Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
