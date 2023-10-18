@@ -35,6 +35,10 @@ async fn stream_images(
     entity_id: &str,
     number_of_images: usize,
 ) -> Result<(), Box<dyn Error>> {
+    let mut sdl_context = sdl2::init().unwrap();
+
+    let mut canvas: WindowCanvas = view_image::create_canvas(&mut sdl_context, "Image", 800, 600);
+
     let stream =
         client.stream(StreamRequest { entity_id: entity_id.to_string() }).await?.into_inner();
 
@@ -50,19 +54,9 @@ async fn stream_images(
         let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;
         let image: DynamicImage = image_reader.decode()?;
 
-        // Display the image
-        // println!("image width = {}   image height = {}", image_rgb.width(), image_rgb.height());
-        // imageproc::window::display_image("My Image", &image_rgb, image_rgb.width(), image_rgb.height());
-
-        let mut sdl_context = sdl2::init().unwrap();
-
-        let mut canvas: WindowCanvas = view_image::create_canvas(&mut sdl_context, "Image", 800, 600);
-
         let resized_image = view_image::resize_image_to_fit_in_canvas(image, &canvas);
 
         view_image::render_image_to_canvas(&resized_image, &mut canvas);
-
-        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
     }
 
     // The stream is dropped when we exit the function and the disconnect info is sent to the server.

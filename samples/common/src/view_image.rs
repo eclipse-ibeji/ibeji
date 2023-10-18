@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
 
 use image::{DynamicImage, imageops::FilterType};
 use sdl2::Sdl;
@@ -5,10 +8,6 @@ use sdl2::pixels::{Color, PixelFormatEnum};
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use sdl2::surface::Surface;
-
-// pub init_context() {
-//    sdl2::init().unwrap();
-// }
 
 pub fn create_canvas(sdl_context: &mut Sdl, window_title: &str, window_width: u32, window_height: u32) -> WindowCanvas{
     let video_subsystem = sdl_context.video().unwrap();
@@ -25,7 +24,8 @@ pub fn create_canvas(sdl_context: &mut Sdl, window_title: &str, window_width: u3
         .build()
         .unwrap();
 
-    canvas.set_draw_color(Color::RGB(255, 255, 255));
+    // Set the background color to black.
+    canvas.set_draw_color(Color::RGB(0, 0, 0));
 
     canvas
 }
@@ -52,6 +52,7 @@ pub fn render_image_to_canvas(image: & DynamicImage, canvas: &mut WindowCanvas )
 
     let image_width = image.width();
     let image_height = image.height();
+
     // The pitch is the width of the texture times the size of a single pixel in bytes.
     // Since we are using 24 bit pixels (RGB24), we need to mutiple the width by 3.
     let image_pitch: u32 = image_width * 3;
@@ -70,7 +71,3 @@ pub fn render_image_to_canvas(image: & DynamicImage, canvas: &mut WindowCanvas )
     canvas.copy(&texture, None, Rect::new(0, 0, image_width, image_height)).unwrap();
     canvas.present();
 }
-
-// pub fn quit_context() {
-//     sdl_context.quit();
-// }
