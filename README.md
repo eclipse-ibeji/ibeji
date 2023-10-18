@@ -68,10 +68,10 @@ sudo apt install -y protobuf-compiler
 
 ### <a name="install-sdl2-library">Install SDL2 library</a>
 
-You will need to install the libsdl2-2.0-0 library. This can be done by executing:
+You will need to install the libsdl2-dev library. This can be done by executing:
 
 ```shell
-sudo apt install libsdl2-2.0-0
+sudo apt install libsdl2-dev
 ```
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>

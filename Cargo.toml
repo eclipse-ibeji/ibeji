@@ -31,7 +31,7 @@ members = [
   "samples/mixed",
   "samples/property",
   "samples/seat_massager",
-  # "samples/streaming",
+  "samples/streaming",
 ]
 
 [workspace.dependencies]
@@ -48,7 +48,6 @@ http = "0.2.9"
 http-body = "0.4.5"
 hyper = "0.14.27"
 image = "0.24.3"
-imageproc = "0.23.0"
 iref = "^2.0.3"
 lazy_static = "1.4.0"
 log = "^0.4"
