@@ -9,13 +9,12 @@ use env_logger::{Builder, Target};
 use image::{DynamicImage, io::Reader as ImageReader};
 use log::{info, LevelFilter, warn};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::view_image;
+use samples_common::image_rendering::{create_canvas, render_image_to_canvas, resize_image_to_fit_in_canvas};
 use samples_common::utils::{
     discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
 };
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::StreamRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
-use sdl2::render::WindowCanvas;
 use std::error::Error;
 use std::io::Cursor;
 use tokio_stream::StreamExt;
@@ -31,9 +30,9 @@ async fn stream_images(
     entity_id: &str,
     number_of_images: usize,
 ) -> Result<(), Box<dyn Error>> {
-    let mut sdl_context = sdl2::init().unwrap();
+    let mut sdl_context = sdl2::init()?;
 
-    let mut canvas: WindowCanvas = view_image::create_canvas(&mut sdl_context, "Image", 800, 600);
+    let mut canvas = create_canvas(&mut sdl_context, "Streamed Image", 800, 500)?;
 
     let stream =
         client.stream(StreamRequest { entity_id: entity_id.to_string() }).await?.into_inner();
@@ -50,9 +49,18 @@ async fn stream_images(
         let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;
         let image: DynamicImage = image_reader.decode()?;
 
-        let resized_image = view_image::resize_image_to_fit_in_canvas(image, &canvas);
+        let resized_image = match resize_image_to_fit_in_canvas(image, &canvas) {
+            Ok(value) => value,
+            Err(err) => {
+                warn!("Failed to resize the image due to: {err}");
+                // Skip this image.
+                continue;
+            }
+        };
 
-        view_image::render_image_to_canvas(&resized_image, &mut canvas);
+        if let Err(err) = render_image_to_canvas(&resized_image, &mut canvas) {
+            warn!("Failed to render the image due to: {err}");
+        }
     }
 
     // The stream is dropped when we exit the function and the disconnect info is sent to the server.
@@ -89,12 +97,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     info!("The provider URI for the Cabin Camera Feed property's provider is {provider_uri}");
 
     let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
-    stream_images(
-        &mut client,
-        sdv::camera::feed::ID,
-        settings.number_of_images.into(),
-    )
-    .await?;
+    stream_images(&mut client, sdv::camera::feed::ID, settings.number_of_images.into()).await?;
 
     info!("The Consumer has completed.");
 

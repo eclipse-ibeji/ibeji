@@ -4,6 +4,6 @@
 
 pub mod constants;
 pub mod consumer_config;
+pub mod image_rendering;
 pub mod provider_config;
 pub mod utils;
-pub mod view_image;
