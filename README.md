@@ -6,7 +6,7 @@
   - [Install gcc](#install-gcc)
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
-  - [Install fontconfig-dev library](#install-fontconfig-dev-library)
+  - [Install SDL2 library](#install-sdl2-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Developer Notes](#developer-notes)
@@ -66,12 +66,12 @@ You will need to install the Protobuf Compiler. This can be done by executing:
 sudo apt install -y protobuf-compiler
 ```
 
-### <a name="install-fontconfig-dev-library">Install fontconfig-dev library</a>
+### <a name="install-sdl2-library">Install SDL2 library</a>
 
-You will need to install the fontconfig-dev library. This can be done by executing:
+You will need to install the libsdl2-dev library. This can be done by executing:
 
 ```shell
-sudo apt install -y libfontconfig-dev
+sudo apt install -y libsdl2-dev
 ```
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>

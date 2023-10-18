@@ -6,16 +6,15 @@ mod streaming_consumer_config;
 
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-
-use image::io::Reader as ImageReader;
+use image::{DynamicImage, io::Reader as ImageReader};
 use log::{info, LevelFilter, warn};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
+use samples_common::image_rendering::{create_canvas, render_image_to_canvas, resize_image_to_fit_in_canvas};
 use samples_common::utils::{
     discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
 };
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::StreamRequest;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_client::DigitalTwinProviderClient;
-use show_image::{ImageView, ImageInfo, create_window, WindowProxy};
 use std::error::Error;
 use std::io::Cursor;
 use tokio_stream::StreamExt;
@@ -25,14 +24,17 @@ use tonic::transport::Channel;
 ///
 /// # Arguments
 /// * `client` - The client connection to the service that will transfer the stream.
+/// * `entity_id` - The entity id that is to be streamed.
 /// * `number_of_images` - The number of images that we will stream.
-/// * `window` - The window where the streamed images will be shown.
 async fn stream_images(
     client: &mut DigitalTwinProviderClient<Channel>,
     entity_id: &str,
     number_of_images: usize,
-    window: &mut WindowProxy,
 ) -> Result<(), Box<dyn Error>> {
+    let mut sdl_context = sdl2::init()?;
+
+    let mut canvas = create_canvas(&mut sdl_context, "Streamed Image", 800, 500)?;
+
     let stream =
         client.stream(StreamRequest { entity_id: entity_id.to_string() }).await?.into_inner();
 
@@ -46,11 +48,20 @@ async fn stream_images(
         }
         let media_content = opt_media.unwrap().media_content;
         let image_reader = ImageReader::new(Cursor::new(media_content)).with_guessed_format()?;
-        let image = image_reader.decode()?;
-        let image_data = image.as_bytes().to_vec();
-        let image_view =
-            ImageView::new(ImageInfo::rgb8(image.width(), image.height()), &image_data);
-        window.set_image("some file", image_view)?;
+        let image: DynamicImage = image_reader.decode()?;
+
+        let resized_image = match resize_image_to_fit_in_canvas(image, &canvas) {
+            Ok(value) => value,
+            Err(err) => {
+                warn!("Failed to resize the image due to: {err}");
+                // Skip this image.
+                continue;
+            }
+        };
+
+        if let Err(err) = render_image_to_canvas(&resized_image, &mut canvas) {
+            warn!("Failed to render the image due to: {err}");
+        }
     }
 
     // The stream is dropped when we exit the function and the disconnect info is sent to the server.
@@ -59,7 +70,6 @@ async fn stream_images(
 }
 
 #[tokio::main]
-#[show_image::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // Setup logging.
     Builder::new().filter(None, LevelFilter::Info).target(Target::Stdout).init();
@@ -87,17 +97,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let provider_uri = provider_endpoint_info.uri;
     info!("The provider URI for the Cabin Camera Feed property's provider is {provider_uri}");
 
-    // Create a window with default options and display the image.
-    let mut window = create_window("image", Default::default())?;
-
     let mut client = DigitalTwinProviderClient::connect(provider_uri.clone()).await.unwrap();
-    stream_images(
-        &mut client,
-        sdv::camera::feed::ID,
-        settings.number_of_images.into(),
-        &mut window,
-    )
-    .await?;
+    stream_images(&mut client, sdv::camera::feed::ID, settings.number_of_images.into()).await?;
 
     info!("The Consumer has completed.");
 
