@@ -19,10 +19,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Install protobuf-compiler
-        run: sudo apt-get install -y protobuf-compiler
-      - name: Install SDL2
-        run: sudo apt-get install -y libsdl2-dev
+      - name: Install packages
+        run: sudo apt-get install -y protobuf-compiler libsdl2-dev
       - name: Install .NET 7.0
         uses: actions/setup-dotnet@v3
         with:
@@ -55,10 +53,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Install protobuf-compiler
-        run: sudo apt-get install -y protobuf-compiler
-      - name: Install SDL2
-        run: sudo apt-get install -y libsdl2-dev
+      - name: Install packages
+        run: sudo apt-get install -y protobuf-compiler libsdl2-dev
       - name: Install .NET 7.0
         uses: actions/setup-dotnet@v3
         with:
