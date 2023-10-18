@@ -24,6 +24,7 @@ use tonic::transport::Channel;
 ///
 /// # Arguments
 /// * `client` - The client connection to the service that will transfer the stream.
+/// * `entity_id` - The entity id that is to be streamed.
 /// * `number_of_images` - The number of images that we will stream.
 async fn stream_images(
     client: &mut DigitalTwinProviderClient<Channel>,
