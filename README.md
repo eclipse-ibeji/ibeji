@@ -9,8 +9,6 @@
   - [Install SDL2 library](#install-sdl2-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
-- [Developer Notes](#developer-notes)
-  - [JSON-LD Crate](#json-ld-crate)
 - [Building](#building)
 - [Running the Tests](#running-the-tests)
 - [Running the Samples](#running-the-samples)
@@ -85,15 +83,6 @@ The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/ope
 and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
 `git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
-
-## <a name="developer-notes">Developer Notes</a>
-
-### <a name="json-ld-crate">JSON-LD Crate</a>
-
-Ideally, we should be using the json_ld 0.6.1 crate, which takes its source from [here](https://github.com/timothee-haudebourg/json-ld).
-However, it currently has a build issue that is discussed [here](https://github.com/timothee-haudebourg/json-ld/issues/40).
-To work around this issue you will need to use git clone to obtain the source from [here](https://github.com/blast-hardcheese/json-ld)
-and checkout its "resolve-issue-40" branch. It should be cloned to a directory that is a sibling to ibeji.
 
 ## <a name="building">Building</a>
 
