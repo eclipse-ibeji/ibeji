@@ -1,0 +1,20 @@
+#
+# Managed Subscribe Module Settings
+#
+
+# The IP address and port number that the base service listens on for the gRPC requests.
+# Example: "0.0.0.0:5010"
+base_authority: "0.0.0.0:5010"
+
+# Information for how to get the Managed Subscribe URI.
+managed_subscribe_uri_source:
+
+  # The Managed Subscribe URI will be discovered through Chariott.
+  # 'chariott_uri' - The URI that the Chariott service listens on for requests.
+  # 'service_identifier' - The service identifier for the Managed Subscribe service.
+  Chariott:
+    chariott_uri: "http://0.0.0.0:50000"
+    service_identifier:
+      namespace: "sdv.pubsub"
+      name: "dynamic.pubsub"
+      version: "0.1.0"

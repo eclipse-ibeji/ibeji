@@ -1,0 +1,11 @@
+#
+# In-Vehicle Digital Twin Service Settings
+#
+
+# The IP address and port number that the in-vehicle digital twin service listens on for digital twin requests.
+# Example: "0.0.0.0:5010"
+invehicle_digital_twin_authority: "0.0.0.0:5010"
+
+# The URL that the Chariott service listens on for requests.
+# If you wish to use Chariott, then uncomment this setting.
+chariott_uri: "http://0.0.0.0:50000"

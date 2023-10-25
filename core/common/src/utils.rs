@@ -2,12 +2,15 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+#![allow(unused_imports)]
+
 use config::{Config, ConfigError, File, FileFormat};
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     service_registry_client::ServiceRegistryClient, DiscoverRequest,
 };
 use log::{debug, info};
 use serde_derive::Deserialize;
+use std::env;
 use std::future::Future;
 use strum_macros::Display;
 use tokio::time::{sleep, Duration};
@@ -105,9 +108,14 @@ pub async fn discover_service_using_chariott(
     expected_communication_kind: &str,
     expected_communication_reference: &str,
 ) -> Result<String, Status> {
-    let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
-        .await
-        .map_err(|e| Status::internal(e.to_string()))?;
+    let uri = get_uri(chariott_uri).map_err(|err| {
+        Status::failed_precondition(format!(
+            "Unable to get container environment variable with error: {err}"
+        ))
+    })?;
+
+    let mut client =
+        ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(DiscoverRequest {
         namespace: namespace.to_string(),
@@ -171,7 +179,35 @@ pub async fn get_service_uri(
         }
     };
 
-    Ok(result)
+    let uri = get_uri(&result).map_err(|err| {
+        Status::failed_precondition(format!(
+            "Unable to get container environment variable with error: {err}"
+        ))
+    })?;
+
+    Ok(uri)
+}
+
+/// If feature 'containerize' is set, will modify a localhost uri to point to container's localhost
+/// DNS alias. Otherwise, returns the uri as a String.
+///
+/// # Arguments
+/// * `uri` - The uri to potentially modify.
+pub fn get_uri(uri: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    #[cfg(feature = "containerize")]
+    let uri = {
+        // Container env variable names.
+        const HOST_GATEWAY_ENV_VAR: &str = "HOST_GATEWAY";
+        const LOCALHOST_ALIAS_ENV_VAR: &str = "LOCALHOST_ALIAS";
+
+        // Return an error if container env variables are not set.
+        let host_gateway = env::var(HOST_GATEWAY_ENV_VAR)?;
+        let localhost_alias = env::var(LOCALHOST_ALIAS_ENV_VAR)?; // DevSkim: ignore DS162092
+
+        uri.replace(&localhost_alias, &host_gateway) // DevSkim: ignore DS162092
+    };
+
+    Ok(uri.to_string())
 }
 
 #[cfg(test)]
