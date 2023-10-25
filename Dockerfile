@@ -19,11 +19,7 @@ WORKDIR /sdv
 COPY ./ .
 
 # Add Build dependencies.
-RUN apt update && apt upgrade -y && apt install -y \
-    cmake \
-    libssl-dev \
-    pkg-config \
-    protobuf-compiler
+RUN apt update && apt upgrade -y && apt install -y protobuf-compiler
 
 # Check that APP_NAME argument is valid.
 RUN sanitized=$(echo "${APP_NAME}" | tr -dc '^[a-zA-Z_0-9-]+$'); \
