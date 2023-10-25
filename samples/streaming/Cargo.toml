@@ -20,10 +20,10 @@ parking_lot = { workspace = true }
 prost = { workspace = true }
 samples-common = { path = "../common" }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
+sdl2 = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-show-image = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal", "sync"] }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }

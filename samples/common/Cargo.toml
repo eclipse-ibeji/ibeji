@@ -10,8 +10,10 @@ license = "MIT"
 
 [dependencies]
 config = { workspace = true }
+image = { workspace = true }
 log = { workspace = true }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
+sdl2 = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 tokio = { workspace = true }

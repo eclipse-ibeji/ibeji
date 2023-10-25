@@ -45,6 +45,7 @@ kbd
 ld
 LD
 libfontconfig
+libsdl
 localhost
 loopback
 microsoft
@@ -66,6 +67,8 @@ Repo
 rm
 rustup
 sdk
+sdl
+SDL
 slirp
 snapd
 standalone
