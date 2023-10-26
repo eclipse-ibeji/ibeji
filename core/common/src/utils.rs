@@ -198,14 +198,13 @@ pub fn get_uri(uri: &str) -> Result<String, Status> {
                 "Unable to get environment var '{HOST_GATEWAY_ENV_VAR}' with error: {err}"
             ))
         })?;
-        // DevSkim: ignore DS162092
-        let localhost_alias = env::var(LOCALHOST_ALIAS_ENV_VAR).map_err(|err| {
+        let alias = env::var(LOCALHOST_ALIAS_ENV_VAR).map_err(|err| {
             Status::failed_precondition(format!(
                 "Unable to get environment var '{LOCALHOST_ALIAS_ENV_VAR}' with error: {err}"
             ))
         })?;
 
-        uri.replace(&localhost_alias, &host_gateway) // DevSkim: ignore DS162092
+        uri.replace(&alias, &host_gateway) // DevSkim: ignore DS162092
     };
 
     Ok(uri.to_string())
