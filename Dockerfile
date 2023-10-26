@@ -62,6 +62,9 @@ USER appuser
 
 WORKDIR /sdv
 
+# Set home environment variable.
+ENV IBEJI_HOME=/sdv
+
 # Copy the executable from the "build" stage.
 COPY --from=build /sdv/service /sdv/
 
