@@ -20,9 +20,9 @@
   - [Streaming Sample](#streaming-sample)
   - [Using Chariott](#using-chariott)
 - [Running in a Container](#running-in-a-container)
+  - [Dockerfile](#dockerfile)
   - [Docker](#docker)
   - [Podman](#podman)
-  - [Dockerfile](#dockerfile)
 - [Trademarks](#trademarks)
 
 ## <a name="introduction">Introduction</a>
@@ -293,6 +293,15 @@ Below are the steps for running the service in a container. Note that the config
 by the containerized service are cloned from [container/config](./container/config/) defined in the
 project's root.
 
+### <a name="dockerfile">Dockerfile</a>
+
+There are currently two dockerfiles provided in the root directory of the project that can be built:
+
+- Dockerfile - A standalone version of the In-Vehicle Digital Twin Service
+- Dockerfile.integrated - A version of the In-Vehicle Digital Twin Service that communicates with
+the [Chariott Service](https://github.com/eclipse-chariott/chariott) and the
+[Agemo Service](https://github.com/eclipse-chariott/Agemo).
+
 ### <a name="docker">Docker</a>
 
 <b>Prerequisites</b>
@@ -356,15 +365,6 @@ project's root directory:
     ```shell
     podman ps -f ancestor=localhost/invehicle_digital_twin:latest --format="{{.Names}}" | xargs podman stop
     ```
-
-### <a name="dockerfile">Dockerfile</a>
-
-There are currently two dockerfiles provided in the root directory of the project that can be built:
-
-- Dockerfile - A standalone version of the In-Vehicle Digital Twin Service
-- Dockerfile.integrated - A version of the In-Vehicle Digital Twin Service that communicates with
-the [Chariott Service](https://github.com/eclipse-chariott/chariott) and the
-[Agemo Service](https://github.com/eclipse-chariott/Agemo).
 
 ## <a name="trademarks">Trademarks</a>
 
