@@ -52,11 +52,7 @@ async fn register_invehicle_digital_twin_service_with_chariott(
     chariott_uri: &str,
     invehicle_digital_twin_uri: &str,
 ) -> Result<(), Status> {
-    let uri = utils::get_uri(chariott_uri).map_err(|err| {
-        Status::failed_precondition(format!(
-            "Unable to get container environment variable with error: {err}"
-        ))
-    })?;
+    let uri = utils::get_uri(chariott_uri)?;
 
     let mut client =
         ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;

@@ -108,11 +108,7 @@ pub async fn discover_service_using_chariott(
     expected_communication_kind: &str,
     expected_communication_reference: &str,
 ) -> Result<String, Status> {
-    let uri = get_uri(chariott_uri).map_err(|err| {
-        Status::failed_precondition(format!(
-            "Unable to get container environment variable with error: {err}"
-        ))
-    })?;
+    let uri = get_uri(chariott_uri)?;
 
     let mut client =
         ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
@@ -179,11 +175,7 @@ pub async fn get_service_uri(
         }
     };
 
-    let uri = get_uri(&result).map_err(|err| {
-        Status::failed_precondition(format!(
-            "Unable to get container environment variable with error: {err}"
-        ))
-    })?;
+    let uri = get_uri(&result)?;
 
     Ok(uri)
 }
@@ -193,16 +185,24 @@ pub async fn get_service_uri(
 ///
 /// # Arguments
 /// * `uri` - The uri to potentially modify.
-pub fn get_uri(uri: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-    #[cfg(feature = "containerize")]
+pub fn get_uri(uri: &str) -> Result<String, Status> {
+    //#[cfg(feature = "containerize")]
     let uri = {
         // Container env variable names.
         const HOST_GATEWAY_ENV_VAR: &str = "HOST_GATEWAY";
         const LOCALHOST_ALIAS_ENV_VAR: &str = "LOCALHOST_ALIAS";
 
         // Return an error if container env variables are not set.
-        let host_gateway = env::var(HOST_GATEWAY_ENV_VAR)?;
-        let localhost_alias = env::var(LOCALHOST_ALIAS_ENV_VAR)?; // DevSkim: ignore DS162092
+        let host_gateway = env::var(HOST_GATEWAY_ENV_VAR).map_err(|err| {
+            Status::failed_precondition(format!(
+                "Unable to get environment var '{HOST_GATEWAY_ENV_VAR}' with error: {err}"
+            ))
+        })?;
+        let localhost_alias = env::var(LOCALHOST_ALIAS_ENV_VAR).map_err(|err| {
+            Status::failed_precondition(format!(
+                "Unable to get environment var '{LOCALHOST_ALIAS_ENV_VAR}' with error: {err}"
+            ))
+        })?; // DevSkim: ignore DS162092
 
         uri.replace(&localhost_alias, &host_gateway) // DevSkim: ignore DS162092
     };
