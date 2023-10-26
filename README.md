@@ -7,6 +7,7 @@
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
   - [Install SDL2 library](#install-sdl2-library)
+  - [Install dotnet-sdk library](#install-dotnet-sdk-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Building](#building)
@@ -39,8 +40,9 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 ## <a name="prerequisites">Prerequisites</a>
 
-The In-Vehicle Digital Twin Service was developed and tested on Ubuntu 22.04. Other operating
-systems or versions of Ubuntu may encounter issues.
+We recommend the use of Ubuntu 22.04 for running the In-Vehicle Digital Twin Service. Other
+operating systems or versions of Ubuntu may encounter issues. We invite others to help us find and
+resolve any compatability issues.
 
 ### <a name="install-gcc">Install gcc</a>
 
@@ -301,7 +303,7 @@ project's root.
 
 To run the service in a Docker container:
 
-1. Run the following command in the project root directory to build the docker container from the
+1. Run the following command in the project's root directory to build the docker container from the
 Dockerfile:
 
     ```shell
@@ -309,7 +311,7 @@ Dockerfile:
     ```
 
 1. Once the container has been built, start the container in interactive mode with the following
-command in the project root directory:
+command in the project's root directory:
 
     ```shell
     docker run --name invehicle_digital_twin -p 5010:5010 --env-file=./container/config/docker.env --add-host=host.docker.internal:host-gateway -it --rm invehicle_digital_twin
@@ -335,15 +337,15 @@ command in the project root directory:
 
 To run the service in a Podman container:
 
-1. Run the following command in the project root directory to build the podman container from the
+1. Run the following command in the project's root directory to build the podman container from the
 Dockerfile:
 
     ```shell
     podman build -t invehicle_digital_twin:latest -f Dockerfile .
     ```
 
-1. Once the container has been built, start the container with the following command in the project
-root directory:
+1. Once the container has been built, start the container with the following command in the
+project's root directory:
 
     ```shell
     podman run -p 5010:5010 --env-file=./container/config/podman.env --network=slirp4netns:allow_host_loopback=true localhost/invehicle_digital_twin
@@ -361,7 +363,8 @@ There are currently two dockerfiles provided in the root directory of the projec
 
 - Dockerfile - A standalone version of the In-Vehicle Digital Twin Service
 - Dockerfile.integrated - A version of the In-Vehicle Digital Twin Service that communicates with
-the Chariott Service and the Agemo Service.
+the [Chariott Service](https://github.com/eclipse-chariott/chariott) and the
+[Agemo Service](https://github.com/eclipse-chariott/Agemo).
 
 ## <a name="trademarks">Trademarks</a>
 
