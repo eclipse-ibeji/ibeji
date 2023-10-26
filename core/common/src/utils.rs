@@ -186,7 +186,7 @@ pub async fn get_service_uri(
 /// # Arguments
 /// * `uri` - The uri to potentially modify.
 pub fn get_uri(uri: &str) -> Result<String, Status> {
-    //#[cfg(feature = "containerize")]
+    #[cfg(feature = "containerize")]
     let uri = {
         // Container env variable names.
         let host_gateway_env_var: &str = "HOST_GATEWAY";
