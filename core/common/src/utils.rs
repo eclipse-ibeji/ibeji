@@ -186,25 +186,25 @@ pub async fn get_service_uri(
 /// # Arguments
 /// * `uri` - The uri to potentially modify.
 pub fn get_uri(uri: &str) -> Result<String, Status> {
-    #[cfg(feature = "containerize")]
+    //#[cfg(feature = "containerize")]
     let uri = {
         // Container env variable names.
-        const HOST_GATEWAY_ENV_VAR: &str = "HOST_GATEWAY";
-        const LOCALHOST_ALIAS_ENV_VAR: &str = "LOCALHOST_ALIAS";
+        let host_gateway_env_var: &str = "HOST_GATEWAY";
+        let host_alias_env_var: &str = "LOCALHOST_ALIAS";
 
         // Return an error if container env variables are not set.
-        let host_gateway = env::var(HOST_GATEWAY_ENV_VAR).map_err(|err| {
+        let host_gateway = env::var(host_gateway_env_var).map_err(|err| {
             Status::failed_precondition(format!(
-                "Unable to get environment var '{HOST_GATEWAY_ENV_VAR}' with error: {err}"
+                "Unable to get environment var '{host_gateway_env_var}' with error: {err}"
             ))
         })?;
-        let alias = env::var(LOCALHOST_ALIAS_ENV_VAR).map_err(|err| {
+        let host_alias = env::var(host_alias_env_var).map_err(|err| {
             Status::failed_precondition(format!(
-                "Unable to get environment var '{LOCALHOST_ALIAS_ENV_VAR}' with error: {err}"
+                "Unable to get environment var '{host_alias_env_var}' with error: {err}"
             ))
         })?;
 
-        uri.replace(&alias, &host_gateway) // DevSkim: ignore DS162092
+        uri.replace(&host_alias, &host_gateway)
     };
 
     Ok(uri.to_string())
