@@ -42,7 +42,7 @@ the nature of the capability, how to work with it and how it can be remotely acc
 
 We recommend the use of Ubuntu 22.04 for running the In-Vehicle Digital Twin Service. Other
 operating systems or versions of Ubuntu may encounter issues. We invite others to help us find and
-resolve any compatability issues.
+resolve any compatibility issues.
 
 ### <a name="install-gcc">Install gcc</a>
 
