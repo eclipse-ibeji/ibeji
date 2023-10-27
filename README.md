@@ -219,8 +219,10 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 ---- provider_settings.yaml ----<br>
 `provider_authority: "0.0.0.0:4010"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run:<br><br>
+1. In the top window, run (config files will be loaded from the current working directory):<br><br>
 `./invehicle-digital-twin`<br>
+Use the `IBEJI_HOME` env var to load configuration files from a specific directory: <br>
+`IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./seat-massager-provider`<br>
 1. In the bottom window, run:<br><br>
