@@ -7,6 +7,7 @@
   - [Install Rust](#install-rust)
   - [Install Protobuf Compiler](#install-protobuf-compiler)
   - [Install SDL2 library](#install-sdl2-library)
+  - [Install dotnet-sdk library](#install-dotnet-sdk-library)
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Building](#building)
@@ -18,6 +19,10 @@
   - [Seat Massager Sample](#seat-massager-sample)
   - [Streaming Sample](#streaming-sample)
   - [Using Chariott](#using-chariott)
+- [Running in a Container](#running-in-a-container)
+  - [Dockerfile](#dockerfile)
+  - [Docker](#docker)
+  - [Podman](#podman)
 - [Trademarks](#trademarks)
 
 ## <a name="introduction">Introduction</a>
@@ -34,6 +39,10 @@ In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. 
 the nature of the capability, how to work with it and how it can be remotely accessed.
 
 ## <a name="prerequisites">Prerequisites</a>
+
+We recommend the use of Ubuntu 22.04 for running the In-Vehicle Digital Twin Service. Other
+operating systems or versions of Ubuntu may encounter issues. We invite others to help us find and
+resolve any compatibility issues.
 
 ### <a name="install-gcc">Install gcc</a>
 
@@ -70,6 +79,14 @@ You will need to install the libsdl2-dev library. This can be done by executing:
 
 ```shell
 sudo apt install -y libsdl2-dev
+```
+
+### <a name="install-dotnet-sdk-library">Install dotnet-sdk library</a>
+
+You will need to install dotnet-sdk for the dtdl-tools crate. This can be done by executing:
+
+```shell
+sudo apt install -y dotnet-sdk-7.0
 ```
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>
@@ -109,6 +126,16 @@ The demos use config files and we have provided a templated version of each conf
 
 - {repo-root-dir}/core/invehicle-digital-twin/template
 - {repo-root-dir}/samples/common/template
+
+Configuration files will be loaded from the current working directory by default
+but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
+
+```
+IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
+```
+
+The above example tells `invehicle-digital-twin` to load configuration files from `/etc/ibeji` instead of using
+the current working directory.
 
 Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
 
@@ -219,10 +246,8 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 ---- provider_settings.yaml ----<br>
 `provider_authority: "0.0.0.0:4010"`<br>
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run (config files will be loaded from the current working directory):<br><br>
+1. In the top window, run:<br><br>
 `./invehicle-digital-twin`<br>
-Use the `IBEJI_HOME` environment variable to load configuration files from a specific directory: <br>
-`IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./seat-massager-provider`<br>
 1. In the bottom window, run:<br><br>
@@ -271,6 +296,85 @@ rather than having it statically provided in their respective config file, then 
 1. In each of the the config files, add the setting:<br><br>
 `chariott_uri: "http://0.0.0.0:50000"`<br>
 1. In the consumer's config file and the provider's config file, remove the setting for invehicle_digital_twin_uri, so that the chariott_uri will be used to find the In-vehicle Digital Twin URI.<br>
+
+## <a name="running-in-a-container">Running in a Container</a>
+
+Below are the steps for running the service in a container. Note that the configuration files used
+by the containerized service are cloned from [container/config](./container/config/) defined in the
+project's root.
+
+### <a name="dockerfile">Dockerfile</a>
+
+There are currently two dockerfiles provided in the root directory of the project that can be built:
+
+- Dockerfile - A standalone version of the In-Vehicle Digital Twin Service
+- Dockerfile.integrated - A version of the In-Vehicle Digital Twin Service that communicates with
+the [Chariott Service](https://github.com/eclipse-chariott/chariott) and the
+[Agemo Service](https://github.com/eclipse-chariott/Agemo).
+
+### <a name="docker">Docker</a>
+
+<b>Prerequisites</b>
+
+[Install Docker](https://docs.docker.com/engine/install/)
+
+<b>Running in Docker</b>
+
+To run the service in a Docker container:
+
+1. Run the following command in the project's root directory to build the docker container from the
+Dockerfile:
+
+    ```shell
+    docker build -t invehicle_digital_twin -f Dockerfile .
+    ```
+
+1. Once the container has been built, start the container in interactive mode with the following
+command in the project's root directory:
+
+    ```shell
+    docker run --name invehicle_digital_twin -p 5010:5010 --env-file=./container/config/docker.env --add-host=host.docker.internal:host-gateway -it --rm invehicle_digital_twin
+    ```
+
+1. To detach from the container, enter:
+
+    <kbd>Ctrl</kbd> + <kbd>p</kbd>, <kbd>Ctrl</kbd> + <kbd>q</kbd>
+
+1. To stop the container, enter:
+
+    ```shell
+    docker stop invehicle_digital_twin
+    ```
+
+### <a name="podman">Podman</a>
+
+<b>Prerequisites</b>
+
+[Install Podman](https://podman.io/docs/installation)
+
+<b>Running in Podman</b>
+
+To run the service in a Podman container:
+
+1. Run the following command in the project's root directory to build the podman container from the
+Dockerfile:
+
+    ```shell
+    podman build -t invehicle_digital_twin:latest -f Dockerfile .
+    ```
+
+1. Once the container has been built, start the container with the following command in the
+project's root directory:
+
+    ```shell
+    podman run -p 5010:5010 --env-file=./container/config/podman.env --network=slirp4netns:allow_host_loopback=true localhost/invehicle_digital_twin
+    ```
+
+1. To stop the container, run:
+
+    ```shell
+    podman ps -f ancestor=localhost/invehicle_digital_twin:latest --format="{{.Names}}" | xargs podman stop
+    ```
 
 ## <a name="trademarks">Trademarks</a>
 
