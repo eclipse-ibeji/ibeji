@@ -221,7 +221,7 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
 1. In the top window, run (config files will be loaded from the current working directory):<br><br>
 `./invehicle-digital-twin`<br>
-Use the `IBEJI_HOME` env var to load configuration files from a specific directory: <br>
+Use the `IBEJI_HOME` environment variable to load configuration files from a specific directory: <br>
 `IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin`<br>
 1. In the middle window, run:<br><br>
 `./seat-massager-provider`<br>

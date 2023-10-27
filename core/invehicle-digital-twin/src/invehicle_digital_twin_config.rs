@@ -15,7 +15,7 @@ pub struct Settings {
 
 /// Load the settings.
 pub fn load_settings() -> Settings {
-    let s = utils::load_settings(CONFIG_FILENAME).unwrap();
+    let settings = utils::load_settings(CONFIG_FILENAME).unwrap();
 
-    s
+    settings
 }
