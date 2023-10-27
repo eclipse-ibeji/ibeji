@@ -37,6 +37,7 @@ disconnects it will stop publishing to that dynamically generated topic.
     ---- provider_settings.yaml ----
 
     ```yaml
+    provider_authority: "0.0.0.0:4010"
     invehicle_digital_twin_uri: "http://0.0.0.0:5010"
     ```
 
