@@ -13,6 +13,8 @@ use strum_macros::Display;
 use tokio::time::{sleep, Duration};
 use tonic::{Request, Status};
 
+const IBEJI_HOME_VAR_NAME: &str = "IBEJI_HOME";
+
 /// An identifier used when discovering a service through Chariott.
 #[derive(Debug, Deserialize)]
 pub struct ServiceIdentifier {
@@ -41,8 +43,13 @@ pub fn load_settings<T>(config_filename: &str) -> Result<T, ConfigError>
 where
     T: for<'de> serde::Deserialize<'de>,
 {
+    let config_filename_path = match std::env::var(IBEJI_HOME_VAR_NAME) {
+        Ok(s) => format!("{}/{}", s, config_filename),
+        _ => config_filename.to_owned()
+    };
+
     let config =
-        Config::builder().add_source(File::new(config_filename, FileFormat::Yaml)).build()?;
+        Config::builder().add_source(File::new(config_filename_path.as_str(), FileFormat::Yaml)).build()?;
 
     config.try_deserialize()
 }
