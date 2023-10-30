@@ -127,6 +127,16 @@ The demos use config files and we have provided a templated version of each conf
 - {repo-root-dir}/core/invehicle-digital-twin/template
 - {repo-root-dir}/samples/common/template
 
+Configuration files will be loaded from the current working directory by default
+but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
+
+```bash
+IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
+```
+
+The above example tells `invehicle-digital-twin` to load configuration files from `/etc/ibeji` instead of using
+the current working directory.
+
 Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
 
 ### <a name="property-sample">Property Sample</a>
