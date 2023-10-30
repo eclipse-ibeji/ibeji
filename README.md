@@ -130,7 +130,7 @@ The demos use config files and we have provided a templated version of each conf
 Configuration files will be loaded from the current working directory by default
 but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
 
-```
+```bash
 IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
 ```
 
