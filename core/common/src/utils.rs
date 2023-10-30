@@ -45,11 +45,12 @@ where
 {
     let config_filename_path = match std::env::var(IBEJI_HOME_VAR_NAME) {
         Ok(s) => format!("{}/{}", s, config_filename),
-        _ => config_filename.to_owned()
+        _ => config_filename.to_owned(),
     };
 
-    let config =
-        Config::builder().add_source(File::new(config_filename_path.as_str(), FileFormat::Yaml)).build()?;
+    let config = Config::builder()
+        .add_source(File::new(config_filename_path.as_str(), FileFormat::Yaml))
+        .build()?;
 
     config.try_deserialize()
 }
