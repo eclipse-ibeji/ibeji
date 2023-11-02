@@ -58,6 +58,10 @@ Our sample in-vehicle digital twin model consists of an airbag seat massager, ca
 
 Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, begins with an interface at the top level.
 
+A suggested strategy for creating your in-vehicle digital twin model is to first determine the components and vehicle characteristics you want to include, followed by deciding the level of granularity you need for your in-vehicle digital twin model.
+
+For example, in our samples, we categorize HVAC and OBD separately. The `hvac.json` DTDL file contains all HVAC-related elements, while the `obd.json` DTDL file encompasses all OBD-related components.
+
 Let's consider the `hvac.json` DTDL file:
 ```json
 [
@@ -85,6 +89,10 @@ Let's consider the `hvac.json` DTDL file:
   }
 ]
 ```
+
+
+Please see the [Interface](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface) section for the descriptions on each field.
+
 
 
 
