@@ -90,10 +90,11 @@ Let's consider the `hvac.json` DTDL file:
 ]
 ```
 
-
 Please see the [Interface](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface) section for the descriptions on each field.
 
+At the top level of this HVAC interface, all the required DTDL fields are specified.
 
+We strictly
 
 
 Please ignore the JSON objects inside the contents field for now. This will be discussed in [1.2 DTDL properties](#12-dtdl-properties).
