@@ -2,7 +2,8 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use config::{Config, File, FileFormat};
+use crate::utils;
+
 use serde_derive::Deserialize;
 
 const CONFIG_FILENAME: &str = "provider_settings";
@@ -16,10 +17,5 @@ pub struct Settings {
 
 /// Load the settings.
 pub fn load_settings() -> Settings {
-    let config =
-        Config::builder().add_source(File::new(CONFIG_FILENAME, FileFormat::Yaml)).build().unwrap();
-
-    let settings: Settings = config.try_deserialize().unwrap();
-
-    settings
+    utils::load_settings(CONFIG_FILENAME).unwrap()
 }

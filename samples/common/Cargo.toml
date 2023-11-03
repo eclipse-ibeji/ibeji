@@ -19,3 +19,6 @@ serde_derive = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
 yaml-rust = { workspace = true }
+
+[features]
+containerize = []

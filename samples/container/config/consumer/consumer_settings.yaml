@@ -1,0 +1,14 @@
+#
+# Consumer Settings
+#
+
+# The IP address and port number that the consumer listens on for consumer requests.
+# Example: "0.0.0.0:80"
+consumer_authority: "0.0.0.0:6010"
+
+# The URL that the in-vehicle digital twin service listens on for digital twin requests.
+invehicle_digital_twin_uri: "http://0.0.0.0:5010"
+
+# The URL that the Chariott service listens on for requests.
+# If you wish to use Chariott, then uncomment this setting and comment out the invehicle_digital_twin_url setting.
+#chariott_uri: "http://0.0.0.0:50000"

@@ -299,82 +299,9 @@ rather than having it statically provided in their respective config file, then 
 
 ## <a name="running-in-a-container">Running in a Container</a>
 
-Below are the steps for running the service in a container. Note that the configuration files used
-by the containerized service are cloned from [container/config](./container/config/) defined in the
-project's root.
+To run the In-Vehicle Digital Twin Service in a container, please refer to [Ibeji Containerization](./container/README.md).
 
-### <a name="dockerfile">Dockerfile</a>
-
-There are currently two dockerfiles provided in the root directory of the project that can be built:
-
-- Dockerfile - A standalone version of the In-Vehicle Digital Twin Service
-- Dockerfile.integrated - A version of the In-Vehicle Digital Twin Service that communicates with
-the [Chariott Service](https://github.com/eclipse-chariott/chariott) and the
-[Agemo Service](https://github.com/eclipse-chariott/Agemo).
-
-### <a name="docker">Docker</a>
-
-<b>Prerequisites</b>
-
-[Install Docker](https://docs.docker.com/engine/install/)
-
-<b>Running in Docker</b>
-
-To run the service in a Docker container:
-
-1. Run the following command in the project's root directory to build the docker container from the
-Dockerfile:
-
-    ```shell
-    docker build -t invehicle_digital_twin -f Dockerfile .
-    ```
-
-1. Once the container has been built, start the container in interactive mode with the following
-command in the project's root directory:
-
-    ```shell
-    docker run --name invehicle_digital_twin -p 5010:5010 --env-file=./container/config/docker.env --add-host=host.docker.internal:host-gateway -it --rm invehicle_digital_twin
-    ```
-
-1. To detach from the container, enter:
-
-    <kbd>Ctrl</kbd> + <kbd>p</kbd>, <kbd>Ctrl</kbd> + <kbd>q</kbd>
-
-1. To stop the container, enter:
-
-    ```shell
-    docker stop invehicle_digital_twin
-    ```
-
-### <a name="podman">Podman</a>
-
-<b>Prerequisites</b>
-
-[Install Podman](https://podman.io/docs/installation)
-
-<b>Running in Podman</b>
-
-To run the service in a Podman container:
-
-1. Run the following command in the project's root directory to build the podman container from the
-Dockerfile:
-
-    ```shell
-    podman build -t invehicle_digital_twin:latest -f Dockerfile .
-    ```
-
-1. Once the container has been built, start the container with the following command in the
-project's root directory:
-
-    ```shell
-    podman run -p 5010:5010 --env-file=./container/config/podman.env --network=slirp4netns:allow_host_loopback=true localhost/invehicle_digital_twin
-    ```
-
-1. To stop the container, run:
-
-    ```shell
-    podman ps -f ancestor=localhost/invehicle_digital_twin:latest --format="{{.Names}}" | xargs podman stop
-    ```
+To run the samples in a container, please refer to [Samples Containerization](./samples/container/README.md).
 
 ## <a name="trademarks">Trademarks</a>
 
