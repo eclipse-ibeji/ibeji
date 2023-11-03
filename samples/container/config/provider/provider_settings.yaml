@@ -8,7 +8,3 @@ provider_authority: "0.0.0.0:1883"
 
 # The URL that the in-vehicle digital twin service listens on for digital twin requests.
 invehicle_digital_twin_uri: "http://0.0.0.0:5010"
-
-# The URL that the Chariott service listens on for requests.
-# If you wish to use Chariott, then uncomment this setting and comment out the invehicle_digital_twin_url setting.
-# chariott_uri: "http://0.0.0.0:50000"

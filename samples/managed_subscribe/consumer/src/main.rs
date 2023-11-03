@@ -11,7 +11,7 @@ use paho_mqtt as mqtt;
 use samples_common::constants::{constraint_type, digital_twin_operation, digital_twin_protocol};
 use samples_common::consumer_config;
 use samples_common::utils::{
-    get_uri, discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
+    discover_digital_twin_provider_using_ibeji, get_uri, retrieve_invehicle_digital_twin_uri,
 };
 use samples_protobuf_data_access::module::managed_subscribe::v1::managed_subscribe_client::ManagedSubscribeClient;
 use samples_protobuf_data_access::module::managed_subscribe::v1::{

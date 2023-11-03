@@ -75,7 +75,8 @@ sudo apt install -y protobuf-compiler
 
 ### <a name="install-sdl2-library">Install SDL2 library</a>
 
-You will need to install the libsdl2-dev library. This can be done by executing:
+You will need to install the libsdl2-dev library. This is used by the streaming sample to view
+images. Install the libsdl2-dev library by executing:
 
 ```shell
 sudo apt install -y libsdl2-dev

@@ -18,7 +18,7 @@ Provider containers utilize the dockerfile [Dockerfile.provider](../Dockerfile.p
 
 By default, the sample provider built in the Dockerfile is the
 [property-provider](./samples/property/provider/). To change the provider the container builds, use
-the following command:
+the following argument:
 
     <b>Docker</b>
 
@@ -89,7 +89,7 @@ Consumer containers utilize the dockerfile [Dockerfile.consumer](../Dockerfile.c
 
 By default, the sample consumer built in the Dockerfile is the
 [property-consumer](./samples/property/consumer/). To change the consumer the container builds, use
-the following command:
+the following argument:
 
     <b>Docker</b>
 

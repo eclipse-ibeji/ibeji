@@ -135,7 +135,9 @@ pub async fn discover_digital_twin_provider_using_ibeji(
                 result.uri
             );
 
-            result.uri = get_uri(&result.uri).map_err(|err| format!("Failed to get provider URI due to error: {err}").to_string())?;
+            result.uri = get_uri(&result.uri).map_err(|err| {
+                format!("Failed to get provider URI due to error: {err}").to_string()
+            })?;
 
             Ok(result)
         }
@@ -162,9 +164,8 @@ pub async fn discover_service_using_chariott(
 ) -> Result<String, Status> {
     let uri = get_uri(chariott_uri)?;
 
-    let mut client = ServiceRegistryClient::connect(uri)
-        .await
-        .map_err(|e| Status::internal(e.to_string()))?;
+    let mut client =
+        ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(DiscoverRequest {
         namespace: namespace.to_string(),
@@ -233,7 +234,10 @@ pub async fn retrieve_invehicle_digital_twin_uri(
         }
     };
 
-    get_uri(&result).map_err(|err| format!("Failed to retrieve the in-vehicle digital twin service's URI due to error: {err}").to_string())
+    get_uri(&result).map_err(|err| {
+        format!("Failed to retrieve the in-vehicle digital twin service's URI due to error: {err}")
+            .to_string()
+    })
 }
 
 /// If feature 'containerize' is set, will modify a localhost uri to point to container's localhost
