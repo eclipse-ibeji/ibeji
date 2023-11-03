@@ -8,7 +8,7 @@ please refer to [Ibeji Containerization](../../container/README.md).
 
 Below are the steps for running the sample providers and consumers in a container. Note that the
 configuration files used by the containerized sample are cloned from
-[/samples/container/config](./samples/container/config/) defined in the project's root.
+[/samples/container/config](./config/) defined in the project's root.
 
 ### Provider
 
@@ -17,7 +17,7 @@ Provider containers utilize the dockerfile [Dockerfile.provider](../Dockerfile.p
 #### Build
 
 By default, the sample provider built in the Dockerfile is the
-[property-provider](./samples/property/provider/). To change the provider the container builds, use
+[property-provider](../property/provider/). To change the provider the container builds, use
 the following argument:
 
     <b>Docker</b>
@@ -88,7 +88,7 @@ Consumer containers utilize the dockerfile [Dockerfile.consumer](../Dockerfile.c
 #### Build
 
 By default, the sample consumer built in the Dockerfile is the
-[property-consumer](./samples/property/consumer/). To change the consumer the container builds, use
+[property-consumer](../property/consumer/). To change the consumer the container builds, use
 the following argument:
 
     <b>Docker</b>

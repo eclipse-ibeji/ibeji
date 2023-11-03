@@ -6,7 +6,7 @@ a container please refer to [Samples Containerization](../samples/container/READ
 ## Running the In-Vehicle Digital Twin Service in a Container
 
 Below are the steps for running the service in a container. Note that the configuration files used
-by the containerized service are cloned from [container/config](./container/config/) defined in the
+by the containerized service are cloned from [/container/config](./config/) defined in the
 project's root.
 
 ### Dockerfile

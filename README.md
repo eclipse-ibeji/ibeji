@@ -20,9 +20,6 @@
   - [Streaming Sample](#streaming-sample)
   - [Using Chariott](#using-chariott)
 - [Running in a Container](#running-in-a-container)
-  - [Dockerfile](#dockerfile)
-  - [Docker](#docker)
-  - [Podman](#podman)
 - [Trademarks](#trademarks)
 
 ## <a name="introduction">Introduction</a>
