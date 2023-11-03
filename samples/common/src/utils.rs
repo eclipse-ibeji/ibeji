@@ -238,8 +238,8 @@ pub async fn retrieve_invehicle_digital_twin_uri(
     })
 }
 
-/// If feature 'containerize' is set, will modify a localhost uri to point to container's localhost
-/// DNS alias. Otherwise, returns the uri as a String.
+/// If the 'containerize' feature is set, this function will modify the localhost URI to point to
+/// the container's localhost DNS alias. Otherwise, returns the URI as a string.
 ///
 /// # Arguments
 /// * `uri` - The uri to potentially modify.

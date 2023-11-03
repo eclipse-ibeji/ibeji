@@ -57,10 +57,11 @@ command in the project's root directory:
 Follow the steps in [Running in Docker](#running-in-docker) to build the container.
 
 1. To run the container with overridden configuration, create your config file and set an
-environment variable called IBEJI_HOME to the path to the config file:
+environment variable called IBEJI_HOME to the absolute path of the directory containing the
+config file:
 
     ```shell
-    export IBEJI_HOME={path to directory containing config file}
+    export IBEJI_HOME={absolute path of the directory containing the config file}
     ```
 
 1. Then run the container with the following command:
@@ -104,10 +105,11 @@ project's root directory:
 Follow the steps in [Running in Podman](#running-in-podman) to build the container.
 
 1. To run the container with overridden configuration, create your config file and set an
-environment variable called IBEJI_HOME to the path to the config file:
+environment variable called IBEJI_HOME to the absolute path of the directory containing the
+config file:
 
     ```shell
-    export IBEJI_HOME={path to directory containing config file}
+    export IBEJI_HOME={absolute path of the directory containing the config file}
     ```
 
 1. Then run the container with the following command:

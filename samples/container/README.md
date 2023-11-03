@@ -54,10 +54,11 @@ the container:
     <b>Docker</b>
 
     1. To run the container with overridden configuration, create your config file and set an
-    environment variable called IBEJI_HOME to the path to the config file:
+    environment variable called IBEJI_HOME to the absolute path of the directory containing the
+    config file:
 
         ```shell
-        export IBEJI_HOME={path to directory containing config file}
+        export IBEJI_HOME={absolute path of the directory containing the config file}
         ```
 
     1. Then run the container from the project's root with the following command:
@@ -69,10 +70,11 @@ the container:
     <b>Podman</b>
 
     1. To run the container with overridden configuration, create your config file and set an
-    environment variable called IBEJI_HOME to the path to the config file:
+    environment variable called IBEJI_HOME to the absolute path of the directory containing the
+    config file:
 
         ```shell
-        export IBEJI_HOME={path to directory containing config file}
+        export IBEJI_HOME={absolute path of the directory containing the config file}
         ```
 
     1. Then run the container from the project's root with the following command:
@@ -125,10 +127,11 @@ the container:
     <b>Docker</b>
 
     1. To run the container with overridden configuration, create your config file and set an
-    environment variable called IBEJI_HOME to the path to the config file:
+    environment variable called IBEJI_HOME to the absolute path of the directory containing the
+    config file:
 
         ```shell
-        export IBEJI_HOME={path to directory containing config file}
+        export IBEJI_HOME={absolute path of the directory containing the config file}
         ```
 
     1. Then run the container from the project's root with the following command:
@@ -140,10 +143,11 @@ the container:
     <b>Podman</b>
 
     1. To run the container with overridden configuration, create your config file and set an
-    environment variable called IBEJI_HOME to the path to the config file:
+    environment variable called IBEJI_HOME to the absolute path of the directory containing the
+    config file:
 
         ```shell
-        export IBEJI_HOME={path to directory containing config file}
+        export IBEJI_HOME={absolute path of the directory containing the config file}
         ```
 
     1. Then run the container from the project's root with the following command:
