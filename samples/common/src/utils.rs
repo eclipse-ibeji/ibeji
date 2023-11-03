@@ -135,9 +135,8 @@ pub async fn discover_digital_twin_provider_using_ibeji(
                 result.uri
             );
 
-            result.uri = get_uri(&result.uri).map_err(|err| {
-                format!("Failed to get provider URI due to error: {err}").to_string()
-            })?;
+            result.uri = get_uri(&result.uri)
+                .map_err(|err| format!("Failed to get provider URI due to error: {err}"))?;
 
             Ok(result)
         }
@@ -236,7 +235,6 @@ pub async fn retrieve_invehicle_digital_twin_uri(
 
     get_uri(&result).map_err(|err| {
         format!("Failed to retrieve the in-vehicle digital twin service's URI due to error: {err}")
-            .to_string()
     })
 }
 
