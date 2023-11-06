@@ -21,7 +21,7 @@ const MQTT_CLIENT_ID: &str = "property-consumer";
 /// # Arguments
 /// * `broker_uri` - The broker URI.
 /// * `topic` - The topic.
-fn receive_ambient_air_tempterature_updates(broker_uri: &str, topic: &str) -> Result<(), String> {
+fn receive_ambient_air_temperature_updates(broker_uri: &str, topic: &str) -> Result<(), String> {
     let create_opts = mqtt::CreateOptionsBuilder::new()
         .server_uri(broker_uri)
         .client_id(MQTT_CLIENT_ID.to_string())
@@ -101,7 +101,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let topic = provider_endpoint_info.context;
     info!("The Topic for the AmbientAirTemperature property's provider is {topic})");
 
-    let _receive_result = receive_ambient_air_tempterature_updates(&broker_uri, &topic)
+    let _receive_result = receive_ambient_air_temperature_updates(&broker_uri, &topic)
         .map_err(|err| Status::internal(format!("{err:?}")));
 
     info!("The Consumer has completed.");

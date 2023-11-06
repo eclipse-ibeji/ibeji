@@ -2,8 +2,6 @@
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
 
-# syntax=docker/dockerfile:1
-
 # Comments are provided throughout this file to help you get started.
 # If you need more help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
@@ -63,13 +61,13 @@ USER appuser
 WORKDIR /sdv
 
 # Set home environment variable.
-ENV IBEJI_HOME=/sdv
+ENV IBEJI_HOME=/sdv/config
 
 # Copy the executable from the "build" stage.
 COPY --from=build /sdv/service /sdv/
 
 # Copy configuration for service.
-COPY --from=build /sdv/container/config/standalone/ /sdv/
+COPY --from=build /sdv/container/config/standalone/ /sdv/config
 
 # Expose the port that the application listens on.
 EXPOSE 5010

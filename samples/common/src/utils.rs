@@ -4,6 +4,7 @@
 
 use crate::constants;
 
+use config::{Config, ConfigError, File, FileFormat};
 use constants::chariott::{
     INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_KIND,
     INVEHICLE_DIGITAL_TWIN_SERVICE_COMMUNICATION_REFERENCE, INVEHICLE_DIGITAL_TWIN_SERVICE_NAME,
@@ -17,6 +18,28 @@ use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, Fin
 use std::future::Future;
 use tokio::time::{sleep, Duration};
 use tonic::{Code, Request, Status};
+
+const IBEJI_HOME_VAR_NAME: &str = "IBEJI_HOME";
+
+/// Load the settings.
+///
+/// # Arguments
+/// * `config_filename` - Name of the config file to load settings from.
+pub fn load_settings<T>(config_filename: &str) -> Result<T, ConfigError>
+where
+    T: for<'de> serde::Deserialize<'de>,
+{
+    let config_filename_path = match std::env::var(IBEJI_HOME_VAR_NAME) {
+        Ok(s) => format!("{}/{}", s, config_filename),
+        _ => config_filename.to_owned(),
+    };
+
+    let config = Config::builder()
+        .add_source(File::new(config_filename_path.as_str(), FileFormat::Yaml))
+        .build()?;
+
+    config.try_deserialize()
+}
 
 /// Is the provided subset a subset of the provided superset?
 ///
@@ -106,11 +129,15 @@ pub async fn discover_digital_twin_provider_using_ibeji(
         })
         .cloned()
     {
-        Some(result) => {
+        Some(mut result) => {
             info!(
                 "Found a matching endpoint for entity id {entity_id} that has URI {}",
                 result.uri
             );
+
+            result.uri = get_uri(&result.uri)
+                .map_err(|err| format!("Failed to get provider URI due to error: {err}"))?;
+
             Ok(result)
         }
         None => Err("Did not find an endpoint that met our requirements".to_string()),
@@ -134,9 +161,10 @@ pub async fn discover_service_using_chariott(
     communication_kind: &str,
     communication_reference: &str,
 ) -> Result<String, Status> {
-    let mut client = ServiceRegistryClient::connect(chariott_uri.to_string())
-        .await
-        .map_err(|e| Status::internal(e.to_string()))?;
+    let uri = get_uri(chariott_uri)?;
+
+    let mut client =
+        ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(DiscoverRequest {
         namespace: namespace.to_string(),
@@ -205,7 +233,39 @@ pub async fn retrieve_invehicle_digital_twin_uri(
         }
     };
 
-    Ok(result)
+    get_uri(&result).map_err(|err| {
+        format!("Failed to retrieve the in-vehicle digital twin service's URI due to error: {err}")
+    })
+}
+
+/// If the 'containerize' feature is set, this function will modify the localhost URI to point to
+/// the container's localhost DNS alias. Otherwise, returns the URI as a string.
+///
+/// # Arguments
+/// * `uri` - The uri to potentially modify.
+pub fn get_uri(uri: &str) -> Result<String, Status> {
+    #[cfg(feature = "containerize")]
+    let uri = {
+        // Container env variable names.
+        let host_gateway_env_var: &str = "HOST_GATEWAY";
+        let host_alias_env_var: &str = "LOCALHOST_ALIAS";
+
+        // Return an error if container env variables are not set.
+        let host_gateway = std::env::var(host_gateway_env_var).map_err(|err| {
+            Status::failed_precondition(format!(
+                "Unable to get environment var '{host_gateway_env_var}' with error: {err}"
+            ))
+        })?;
+        let host_alias = std::env::var(host_alias_env_var).map_err(|err| {
+            Status::failed_precondition(format!(
+                "Unable to get environment var '{host_alias_env_var}' with error: {err}"
+            ))
+        })?;
+
+        uri.replace(&host_alias, &host_gateway)
+    };
+
+    Ok(uri.to_string())
 }
 
 #[cfg(test)]

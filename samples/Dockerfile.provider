@@ -11,13 +11,18 @@
 
 ARG RUST_VERSION=1.72.1
 FROM docker.io/library/rust:${RUST_VERSION}-slim-bullseye AS build
-ARG APP_NAME=invehicle-digital-twin
+ARG APP_NAME=property-provider
 WORKDIR /sdv
 
 COPY ./ .
 
 # Add Build dependencies.
-RUN apt update && apt upgrade -y && apt install -y protobuf-compiler
+RUN apt update && apt upgrade -y && apt install -y \
+    cmake \
+    libsdl2-dev \
+    libssl-dev \
+    pkg-config \
+    protobuf-compiler
 
 # Check that APP_NAME argument is valid.
 RUN sanitized=$(echo "${APP_NAME}" | tr -dc '^[a-zA-Z_0-9-]+$'); \
@@ -27,7 +32,7 @@ RUN sanitized=$(echo "${APP_NAME}" | tr -dc '^[a-zA-Z_0-9-]+$'); \
 }
 
 # Build the application with the 'containerize' feature.
-RUN cargo build --release -p "${APP_NAME}" --features "containerize managed_subscribe"
+RUN cargo build --release --bin "${APP_NAME}" --features "containerize"
 
 # Copy the built application to working directory.
 RUN cp ./target/release/"${APP_NAME}" /sdv/service
@@ -44,6 +49,8 @@ RUN cp ./target/release/"${APP_NAME}" /sdv/service
 # reproducability is important, consider using a digest
 # (e.g., debian@sha256:ac707220fbd7b67fc19b112cee8170b41a9e97f703f588b2cdbbcdcecdd8af57).
 FROM docker.io/library/debian:bullseye-slim AS final
+
+RUN apt update && apt upgrade -y && apt install -y libsdl2-dev
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
@@ -67,10 +74,10 @@ ENV IBEJI_HOME=/sdv/config
 COPY --from=build /sdv/service /sdv/
 
 # Copy configuration for service.
-COPY --from=build /sdv/container/config/integrated/ /sdv/config
+COPY --from=build /sdv/samples/container/config/provider/ /sdv/config
 
 # Expose the port that the application listens on.
-EXPOSE 5010
+EXPOSE 4010
 
 # What the container should run when it is started.
 CMD ["/sdv/service"]

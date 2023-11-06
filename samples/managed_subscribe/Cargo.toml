@@ -38,3 +38,6 @@ path = "provider/src/main.rs"
 [[bin]]
 name = "managed-subscribe-consumer"
 path = "consumer/src/main.rs"
+
+[features]
+containerize = ["samples-common/containerize"]

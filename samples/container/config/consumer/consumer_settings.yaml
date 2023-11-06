@@ -1,0 +1,6 @@
+#
+# Consumer Settings
+#
+
+# The URL that the in-vehicle digital twin service listens on for digital twin requests.
+invehicle_digital_twin_uri: "http://0.0.0.0:5010" # DevSkim: ignore DS137138

@@ -1,0 +1,10 @@
+#
+# Provider Settings
+#
+
+# The IP address and port number that the provider listens on for provider requests.
+# Example: "0.0.0.0:80"
+provider_authority: "0.0.0.0:1883"
+
+# The URL that the in-vehicle digital twin service listens on for digital twin requests.
+invehicle_digital_twin_uri: "http://0.0.0.0:5010" # DevSkim: ignore DS137138
