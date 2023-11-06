@@ -4,10 +4,9 @@
 - [1. Create a reference vehicle model with DTDL](#1-create-a-reference-vehicle-model-with-dtdl)
     - [1.1 DTDL Interfaces](#11-dtdl-interfaces)
     - [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces)
-    - [1.3 Required Fields](#13-required-fields)
-    - [1.4 DTDL DTMI ID](#14-dtdl-dtmi-id)
-    - [1.5 DTDL properties](#15-dtdl-properties)
-    - [1.6 DTDL commands](#16-dtdl-commands)
+    - [1.3 DTDL DTMI ID](#14-dtdl-dtmi-id)
+    - [1.4 DTDL properties](#15-dtdl-properties)
+    - [1.5 DTDL commands](#16-dtdl-commands)
 - [2. DTDL validation](#2-dtdl-validation)
 - [3. Translating DTDL to code](#3-translating-dtdl-to-code)
 
@@ -27,6 +26,7 @@ In this section, you will be learning how to create a reference vehicle model wi
 
 Under the {repo-root-dir}/digital-twin-model/dtdl directory, contains sample DTDL
 files to describe our sample in-vehicle digital twin model:
+
 ```
 dtdl
 └── v3
@@ -56,7 +56,9 @@ Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, 
 ### 1.2 Create HVAC and HMI interfaces
 
 1. Create a file named `hvac.json`
+
 1. Create the DTDL interface for HVAC:
+
   ```json
   [
     {
@@ -68,6 +70,7 @@ Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, 
     }
   ]
   ```
+
 1. Create a file named `hmi.json`
 1. Create the DTDL interface for HMI:
   ```json
@@ -82,15 +85,13 @@ Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, 
   ]
   ```
 
-### 1.3 Required Fields
-
 Please see the [Interface](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface) section for the descriptions on each field and the required DTDL fields.
 
 In addition to `@context`, `@type`, and `@id` fields, Ibeji requires you to include the `description` field. The `description` field is useful as it offers extra metadata for DTDL file labeling and information logging.
 
 The `contents` field will be discussed further in the [1.5 DTDL properties](#15-dtdl-properties) and [1.6 DTDL commands](#16-dtdl-commands-dtdl-commands) sections.
 
-### 1.4 DTDL DTMI ID
+### 1.3 DTDL DTMI ID
 
 >[Digital Twin Model Identifer (DTMI):](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#additional-concerns) "All elements in digital twin models must have an identifier that is a digital twin model identifier (DTMI). This includes Interfaces, Properties, Telemetries, Commands, Relationships, Components, complex schema objects, etc. This does not require that every model element have an explicit identifier, but any identifier assigned to a model element by a digital twin processor must follow this identifier format".
 
@@ -100,7 +101,7 @@ The suggested approach for your creating a [DTMI](https://azure.github.io/opendi
 
 In step 2 of [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the DTMI for your HVAC system is `dtmi:sdv:HVAC;1` and `dtmi:sdv:HMI;1` for your HMI. The domain is `sdv` and under this domain we have an `HVAC` and an `HMI` interface. These two DTMIs conforms to the DTDL v3 spec.
 
-### 1.5 DTDL properties
+### 1.4 DTDL properties
 
 >[Property:](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) "A Property describes the read-only and read/write state of any digital twin. For example, a device serial number may be a read-only Property; the desired temperature on a thermostat may be a read-write Property; and the name of a room may be a read-write Property".
 
@@ -141,7 +142,7 @@ Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL
 
 You can add more signals to the HVAC system, but ensure they are properties, not commands, which we will discuss in the next section. Signals unrelated to HVAC should not be included in the HVAC interface. As suggested in [1.1 DTDL interfaces](#11-dtdl-interfaces), it is beneficial to segregate interfaces to maintain conciseness and group related components together.
 
-### 1.6 DTDL commands
+### 1.5 DTDL commands
 
 >[Command:](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#command) "A Command describes a function or operation that can be performed on any digital twin".
 
