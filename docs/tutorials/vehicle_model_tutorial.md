@@ -187,11 +187,14 @@ Ensure your digital twin models adhere to the [DTDL v3 spec](https://azure.githu
 
 ## 3. Translating DTDL to code
 
-You have finally finished constructing your reference simple vehicle model using DTDL. Your reference vehicle model now consists of an HVAC and an HMI. In this section, you will use your reference vehicle model and translate it to Rust code.
 
-1. Reference the `hvac.json` and `hmi.json` you created in [1.5 DTDL properties](#15-dtdl-properties) and [1.6 DTDL commands](#16-dtdl-commands).
+You have built a basic reference digital twin model of a vehicle with an HVAC system and HMI using DTDL. In this section, you will use convert this model into Rust code.
 
-1. Create a Rust file called `sdv_v1.rs`, and copy the following contents:
+1. Create a Rust file called `sdv_v1.rs`
+
+1. Reference the `hmi.json` DTDL file that you have created in  [1.6 DTDL commands](#16-dtdl-commands).
+
+1. Copy the following contents to the `sdv_v1.rs`
 
 ```rust
 // Copyright (c) Microsoft Corporation.
@@ -217,6 +220,11 @@ pub mod hmi {
     }
 }
 
+1. Reference the `hvac.json` DTDL file that you have created in [1.5 DTDL properties](#15-dtdl-properties)
+
+1. Copy the following contents to the `sdv_v1.rs` Rust file
+
+```rust
 pub mod hvac {
     pub mod ambient_air_temperature {
         pub const ID: &str = "dtmi:sdv:HVAC:AmbientAirTemperature;1";
@@ -234,7 +242,7 @@ pub mod hvac {
 }
 ```
 
-This Rust code is a representation of the vehicle DTDL model that has an HMI and an HVAC.
+This `sdv_v1.rs` is a representation of the vehicle DTDL model with an HMI and an HVAC in code.
 
 In [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the `@id` field for the HMI and HVAC digital twin interfaces are `dtmi:sdv:HMI;1` and `dtmi:sdv:HVAC;1`, respectively. These DTMIs are constructed in the sdv_v1.rs file, which we created in step 2.
 
@@ -244,4 +252,4 @@ In the HMI module, there is a `show_notification` submodule that represents the 
 
 Similarly, in the HVAC module, there are two submodules: ambient_air_temperature and is_air_conditioning_active. These represent the `AmbientAirTemperature` and `IsAirConditioningActive` properties in the `hvac.json` DTDL. Each submodule has an ID, NAME, DESCRIPTION, and TYPE constant, which correspond to the `@id`, `name`, `description`, and `schema` fields in DTDL.
 
-This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust constant or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your DTDL model as guidance to code your vehicle model.
+This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module,constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your DTDL model as guidance to code your vehicle model.
