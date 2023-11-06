@@ -2,11 +2,11 @@
 
 - [Introduction](#introduction)
 - [1. Create a reference vehicle model with DTDL](#1-create-a-reference-vehicle-model-with-dtdl)
-    - [1.1 DTDL Interfaces](#11-dtdl-interfaces)
-    - [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces)
-    - [1.3 DTDL DTMI ID](#14-dtdl-dtmi-id)
-    - [1.4 DTDL properties](#15-dtdl-properties)
-    - [1.5 DTDL commands](#16-dtdl-commands)
+  - [1.1 DTDL Interfaces](#11-dtdl-interfaces)
+  - [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces)
+  - [1.3 DTDL DTMI ID](#13-dtdl-dtmi-id)
+  - [1.4 DTDL properties](#14-dtdl-properties)
+  - [1.5 DTDL commands](#15-dtdl-commands)
 - [2. DTDL validation](#2-dtdl-validation)
 - [3. Translating DTDL to code](#3-translating-dtdl-to-code)
 
@@ -24,22 +24,7 @@ Please refer to the [DTDL v3](https://azure.github.io/opendigitaltwins-dtdl/DTDL
 
 In this section, you will be learning how to create a reference vehicle model with DTDL. DTDL is used to define a digital twin model of a vehicle, and its capabilities.
 
-Under the {repo-root-dir}/digital-twin-model/dtdl directory, contains sample DTDL
-files to describe our sample in-vehicle digital twin model:
-
-```
-dtdl
-└── v3
-    └── spec
-        └── sdv
-            ├── airbag_seat_massager.json
-            ├── camera.json
-            ├── hmi.json
-            ├── hvac.json
-            └── obd.json
-```
-
-Our sample in-vehicle digital twin model consists of an airbag seat massager, camera, human machine interface (HMI), HVAC, and an on-board diagnostics (OBD).
+Under the {repo-root-dir}/digital-twin-model/dtdl directory, contains sample DTDL files to describe our sample in-vehicle digital twin model. Our sample in-vehicle digital twin model consists of an airbag seat massager, camera, human machine interface (HMI), HVAC, and an on-board diagnostics (OBD).
 
 To simplify, this tutorial will guide you in creating a digital twin vehicle model with HVAC and HMI systems.
 
@@ -72,7 +57,9 @@ Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, 
   ```
 
 1. Create a file named `hmi.json`
+
 1. Create the DTDL interface for HMI:
+
   ```json
   [
     {
@@ -89,7 +76,7 @@ Please see the [Interface](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3
 
 In addition to `@context`, `@type`, and `@id` fields, Ibeji requires you to include the `description` field. The `description` field is useful as it offers extra metadata for DTDL file labeling and information logging.
 
-The `contents` field will be discussed further in the [1.5 DTDL properties](#15-dtdl-properties) and [1.6 DTDL commands](#16-dtdl-commands-dtdl-commands) sections.
+The `contents` field will be discussed further in the [1.4 DTDL properties](#14-dtdl-properties) and [1.5 DTDL commands](#15-dtdl-commands) sections.
 
 ### 1.3 DTDL DTMI ID
 
@@ -188,12 +175,11 @@ Ensure your digital twin models adhere to the [DTDL v3 spec](https://azure.githu
 
 ## 3. Translating DTDL to code
 
-
 You have built a basic reference digital twin model of a vehicle with an HVAC system and HMI using DTDL. In this section, you will use convert this model into Rust code.
 
 1. Create a Rust file called `sdv_v1.rs`
 
-1. Reference the `hmi.json` DTDL file that you have created in  [1.6 DTDL commands](#16-dtdl-commands).
+1. Reference the `hmi.json` DTDL file that you have created in  [1.5 DTDL commands](#15-dtdl-commands).
 
 1. Copy the following contents to the `sdv_v1.rs`
 
