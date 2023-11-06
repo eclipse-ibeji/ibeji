@@ -20,7 +20,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install packages
-        run: sudo apt-get install -y protobuf-compiler libsdl2-dev
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler libsdl2-dev
       - name: Install .NET 7.0
         uses: actions/setup-dotnet@v3
         with:
@@ -54,7 +54,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install packages
-        run: sudo apt-get install -y protobuf-compiler libsdl2-dev
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler libsdl2-dev
       - name: Install .NET 7.0
         uses: actions/setup-dotnet@v3
         with:
