@@ -1,5 +1,7 @@
 Agemo
 agemo
+APP
+arg
 br
 build
 cargo
@@ -10,6 +12,7 @@ Chariott's
 chariott
 com
 config
+containerize
 containerized
 Containerization
 Ctrl
@@ -20,6 +23,7 @@ Dockerfile
 dockerfile
 dockerfiles
 dotnet
+dst
 dt
 dtdl
 DTDL
@@ -67,12 +71,15 @@ ps
 repo
 Repo
 rm
+ro
 rustup
 sdk
 sdl
 SDL
+sdv
 slirp
 snapd
+src
 standalone
 sudo
 timothee

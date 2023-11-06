@@ -8,7 +8,9 @@ use log::{debug, info, warn, LevelFilter};
 use paho_mqtt as mqtt;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::provider_config;
-use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
+use samples_common::utils::{
+    get_uri, retrieve_invehicle_digital_twin_uri, retry_async_based_on_status,
+};
 use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
 use samples_protobuf_data_access::invehicle_digital_twin::v1::{
     EndpointInfo, EntityAccessInfo, RegisterRequest,
@@ -207,7 +209,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     })
     .await?;
 
-    start_ambient_air_temperature_data_stream(broker_uri, topic);
+    let stream_uri = get_uri(&broker_uri)?;
+
+    start_ambient_air_temperature_data_stream(stream_uri, topic);
 
     signal::ctrl_c().await.expect("Failed to listen for control-c event");
 
