@@ -12,7 +12,7 @@
 
 ## Introduction
 
-In this tutorial, you will learn how to create a vehicle model using [Digital Twins Definition Language (DTDL) version 3.0](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html), and build a corresponding Rust vehicle model. The focus will be on translating DTDL to a programming language, specifically Rust. While Rust is used here to be consistent with Ibeji's samples being in Rust, you can use any programming language.
+In this tutorial, you will learn how to create a vehicle model using [Digital Twins Definition Language (DTDL) version 3.0](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html), and build a corresponding Rust vehicle model. The focus will be on translating DTDL to a programming language. While Rust is used here to be consistent with Ibeji's samples (which are in Rust), you can use any programming language.
 
 This tutorial provides a basic understanding of DTDL in the context of our Ibeji samples, but it is not a comprehensive guide to DTDL. Specifically, it covers [interfaces](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface), [commands](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#command), [properties](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#property)
 
@@ -22,9 +22,11 @@ Please refer to the [DTDL v3](https://azure.github.io/opendigitaltwins-dtdl/DTDL
 
 ## 1. Create a reference vehicle model with DTDL
 
-In this section, you will be learning how to create a reference vehicle model with DTDL. DTDL is used to define a digital twin model of a vehicle, and its capabilities.
+In this section, you will learn how to create a reference vehicle model with DTDL. DTDL is used to define a digital twin model of a vehicle and its capabilities.
 
-Under the {repo-root-dir}/digital-twin-model/dtdl directory, contains sample DTDL files to describe our sample in-vehicle digital twin model. Our sample in-vehicle digital twin model consists of an airbag seat massager, camera, human machine interface (HMI), HVAC, and an on-board diagnostics (OBD).
+
+The `{repo-root-dir}/digital-twin-model/dtdl` directory contains sample DTDL files which describe our sample in-vehicle digital twin model. This model consists of an airbag seat massager; camera; human machine interface (HMI); heating, ventilation, and air conditioning (HVAC) system; and an on-board diagnostics (OBD).
+
 
 To simplify, this tutorial will guide you in creating a digital twin vehicle model with HVAC and HMI systems.
 
@@ -32,7 +34,8 @@ To simplify, this tutorial will guide you in creating a digital twin vehicle mod
 
 >[DTDL v3 Interface:](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface) "An Interface describes the contents (Commands, Components, Properties, Relationships, and Telemetries) of any digital twin".
 
-Each sample DTDL file in the {repo-root-dir}/digital-twin-model/dtdl directory, and begins with an interface at the top level.
+Each sample DTDL file in the `{repo-root-dir}/digital-twin-model/dtdl` directory begins with an interface at the top level.
+
 
 >Tip: A suggested strategy for creating your in-vehicle digital twin model is to first determine the components and vehicle characteristics you want to include in your common vehicle, followed by deciding the level of granularity you need for your in-vehicle digital twin model.
 >
@@ -84,9 +87,13 @@ The `contents` field will be discussed further in the [1.4 DTDL properties](#14-
 
 The value for the `@id` field must conform to the DTMI format. A DTMI consists of three parts: scheme, path, and version. They are arranged in the format: `<scheme>:<path>;<version>`, with a colon separating the scheme and path, and a semicolon dividing the path and version. A DTMI must be unique. Please reference the [Digital Twin Mode Identifier](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#digital-twin-model-identifier) section of the DTDL document to learn more about DTMI.
 
-The suggested approach for your creating a [DTMI](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#digital-twin-model-identifier): "For any definition that is the property of an organization with a registered domain name, a suggested approach to generating identifiers is to use the reversed order of domain segments as initial path segments, followed by further segments that are expected to be collectively unique among definitions within the domain. For example, dtmi:com:fabrikam:industrialProducts:airQualitySensor;1".
+The following is the suggested approach for creating a [DTMI](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#digital-twin-model-identifier):
 
-In step 2 of [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the DTMI for your HVAC system is `dtmi:sdv:HVAC;1` and `dtmi:sdv:HMI;1` for your HMI. The domain is `sdv` and under this domain we have an `HVAC` and an `HMI` interface. These two DTMIs conforms to the DTDL v3 spec.
+>For any definition that is the property of an organization with a registered domain name, a suggested approach to generating identifiers is to use the reversed order of domain segments as initial path segments, followed by further segments that are expected to be collectively unique among definitions within the domain. For example, `dtmi:com:fabrikam:industrialProducts:airQualitySensor;1`.
+
+
+In step 2 of [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the DTMI for your HVAC system is `dtmi:sdv:HVAC;1` and the DTMI for your HMI is `dtmi:sdv:HMI;1`. The domain is `sdv` and under this domain we have an `HVAC` and an `HMI` interface. These two DTMIs conform to the DTDL v3 spec.
+
 
 ### 1.4 DTDL properties
 
@@ -125,7 +132,8 @@ To add properties to the HVAC digital twin model, replace the existing content o
 
 This introduces two signals to our HVAC system: ambient air temperature and air conditioning status. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
 
-Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the @id field for properties as optional, Ibeji requires it. This helps in translating your DTDL files to code.
+Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for properties as optional, Ibeji requires it. This helps in translating your DTDL files to code.
+
 
 You can add more signals to the HVAC system, but ensure they are properties, not commands, which we will discuss in the next section. Signals unrelated to HVAC should not be included in the HVAC interface. As suggested in [1.1 DTDL interfaces](#11-dtdl-interfaces), it is beneficial to segregate interfaces to maintain conciseness and group related components together.
 
@@ -179,9 +187,11 @@ You have built a basic reference digital twin model of a vehicle with an HVAC sy
 
 1. Create a Rust file called `sdv_v1.rs`
 
-1. Reference the `hmi.json` DTDL file that you have created in  [1.5 DTDL commands](#15-dtdl-commands).
+1. Reference the `hmi.json` DTDL file that you have created in [1.5 DTDL commands](#15-dtdl-commands).
 
-1. Copy the following contents to the `sdv_v1.rs`
+
+1. Copy the following contents to the `sdv_v1.rs`:
+
 
 ```rust
 // Copyright (c) Microsoft Corporation.
@@ -209,7 +219,8 @@ pub mod hmi {
 
 1. Reference the `hvac.json` DTDL file that you have created in [1.5 DTDL properties](#15-dtdl-properties)
 
-1. Copy the following contents to the `sdv_v1.rs` Rust file
+1. Copy the following contents to the `sdv_v1.rs` Rust file:
+
 
 ```rust
 pub mod hvac {
@@ -231,12 +242,17 @@ pub mod hvac {
 
 This `sdv_v1.rs` is a representation of the vehicle DTDL model with an HMI and an HVAC in code.
 
-In [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the `@id` field for the HMI and HVAC digital twin interfaces are `dtmi:sdv:HMI;1` and `dtmi:sdv:HVAC;1`, respectively. These DTMIs are constructed in the sdv_v1.rs file, which we created in step 2.
+In [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the `@id` field for the HMI and HVAC digital twin interfaces are `dtmi:sdv:HMI;1` and `dtmi:sdv:HVAC;1`, respectively. These DTMIs are constructed in the `sdv_v1.rs` file, which we created in step 2.
 
-The sdv_v1.rs file contains two main modules: `hmi` and `hvac`. The HMI module constructs the interface for `dtmi:sdv:HMI;1`, and the hvac module constructs the interface for `dtmi:sdv:HVAC;1`.
 
-In the HMI module, there is a `show_notification` submodule that represents the ShowNotification command in DTDL. It has an ID, NAME, and DESCRIPTION constant, which correspond to the `@id`, `name`, and `description` fields in the `hmi.json` DTDL file. The request and response submodules represent the request and response of the command.
+The `sdv_v1.rs` file contains two main modules: `hmi` and `hvac`. The `hmi` module constructs the interface for `dtmi:sdv:HMI;1`, and the `hvac` module constructs the interface for `dtmi:sdv:HVAC;1`.
 
-Similarly, in the HVAC module, there are two submodules: ambient_air_temperature and is_air_conditioning_active. These represent the `AmbientAirTemperature` and `IsAirConditioningActive` properties in the `hvac.json` DTDL. Each submodule has an ID, NAME, DESCRIPTION, and TYPE constant, which correspond to the `@id`, `name`, `description`, and `schema` fields in DTDL.
 
-This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module,constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your DTDL model as guidance to code your vehicle model.
+In the `hmi` module, there is a `show_notification` submodule that represents the `ShowNotification` command in DTDL. It has an `ID`, `NAME`, and `DESCRIPTION` constant, which correspond to the `@id`, `name`, and `description` fields in the `hmi.json` DTDL file. The request and response submodules represent the request and response of the command.
+
+
+Similarly, in the `hvac` module, there are two submodules: `ambient_air_temperature` and `is_air_conditioning_active`. These represent the `AmbientAirTemperature` and `IsAirConditioningActive` properties in the `hvac.json` DTDL. Each submodule has an `ID`, `NAME`, `DESCRIPTION`, and `TYPE` constant, which correspond to the `@id`, `name`, `description`, and `schema` fields in DTDL.
+
+
+This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module, constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your DTDL model as guidance to code your vehicle model.
+
