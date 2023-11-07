@@ -22,7 +22,7 @@ Please refer to the [DTDL v3](https://azure.github.io/opendigitaltwins-dtdl/DTDL
 
 ## 1. Create an In-vehicle Digital Twin Model With DTDL
 
-In this section, you will learn how to create a in-vehicle digital twin model with DTDL.
+In this section, you will learn how to create an in-vehicle digital twin model with DTDL.
 
 The `{repo-root-dir}/digital-twin-model/dtdl` directory contains sample DTDL files which describe our sample in-vehicle digital twin model. This model consists of an airbag seat massager; camera; human machine interface (HMI); heating, ventilation, and air conditioning (HVAC) system; and an on-board diagnostics (OBD).
 
@@ -125,7 +125,7 @@ To add properties to the HVAC digital twin model, replace the existing content o
 
 This introduces two signals to our HVAC system: ambient air temperature and air conditioning status. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
 
-Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for properties as optional, Ibeji requires it. This helps in translating your DTDL files to code.
+Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for properties as optional, Ibeji requires it. This helps in referring to your DTDL fragments in the code.
 
 You can add more signals to the HVAC system, but ensure they are properties, not commands, which we will discuss in the next section. Signals unrelated to HVAC should not be included in the HVAC interface. As suggested in [1.1 DTDL interfaces](#11-dtdl-interfaces), it is beneficial to segregate interfaces to maintain conciseness and group related components together.
 
@@ -167,7 +167,7 @@ This introduces a command to our HMI system: Show Notification. Similar to the p
 
 The `ShowNotification` is not a property. This is because properties reflect the state of a digital twin, while `ShowNotification` is an action that can be performed on this HMI digital twin model which qualifies as a command.
 
-Please see [Command](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#command) for more information on the command type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for commands as optional, Ibeji requires it. This helps in translating your DTDL files to code.
+Please see [Command](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#command) for more information on the command type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for commands as optional, Ibeji requires it. This helps in referring to your DTDL fragments in the code.
 
 ## 2. DTDL Validation
 
