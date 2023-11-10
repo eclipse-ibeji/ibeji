@@ -1,12 +1,15 @@
-# Tutorial: Create a Provider
+# Tutorial: Create a Digital Twin Provider
 
 - [Introduction](#introduction)
 - [Prerequisites](#introduction)
 - [1. Create an Ibeji Digital Twin Provider](#1-create-an-ibeji-digital-twin-provider)
   - [1.1 Define Digital Twin Provider Interface](#11-define-digital-twin-provider-interface)
-  - [1.2 Provider Implementation](#12-create-hvac-and-hmi-interfaces)
-- [2. Register with the In-Vehicle Digital Twin Service](#2-dtdl-validation)
-- [3. (Optional) Enable Managed Subscribe](#2-dtdl-validation)
+    - [Sample Digital Twin Provider Interface](#sample-digital-twin-provider-interface)
+  - [1.2 Digital Twin Provider Implementation](#12-digital-twin-provider-implementation)
+    - [Sample Digital Twin Provider Implementation](#sample-digital-twin-provider-implementation)
+- [2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-register-digital-twin-provider-with-the-in-vehicle-digital-twin-service)
+  - [2.1 Run Sample Digital Twin Provider](#21-run-sample-digital-twin-provider)
+- [3. (Optional) Add Managed Subscribe to Digital Twin Provider](#3-optional-add-managed-subscribe-to-digital-twin-provider)
 - [Next Steps](#next-steps)
 
 ## Introduction
@@ -16,8 +19,6 @@
 In this tutorial, you will leverage your in-vehicle model in code that you have created in the previous tutorial in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
 
 This tutorial will reference the sample code provided in Ibeji to keep the tutorial concise. Relevant code snippets are explicitly highlighted and discussed to ensure a clear understanding of the concepts.
-
-In this tutorial, we be focusing on these specific parts of the code (provide links or snippets). While the full sample code (link to sample code) contains additional functionality, those parts are not directly relevant to this tutorial.
 
 ## Prerequisites
 
@@ -35,123 +36,92 @@ For simplicity, we will refer to both the `{repo-root-dir}/samples/mixed` and `{
 
 ### 1.1 Define Digital Twin Provider Interface
 
-Ibeji
+A digital twin provider needs an interface. The interface will expose operations that allow consumers to access the subset of vehicle signals that your digital provider makes available.
 
-Each sample DTDL file in the `{repo-root-dir}/digital-twin-model/dtdl` directory begins with an interface at the top level.
+>Tip: A suggested approach to defining your digital twin provider is to adopt the perspective of a digital twin consumer. This involves consideration of the operations and their corresponding names. For example, the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
 
->Tip: A suggested strategy for defining your digital twin provider is to first determine the components and in-vehicle characteristics you want to include in your common in-vehicle, followed by deciding the level of granularity you need for your in-vehicle digital twin model. For example, in our samples, we categorize HVAC and OBD separately. The `hvac.json` DTDL file contains all HVAC-related elements, while the `obd.json` DTDL file contains all OBD-related components.
+In this section, you will utilize the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto). Specifically, you will use the `Subscribe`, `Set` and `Invoke` operations from this interface.
 
-### 1.2 Provider Implementation
+>Please note that this interface serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements.
 
-1. Create a file named `hvac.json`
+#### Sample Digital Twin Provider Interface
 
-1. Create the DTDL interface for HVAC:
+1. Consider the in-vehicle signals `ambient air temperature` and `is air conditioning active`, as well as the command `show notification` that you defined in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 
-  ```json
-  [
-    {
-      "@context": ["dtmi:dtdl:context;3"],
-      "@type": "Interface",
-      "@id": "dtmi:sdv:HVAC;1",
-      "description": "Heat, Ventilation and Air Conditioning",
-      "contents": []
-    }
-  ]
-  ```
+1. Reference the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto). In this tutorial, a digital twin consumer will only need to use the `Subscribe`, `Set` and `Invoke` operations. The digital twin consumer is covered in the next tutorial.
 
-1. Create a file named `hmi.json`
+1. A digital twin consumer should utilize the `Subscribe` operation to consume the `ambient air temperature` and the `is air conditioning active` in-vehicle signals.
 
-1. Create the DTDL interface for HMI:
+1. A digital twin consumer should utilize the `Set` operation to set the value of an in-vehicle signal.
 
-  ```json
-  [
-    {
-      "@context": ["dtmi:dtdl:context;3"],
-      "@type": "Interface",
-      "@id": "dtmi:sdv:HMI;1",
-      "description": "The Human Machine Interface.",
-      "contents": []
-    }
-  ]
-  ```
+1. A digital twin consumer should utilize the `Invoke` operation to send a `show notification` command.
 
-Please see the [Interface](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface) section for the descriptions on each field and the required DTDL fields.
+### 1.2 Digital Twin Provider Implementation
 
-In addition to `@context`, `@type`, and `@id` fields, Ibeji requires you to include the `description` field. The `description` field is useful as it offers extra metadata for DTDL file labeling and logging.
+You have defined your [digital twin provider interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto). Let's implement the functionality for the `Subscribe`, `Set` and `Invoke` operations.
 
-The `contents` field will be discussed further in the [1.4 DTDL Properties](#14-dtdl-properties) and [1.5 DTDL Commands](#15-dtdl-commands) sections.
+#### Sample Digital Twin Provider Implementation
 
-## 2. Register with the In-Vehicle Digital Twin Service
+1. Reference the [Sample Digital Twin Provider Implementation](../../../samples/mixed/provider/src/provider_impl.rs). Please only consider the implementations for the `Subscribe`, `Set` and `Invoke` operations.
 
-Ensure your digital twin models adhere to the [DTDL v3 spec](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3) before translating your digital twin models to code. Use Ibeji's [DTDL tools](https://github.com/eclipse-ibeji/ibeji/blob/main/dtdl-tools/README.md) to validate your DTDL files.
-
-## 3. (Optional) Enable Managed Subscribe
-
-You have built a basic in-vehicle digital twin model with HVAC  and HMI systems using DTDL. In this section, you will convert this model into Rust code.
-
-1. Create a Rust file called `sdv_v1.rs`. This file will provide metadata from the in-vehicle digital twin model.
-
-1. Reference the `hmi.json` DTDL file that you have created in [1.5 DTDL Commands](#15-dtdl-commands).
-
-1. Copy the following contents to the `sdv_v1.rs`:
+1. Observe at the beginning of the code, where you see the import statement for the in-vehicle digital model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 
 ```rust
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-// SPDX-License-Identifier: MIT
-
-// Note: In the future this code should be generated from a DTDL spec.
-
-pub mod hmi {
-    pub mod show_notification {
-        pub const ID: &str = "dtmi:sdv:HMI:ShowNotification;1";
-        pub const NAME: &str = "Show Notification";
-        pub const DESCRIPTION: &str = "Show a notification on the HMI.";
-        pub mod request {
-            pub const ID: &str = "dtmi:sdv:HMI:ShowNotification::request;1";
-            pub const NAME: &str = "Notification";
-            pub const DESCRIPTION: &str = "The notification to show on the HMI.";
-            pub type TYPE = String;
-        }
-        pub mod response {
-            pub const ID: &str = "dtmi:sdv:HMI:ShowNotification::response;1";
-        }
-    }
-}
+use digital_twin_model::sdv_v1 as sdv;
 ```
 
-1. Reference the `hvac.json` DTDL file that you have created in [1.4 DTDL Properties](#14-dtdl-properties)
+1. The implementation of the `Set` operation references the signals `is air conditioning active` and `ambient air temperature`.
 
-1. Copy the following contents to the `sdv_v1.rs` Rust file:
+1. The implementation of the `Invoke` operation references the command `show notification`.
+
+## 2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service
+
+You have defined a sample interface with the following operations: `Subscribe`, `Set` and `Invoke` operations. You have implemented the functionality for each operation.
+
+You will need to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../../README.md#high-level-design). This registration will make your digital twin provider discoverable to digital twin consumers through the In-Vehicle Digital Twin Service.
+
+>[In-Vehicle Digital Twin Service:](../../../README.md#high-level-design) "Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities and makes them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers. A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes meta data that allow Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed".
+
+1. Reference the [main.rs file of your digital twin provider](../../../samples/mixed/provider/src/main.rs). The main.rs file outlines the behavior of the signals in your digital twin provider sample. This includes a vehicle simulator that can emulate changes in its signals. These changes are then published to any digital twin consumers that have subscribed to your digital twin provider.
+
+1. One function of particular interest in the [main.rs](../../../samples/mixed/provider/src/main.rs) file is the register function.
 
 ```rust
-pub mod hvac {
-    pub mod ambient_air_temperature {
-        pub const ID: &str = "dtmi:sdv:HVAC:AmbientAirTemperature;1";
-        pub const NAME: &str = "AmbientAirTemperature";
-        pub const DESCRIPTION: &str = "The immediate surroundings air temperature (in Fahrenheit).";
-        pub type TYPE = i32;
-    }
-
-    pub mod is_air_conditioning_active {
-        pub const ID: &str = "dtmi:sdv:HVAC:IsAirConditioningActive;1";
-        pub const NAME: &str = "IsAirConditioningActive";
-        pub const DESCRIPTION: &str = "Is air conditioning active?";
-        pub type TYPE = bool;
-    }
-}
+/// Register the entities endpoints.
+///
+/// # Arguments
+/// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
+/// * `provider_uri` - The provider's URI.
+async fn register_entities(
+    invehicle_digital_twin_uri: &str,
+    provider_uri: &str,
+) -> Result<(), Status> { .. }
 ```
 
-This `sdv_v1.rs` is a representation of the in-vehicle DTDL model with an HMI and an HVAC in code.
+The `register_entities` function in this sample digital twin provider exemplifies the process of registering with the In-Vehicle Digital Twin Service.
 
-In [1.2 Create HVAC and HMI interfaces](#12-create-hvac-and-hmi-interfaces), the `@id` field for the HMI and HVAC digital twin interfaces are `dtmi:sdv:HMI;1` and `dtmi:sdv:HVAC;1`, respectively. These DTMIs are constructed in the `sdv_v1.rs` file, which we created in step 3 and step 5.
+### 2.1 Run Sample Digital Twin Provider
 
-The `sdv_v1.rs` file contains two main modules: `hmi` and `hvac`. The `hmi` module constructs the interface for `dtmi:sdv:HMI;1`, and the `hvac` module constructs the interface for `dtmi:sdv:HVAC;1`.
+Please refer to these [instructions](../../../README.md#mixed-sample) to run your sample digital twin provider.
 
-In the `hmi` module, there is a `show_notification` submodule that represents the `ShowNotification` command in DTDL. It has an `ID`, `NAME` and `DESCRIPTION` constants, which correspond to the `@id`, `name`, and `description` fields in the `hmi.json` DTDL file. The request and response submodules represent the request and response of the command.
+## 3. (Optional) Add Managed Subscribe to Digital Twin Provider
 
-Similarly, in the `hvac` module, there are two submodules: `ambient_air_temperature` and `is_air_conditioning_active`. These represent the `AmbientAirTemperature` and `IsAirConditioningActive` properties in the `hvac.json` DTDL. Each submodule has an `ID`, `NAME`, `DESCRIPTION` and `TYPE` constants, which correspond to the `@id`, `name`, `description`, and `schema` fields in DTDL.
+>[Managed Subscribe:](../../../../../samples/managed_subscribe/README.md#introduction) "The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, through the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer disconnects it will stop publishing to that dynamically generated topic".
 
-This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module, constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your in-vehicle digital twin model as guidance to code your in-vehicle model.
+Adding the `Managed Subscribe` module for your digital twin provider is optional. However, here are some reasons why you might want to consider using the `Managed Subscribe` module for your digital twin provider:
 
-Both Ibeji providers and Ibeji consumers can utilize this code. This code serves as a set of constants to standardize the values used in their communication with Ibeji, which ensures a consistent and reliable exchange of information.
+- Efficient Data Management: Allows your digital twin provider to efficiently manage the data being sent to its digital twin consumers. Your digital twin provider only needs to publish data when there is a change, so it reduces unnecessary data transmission.
+
+- Customized Frequency: Digital twin consumers can specify the frequency at which they want to receive updates. This allows for more tailored data delivery and can improve the consumer experience.
+
+- Automated Unsubscription: The feature automatically stops publishing to a topic once the consumer disconnects. This helps in resource optimization and ensures that data is not being sent to inactive consumers.
+
+- Scalability: Managed Subscribe can handle a large number of digital twin consumers, making it a good choice for your digital twin provider that is expected to have many digital twin consumers subscribed to it.
+
+- Enhanced Capabilities: The Managed Subscribe module extends the functionality of a digital twin provider.
+
+If you decide to incorporate the `Managed Subscribe` module into your digital twin provider, please consult the [documentation for the Managed Subscribe Sample](../../../samples/managed_subscribe/README.md), and the [code for the Managed Subscribe Sample provider](../../../samples/managed_subscribe/provider/src/) for guidance.
+
+## Next Steps
+
+- Learn how to create an Ibeji Digital Twin Consumer in Tutorial: Create a Digital Twin Consumer
