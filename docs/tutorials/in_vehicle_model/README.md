@@ -247,4 +247,5 @@ Both Ibeji providers and Ibeji consumers can utilize this code. This code serves
 
 ## Next Steps
 
-- Learn how to create a digital twin provider in the tutorial [Tutorial: Create a Digital Twin Provider](../provider/README.md)
+- Learn how to create a digital twin provider in [Tutorial: Create a Digital Twin Provider](../provider/README.md)
+
