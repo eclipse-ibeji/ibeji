@@ -14,9 +14,9 @@
 
 ## Introduction
 
->[Digital Twin Provider:](https://github.com/eclipse-ibeji/ibeji#high-level-design) "A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed".
+>[Digital Twin Provider:](../../../README.md#high-level-design) "A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed".
 
-In this tutorial, you will leverage your in-vehicle model in code that you have created in the previous tutorial in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
+In this tutorial, you will leverage your in-vehicle model in code that you have created in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
 
 This tutorial will reference the sample code provided in Ibeji to keep the tutorial concise. Relevant code snippets are explicitly highlighted and discussed to ensure a clear understanding of the concepts.
 
@@ -46,15 +46,15 @@ In this section, you will utilize the [digital twin provider sample interface](.
 
 #### Sample Digital Twin Provider Interface
 
-1. Consider the in-vehicle signals `ambient air temperature` and `is air conditioning active`, as well as the command `show notification` that you defined in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
+1. Consider the in-vehicle signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification* that you defined in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 
 1. Reference the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto). In this tutorial, a digital twin consumer will only need to use the `Subscribe`, `Set` and `Invoke` operations. The digital twin consumer is covered in the next tutorial.
 
-1. A digital twin consumer should utilize the `Subscribe` operation to consume the `ambient air temperature` and the `is air conditioning active` in-vehicle signals.
+1. A digital twin consumer should utilize the `Subscribe` operation to consume the *ambient air temperature* and the *is air conditioning active* in-vehicle signals.
 
 1. A digital twin consumer should utilize the `Set` operation to set the value of an in-vehicle signal.
 
-1. A digital twin consumer should utilize the `Invoke` operation to send a `show notification` command.
+1. A digital twin consumer should utilize the `Invoke` operation to send a *show notification* command.
 
 ### 1.2 Implement the Operations for the Digital Twin Provider Interface
 
@@ -64,15 +64,15 @@ You have defined your [digital twin provider interface](../../../samples/interfa
 
 1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/mixed/provider/src/provider_impl.rs). Please only consider the implementations for the `Subscribe`, `Set` and `Invoke` operations.
 
-1. At the beginning of the code you will see the import statement for the in-vehicle digital model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md):
+1. There is an import statement for the in-vehicle digital model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md):
 
 ```rust
 use digital_twin_model::sdv_v1 as sdv;
 ```
 
-1. The implementation of the `Set` operation references the signals `is air conditioning active` and `ambient air temperature`.
+1. The implementation of the `Set` operation references the signals *is air conditioning active* and *ambient air temperature*.
 
-1. The implementation of the `Invoke` operation references the command `show notification`.
+1. The implementation of the `Invoke` operation references the command *show notification*.
 
 ## 2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service
 
@@ -80,7 +80,7 @@ You have defined a sample interface with the following operations: `Subscribe`, 
 
 You will need to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../../README.md#high-level-design). This registration will make your digital twin provider discoverable to digital twin consumers through the In-Vehicle Digital Twin Service.
 
->[In-Vehicle Digital Twin Service:](../../../README.md#high-level-design) "Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities and makes them available to Ibeji consumers. Another component in Ibeji's architecture is the Provider. A vehicle may have one or more providers. A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed".
+>[In-Vehicle Digital Twin Service:](../../../README.md#high-level-design) "Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities and makes them available to Ibeji consumers".
 
 1. Reference the [main.rs file of your digital twin provider](../../../samples/mixed/provider/src/main.rs). The main.rs file outlines the behavior of the signals in your digital twin provider sample. This includes a vehicle simulator that can emulate changes in its signals. These changes are then published to any digital twin consumers that have subscribed to your digital twin provider.
 
@@ -123,5 +123,3 @@ Adding the `Managed Subscribe` module for your digital twin provider is optional
 If you decide to incorporate the `Managed Subscribe` module into your digital twin provider, please consult the [documentation for the Managed Subscribe Sample](../../../samples/managed_subscribe/README.md), and the [code for the Managed Subscribe Sample provider](../../../samples/managed_subscribe/provider/src/) for guidance.
 
 ## Next Steps
-
-- Learn how to create an Ibeji Digital Twin Consumer in Tutorial: Create a Digital Twin Consumer

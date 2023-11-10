@@ -124,7 +124,7 @@ To add properties to the HVAC digital twin model, replace the existing content o
 ]
 ```
 
-This introduces two signals to our HVAC system: ambient air temperature and air conditioning status. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
+This introduces two signals to our HVAC system: *ambient air temperature* and *is air conditioning active*. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
 
 Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for properties as optional, Ibeji requires it. This helps in referring to your DTDL fragments in the code.
 
@@ -248,4 +248,3 @@ Both Ibeji providers and Ibeji consumers can utilize this code. This code serves
 ## Next Steps
 
 - Learn how to create a digital twin provider in [Tutorial: Create a Digital Twin Provider](../provider/README.md)
-
