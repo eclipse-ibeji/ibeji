@@ -69,10 +69,10 @@ where you are running the demo.<br><br>
 `./invehicle-digital-twin`
 
 1. In the middle window, run:<br><br>
-`./property-provider`
+`./managed-subscribe-provider`
 
 1. In the bottom window, run:<br><br>
-`./property-consumer freq_ms=<value>`
+`./managed-subscribe-consumer freq_ms=<value>`
     > Note: The consumer currently has a minimum frequency rate of 1000 ms, so set accordingly.
     Default is 10000 ms (10 secs) if no value is set in the optional `freq_ms` flag.<br>
     > Note: One or more consumers can be run with different frequencies. This will show how a
