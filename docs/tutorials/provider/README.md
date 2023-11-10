@@ -41,7 +41,7 @@ A digital twin provider needs an interface. The interface will expose operations
 
 >Tip: A suggested approach to defining your digital twin provider is adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names to interact with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
 
->Note: The [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention.
+The [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention.
 
 #### Sample Digital Twin Provider Interface
 
@@ -213,6 +213,11 @@ Adding the `Managed Subscribe` module for your digital twin provider is **option
 
 - Enhanced Capabilities: The Managed Subscribe module extends the functionality of a digital twin provider.
 
-If you decide to incorporate the `Managed Subscribe` module into your digital twin provider, please consult the [documentation for the Managed Subscribe Sample](../../../samples/managed_subscribe/README.md), and the [code for the Managed Subscribe Sample provider](../../../samples/managed_subscribe/provider/src/) for guidance.
+If you decide to incorporate the `Managed Subscribe` module into your digital twin provider, please consult the [Managed Subscribe interface](../../../interfaces/module/managed_subscribe/v1/managed_subscribe.proto), and the [documentation for the Managed Subscribe sample](../../../samples/managed_subscribe/README.md) for guidance. You will need to implement the proto methods that are defined in the `Managed Subscribe` interface. Since the interface is defined in a protobuf file, the `Managed Subscribe` module is program language agnostic.
+
+### 3.1 Rust Sample Implementation of a Managed Subscribe Digital Twin Provider
+
+Please refer to the [sample Rust code for the Managed Subscribe Sample provider](../../../samples/managed_subscribe/provider/src/) to see an example of how to integrate the Managed Subscribe module into a digital twin provider.
+This sample Rust code just contains an *ambient air temperature* signal, and does not include the in-vehicle signal *is air conditioning active* and the command *show notification*.
 
 ## Next Steps
