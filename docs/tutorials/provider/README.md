@@ -106,7 +106,7 @@ Please refer to these [instructions](../../../README.md#mixed-sample) to run you
 
 ## 3. (Optional) Add Managed Subscribe to Digital Twin Provider
 
->[Managed Subscribe:](../../../../../samples/managed_subscribe/README.md#introduction) "The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, through the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer disconnects it will stop publishing to that dynamically generated topic".
+>[Managed Subscribe:](../../../samples/managed_subscribe/README.md#introduction) "The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, through the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer disconnects it will stop publishing to that dynamically generated topic".
 
 Adding the `Managed Subscribe` module for your digital twin provider is optional. However, here are some reasons why you might want to consider using the `Managed Subscribe` module for your digital twin provider:
 
