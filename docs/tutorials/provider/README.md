@@ -5,8 +5,8 @@
 - [1. Create an Ibeji Digital Twin Provider](#1-create-an-ibeji-digital-twin-provider)
   - [1.1 Define Digital Twin Provider Interface](#11-define-digital-twin-provider-interface)
     - [Sample Digital Twin Provider Interface](#sample-digital-twin-provider-interface)
-  - [1.2 Digital Twin Provider Implementation](#12-digital-twin-provider-implementation)
-    - [Sample Digital Twin Provider Implementation](#sample-digital-twin-provider-implementation)
+  - [1.2 Implement the Operations for the Digital Twin Provider Interface](#12-implement-the-operations-for-the-digital-twin-provider-interface)
+    - [Implement the Operations for the Sample Digital Twin Provider Interface](#implement-the-operations-for-the-sample-digital-twin-provider-interface)
 - [2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-register-digital-twin-provider-with-the-in-vehicle-digital-twin-service)
   - [2.1 Run Sample Digital Twin Provider](#21-run-sample-digital-twin-provider)
 - [3. (Optional) Add Managed Subscribe to Digital Twin Provider](#3-optional-add-managed-subscribe-to-digital-twin-provider)
@@ -28,15 +28,15 @@ This tutorial will reference the sample code provided in Ibeji to keep the tutor
 
 ## 1. Create an Ibeji Digital Twin Provider
 
-In this section, you will learn how to develop a digital twin provider that communicates with its consumers via gRPC. It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not restricted to using gRPC and can employ other communication protocols.
+In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not restricted to using gRPC and can employ other communication protocols.
 
 The `{repo-root-dir}/samples/mixed` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` contains the in-vehicle model in Rust code that you have constructed in the previous [Tutorial: Create an In-vehicle Model With DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
 
-For simplicity, we will refer to both the `{repo-root-dir}/samples/mixed` and `{repo-root-dir}/digital-twin-model/src` directories throughout this tutorial.
+Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mixed` directory are referreced to guide you through the process of creating a digital twin provider.
 
 ### 1.1 Define Digital Twin Provider Interface
 
-A digital twin provider needs an interface. The interface will expose operations that allow consumers to access the subset of vehicle signals that your digital provider makes available.
+A digital twin provider needs an interface. The interface will expose operations that allow digital twin consumers to access a subset of in-vehicle signals that your digital provider makes available.
 
 >Tip: A suggested approach to defining your digital twin provider is to adopt the perspective of a digital twin consumer. This involves consideration of the operations and their corresponding names. For example, the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
 
@@ -56,13 +56,13 @@ In this section, you will utilize the [digital twin provider sample interface](.
 
 1. A digital twin consumer should utilize the `Invoke` operation to send a `show notification` command.
 
-### 1.2 Digital Twin Provider Implementation
+### 1.2 Implement the Operations for the Digital Twin Provider Interface
 
 You have defined your [digital twin provider interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto). Let's implement the functionality for the `Subscribe`, `Set` and `Invoke` operations.
 
-#### Sample Digital Twin Provider Implementation
+#### Implement the Operations for the Sample Digital Twin Provider Interface
 
-1. Reference the [Sample Digital Twin Provider Implementation](../../../samples/mixed/provider/src/provider_impl.rs). Please only consider the implementations for the `Subscribe`, `Set` and `Invoke` operations.
+1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/mixed/provider/src/provider_impl.rs). Please only consider the implementations for the `Subscribe`, `Set` and `Invoke` operations.
 
 1. Observe at the beginning of the code, where you see the import statement for the in-vehicle digital model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 
@@ -112,9 +112,9 @@ Adding the `Managed Subscribe` module for your digital twin provider is optional
 
 - Efficient Data Management: Allows your digital twin provider to efficiently manage the data being sent to its digital twin consumers. Your digital twin provider only needs to publish data when there is a change, so it reduces unnecessary data transmission.
 
-- Customized Frequency: Digital twin consumers can specify the frequency at which they want to receive updates. This allows for more tailored data delivery and can improve the consumer experience.
+- Customized Frequency: Digital twin consumers can specify the frequency at which they want to receive updates. This allows for more tailored data delivery and can improve a digital twin consumer's experience.
 
-- Automated Unsubscription: The feature automatically stops publishing to a topic once the consumer disconnects. This helps in resource optimization and ensures that data is not being sent to inactive consumers.
+- Automated Unsubscription: The feature automatically stops publishing to a topic once all the digital twin consumers disconnect. This helps in resource optimization and ensures that data is not being sent to inactive digital twin consumers.
 
 - Scalability: Managed Subscribe can handle a large number of digital twin consumers, making it a good choice for your digital twin provider that is expected to have many digital twin consumers subscribed to it.
 
