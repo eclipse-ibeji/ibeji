@@ -4,8 +4,8 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
-- MIT License (39)
 - Apache License 2.0 (38)
+- MIT License (38)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (1)
 - ISC License (1)
@@ -1292,6 +1292,7 @@ This page lists the licenses of the projects used in cargo-about.
 #### Used by
 
 - [crc32fast]( https://github.com/srijs/rust-crc32fast ) 1.3.2
+- [env_logger]( https://github.com/rust-cli/env_logger ) 0.10.1
 - [humantime]( https://github.com/tailhook/humantime ) 2.1.0
 - [tokio-io-timeout]( https://github.com/sfackler/tokio-io-timeout ) 1.2.0
 
@@ -1715,16 +1716,16 @@ This page lists the licenses of the projects used in cargo-about.
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.16
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.9
-- [libc]( https://github.com/rust-lang/libc ) 0.2.149
+- [libc]( https://github.com/rust-lang/libc ) 0.2.150
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.15
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.69
 - [quote]( https://github.com/dtolnay/quote ) 1.0.33
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.15
-- [serde]( https://github.com/serde-rs/serde ) 1.0.190
-- [serde_derive]( https://github.com/serde-rs/serde ) 1.0.190
+- [serde]( https://github.com/serde-rs/serde ) 1.0.192
+- [serde_derive]( https://github.com/serde-rs/serde ) 1.0.192
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.108
-- [syn]( https://github.com/dtolnay/syn ) 2.0.38
+- [syn]( https://github.com/dtolnay/syn ) 2.0.39
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.50
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.50
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
@@ -2774,7 +2775,7 @@ limitations under the License.
 
 #### Used by
 
-- [http]( https://github.com/hyperium/http ) 0.2.9
+- [http]( https://github.com/hyperium/http ) 0.2.10
 
 #### License
 
@@ -3869,7 +3870,6 @@ limitations under the License.
 - [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.15
 - [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.16
 - [either]( https://github.com/bluss/either ) 1.9.0
-- [env_logger]( https://github.com/rust-cli/env_logger/ ) 0.10.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
@@ -3896,7 +3896,7 @@ limitations under the License.
 - [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.65
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
-- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.10
+- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.11
 - [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.11
 - [log]( https://github.com/rust-lang/log ) 0.4.20
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
@@ -3935,7 +3935,7 @@ limitations under the License.
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.21
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
-- [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.1
+- [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.2
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.10
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.5.5
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
@@ -4991,7 +4991,7 @@ APPENDIX: How to apply the Apache License to your work.
 
 #### Used by
 
-- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.10
+- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.11
 - [rand_chacha]( https://github.com/rust-random/rand ) 0.3.1
 
 #### License
@@ -7745,7 +7745,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.33.0
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.34.0
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.14
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.10
 
@@ -7777,65 +7777,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
-- [tokio-macros]( https://github.com/tokio-rs/tokio ) 2.1.0
-
-#### License
-
-```text
-Copyright (c) 2023 Tokio Contributors
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-The MIT License (MIT)
-
-Copyright (c) 2019 Yoshua Wuyts
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ```
 
@@ -7978,6 +7919,7 @@ SOFTWARE.
 - [samples-seat-massager]( https://crates.io/crates/samples-seat-massager ) 0.1.0
 - [samples-streaming]( https://crates.io/crates/samples-streaming ) 0.1.0
 - [sdl2-sys]( https://github.com/rust-sdl2/rust-sdl2 ) 0.35.2
+- [tokio-macros]( https://github.com/tokio-rs/tokio ) 2.2.0
 
 #### License
 
