@@ -33,7 +33,7 @@ In this section, you will learn how to develop a digital twin provider that comm
 
 The `{repo-root-dir}/samples/mixed` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` contains the in-vehicle model in Rust code that you have constructed in [Tutorial: Create an In-vehicle Model With DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
 
-Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mixed` directory are referreced to guide you through the process of creating a digital twin provider.
+Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mixed` directory are referenced to guide you through the process of creating a digital twin provider.
 
 ### 1.1 Define Digital Twin Provider Interface
 
@@ -100,7 +100,7 @@ In this digital twin provider sample interface, the conventions that the Ibeji s
 
 - A digital twin consumer should utilize the `Invoke` operation to send a *show notification* command.
 
-When introducing additional signals and commands, it iss crucial to carefully select the operation(s) that best align with the behavior of each signal or command. This ensures a seamless integration and optimal performance of your system.
+When introducing additional signals and commands, it is crucial to carefully select the operation(s) that best align with the behavior of each signal or command. This ensures a seamless integration and optimal performance of your system.
 
 ### 1.2 Implement the Operations of a Digital Twin Provider Interface
 
@@ -110,7 +110,7 @@ The following lists out the flow for implementing the operations of a digital tw
 
 Here is a guide to implementing these operations for your digital twin interface:
 
-1. Choose Your Programming Language: Since the operations are defined in a protobuf file, you can select any programming language that supports protobufs.  This includes languages like Python, Java, C++, Go, etc.
+1. Choose Your Programming Language: Since the operations are defined in a protobuf file, you can select any programming language that supports protobufs. This includes languages like Rust, Python, Java, C++, Go, etc.
 
 1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
@@ -199,7 +199,7 @@ Please refer to these [instructions](../../../README.md#mixed-sample) to run you
 
 ## 3. Add Managed Subscribe to Digital Twin Provider
 
->[Managed Subscribe:](../../../samples/managed_subscribe/README.md#introduction) The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, through the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer disconnects it will stop publishing to that dynamically generated topic.
+>[Managed Subscribe:](../../../samples/managed_subscribe/README.md#introduction) The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, signaled with the help of the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer unsubscribes and disconnects it will stop publishing to that dynamically generated topic.
 
 Adding the `Managed Subscribe` module for your digital twin provider is **optional**. However, here are some reasons why you might want to consider using the `Managed Subscribe` module for your digital twin provider:
 
@@ -207,7 +207,7 @@ Adding the `Managed Subscribe` module for your digital twin provider is **option
 
 - Customized Frequency: Digital twin consumers can specify the frequency at which they want to receive updates. This allows for more tailored data delivery and can improve a digital twin consumer's experience.
 
-- Automated Unsubscription: The feature automatically stops publishing to a topic once all the digital twin consumers disconnect. This helps in resource optimization and ensures that data is not being sent to inactive digital twin consumers.
+- Automated Topic Cleanup: The feature automatically stops publishing to a topic once all the digital twin consumers have unsubscribed. This helps in resource optimization and ensures that data is not being sent to inactive digital twin consumers.
 
 - Scalability: Managed Subscribe can handle a large number of digital twin consumers, making it a good choice for your digital twin provider that is expected to have many digital twin consumers subscribed to it.
 
