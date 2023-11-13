@@ -15,7 +15,7 @@
 
 ## Introduction
 
->[Digital Twin Provider:](../../../README.md#high-level-design) A provider exposes a subset of the vehicle's primary capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed.
+>[Digital Twin Provider:](../../../README.md#high-level-design) A provider exposes a subset of the vehicle's hardware capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed.
 
 In this tutorial, you will leverage your in-vehicle model in code that you have created in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
 
@@ -39,9 +39,9 @@ Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mi
 
 A digital twin provider needs an interface. The interface will expose operations that allow digital twin consumers to access a subset of in-vehicle signals that your digital provider makes available.
 
->Tip: A suggested approach to defining your digital twin provider is adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names to interact with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
+>Tip: A suggested approach for defining your digital twin provider is to adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names for interacting with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
 
-The [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention.
+The [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention for the operations.
 
 #### Sample Digital Twin Provider Interface
 
@@ -108,13 +108,11 @@ You have defined your digital twin provider interface.
 
 The following lists out the flow for implementing the operations of a digital twin interface in the programming language of your choice:
 
-Here is a guide to implementing these operations for your digital twin interface:
-
 1. Choose Your Programming Language: Since the operations are defined in a protobuf file, you can select any programming language that supports protobufs. This includes languages like Rust, Python, Java, C++, Go, etc.
 
 1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
-1. Implement the protobuf methods you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Subscribe`, `Set` and `Invoke` operations. These operations have been defined in a protobuf file, which gives you the flexibility to implement them in any programming language you prefer.
+1. Implement the protobuf methods you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Subscribe`, `Set` and `Invoke` operations.
 
 1. For each protobuf method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
@@ -200,6 +198,8 @@ Please refer to these [instructions](../../../README.md#mixed-sample) to run you
 ## 3. Add Managed Subscribe to Digital Twin Provider
 
 >[Managed Subscribe:](../../../samples/managed_subscribe/README.md#introduction) The managed subscribe sample shows how Ibeji can extend its functionality with modules to give providers and consumers more capabilities. This sample utilizes the 'Managed Subscribe' module to allow a consumer to get an MQTT subscription for the AmbientAirTemperature value of a vehicle at a specific frequency in milliseconds. The provider, signaled with the help of the module, will publish the temperature value at the requested frequency for each consumer on its own topic and once the consumer unsubscribes and disconnects it will stop publishing to that dynamically generated topic.
+
+The current implementation of the Managed Subscribe Module expects to utilize the [Agemo Service](https://github.com/eclipse-chariott/Agemo/blob/main/README.md). This service currently requires the use of an MQTT broker for communication between publishers and subscribers.
 
 Adding the `Managed Subscribe` module for your digital twin provider is **optional**. However, here are some reasons why you might want to consider using the `Managed Subscribe` module for your digital twin provider:
 
