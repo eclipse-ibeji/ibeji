@@ -69,7 +69,7 @@ async fn start_show_notification_repeater(provider_uri: String) -> Result<(), St
     let request_payload_json = serde_json::to_string(&request_payload).unwrap();
 
     loop {
-        info!("Sending an invoke request on entity {} with payload '{} to provider URI {provider_uri}",
+        info!("Sending an invoke request on entity {} with payload '{}' to provider URI {provider_uri}",
             sdv::hmi::show_notification::ID, &request_payload_json);
 
         let client_result = DigitalTwinProviderTutorialClient::connect(provider_uri.clone()).await;
