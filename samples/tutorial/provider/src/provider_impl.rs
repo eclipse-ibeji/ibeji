@@ -26,7 +26,7 @@ impl DigitalTwinProviderTutorial for ProviderImpl {
         let value = match entity_id.as_str() {
             sdv::hvac::ambient_air_temperature::ID => "42",
             sdv::hvac::is_air_conditioning_active::ID => "true",
-            _ => "NULL"
+            _ => "NULL",
         };
 
         let get_response = GetResponse { property_value: String::from(value) };

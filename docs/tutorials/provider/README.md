@@ -69,15 +69,15 @@ The following lists out the flow for implementing the operations of a digital tw
 
 1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
-1. Implement the methods you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
+1. Implement the operations you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
 
-1. For each method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
+1. For each opeartion you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
-In order to translate operations into code, it is important to understand the requirements of each operation.
+In order to translate the operations into code, it is important to understand the requirements of each operation.
 
 #### Rust Sample Implementation of the Sample Interface
 
-This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
+This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface) that is defined in a protobuf file, and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
 
 1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/tutorial/provider/src/provider_impl.rs).
 
