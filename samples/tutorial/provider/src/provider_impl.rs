@@ -23,13 +23,13 @@ impl DigitalTwinProviderTutorial for ProviderImpl {
         let request_inner = request.into_inner();
         let entity_id: String = request_inner.entity_id.clone();
 
-        let mut get_response: GetResponse = GetResponse { property_value: String::from("NULL") };
+        let value = match entity_id.as_str() {
+            sdv::hvac::ambient_air_temperature::ID => "42",
+            sdv::hvac::is_air_conditioning_active::ID => "true",
+            _ => "NULL"
+        };
 
-        if entity_id == sdv::hvac::ambient_air_temperature::ID {
-            get_response = GetResponse { property_value: String::from("42") };
-        } else if entity_id == sdv::hvac::is_air_conditioning_active::ID {
-            get_response = GetResponse { property_value: String::from("true") };
-        }
+        let get_response = GetResponse { property_value: String::from(value) };
 
         Ok(Response::new(get_response))
     }

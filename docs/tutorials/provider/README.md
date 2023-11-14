@@ -31,9 +31,9 @@ This tutorial will reference the sample code provided in Ibeji to keep the tutor
 
 In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not restricted to using gRPC and can employ other communication protocols.
 
-The `{repo-root-dir}/samples/mixed` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` contains the in-vehicle model in Rust code that you have constructed in [Tutorial: Create an In-vehicle Model With DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
+The `{repo-root-dir}/samples/tutorial` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` contains the in-vehicle model in Rust code that you have constructed in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
 
-Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mixed` directory are referenced to guide you through the process of creating a digital twin provider.
+Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/tutorial` directory are referenced to guide you through the process of creating a digital twin provider.
 
 ### 1.1 Define Digital Twin Provider Interface
 
@@ -73,8 +73,7 @@ The following lists out the flow for implementing the operations of a digital tw
 
 1. For each method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
-It is important to understand the requirements of each operation and then translating those requirements into code. Please feel free to contribute to Ibeji by submitting a pull request with your samples whether they are in Rust or in a different programming language.
-
+n order to translate operations into code, it is important to understand the requirements of each operation.
 #### Rust Sample Implementation of the Sample Interface
 
 This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
