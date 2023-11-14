@@ -73,7 +73,7 @@ The following lists out the flow for implementing the operations of a digital tw
 
 1. For each opeartion you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
-In order to translate the operations into code, it is important to understand the requirements of each operation.
+In order to translate your operations into code, it is important to understand the requirements of each operation.
 
 #### Rust Sample Implementation of the Sample Interface
 
