@@ -151,7 +151,7 @@ The `register_entities` function in this Rust sample digital twin provider showc
 #### Run the Sample Digital Twin Provider
 
 1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer. Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin. The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.
-In each window, change directory to the directory containing the build artifacts. Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.
+In each window, change the current directory to the directory containing the build artifacts. Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.
 
 1. cd {repo-root-dir}/target/debug
 Create the three config files with the following contents, if they are not already there:
@@ -172,11 +172,11 @@ Create the three config files with the following contents, if they are not alrea
 
 1. In the middle window, run:
 
-./mixed-provider
+`./digital-twin-provider-tutorial`
 
 1. In the bottom window, run:
 
-`./mixed-consumer`
+`./digital-twin-consumer-tutorial`
 
 1. Use control-c in each of the windows when you wish to stop the demo.
 
