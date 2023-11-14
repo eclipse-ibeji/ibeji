@@ -73,7 +73,8 @@ The following lists out the flow for implementing the operations of a digital tw
 
 1. For each method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
-n order to translate operations into code, it is important to understand the requirements of each operation.
+In order to translate operations into code, it is important to understand the requirements of each operation.
+
 #### Rust Sample Implementation of the Sample Interface
 
 This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
