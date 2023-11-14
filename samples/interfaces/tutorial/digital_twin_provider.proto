@@ -1,0 +1,37 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+// Digital Twin Provider Tutorial definition
+//
+// The protobuf definitions for the Digital Twin Provider Tutorial that only supports synchronous
+// "Get" and "Invoke" operations
+
+syntax = "proto3";
+package digital_twin_provider_tutorial;
+
+// The service entry point to the Digital Twin Provider Tutorial.
+service DigitalTwinProviderTutorial {
+    // Method to get the value of the specified property
+    rpc Get (GetRequest) returns (GetResponse);
+
+    // Method to invoke a command
+    rpc Invoke (InvokeRequest) returns (InvokeResponse);
+}
+
+message GetRequest {
+    string entity_id = 1;
+}
+
+message GetResponse {
+    string property_value = 1;
+}
+
+message InvokeRequest {
+   string entity_id = 1;
+   string payload = 4;
+}
+
+message InvokeResponse {
+    string response = 1;
+}
