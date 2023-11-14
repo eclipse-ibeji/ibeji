@@ -71,7 +71,7 @@ The following lists out the flow for implementing the operations of a digital tw
 
 1. Implement the operations you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
 
-1. For each opeartion you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
+1. For each operation you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
 In order to translate your operations into code, it is important to understand the requirements of each operation.
 
