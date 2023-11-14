@@ -39,9 +39,9 @@ Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/mi
 
 A digital twin provider needs an interface. The interface will expose operations that allow digital twin consumers to access a subset of in-vehicle signals that your digital provider makes available.
 
->Tip: A suggested approach for defining your digital twin provider is to adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names for interacting with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto), the specified operations are `Subscribe`, `Unsubscribe`, `Get`, `Set`, `Invoke` and `Stream`.
+>Tip: A suggested approach for defining your digital twin provider is to adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names for interacting with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto), the specified operations are `Get` and `Invoke`.
 
-The [digital twin provider sample interface](../../../samples/interfaces/sample_grpc/v1/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention for the operations.
+The [digital twin provider tutorial interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto) serves as an example of what a digital twin provider's interface could look like. Feel free to replicate these operation names, modify them, or even add new ones as per your requirements. These operations are non-prescriptive. It is up to the developers of the in-vehicle digital twin to come up with their own convention for the operations.
 
 #### Sample Digital Twin Provider Interface
 
@@ -49,54 +49,11 @@ This section provides an example of a digital twin provider interface. To reiter
 
 1. Consider the in-vehicle signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification* that you defined in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 
-1. Reference the digital twin provider sample interface below which is defined using a protobuf file:
+1. Reference the [sample digital twin provider tutorial interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto):
 
-  ```proto
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT license.
-  // SPDX-License-Identifier: MIT
+In this digital twin provider sample interface, the conventions that this interface enforces are as follows:
 
-  syntax = "proto3";
-
-  package digital_twin_provider;
-
-  service DigitalTwinProvider {
-      rpc Subscribe (SubscribeRequest) returns (SubscribeResponse);
-      rpc Get (GetRequest) returns (GetResponse);
-      rpc Set (SetRequest) returns (SetResponse);
-      rpc Invoke (InvokeRequest) returns (InvokeResponse);
-      rpc Stream(StreamRequest) returns (stream StreamResponse);
-  }
-
-  message SubscribeRequest {
-    string entity_id = 1;
-    string consumer_uri = 2;
-  }
-
-  message SubscribeResponse {}
-
-  message SetRequest {
-    string entity_id = 1;
-    string value = 2;
-  }
-
-  message SetResponse {}
-
-  message InvokeRequest {
-    string entity_id = 1;
-    string consumer_uri = 2;
-    string response_id = 3;
-    string payload = 4;
-  }
-
-  message InvokeResponse {}
-  ```
-
-In this digital twin provider sample interface, the conventions that the Ibeji samples enforce are as follows:
-
-- A digital twin consumer should utilize the `Subscribe` operation to consume the *ambient air temperature* and the *is air conditioning active* in-vehicle signals.
-
-- A digital twin consumer should utilize the `Set` operation to set the value of an in-vehicle signal.
+- A digital twin consumer should utilize the `Get` operation to synchronously consume the *ambient air temperature* and the *is air conditioning active* in-vehicle signals.
 
 - A digital twin consumer should utilize the `Invoke` operation to send a *show notification* command.
 
@@ -108,21 +65,21 @@ You have defined your digital twin provider interface.
 
 The following lists out the flow for implementing the operations of a digital twin interface in the programming language of your choice:
 
-1. Choose Your Programming Language: Since the operations are defined in a protobuf file, you can select any programming language that supports protobufs. This includes languages like Rust, Python, Java, C++, Go, etc.
+1. Choose Your Programming Language: Since operations can be defined in a protobuf file, you can select any programming language that supports protobufs. This includes languages like Rust, Python, Java, C++, Go, etc. However, operations do not need to be defined in a protobuf file to be programming language agnostic. For instance, if you have a subscribe operation you may want to use [MQTT](https://mqtt.org/) for publishing to digital twin consumers that have subscribed to your digital twin provider. Please see the [Managed Subscribe Sample](https://github.com/eclipse-ibeji/ibeji/tree/main/samples/managed_subscribe) and [Property Sample](../../../samples/property/provider/src/main.rs) for Rust examples of a digital twin provider using MQTT.
 
 1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
-1. Implement the protobuf methods you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Subscribe`, `Set` and `Invoke` operations.
+1. Implement the methods you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
 
-1. For each protobuf method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
+1. For each method you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
 
-It is important to understand the requirements of each operation and then translating those requirements into code.
+It is important to understand the requirements of each operation and then translating those requirements into code. Please feel free to contribute to Ibeji by submitting a pull request with your samples whether they are in Rust or in a different programming language.
 
 #### Rust Sample Implementation of the Sample Interface
 
-This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of the `Subscribe`, `Set` and `Invoke` operations.
+This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
 
-1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/mixed/provider/src/provider_impl.rs). Please only consider the implementations for the `Subscribe`, `Set` and `Invoke` operations.
+1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/tutorial/provider/src/provider_impl.rs).
 
 1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
 
@@ -130,14 +87,14 @@ This section uses the [sample digital twin provider interface](#sample-digital-t
 use digital_twin_model::sdv_v1 as sdv;
 ```
 
-1. The implementation of the `Set` operation references the signals *is air conditioning active* and *ambient air temperature*:
+1. The implementation of the `Get` operation references the signals *is air conditioning active* and *ambient air temperature*:
 
 ```rust
-    /// Set implementation.
-    ///
-    /// # Arguments
-    /// * `request` - Set request.
-    async fn set(&self, request: Request<SetRequest>) -> Result<Response<SetResponse>, Status> {..}
+  /// Get implementation.
+  ///
+  /// # Arguments
+  /// * `request` - Get request.
+  async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {..}
 ```
 
 1. The implementation of the `Invoke` operation references the command *show notification*.
@@ -171,11 +128,11 @@ The following lists out the flow for registering a digital twin provider in the 
 
 ### 2.1 Rust Sample Registration of a Digital Twin Provider
 
-This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of registering the signals *ambient air temperature* and *is air conditioning active* and the command *show notification*
+This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of a provider registering the signals *ambient air temperature* and *is air conditioning active* and the command *show notification*
 
-1. Reference the [main.rs file of your digital twin provider](../../../samples/mixed/provider/src/main.rs). The main.rs file outlines the behavior of the signals in your digital twin provider sample. This includes a vehicle simulator that can emulate changes in its signals. These changes are then published to any digital twin consumers that have subscribed to your digital twin provider.
+1. Reference the [main.rs file of the sample digital twin provider](../../../samples/tutorial/provider/src/main.rs). The main.rs file outlines the behavior of the signals in your digital twin provider sample. This includes a vehicle simulator that can emulate changes in its signals. These changes are then published to any digital twin consumers that have subscribed to your digital twin provider.
 
-1. One function of particular interest in the [main.rs](../../../samples/mixed/provider/src/main.rs) file is the register function.
+1. One function of particular interest in the [main.rs](../../../samples/tutorial/provider/src/main.rs) file is the `register_entities` function.
 
 ```rust
 /// Register the entities endpoints.
@@ -193,7 +150,35 @@ The `register_entities` function in this Rust sample digital twin provider showc
 
 #### Run the Sample Digital Twin Provider
 
-Please refer to these [instructions](../../../README.md#mixed-sample) to run your sample digital twin provider.
+1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer. Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin. The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.
+In each window, change directory to the directory containing the build artifacts. Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.
+
+1. cd {repo-root-dir}/target/debug
+Create the three config files with the following contents, if they are not already there:
+
+---- consumer_settings.yaml ----
+`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`
+
+---- invehicle_digital_twin_settings.yaml ----
+`invehicle_digital_twin_authority: "0.0.0.0:5010"`
+
+---- provider_settings.yaml ----
+`provider_authority: "0.0.0.0:4010"`
+`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`
+
+1. In the top window, run:
+
+`./invehicle-digital-twin`
+
+1. In the middle window, run:
+
+./mixed-provider
+
+1. In the bottom window, run:
+
+`./mixed-consumer`
+
+1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## 3. Add Managed Subscribe to Digital Twin Provider
 
@@ -218,6 +203,6 @@ If you decide to incorporate the `Managed Subscribe` module into your digital tw
 ### 3.1 Rust Sample Implementation of a Managed Subscribe Digital Twin Provider
 
 Please refer to the [sample Rust code for the Managed Subscribe Sample provider](../../../samples/managed_subscribe/provider/src/) to see an example of how to integrate the Managed Subscribe module into a digital twin provider.
-This sample Rust code just contains an *ambient air temperature* signal, and does not include the in-vehicle signal *is air conditioning active* and the command *show notification*.
+This sample Rust code contains an *ambient air temperature* signal, and does not include the in-vehicle signal *is air conditioning active* and the command *show notification*.
 
 ## Next Steps
