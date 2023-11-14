@@ -184,7 +184,7 @@ async fn publish(subscription_map: Arc<Mutex<SubscriptionMap>>, entity_id: &str,
 ///
 /// # Arguments
 /// * `subscription_map` - Subscription map.
-/// * `vehicle` - Vehicle.
+/// * `vehicle` - A vehicle struct that emulates the dynamic changes of in-vehicle signals.
 async fn start_vehicle_simulator(
     subscription_map: Arc<Mutex<SubscriptionMap>>,
     vehicle: Arc<Mutex<Vehicle>>,
