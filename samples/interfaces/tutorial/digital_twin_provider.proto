@@ -29,7 +29,7 @@ message GetResponse {
 
 message InvokeRequest {
    string entity_id = 1;
-   string payload = 4;
+   string payload = 2;
 }
 
 message InvokeResponse {

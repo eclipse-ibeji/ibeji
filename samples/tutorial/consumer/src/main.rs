@@ -88,12 +88,13 @@ async fn start_show_notification_repeater(provider_uri: String) -> Result<(), St
         let response = client.invoke(request).await?;
 
         info!("Show notification response: {}", response.into_inner().response);
+
         debug!("Completed the invoke request");
         sleep(Duration::from_secs(15)).await;
     }
 }
 
-/// Send a GET request to the digital twin provider.
+/// Send a GET request to the digital twin provider and return the resulting value.
 ///
 /// # Arguments
 /// `provider_uri` - The provider's URI.
@@ -124,7 +125,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    // Acquire the provider's endpoint for show notification
+    // Acquire the provider's endpoint for the show notification command
     let show_notification_command_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
             &invehicle_digital_twin_uri,
@@ -137,7 +138,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let show_notification_command_provider_uri =
         show_notification_command_provider_endpoint_info.uri;
 
-    // Acquire the provider's endpoint for ambient air temperature and is air conditioning active.
+    // Acquire the provider's endpoint for the ambient air temperature signal
     let mut provider_uri_map = HashMap::new();
     let ambient_air_temperature_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
@@ -153,6 +154,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ambient_air_temperature_property_provider_endpoint_info.uri,
     );
 
+    // Acquire the provider's endpoint for the is air conditioning active signal
     let is_air_conditioning_active_property_provider_endpoint_info =
         discover_digital_twin_provider_using_ibeji(
             &invehicle_digital_twin_uri,

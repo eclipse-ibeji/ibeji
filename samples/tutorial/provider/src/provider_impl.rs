@@ -24,7 +24,7 @@ impl DigitalTwinProviderTutorial for ProviderImpl {
         let entity_id: String = request_inner.entity_id.clone();
 
         let value = match entity_id.as_str() {
-            sdv::hvac::ambient_air_temperature::ID => "42",
+            sdv::hvac::ambient_air_temperature::ID => "70",
             sdv::hvac::is_air_conditioning_active::ID => "true",
             _ => "NULL",
         };

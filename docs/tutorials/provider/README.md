@@ -37,7 +37,7 @@ Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/tu
 
 ### 1.1 Define Digital Twin Provider Interface
 
-A digital twin provider needs an interface. The interface will expose operations that allow digital twin consumers to access a subset of in-vehicle signals that your digital provider makes available.
+A digital twin provider needs an interface. The interface will expose operations that allow digital twin consumers to access the in-vehicle signals that your digital provider makes available.
 
 >Tip: A suggested approach for defining your digital twin provider is to adopt the perspective of a digital twin consumer. This requires consideration of the operations and their corresponding names for interacting with each in-vehicle signal and command. For example, for the [digital twin provider sample interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto), the specified operations are `Get` and `Invoke`.
 
@@ -116,7 +116,7 @@ You have defined your digital twin provider interface, and you have implemented 
 
 You will need to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../../README.md#high-level-design). This registration will make your digital twin provider discoverable by digital twin consumers through the In-Vehicle Digital Twin Service.
 
->[In-Vehicle Digital Twin Service:](../../../README.md#high-level-design) Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's primary capabilities and makes them available to Ibeji consumers.
+>[In-Vehicle Digital Twin Service:](../../../README.md#high-level-design) Ibeji's architecture has an In-Vehicle Digital Twin Service at its core. The In-Vehicle Digital Twin Service captures all of the vehicle's hardware capabilities and makes them available to Ibeji consumers.
 
 The following lists out the flow for registering a digital twin provider in the programming language of your choice:
 
@@ -146,7 +146,7 @@ async fn register_entities(
 ) -> Result<(), Status> { .. }
 ```
 
-The `register_entities` function in this Rust sample digital twin provider showcases the process of registering with the In-Vehicle Digital Twin Service.
+The `register_entities` function in this Rust sample digital twin provider shows the process of registering with the In-Vehicle Digital Twin Service.
 
 #### Run the Sample Digital Twin Provider
 
