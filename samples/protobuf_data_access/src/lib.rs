@@ -37,3 +37,9 @@ pub mod sample_grpc {
         }
     }
 }
+
+pub mod tutorial_grpc {
+    pub mod v1 {
+        tonic::include_proto!("digital_twin_provider_tutorial");
+    }
+}

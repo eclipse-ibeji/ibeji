@@ -1,7 +1,7 @@
 # Tutorial: Create an In-vehicle Model With DTDL
 
 - [Introduction](#introduction)
-- [1. Create an In-vehicle Digital Twin Model With DTDL](#1-create-an-in-vehicle-digital-twin-model-with-dtdl)
+- [1. Create an In-Vehicle Digital Twin Model with DTDL](#1-create-an-in-vehicle-digital-twin-model-with-dtdl)
   - [1.1 DTDL Interfaces](#11-dtdl-interfaces)
   - [1.2 Create HVAC and HMI Interfaces](#12-create-hvac-and-hmi-interfaces)
   - [1.3 DTDL DTMI ID](#13-dtdl-dtmi-id)
@@ -9,6 +9,7 @@
   - [1.5 DTDL Commands](#15-dtdl-commands)
 - [2. DTDL Validation](#2-dtdl-validation)
 - [3. Translating DTDL to Code](#3-translating-dtdl-to-code)
+- [Next Steps](#next-steps)
 
 ## Introduction
 
@@ -20,7 +21,7 @@ Please refer to the [DTDL v3](https://azure.github.io/opendigitaltwins-dtdl/DTDL
 
 >Note: DTDL is used to define a digital twin model of the in-vehicle's hardware. Currently in Ibeji, DTDL serves as a guide to manually construct the in-vehicle model in code. In the future, the in-vehicle model code should be generated from a DTDL file.
 
-## 1. Create an In-vehicle Digital Twin Model With DTDL
+## 1. Create an In-Vehicle Digital Twin Model with DTDL
 
 In this section, you will learn how to create an in-vehicle digital twin model with DTDL.
 
@@ -123,7 +124,7 @@ To add properties to the HVAC digital twin model, replace the existing content o
 ]
 ```
 
-This introduces two signals to our HVAC system: ambient air temperature and air conditioning status. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
+This introduces two signals to our HVAC system: *ambient air temperature* and *is air conditioning active*. Both signals have `@id` values starting with `dtmi:sdv:HVAC`, signifying they belong to the sdv domain and HVAC interface.
 
 Please see [Property](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3#property) for more information on the property type and the descriptions of each field. Similar to the DTDL interface type, Ibeji mandates the description field. Despite DTDL v3 spec considering the `@id` field for properties as optional, Ibeji requires it. This helps in referring to your DTDL fragments in the code.
 
@@ -243,3 +244,7 @@ Similarly, in the `hvac` module, there are two submodules: `ambient_air_temperat
 This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module, constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your in-vehicle digital twin model as guidance to code your in-vehicle model.
 
 Both Ibeji providers and Ibeji consumers can utilize this code. This code serves as a set of constants to standardize the values used in their communication with Ibeji, which ensures a consistent and reliable exchange of information.
+
+## Next Steps
+
+- Learn how to create a digital twin provider in [Tutorial: Create a Digital Twin Provider](../provider/README.md)

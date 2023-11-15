@@ -25,5 +25,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &["../../external/chariott/service_discovery/proto/core/v1/"],
     )?;
 
+    tonic_build::compile_protos("../interfaces/tutorial/digital_twin_provider.proto")?;
     Ok(())
 }

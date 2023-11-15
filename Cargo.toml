@@ -32,6 +32,7 @@ members = [
   "samples/property",
   "samples/seat_massager",
   "samples/streaming",
+  "samples/tutorial"
 ]
 
 [workspace.dependencies]
