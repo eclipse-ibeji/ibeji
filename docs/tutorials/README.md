@@ -42,14 +42,14 @@ invehicle_digital_twin_uri: "http://0.0.0.0:5010"
 
 1. In the top window, run:
 
-`./invehicle-digital-twin`
+    `./invehicle-digital-twin`
 
 1. In the middle window, run:
 
-`./digital-twin-provider-tutorial`
+    `./digital-twin-provider-tutorial`
 
 1. In the bottom window, run:
 
-`./digital-twin-consumer-tutorial`
+    `./digital-twin-consumer-tutorial`
 
 1. Use control-c in each of the windows when you wish to stop the demo.
