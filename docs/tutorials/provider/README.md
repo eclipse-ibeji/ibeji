@@ -9,8 +9,8 @@
     - [Rust Sample Implementation of the Sample Interface](#rust-sample-implementation-of-the-sample-interface)
 - [2. Register a Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-register-digital-twin-provider-with-the-in-vehicle-digital-twin-service)
   - [2.1 Rust Sample Registration of a Digital Twin Provider](#21-rust-sample-registration-of-a-digital-twin-provider)
-    - [Run the Sample Digital Twin Provider](#run-the-sample-digital-twin-provider)
 - [3. Add Managed Subscribe to Digital Twin Provider](#3-add-managed-subscribe-to-digital-twin-provider)
+  - [3.1 Rust Sample Implementation of a Managed Subscribe Digital Twin Provider](#31-rust-sample-implementation-of-a-managed-subscribe-digital-twin-provider)
 - [Next Steps](#next-steps)
 
 ## Introduction
@@ -23,7 +23,7 @@ This tutorial will reference the sample code provided in Ibeji to keep the tutor
 
 ## Prerequisites
 
-- Complete the tutorial in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
+- Complete the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
 - Basic knowledge about [Protocol Buffers (protobufs) version 3.0](https://protobuf.dev/programming-guides/proto3/).
 - Basic knowledge about the [gRPC protocol](https://grpc.io/docs/what-is-grpc/introduction/).
 
@@ -65,7 +65,8 @@ You have defined your digital twin provider interface.
 
 The following lists out the flow for implementing the operations of a digital twin interface in the programming language of your choice:
 
-1. Choose Your Programming Language: Since operations can be defined in a protobuf file, you can select any programming language that supports protobufs. This includes languages like Rust, Python, Java, C++, Go, etc. However, operations do not need to be defined in a protobuf file to be programming language agnostic. For instance, if you have a subscribe operation you may want to use [MQTT](https://mqtt.org/) for publishing to digital twin consumers that have subscribed to your digital twin provider. Please see the [Managed Subscribe Sample](https://github.com/eclipse-ibeji/ibeji/tree/main/samples/managed_subscribe) and [Property Sample](../../../samples/property/provider/src/main.rs) for Rust examples of a digital twin provider using MQTT.
+1. The programming language you choose should contain support for gRPC. gRPC is required to communicate with the In-Vehicle Digital Twin Service. This will be described further in [2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-register-digital-twin-provider-with-the-in-vehicle-digital-twin-service). This includes languages like Rust, Python, Java, C++, Go, etc.
+    >Note: Operations do not need to be defined in a protobuf file to be programming language agnostic. If you have a subscribe operation you may want to use [MQTT](https://mqtt.org/) for publishing to digital twin consumers that have subscribed to your digital twin provider. Please see the [Managed Subscribe Sample](../../../samples/managed_subscribe/README.md) and [Property Sample](../../../samples/property/provider/src/main.rs) for Rust examples of a digital twin provider using MQTT.
 
 1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
@@ -83,32 +84,32 @@ This section uses the [sample digital twin provider interface](#sample-digital-t
 
 1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
 
-```rust
-use digital_twin_model::sdv_v1 as sdv;
-```
+    ```rust
+    use digital_twin_model::sdv_v1 as sdv;
+    ```
 
 1. The implementation of the `Get` operation references the signals *is air conditioning active* and *ambient air temperature*:
 
-```rust
-  /// Get implementation.
-  ///
-  /// # Arguments
-  /// * `request` - Get request.
-  async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {..}
-```
+    ```rust
+    /// Get implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Get request.
+    async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {..}
+    ```
 
 1. The implementation of the `Invoke` operation references the command *show notification*.
 
-```rust
-/// Invoke implementation.
-///
-/// # Arguments
-/// * `request` - Invoke request.
-async fn invoke(
-    &self,
-    request: Request<InvokeRequest>,
-) -> Result<Response<InvokeResponse>, Status> {..}
-```
+    ```rust
+    /// Invoke implementation.
+    ///
+    /// # Arguments
+    /// * `request` - Invoke request.
+    async fn invoke(
+        &self,
+        request: Request<InvokeRequest>,
+    ) -> Result<Response<InvokeResponse>, Status> {..}
+    ```
 
 ## 2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service
 
@@ -124,61 +125,31 @@ The following lists out the flow for registering a digital twin provider in the 
 
 1. In the code for your digital twin provider, you will need to import an `In-Vehicle Digital Twin Service` gRPC client.
 
-1. Using the `In-Vehicle Digital Twin Service` gRPC client, you will need to define how to register your in-vehicle signals and commands with the In-Vehicle Digital Twin Service. This involves calling the `Register` gRPC method with the gRPC client.
+1. Using the `In-Vehicle Digital Twin Service` gRPC client, you will need to define how to register your in-vehicle signals and commands with the In-Vehicle Digital Twin Service. This involves calling the `Register` gRPC method with the gRPC client. Please see the sequence diagram for [Register](../../design/README.md#register) for more details.
+
+1. For each in-vehicle signal or command you register, you can reference the signal or command with the code of your in-vehicle digital twin model.
 
 ### 2.1 Rust Sample Registration of a Digital Twin Provider
 
 This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of a provider registering the signals *ambient air temperature* and *is air conditioning active* and the command *show notification*
 
-1. Reference the [main.rs file of the sample digital twin provider](../../../samples/tutorial/provider/src/main.rs). The main.rs file outlines the behavior of the signals in your digital twin provider sample. This includes a vehicle simulator that can emulate changes in its signals. These changes are then published to any digital twin consumers that have subscribed to your digital twin provider.
+1. Reference the [main.rs file of the sample digital twin provider](../../../samples/tutorial/provider/src/main.rs).
 
 1. One function of particular interest in the [main.rs](../../../samples/tutorial/provider/src/main.rs) file is the `register_entities` function.
 
-```rust
-/// Register the entities endpoints.
-///
-/// # Arguments
-/// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
-/// * `provider_uri` - The provider's URI.
-async fn register_entities(
-    invehicle_digital_twin_uri: &str,
-    provider_uri: &str,
-) -> Result<(), Status> { .. }
-```
+    ```rust
+    /// Register the entities endpoints.
+    ///
+    /// # Arguments
+    /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
+    /// * `provider_uri` - The provider's URI.
+    async fn register_entities(
+        invehicle_digital_twin_uri: &str,
+        provider_uri: &str,
+    ) -> Result<(), Status> { .. }
+    ```
 
 The `register_entities` function in this Rust sample digital twin provider shows the process of registering with the In-Vehicle Digital Twin Service.
-
-#### Run the Sample Digital Twin Provider
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer. Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin. The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.
-In each window, change the current directory to the directory containing the build artifacts. Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.
-
-1. cd {repo-root-dir}/target/debug
-Create the three config files with the following contents, if they are not already there:
-
----- consumer_settings.yaml ----
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`
-
----- invehicle_digital_twin_settings.yaml ----
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`
-
----- provider_settings.yaml ----
-`provider_authority: "0.0.0.0:4010"`
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`
-
-1. In the top window, run:
-
-`./invehicle-digital-twin`
-
-1. In the middle window, run:
-
-`./digital-twin-provider-tutorial`
-
-1. In the bottom window, run:
-
-`./digital-twin-consumer-tutorial`
-
-1. Use control-c in each of the windows when you wish to stop the demo.
 
 ## 3. Add Managed Subscribe to Digital Twin Provider
 
@@ -206,3 +177,5 @@ Please refer to the [sample Rust code for the Managed Subscribe Sample provider]
 This sample Rust code contains an *ambient air temperature* signal, and does not include the in-vehicle signal *is air conditioning active* and the command *show notification*.
 
 ## Next Steps
+
+- Learn how to create a digital twin consumer in [Tutorial: Create a Digital Twin Consumer](../consumer/README.md)
