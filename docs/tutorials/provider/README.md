@@ -29,7 +29,7 @@ This tutorial references the code in the `{repo-root-dir}/samples/tutorial` dire
 
 ## 1. Create an Ibeji Digital Twin Provider
 
-In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not limited to gRPC; they can use other communication protocols.
+In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not limited to gRPC, they can use other communication protocols.
 
 The `{repo-root-dir}/samples/tutorial` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` directory contains the in-vehicle digital twin model in Rust code that you have constructed in [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md) along with additional signals that are not needed for this tutorial.
 

@@ -27,7 +27,7 @@ This tutorial references the code in the `{repo-root-dir}/samples/tutorial` dire
 
 ## 1. Create an Ibeji Digital Twin Consumer
 
-In this section, you will learn how to develop a digital twin consumer that communicates with the [digital twin provider that you have created in the previous tutorial](../provider/README.md#rust-sample-implementation-of-the-sample-interface) via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). Remember digital twin providers are protocol-agnostic. This means they are not limited to gRPC; they can use other communication protocols.
+In this section, you will learn how to develop a digital twin consumer that communicates with the [digital twin provider that you have created in the previous tutorial](../provider/README.md#rust-sample-implementation-of-the-sample-interface) via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). Remember digital twin providers are protocol-agnostic. This means they are not limited to gRPC, they can use other communication protocols.
 
 To interact with a digital twin provider, the digital twin consumer must use the same communication protocol and understand the interface contract. The programming language of the digital twin consumer and the digital twin provider does not need to match.
 
