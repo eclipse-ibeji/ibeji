@@ -39,35 +39,37 @@ Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/tu
 
 You have defined a [digital twin provider's interface](../provider/README.md#11-define-digital-twin-provider-interface). A digital twin consumer needs to utilize that interface to communicate with your digital twin provider to access the in-vehicle capabilities that a digital twin provider makes available.
 
-The following discusses the steps that a digital twin consumer takes to interact with a digital twin provider using the programming language of your choice.
+The following discusses the steps that a digital twin consumer should take to interact with a digital twin provider using the programming language of your choice.
 
 1. Examine the digital twin provider's interface. Make sure that you understand its contract and the communication protocol that it uses.
 
 1. Choose a programming language that supports both gRPC and your digital twin provider's communication protocol. gRPC is required to communicate with the In-Vehicle Digital Twin Service. This will be described further in [2. Discover a Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-discover-a-digital-twin-provider-with-the-in-vehicle-digital-twin-service). For instance, if your digital twin provider uses MQTT, then you should select a programming language that supports both MQTT and gRPC. This includes languages like Rust, Python, Java, C++ and Go.
 
-1. In the implementation of your digital twin consumer, import the code for your in-vehicle digital twin model that you have developed in the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code), and call the desired operations of the digital twin provider for the in-vehicle capabilities. You can reference an in-vehicle capability using the code for your in-vehicle digital twin model.
+1. In the implementation of your digital twin consumer, import the code for your in-vehicle digital twin model that you have developed in the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
+
+1. In your digital twin consumer, call the desired operations of the digital twin provider to access the desired in-vehicle capabilities. You can reference an in-vehicle capability's model id using the [code for your in-vehicle digital twin model](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
 #### Rust Sample Implementation of the Interaction with a Digital Twin Provider
 
-This section shows a sample digital twin consumer interacting with a digital twin provider in Rust. It uses the [sample digital twin provider interface](../provider/README.md#sample-digital-twin-provider-interface) that is defined in a protobuf file, and covers calling the `Get` and `Invoke` operations that are defined in the [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs). This is the same sample digital twin provider that shown in the [Tutorial: Create a Digital Twin Provider](../provider/README.md#rust-sample-implementation-of-the-sample-interface).
+This section shows a sample digital twin consumer interacting with a digital twin provider in Rust. It uses the [sample digital twin provider interface](../provider/README.md#sample-digital-twin-provider-interface) that is defined in a protobuf file, and it covers calling the `Get` and `Invoke` operations that are defined in the [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs). This is the same sample digital twin provider that is shown in the [Tutorial: Create a Digital Twin Provider](../provider/README.md#rust-sample-implementation-of-the-sample-interface).
 
 1. Refer to the [Rust code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs).
 
-1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Digital Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
+1. There is an import statement for the Rust in-vehicle digital twin model that is shown in the [Tutorial: Create an In-Vehicle Digital Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
 
     ```rust
     use digital_twin_model::{sdv_v1 as sdv, ...};
     ```
 
-1. This sample digital twin consumer is interested in communicating with a digital twin provider through gRPC, so there is an imported gRPC client.
+1. This sample digital twin consumer aims to communicate with a digital twin provider through gRPC, so there is an imported gRPC client.
 
     ```rust
     use samples_protobuf_data_access::tutorial_grpc::v1::digital_twin_provider_tutorial_client::DigitalTwinProviderTutorialClient;
     ```
 
-1. The [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs) has a `Get` operation defined. This operation is called in the sample digital consumer in the `send_get_request` method.
+1. The [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs) has a `Get` operation defined. This operation is called by the sample digital consumer in the `send_get_request` method.
 
-1. The [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs) has an `Invoke` operation defined. This operation is called in the sample digital consumer in the `start_show_notification_repeater` method.
+1. The [sample digital twin provider](../../../samples/tutorial/provider/src/provider_impl.rs) has an `Invoke` operation defined. This operation is called by the sample digital consumer in the `start_show_notification_repeater` method.
 
 ### 2. Discover a Digital Twin Provider with the In-Vehicle Digital Twin Service
 
@@ -75,7 +77,7 @@ You have defined a [digital twin provider's interface](../provider/README.md#11-
 
 A digital twin consumer needs to discover the digital twin provider using the [In-Vehicle Digital Twin Service](../../../README.md#high-level-design) before it can interact with the digital twin provider.
 
-The following discusses the steps your digital twin consumer takes to discover a digital twin provider in the programming language of your choice:
+The following discusses the steps that your digital twin consumer should take to discover a digital twin provider in the programming language of your choice:
 
 1. Refer to the interface of the [In-Vehicle Digital Twin Service](../../../interfaces/invehicle_digital_twin/v1/invehicle_digital_twin.proto) which is defined as a protobuf file.
 
@@ -91,7 +93,7 @@ This section uses the same *sample* Rust implementation of the digital twin cons
 
 1. Refer to the [code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs).
 
-1. One function of interest in the [code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs) is the `discover_digital_twin_provider_using_ibeji` helper function in the [sample commons utils](../../../samples/common/src/utils.rs). This function is a helper function for discovering a digital twin provider through the In-Vehicle Digital Twin Service.
+1. One function of interest in the [code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs) is the `discover_digital_twin_provider_using_ibeji` helper function in the [sample commons utils](../../../samples/common/src/utils.rs). This is a helper function for discovering a digital twin provider through the In-Vehicle Digital Twin Service.
 
     ```rust
     /// Use Ibeji to discover the endpoint for a digital twin provider that satifies the requirements.
