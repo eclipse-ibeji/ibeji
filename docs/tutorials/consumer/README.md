@@ -31,7 +31,7 @@ In this section, you will learn how to develop a digital twin consumer that comm
 
 To interact with a digital twin provider, the digital twin consumer must use the same communication protocol and understand the interface contract. The programming language of the digital twin consumer and the digital twin provider does not need to match.
 
-The `{repo-root-dir}/samples/tutorial/consumer` directory contains the code for the sample digital twin consumer used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` directory contains the Rust code for the in-vehicle digital twin model that you have constructed in [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
+The `{repo-root-dir}/samples/tutorial/consumer` directory contains the code for the sample digital twin consumer used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` directory contains the Rust code for the in-vehicle digital twin model that you have constructed in [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md) along with additional signals that are not needed for this tutorial.
 
 Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/tutorial` directory are referenced to guide you through the process of creating a digital twin consumer.
 
@@ -53,7 +53,7 @@ This section shows a sample digital twin consumer interacting with a digital twi
 
 1. Refer to the [Rust code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs).
 
-1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
+1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Digital Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
 
     ```rust
     use digital_twin_model::{sdv_v1 as sdv, ...};
@@ -81,13 +81,13 @@ The following discusses the steps your digital twin consumer takes to discover a
 
 1. In the code for your digital twin consumer, you will need to import an `In-Vehicle Digital Twin Service` gRPC client.
 
-1. For each in-vehicle capability required by your digital twin consumer, it should utilize an `In-Vehicle Digital Twin Service` gRPC client to discover the corresponding digital twin provider. This involves calling the `FindById` gRPC method with the gRPC client. Please see the sequence diagram for [Find By Id](../../design/README.md#find-by-id) for more details.
+1. For each in-vehicle capability required by your digital twin consumer, the digital twin consumer should utilize an `In-Vehicle Digital Twin Service` gRPC client to discover the corresponding digital twin provider. This involves calling the `FindById` gRPC method with the gRPC client. Please see the sequence diagram for [Find By Id](../../design/README.md#find-by-id) for more details.
 
 1. When trying to discover a digital twin provider for an in-vehicle capability, your digital twin consumer can refer to the capability's model id by using the [code for your in-vehicle digital twin model](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
 ### 2.1 Rust Sample Discovery of a Digital Twin Provider
 
-This section uses the same *sample* Rust implementation of a digital twin consumer in [Rust Sample Implementation of the Interaction with a Digital Twin Provider](#rust-sample-implementation-of-the-interaction-with-a-digital-twin-provider). This digital twin consumer uses an `In-Vehicle Digital Twin Service` gRPC client to discover the signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification*.
+This section uses the same *sample* Rust implementation of the digital twin consumer in the [Rust Sample Implementation of the Interaction with a Digital Twin Provider](#rust-sample-implementation-of-the-interaction-with-a-digital-twin-provider) section. This digital twin consumer uses an `In-Vehicle Digital Twin Service` gRPC client to discover the signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification*.
 
 1. Refer to the [code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs).
 
@@ -124,4 +124,4 @@ This sample Rust code contains an *ambient air temperature* signal, and does not
 
 ## Next Steps
 
-- Run the tutorial by following the steps in [Run the Tutorial](../README.md#run-the-tutorial)
+- Run the entire tutorial demo by following the steps in [Run the Tutorial](../README.md#run-the-tutorial)

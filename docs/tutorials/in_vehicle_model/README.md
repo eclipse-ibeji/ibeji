@@ -13,13 +13,13 @@
 
 ## Introduction
 
-In this tutorial, you will learn how to create an in-vehicle model using [Digital Twins Definition Language (DTDL) version 3.0](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html), and build a corresponding Rust in-vehicle model. The focus will be on translating DTDL to a programming language. While Rust is used here to be consistent with Ibeji's samples (which are in Rust), you can use any programming language.
+In this tutorial, you will learn how to create an in-vehicle digital twin model using [Digital Twins Definition Language (DTDL) version 3.0](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html), and build a corresponding Rust in-vehicle digital twin model. The focus will be on translating DTDL to a programming language. While Rust is used here to be consistent with Ibeji's samples (which are in Rust), you can use any programming language.
 
 This tutorial provides a basic understanding of DTDL in the context of our Ibeji samples, but it is not a comprehensive guide to DTDL. Specifically, it covers [interfaces](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#interface), [commands](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#command), [properties](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html#property)
 
 Please refer to the [DTDL v3](https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html) documentation for more information on DTDL.
 
->Note: DTDL is used to define a digital twin model of the in-vehicle's hardware. Currently in Ibeji, DTDL serves as a guide to manually construct the in-vehicle model in code. In the future, the in-vehicle model code should be generated from a DTDL file.
+>Note: DTDL is used to define a digital twin model of the in-vehicle's hardware. Currently in Ibeji, DTDL serves as a guide to manually construct the in-vehicle digital twin model in code. In the future, the in-vehicle digital twin model code should be generated from a DTDL file.
 
 ## 1. Create an In-Vehicle Digital Twin Model with DTDL
 
@@ -241,7 +241,7 @@ In the `hmi` module, there is a `show_notification` submodule that represents th
 
 Similarly, in the `hvac` module, there are two submodules: `ambient_air_temperature` and `is_air_conditioning_active`. These represent the `AmbientAirTemperature` and `IsAirConditioningActive` properties in the `hvac.json` DTDL. Each submodule has an `ID`, `NAME`, `DESCRIPTION` and `TYPE` constants, which correspond to the `@id`, `name`, `description`, and `schema` fields in DTDL.
 
-This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module, constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your in-vehicle digital twin model as guidance to code your in-vehicle model.
+This Rust code is a way to use a DTDL model in a Rust program, with each DTDL element represented as a Rust module, constant, or type. You can translate a DTDL model into other programming languages. Use the `@id` fields in your in-vehicle digital twin model as guidance to translate your in-vehicle digital model to code.
 
 Both Ibeji providers and Ibeji consumers can utilize this code. This code serves as a set of constants to standardize the values used in their communication with Ibeji, which ensures a consistent and reliable exchange of information.
 
