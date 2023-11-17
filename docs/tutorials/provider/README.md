@@ -17,21 +17,21 @@
 
 >[Digital Twin Provider:](../../../README.md#high-level-design) A provider exposes a subset of the vehicle's hardware capabilities by registering them with the In-Vehicle Digital Twin Service. Once registered with the In-Vehicle Digital Twin Service they can in turn be offered to Ibeji consumers. Each capability includes metadata that allows Ibeji consumers to comprehend the nature of the capability, how to work with it and how it can be remotely accessed.
 
-In this tutorial, you will leverage your in-vehicle model in code that you have created in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
+In this tutorial, you will leverage the code for your in-vehicle digital twin model that you have developed in [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md) to create a digital twin provider. Additionally, you will learn how to register your digital twin provider with the [In-Vehicle Digital Twin Service](../../design/README.md#in-vehicle-digital-twin-service).
 
-This tutorial will reference the tutorial sample code in `{repo-root-dir}/samples/tutorial` to keep the tutorial concise. Relevant code snippets are explicitly highlighted and discussed to ensure a clear understanding of the concepts.
+This tutorial references the code in the `{repo-root-dir}/samples/tutorial` directory. Relevant code snippets are explicitly highlighted and discussed to ensure a clear understanding of the concepts.
 
 ## Prerequisites
 
-- Complete the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
+- Complete the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md).
 - Basic knowledge about [Protocol Buffers (protobufs) version 3.0](https://protobuf.dev/programming-guides/proto3/).
 - Basic knowledge about the [gRPC protocol](https://grpc.io/docs/what-is-grpc/introduction/).
 
 ## 1. Create an Ibeji Digital Twin Provider
 
-In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not restricted to using gRPC and can employ other communication protocols.
+In this section, you will learn how to develop a digital twin provider that communicates with its digital twin consumers via [gRPC](https://grpc.io/docs/what-is-grpc/introduction/). It is important to note that digital twin providers in Ibeji are protocol-agnostic. This means they are not limited to gRPC; they can use other communication protocols.
 
-The `{repo-root-dir}/samples/tutorial` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` contains the in-vehicle model in Rust code that you have constructed in [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md) along with additional signals not needed for this tutorial.
+The `{repo-root-dir}/samples/tutorial` directory contains code for the sample digital twin provider used in this tutorial. The `{repo-root-dir}/digital-twin-model/src` directory contains the in-vehicle digital twin model in Rust code that you have constructed in [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md) along with additional signals that are not needed for this tutorial.
 
 Throughout this tutorial, the sample contents in the `{repo-root-dir}/samples/tutorial` directory are referenced to guide you through the process of creating a digital twin provider.
 
@@ -47,9 +47,9 @@ The [digital twin provider tutorial interface](../../../samples/interfaces/tutor
 
 This section provides an example of a digital twin provider interface. To reiterate, you are free to use this interface as a starting point or you may come up with your own convention.
 
-1. Consider the in-vehicle signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification* that you defined in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md).
+1. Consider the in-vehicle signals *ambient air temperature* and *is air conditioning active*, as well as the command *show notification* that you defined in the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md).
 
-1. Reference the [sample digital twin provider tutorial interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto):
+1. Refer to the [sample digital twin provider tutorial interface](../../../samples/interfaces/tutorial/digital_twin_provider.proto):
 
 In this digital twin provider sample interface, the conventions that this interface enforces are as follows:
 
@@ -57,7 +57,7 @@ In this digital twin provider sample interface, the conventions that this interf
 
 - A digital twin consumer should utilize the `Invoke` operation to send a *show notification* command.
 
-When introducing additional signals and commands, it is crucial to carefully select the operation(s) that best align with the behavior of each signal or command. This ensures a seamless integration and optimal performance of your system.
+When introducing additional capabilities, it is crucial to carefully select the operation(s) that best align with the behavior of each capability. This ensures a seamless integration and optimal performance of your system.
 
 ### 1.2 Implement the Operations of a Digital Twin Provider Interface
 
@@ -66,13 +66,13 @@ You have defined your digital twin provider interface.
 The following lists out the flow for implementing the operations of a digital twin interface in the programming language of your choice:
 
 1. Choose a programming language that supports gRPC. gRPC is required to communicate with the In-Vehicle Digital Twin Service. This will be described further in [2. Register Digital Twin Provider with the In-Vehicle Digital Twin Service](#2-register-digital-twin-provider-with-the-in-vehicle-digital-twin-service). This includes languages like Rust, Python, Java, C++, Go, etc.
-    >Note: Operations do not need to be defined in a protobuf file to be programming language agnostic. If you have a subscribe operation you may want to use [MQTT](https://mqtt.org/) for publishing to digital twin consumers that have subscribed to your digital twin provider. Please see the [Managed Subscribe Sample](../../../samples/managed_subscribe/README.md) and [Property Sample](../../../samples/property/provider/src/main.rs) for Rust examples of a digital twin provider using MQTT.
+    >Note: Operations can be performed by various protocols. Some protocols require that the operation's interface contract is specified. For example in gRPC, the operation must be specified in a protobuf file. However, operations are programming language and protocol agnostic. If you have a subscribe operation you may want to use [MQTT](https://mqtt.org/) for publishing to digital twin consumers that have subscribed to your digital twin provider. Please see the [Managed Subscribe Sample](../../../samples/managed_subscribe/README.md) and [Property Sample](../../../samples/property/provider/src/main.rs) for Rust examples of a digital twin provider using MQTT.
 
-1. In your implementation, import the code of your in-vehicle digital twin model that you have created in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
+1. In your implementation, import the code for your in-vehicle digital twin model that you have developed in the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
-1. Implement the operations you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle signal or command when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
+1. Implement the operations that you have defined in your interface. This involves writing the logic for what should happen to each in-vehicle capability when each operation is called. If you are using the [sample digital twin provider interface](#sample-digital-twin-provider-interface), you need to implement the functionality for the `Get` and `Invoke` operations.
 
-1. For each operation you implement, you can reference an in-vehicle signal or command using the code of your in-vehicle digital twin model.
+1. For each operation you implement, you can refer to an in-vehicle capability using the [code for your in-vehicle digital twin model](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
 In order to translate your operations into code, it is important to understand the requirements of each operation.
 
@@ -80,9 +80,9 @@ In order to translate your operations into code, it is important to understand t
 
 This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface) that is defined in a protobuf file, and covers a *sample* Rust implementation of the synchronous `Get` and `Invoke` operations.
 
-1. Reference the [code for implementing the operations for the sample digital twin provider interface](../../../samples/tutorial/provider/src/provider_impl.rs).
+1. Refer to the [code for implementing the operations for the sample digital twin provider interface](../../../samples/tutorial/provider/src/provider_impl.rs).
 
-1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
+1. There is an import statement for the Rust in-vehicle digital twin model that you have previously constructed in the [Tutorial: Create an In-Vehicle Digital Twin Model with DTDL](../in_vehicle_model/README.md#3-translating-dtdl-to-code):
 
     ```rust
     use digital_twin_model::sdv_v1 as sdv;
@@ -91,7 +91,7 @@ This section uses the [sample digital twin provider interface](#sample-digital-t
 1. The implementation of the `Get` operation references the signals *is air conditioning active* and *ambient air temperature*:
 
     ```rust
-    /// Get implementation.
+    /// Get operation.
     ///
     /// # Arguments
     /// * `request` - Get request.
@@ -101,7 +101,7 @@ This section uses the [sample digital twin provider interface](#sample-digital-t
 1. The implementation of the `Invoke` operation references the command *show notification*.
 
     ```rust
-    /// Invoke implementation.
+    /// Invoke operation.
     ///
     /// # Arguments
     /// * `request` - Invoke request.
@@ -121,19 +121,19 @@ You will need to register your digital twin provider with the [In-Vehicle Digita
 
 The following lists out the flow for registering a digital twin provider in the programming language of your choice:
 
-1. Reference the interface of the [In-Vehicle Digital Twin Service](../../../interfaces/invehicle_digital_twin/v1/invehicle_digital_twin.proto) which is defined as a protobuf file.
+1. Refer to the interface of the [In-Vehicle Digital Twin Service](../../../interfaces/invehicle_digital_twin/v1/invehicle_digital_twin.proto) which is defined as a protobuf file.
 
 1. In the code for your digital twin provider, you will need to import an `In-Vehicle Digital Twin Service` gRPC client.
 
-1. Using the `In-Vehicle Digital Twin Service` gRPC client, you will need to define how to register your in-vehicle signals and commands with the In-Vehicle Digital Twin Service. This involves calling the `Register` gRPC method with the gRPC client. Please see the sequence diagram for [Register](../../design/README.md#register) for more details.
+1. Using the `In-Vehicle Digital Twin Service` gRPC client, you will need to define how to register your in-vehicle capabilities with the In-Vehicle Digital Twin Service. This involves calling the `Register` gRPC method with the gRPC client. Please see the sequence diagram for [Register](../../design/README.md#register) for more details.
 
-1. For each in-vehicle signal or command you register, you can reference the in-vehicle signal or command with the [code of your in-vehicle digital twin model](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
+1. For each in-vehicle capability you register, you can refer to the in-vehicle capability with the [code for your in-vehicle digital twin model](../in_vehicle_model/README.md#3-translating-dtdl-to-code).
 
 ### 2.1 Rust Sample Registration of a Digital Twin Provider
 
 This section uses the [sample digital twin provider interface](#sample-digital-twin-provider-interface), and covers a *sample* Rust implementation of a provider registering the signals *ambient air temperature* and *is air conditioning active* and the command *show notification*
 
-1. Reference the [main.rs file of the sample digital twin provider](../../../samples/tutorial/provider/src/main.rs).
+1. Refer to the [main.rs file of the sample digital twin provider](../../../samples/tutorial/provider/src/main.rs).
 
 1. One function of particular interest in the [main.rs](../../../samples/tutorial/provider/src/main.rs) file is the `register_entities` function.
 

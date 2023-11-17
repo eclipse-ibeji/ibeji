@@ -1,4 +1,4 @@
-# Tutorial: Create an In-vehicle Model With DTDL
+# Tutorial: Create an In-Vehicle Digital Twin Model with DTDL
 
 - [Introduction](#introduction)
 - [1. Create an In-Vehicle Digital Twin Model with DTDL](#1-create-an-in-vehicle-digital-twin-model-with-dtdl)

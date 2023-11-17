@@ -15,7 +15,7 @@ pub struct ProviderImpl {}
 
 #[tonic::async_trait]
 impl DigitalTwinProviderTutorial for ProviderImpl {
-    /// Get implementation.
+    /// Get operation.
     ///
     /// # Arguments
     /// * `request` - Get request.
@@ -34,7 +34,7 @@ impl DigitalTwinProviderTutorial for ProviderImpl {
         Ok(Response::new(get_response))
     }
 
-    /// Invoke implementation.
+    /// Invoke operation.
     ///
     /// # Arguments
     /// * `request` - Invoke request.
