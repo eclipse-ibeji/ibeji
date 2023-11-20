@@ -4,8 +4,8 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
+- MIT License (39)
 - Apache License 2.0 (38)
-- MIT License (38)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (1)
 - ISC License (1)
@@ -2775,7 +2775,7 @@ limitations under the License.
 
 #### Used by
 
-- [http]( https://github.com/hyperium/http ) 0.2.10
+- [http]( https://github.com/hyperium/http ) 0.2.11
 
 #### License
 
@@ -3844,10 +3844,12 @@ limitations under the License.
 - [addr2line]( https://github.com/gimli-rs/addr2line ) 0.21.0
 - [ahash]( https://github.com/tkaitchuck/ahash ) 0.7.7
 - [async-channel]( https://github.com/smol-rs/async-channel ) 1.9.0
-- [async-executor]( https://github.com/smol-rs/async-executor ) 1.6.0
+- [async-channel]( https://github.com/smol-rs/async-channel ) 2.1.0
+- [async-executor]( https://github.com/smol-rs/async-executor ) 1.7.2
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.3.1
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
+- [async-lock]( https://github.com/smol-rs/async-lock ) 3.1.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.5.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
@@ -3857,7 +3859,7 @@ limitations under the License.
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.5
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
 - [bitflags]( https://github.com/bitflags/bitflags ) 2.4.1
-- [blocking]( https://github.com/smol-rs/blocking ) 1.4.1
+- [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
 - [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.14.0
 - [cc]( https://github.com/rust-lang/cc-rs ) 1.0.83
@@ -3872,6 +3874,8 @@ limitations under the License.
 - [either]( https://github.com/bluss/either ) 1.9.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
+- [event-listener]( https://github.com/smol-rs/event-listener ) 3.1.0
+- [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.3.0
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
 - [fastrand]( https://github.com/smol-rs/fastrand ) 2.0.1
 - [fixedbitset]( https://github.com/petgraph/fixedbitset ) 0.4.2
@@ -3879,6 +3883,7 @@ limitations under the License.
 - [fnv]( https://github.com/servo/rust-fnv ) 1.0.7
 - [form_urlencoded]( https://github.com/servo/rust-url ) 1.2.0
 - [futures-lite]( https://github.com/smol-rs/futures-lite ) 1.13.0
+- [futures-lite]( https://github.com/smol-rs/futures-lite ) 2.0.1
 - [gimli]( https://github.com/gimli-rs/gimli ) 0.28.0
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.12.3
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.2
@@ -3920,10 +3925,10 @@ limitations under the License.
 - [piper]( https://github.com/notgull/piper ) 0.2.1
 - [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.27
 - [png]( https://github.com/image-rs/image-png.git ) 0.17.10
-- [prost]( https://github.com/tokio-rs/prost ) 0.12.1
-- [prost-build]( https://github.com/tokio-rs/prost ) 0.12.1
-- [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.1
-- [prost-types]( https://github.com/tokio-rs/prost ) 0.12.1
+- [prost]( https://github.com/tokio-rs/prost ) 0.12.2
+- [prost-build]( https://github.com/tokio-rs/prost ) 0.12.2
+- [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.2
+- [prost-types]( https://github.com/tokio-rs/prost ) 0.12.2
 - [rayon]( https://github.com/rayon-rs/rayon ) 1.8.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.0
 - [regex]( https://github.com/rust-lang/regex ) 1.10.2
@@ -3932,7 +3937,7 @@ limitations under the License.
 - [ron]( https://github.com/ron-rs/ron ) 0.7.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.21
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.24
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
 - [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.2
@@ -7321,7 +7326,7 @@ SOFTWARE.
 
 #### Used by
 
-- [h2]( https://github.com/hyperium/h2 ) 0.3.21
+- [h2]( https://github.com/hyperium/h2 ) 0.3.22
 
 #### License
 
@@ -7784,6 +7789,65 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
+- [tokio-macros]( https://github.com/tokio-rs/tokio ) 2.2.0
+
+#### License
+
+```text
+Copyright (c) 2023 Tokio Contributors
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+The MIT License (MIT)
+
+Copyright (c) 2019 Yoshua Wuyts
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+### MIT (MIT License)
+
+#### Used by
+
 - [axum-core]( https://github.com/tokio-rs/axum ) 0.3.4
 
 #### License
@@ -7907,6 +7971,7 @@ SOFTWARE.
 - [core-protobuf-data-access]( https://crates.io/crates/core-protobuf-data-access ) 0.1.0
 - [crunchy]( https://crates.io/crates/crunchy ) 0.2.2
 - [digital-twin-model]( https://crates.io/crates/digital-twin-model ) 0.1.0
+- [digital-twin-tutorial]( https://crates.io/crates/digital-twin-tutorial ) 0.1.0
 - [dtdl-tools]( https://crates.io/crates/dtdl-tools ) 0.1.0
 - [invehicle-digital-twin]( https://crates.io/crates/invehicle-digital-twin ) 0.1.0
 - [managed_subscribe]( https://crates.io/crates/managed_subscribe ) 0.1.0
@@ -7919,7 +7984,6 @@ SOFTWARE.
 - [samples-seat-massager]( https://crates.io/crates/samples-seat-massager ) 0.1.0
 - [samples-streaming]( https://crates.io/crates/samples-streaming ) 0.1.0
 - [sdl2-sys]( https://github.com/rust-sdl2/rust-sdl2 ) 0.35.2
-- [tokio-macros]( https://github.com/tokio-rs/tokio ) 2.2.0
 
 #### License
 
@@ -8195,7 +8259,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.6.4
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.3.0
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.0
 
 #### License
 
@@ -8329,7 +8393,6 @@ SOFTWARE.
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.6.4
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.3.0
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.6
 
 #### License
