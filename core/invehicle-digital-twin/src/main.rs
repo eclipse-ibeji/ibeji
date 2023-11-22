@@ -26,7 +26,9 @@ use parking_lot::RwLock;
 use std::boxed::Box;
 use std::collections::HashMap;
 use std::convert::Infallible;
+use std::env;
 use std::net::SocketAddr;
+use std::str::FromStr;
 use std::sync::Arc;
 use tonic::body::BoxBody;
 use tonic::transport::{Body, NamedService};
@@ -37,6 +39,7 @@ use tower::Service;
 mod invehicle_digital_twin_config;
 mod invehicle_digital_twin_impl;
 
+const DEFAULT_LOG_LEVEL: &str = "info";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE: &str = "sdv.ibeji";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_NAME: &str = "invehicle_digital_twin";
 const INVEHICLE_DIGITAL_TWIN_SERVICE_VERSION: &str = "1.0";
@@ -136,8 +139,37 @@ where
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Setup logging.
-    Builder::new().filter(None, LevelFilter::Info).target(Target::Stdout).init();
+    let args: HashMap<String, Option<String>> = env::args()
+        .skip(1)
+        .map(|arg| {
+            let mut split = arg.split('=');
+            let key = split
+                .next()
+                .expect("Couldn't parse argument key")
+                .to_owned();
+            let val = split.next().map(|v| v.to_owned());
+
+            if split.next().is_some() {
+                panic!("Too many pieces in argument");
+            }
+
+            (key, val)
+        })
+        .collect();
+
+    println!("args: {args:?}");
+
+    // Setup logging
+    let log_level_arg = args.get("--log-level")
+        .cloned()
+        .unwrap_or(Some(DEFAULT_LOG_LEVEL.to_owned()))
+        .expect("No log-level value provided");
+    let log_level = LevelFilter::from_str(log_level_arg.as_str())
+        .expect("Could not parse log level");
+    Builder::new().filter(None, log_level).target(Target::Stdout).init();
+
+    // enables tokio tracing
+    //console_subscriber::init();
 
     info!("The In-Vehicle Digital Twin Service has started.");
 
