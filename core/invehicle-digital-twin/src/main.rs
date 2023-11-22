@@ -169,7 +169,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Builder::new().filter(None, log_level).target(Target::Stdout).init();
 
     // enables tokio tracing
-    //console_subscriber::init();
+    console_subscriber::init();
 
     info!("The In-Vehicle Digital Twin Service has started.");
 
