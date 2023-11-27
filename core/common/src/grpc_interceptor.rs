@@ -14,6 +14,8 @@ use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
 
+use crate::utils;
+
 // This module provides the gRPC Interceptor construct. It can be used to
 // intercept gRPC calls, and examine/modify their requests and responses.
 
@@ -159,7 +161,7 @@ where
         if is_applicable && interceptor.must_handle_request() {
             let (parts, body) = request.into_parts();
             let mut body_bytes: Bytes =
-                match futures::executor::block_on(hyper::body::to_bytes(body)) {
+                match futures::executor::block_on(utils::to_bytes(&mut body, None)) {
                     Ok(bytes) => bytes,
                     Err(err) => {
                         return Box::pin(async move {
@@ -191,7 +193,7 @@ where
 
             if is_applicable && interceptor.must_handle_response() {
                 let (parts, body) = response.into_parts();
-                let mut body_bytes = match hyper::body::to_bytes(body).await {
+                let mut body_bytes = match utils::to_bytes(&mut body, None).await {
                     Ok(bytes) => bytes,
                     Err(err) => {
                         return Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)

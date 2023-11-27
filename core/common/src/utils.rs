@@ -4,10 +4,13 @@
 
 #![allow(unused_imports)]
 
+use bytes::{Bytes, BytesMut};
 use config::{Config, ConfigError, File, FileFormat};
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     service_registry_client::ServiceRegistryClient, DiscoverRequest,
 };
+use http_body::Body;
+use http_body_util::{BodyExt, combinators::UnsyncBoxBody};
 use log::{debug, info};
 use serde_derive::Deserialize;
 use std::env;
@@ -216,6 +219,33 @@ pub fn get_uri(uri: &str) -> Result<String, Status> {
     };
 
     Ok(uri.to_string())
+}
+
+/// Converts an HTTP body to bytes, propagating errors from the body.
+/// 
+/// # Arguments
+/// - `body`: the body to read
+/// - `max_length`: an optional maximum number of bytes to read. Body frames will be read until this value is exceeded. Setting this value can help avoid DoS attacks.
+// pub async fn to_bytes<'a, T, E>(body: &mut T, max_length: Option<usize>) -> Result<Bytes, E>
+// where
+//     T: Body<Data = Bytes, Error = E> + Unpin
+pub async fn to_bytes(body: &mut UnsyncBoxBody<Bytes, Status>, max_length: Option<usize>) -> Result<Bytes, Status>
+{
+    let mut buf = BytesMut::new();
+    while let Some(next) = body.frame().await {
+        let frame = next?;
+
+        // Only capture DATA frames and skip others, such as trailer frames
+        if let Some(chunk) = frame.data_ref() {
+            buf.extend_from_slice(&chunk[..]);
+        }
+
+        if buf.len() >= max_length.unwrap_or(usize::MAX) {
+            return Ok(buf.freeze());
+        }
+    }
+
+    Ok(buf.freeze())
 }
 
 #[cfg(test)]
