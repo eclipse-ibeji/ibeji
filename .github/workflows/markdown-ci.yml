@@ -8,6 +8,8 @@ on:
       - 'docs/**'
       - '**.md'
       - '**.markdown'
+      - '.markdownlint.jsonc'
+      - '.markdownlinkcheck.json'
 
 jobs:
   lint-markdown:
@@ -26,4 +28,4 @@ jobs:
     - uses: actions/checkout@v2
     - run: |
         npm install markdown-link-check
-        find . -type d \( -name node_modules -o -name .github \) -prune -o -type f -name '*.md' -print0 | xargs -0 -n1 node_modules/.bin/markdown-link-check --config .markdownlinkcheck.jsonc --quiet
+        find . -type d \( -name node_modules -o -name .github \) -prune -o -type f -name '*.md' -print0 | xargs -0 -n1 node_modules/.bin/markdown-link-check --config .markdownlinkcheck.json --quiet
