@@ -143,10 +143,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .skip(1)
         .map(|arg| {
             let mut split = arg.split('=');
-            let key = split
-                .next()
-                .expect("Couldn't parse argument key")
-                .to_owned();
+            let key = split.next().expect("Couldn't parse argument key").to_owned();
             let val = split.next().map(|v| v.to_owned());
 
             if split.next().is_some() {
@@ -160,12 +157,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     debug!("args: {args:?}");
 
     // Setup logging
-    let log_level_arg = args.get("--log-level")
+    let log_level_arg = args
+        .get("--log-level")
         .cloned()
         .unwrap_or(Some(DEFAULT_LOG_LEVEL.to_owned()))
         .expect("No log-level value provided");
-    let log_level = LevelFilter::from_str(log_level_arg.as_str())
-        .expect("Could not parse log level");
+    let log_level =
+        LevelFilter::from_str(log_level_arg.as_str()).expect("Could not parse log level");
     Builder::new().filter(None, log_level).target(Target::Stdout).init();
 
     #[cfg(feature = "tokio_console")]

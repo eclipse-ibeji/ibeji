@@ -116,7 +116,7 @@ Ibeji has support for using the [tokio console](https://github.com/tokio-rs/cons
 RUSTFLAGS="--cfg tokio_unstable" cargo build --features tokio_console
 ```
 
-Note that the tokio console will intercept trace-level logs, so these will not be visible when debugging wih the tokio console.
+Note that the tokio console will intercept trace-level logs, so these will not be visible when debugging with the tokio console.
 
 ## <a name="running-the-tests">Running the Tests</a>
 
