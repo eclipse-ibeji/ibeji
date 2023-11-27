@@ -10,6 +10,7 @@ use core_protobuf_data_access::chariott::service_discovery::core::v1::{
 };
 use log::{debug, info};
 use serde_derive::Deserialize;
+use tokio::time::error::Elapsed;
 use std::{env, thread};
 use std::future::Future;
 use strum_macros::Display;
@@ -249,15 +250,21 @@ where
 
     match thread.join() {
         Ok(Ok(r)) => r.map_err(|e| BlockOnError::InnerError(e)),
-        Ok(Err(_)) => Err(BlockOnError::Timeout),
+        Ok(Err(e)) => Err(BlockOnError::Timeout(e)),
         Err(e) => Err(BlockOnError::JoinError(format!("{e:?}"))),
     }
 }
 
+/// Error returned by the [`block_on`] function.
 #[derive(Debug)]
 pub enum BlockOnError<E> {
-    Timeout,
+    /// Execution timed out
+    Timeout(Elapsed),
+
+    /// Joining with the thread failed
     JoinError(String),
+
+    /// The future returned an error result
     InnerError(E),
 }
 
@@ -273,7 +280,7 @@ impl<E: std::error::Error + 'static> std::error::Error for BlockOnError<E> {
 impl<E: std::fmt::Display> std::fmt::Display for BlockOnError<E> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            BlockOnError::Timeout => write!(f, "Execution timed out"),
+            BlockOnError::Timeout(_) => write!(f, "Execution timed out"),
             BlockOnError::JoinError(s) => write!(f, "Error joining thread (most likely the future passed to block_on panicked): {s}"),
             BlockOnError::InnerError(e) => write!(f, "Error during execution: {e}"),
         }
