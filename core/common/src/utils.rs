@@ -10,10 +10,10 @@ use core_protobuf_data_access::chariott::service_discovery::core::v1::{
 };
 use log::{debug, info};
 use serde_derive::Deserialize;
-use std::env;
+use std::{env, thread};
 use std::future::Future;
 use strum_macros::Display;
-use tokio::time::{sleep, Duration};
+use tokio::{time::{sleep, Duration}, runtime::Handle};
 use tonic::{Request, Status};
 
 const IBEJI_HOME_VAR_NAME: &str = "IBEJI_HOME";
@@ -216,6 +216,68 @@ pub fn get_uri(uri: &str) -> Result<String, Status> {
     };
 
     Ok(uri.to_string())
+}
+
+/// Blocks on an asynchronous task, waiting for it to complete.
+/// This can be used to execute async code in a sync context.
+/// This will start a new thread using the current tokio runtime.
+///
+/// # Panics
+/// This will panic when called outside of a tokio runtime context.
+/// This can also theoretically panic if `std::thread::JoinHandle::join` panics,
+/// but this is believed to be impossible in this usage.
+///
+/// For more information on the panic conditions, see
+/// <https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.current> and
+/// <https://doc.rust-lang.org/std/thread/struct.JoinHandle.html#method.join>
+///
+/// # Arguments
+/// - `future`: the future to execute
+/// - `timeout`: the maximum amount of time that `future` should execute before being cancelled
+pub fn block_on<T, E, F>(future: F, timeout: Duration) -> Result<T, BlockOnError<E>>
+where
+    F: Future<Output = Result<T, E>> + Send + 'static,
+    T: Send + 'static,
+    E: Send + 'static,
+{
+    let handle = Handle::current();
+    let thread = thread::spawn(move || {
+        handle.block_on(async move {
+            tokio::time::timeout(timeout, future).await
+        })
+    });
+
+    match thread.join() {
+        Ok(Ok(r)) => r.map_err(|e| BlockOnError::InnerError(e)),
+        Ok(Err(_)) => Err(BlockOnError::Timeout),
+        Err(e) => Err(BlockOnError::JoinError(format!("{e:?}"))),
+    }
+}
+
+#[derive(Debug)]
+pub enum BlockOnError<E> {
+    Timeout,
+    JoinError(String),
+    InnerError(E),
+}
+
+impl<E: std::error::Error + 'static> std::error::Error for BlockOnError<E> {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            BlockOnError::InnerError(e) => Some(e),
+            _ => None,
+        }
+    }
+}
+
+impl<E: std::fmt::Display> std::fmt::Display for BlockOnError<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BlockOnError::Timeout => write!(f, "Execution timed out"),
+            BlockOnError::JoinError(s) => write!(f, "Error joining thread (most likely the future passed to block_on panicked): {s}"),
+            BlockOnError::InnerError(e) => write!(f, "Error during execution: {e}"),
+        }
+    }
 }
 
 #[cfg(test)]
