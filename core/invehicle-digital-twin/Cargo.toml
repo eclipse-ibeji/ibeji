@@ -27,13 +27,12 @@ serde_derive = { workspace = true }
 serde_json = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
-tokio = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tokio-console-subscriber = { workspace = true, optional = true }
 tonic = { workspace = true }
 tower = { workspace = true }
 url = { workspace = true }
 yaml-rust = { workspace = true }
-# for tokio console
-console-subscriber = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
@@ -41,3 +40,4 @@ tonic-build = { workspace = true }
 [features]
 managed_subscribe = ["dep:managed_subscribe"]
 containerize = ["common/containerize"]
+tokio_console = ["dep:tokio-console-subscriber", "tokio/tracing"]

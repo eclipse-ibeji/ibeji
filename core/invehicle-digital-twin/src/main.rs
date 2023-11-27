@@ -168,8 +168,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Could not parse log level");
     Builder::new().filter(None, log_level).target(Target::Stdout).init();
 
-    // enables tokio tracing
-    console_subscriber::init();
+    #[cfg(feature = "tokio_console")]
+    {
+        // enable tracing for tokio console
+        info!("Tokio console tracing is enabled");
+        tokio_console_subscriber::init();
+    }
 
     info!("The In-Vehicle Digital Twin Service has started.");
 
