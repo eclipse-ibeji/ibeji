@@ -2,6 +2,10 @@
   "ignorePatterns": [
     {
       "pattern": "^http://localhost"
+    },
+    {
+      "_patternComment": "Checking aka.ms links is unstable and frequently fails on valid links",
+      "pattern": "^https://aka.ms"
     }
   ],
   "aliveStatusCodes": [

@@ -8,6 +8,7 @@ CHARIOTT
 Chariott
 Chariott's
 chariott
+cfg
 com
 config
 containerized
@@ -67,6 +68,7 @@ ps
 repo
 Repo
 rm
+RUSTFLAGS
 rustup
 sdk
 sdl
@@ -76,6 +78,8 @@ snapd
 standalone
 sudo
 timothee
+tokio
+Tokio
 toml
 Tonic
 toolchain

@@ -29,7 +29,7 @@ pub mod chariott {
 }
 
 /// Media/MIME types.
-/// Common MIME types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+/// Common MIME types can be found here: <https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types>
 pub mod mime_type {
     pub const JPEG_IMAGES: &str = "image/jpeg";
 }

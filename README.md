@@ -11,6 +11,7 @@
   - [Install MQTT Broker](#install-mqtt-broker)
 - [Cloning the Repo](#cloning-the-repo)
 - [Building](#building)
+  - [Tokio Console Support](#tokio-console-support)
 - [Running the Tests](#running-the-tests)
 - [Running the Samples](#running-the-samples)
   - [Property Sample](#property-sample)
@@ -106,6 +107,16 @@ Once you have installed the prerequisites, go to your enlistment's root director
 `cargo build`
 
 This should build all of the libraries and executables.
+
+### Tokio Console Support
+
+Ibeji has support for using the [tokio console](https://github.com/tokio-rs/console) for advanced debugging. To enable this support, you need to build with the `tokio_console` feature enabled and with the `tokio_unstable` config flag for the rust compiler:
+
+```bash
+RUSTFLAGS="--cfg tokio_unstable" cargo build --features tokio_console
+```
+
+Note that the tokio console will intercept trace-level logs, so these will not be visible when debugging with the tokio console.
 
 ## <a name="running-the-tests">Running the Tests</a>
 

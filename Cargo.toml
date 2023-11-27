@@ -64,6 +64,7 @@ serde_json = "^1.0"
 strum = "0.25"
 strum_macros = "0.25.1"
 tokio = "1.29.1"
+tokio-console-subscriber = { version = "0.2.0", package = "console-subscriber" }
 tokio-stream = "0.1.14"
 tonic = "0.10.0"
 tonic-build = "0.10.0"
