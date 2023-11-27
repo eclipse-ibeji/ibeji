@@ -157,7 +157,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
         .collect();
 
-    println!("args: {args:?}");
+    debug!("args: {args:?}");
 
     // Setup logging
     let log_level_arg = args.get("--log-level")

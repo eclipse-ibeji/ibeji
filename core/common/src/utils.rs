@@ -8,14 +8,12 @@ use config::{Config, ConfigError, File, FileFormat};
 use core_protobuf_data_access::chariott::service_discovery::core::v1::{
     service_registry_client::ServiceRegistryClient, DiscoverRequest,
 };
-use log::{debug, info, error};
+use log::{debug, info};
 use serde_derive::Deserialize;
-use tokio::time::timeout;
-use std::any::Any;
-use std::{env, thread, panic};
+use std::env;
 use std::future::Future;
 use strum_macros::Display;
-use tokio::{time::{sleep, Duration}, runtime::Handle};
+use tokio::time::{sleep, Duration};
 use tonic::{Request, Status};
 
 const IBEJI_HOME_VAR_NAME: &str = "IBEJI_HOME";
@@ -218,65 +216,6 @@ pub fn get_uri(uri: &str) -> Result<String, Status> {
     };
 
     Ok(uri.to_string())
-}
-
-/// Blocks on an asynchronous task, waiting for it to complete.
-/// This can be used to execute async code in a sync context.
-/// This will start a new thread using the current tokio runtime,
-/// and will panic when called outside of a tokio runtime context.
-/// This method will also panic if joining with the spawned thread panics,
-/// including if the passed-in future panics.
-///
-/// For more information on acquiring a runtime handle and the panic conditions,
-/// see https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.current
-/// 
-/// # Arguments
-/// - `future`: the future to execute
-/// - `timeout`: the maximum amount of time that `future` should execute before being cancelled
-pub fn block_on<T, E, F>(future: F, timeout: Duration) -> Result<T, SomeError<E>>
-where
-    F: Future<Output = Result<T, E>> + Send + 'static,
-    T: Send + 'static,
-    E: Send + 'static,
-{
-    let handle = Handle::current();
-    let thread = thread::spawn(move || {
-        handle.block_on(async move {
-            tokio::time::timeout(timeout, future).await
-        })
-    });
-
-    match thread.join() {
-        Ok(Ok(r)) => r.map_err(|e| SomeError::InnerError(e)),
-        Ok(Err(_)) => Err(SomeError::TimeoutError),
-        Err(e) => Err(SomeError::JoinError(format!("{e:?}"))),
-    }
-}
-
-#[derive(Debug)]
-pub enum SomeError<E> {
-    TimeoutError,
-    JoinError(String),
-    InnerError(E),
-}
-
-impl<E: std::error::Error + 'static> std::error::Error for SomeError<E> {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            SomeError::InnerError(e) => Some(e),
-            _ => None,
-        }
-    }
-}
-
-impl<E: std::fmt::Display> std::fmt::Display for SomeError<E> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            SomeError::TimeoutError => write!(f, "Execution timed out"),
-            SomeError::JoinError(s) => write!(f, "Joining thread failed with {s}"),
-            SomeError::InnerError(e) => write!(f, "Error during execution: {e}"),
-        }
-    }
 }
 
 #[cfg(test)]

@@ -20,7 +20,7 @@ serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
-tokio = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tonic = { workspace = true }
 tower = { workspace = true }
 yaml-rust = { workspace = true }

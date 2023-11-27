@@ -24,7 +24,7 @@ sdl2 = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal", "sync"] }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }
 url = { workspace = true }

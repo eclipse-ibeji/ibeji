@@ -10,11 +10,9 @@ use http::uri::Uri;
 use http_body::Body;
 use log::warn;
 use regex::Regex;
-use std::{error::Error, time::Duration};
+use std::error::Error;
 use std::pin::Pin;
 use tower::{Layer, Service};
-
-use crate::utils;
 
 // This module provides the gRPC Interceptor construct. It can be used to
 // intercept gRPC calls, and examine/modify their requests and responses.
@@ -159,10 +157,9 @@ where
         let is_applicable = interceptor.is_applicable(&service_name, &method_name);
 
         if is_applicable && interceptor.must_handle_request() {
-            log::warn!("Request intercepted");
             let (parts, body) = request.into_parts();
             let mut body_bytes: Bytes =
-                match utils::block_on(hyper::body::to_bytes(body), Duration::from_secs(10)) {
+                match futures::executor::block_on(hyper::body::to_bytes(body)) {
                     Ok(bytes) => bytes,
                     Err(err) => {
                         return Box::pin(async move {
@@ -170,7 +167,6 @@ where
                         })
                     }
                 };
-            log::warn!("Body parsed");
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
             let new_protobuf_message_bytes: Bytes = match interceptor.handle_request(
@@ -186,7 +182,6 @@ where
             let stream = futures_util::stream::iter(new_body_chunks);
             let new_body = tonic::transport::Body::wrap_stream(stream);
             request = http::request::Request::from_parts(parts, new_body);
-            log::warn!("Finished handling request");
         }
 
         let fut = self.service.call(request);
