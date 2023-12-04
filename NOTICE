@@ -1727,7 +1727,7 @@ This page lists the licenses of the projects used in cargo-about.
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.9
 - [libc]( https://github.com/rust-lang/libc ) 0.2.150
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.15
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.69
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.70
 - [quote]( https://github.com/dtolnay/quote ) 1.0.33
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.15
@@ -3859,7 +3859,7 @@ limitations under the License.
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
 - [async-io]( https://github.com/smol-rs/async-io ) 2.2.1
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
-- [async-lock]( https://github.com/smol-rs/async-lock ) 3.1.2
+- [async-lock]( https://github.com/smol-rs/async-lock ) 3.2.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.5.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
@@ -3876,7 +3876,7 @@ limitations under the License.
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 2.0.0
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [cmake]( https://github.com/rust-lang/cmake-rs ) 0.1.50
-- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.3.0
+- [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.4.0
 - [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.8
 - [crossbeam-deque]( https://github.com/crossbeam-rs/crossbeam ) 0.8.3
 - [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.15
@@ -3893,10 +3893,10 @@ limitations under the License.
 - [fnv]( https://github.com/servo/rust-fnv ) 1.0.7
 - [form_urlencoded]( https://github.com/servo/rust-url ) 1.2.1
 - [futures-lite]( https://github.com/smol-rs/futures-lite ) 1.13.0
-- [futures-lite]( https://github.com/smol-rs/futures-lite ) 2.0.1
+- [futures-lite]( https://github.com/smol-rs/futures-lite ) 2.1.0
 - [gimli]( https://github.com/gimli-rs/gimli ) 0.28.1
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.12.3
-- [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.2
+- [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.3
 - [heck]( https://github.com/withoutboats/heck ) 0.4.1
 - [hermit-abi]( https://github.com/hermitcore/hermit-rs ) 0.3.3
 - [httparse]( https://github.com/seanmonstar/httparse ) 1.8.0
@@ -3908,10 +3908,10 @@ limitations under the License.
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.3
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
 - [jpeg-decoder]( https://github.com/image-rs/jpeg-decoder ) 0.3.0
-- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.65
+- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.66
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
-- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.11
+- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.12
 - [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.11
 - [log]( https://github.com/rust-lang/log ) 0.4.20
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
@@ -3948,7 +3948,7 @@ limitations under the License.
 - [ron]( https://github.com/ron-rs/ron ) 0.7.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.25
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.26
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
 - [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.2
@@ -3968,13 +3968,13 @@ limitations under the License.
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
-- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.88
-- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.88
-- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.38
-- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.88
-- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.88
-- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.88
-- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.65
+- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.89
+- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.89
+- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.39
+- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.89
+- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.89
+- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.89
+- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.66
 - [yaml-rust]( https://github.com/chyh1990/yaml-rust ) 0.4.5
 
 #### License
@@ -8404,6 +8404,7 @@ SOFTWARE.
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.6.4
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.0
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.6
 
 #### License
