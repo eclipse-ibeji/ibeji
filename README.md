@@ -108,13 +108,15 @@ Once you have installed the prerequisites, go to your enlistment's root director
 
 This should build all of the libraries and executables.
 
-### Tokio Console Support
+### <a name="tokio-console-support">Tokio Console Support</a>
 
 Ibeji has support for using the [tokio console](https://github.com/tokio-rs/console) for advanced debugging. To enable this support, you need to build with the `tokio_console` feature enabled and with the `tokio_unstable` config flag for the rust compiler:
 
 ```bash
 RUSTFLAGS="--cfg tokio_unstable" cargo build --features tokio_console
 ```
+
+Read the [tokio console documentation](https://github.com/tokio-rs/console) to learn how to install tokio console and how to run it.
 
 Note that the tokio console will intercept trace-level logs, so these will not be visible when debugging with the tokio console.
 

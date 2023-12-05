@@ -8,6 +8,7 @@ use dyn_clone::DynClone;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
+use hyper::Method;
 use log::warn;
 use regex::Regex;
 use std::error::Error;
@@ -154,19 +155,35 @@ where
         let interceptor = self.interceptor.clone();
 
         let (service_name, method_name) = Self::retrieve_grpc_names_from_uri(request.uri());
-        let is_applicable = interceptor.is_applicable(&service_name, &method_name);
+        let is_applicable = interceptor.is_applicable(&service_name, &method_name)
+            && (request.method() == Method::POST);
 
         if is_applicable && interceptor.must_handle_request() {
             let (parts, body) = request.into_parts();
-            let mut body_bytes: Bytes =
-                match futures::executor::block_on(hyper::body::to_bytes(body)) {
-                    Ok(bytes) => bytes,
-                    Err(err) => {
-                        return Box::pin(async move {
-                            Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
-                        })
-                    }
-                };
+
+            // There is a known issue where hyper::body::to_bytes sometimes hangs in the code below.
+            // We will use a timeout to break out when this happens.  This fix is a bandaid.  We will
+            // implement a better fix after we have upgraded to the latest major version of the hyper crate.
+            let mut body_bytes: Bytes = match futures::executor::block_on(async {
+                async_std::future::timeout(
+                    core::time::Duration::from_secs(5),
+                    hyper::body::to_bytes(body),
+                )
+                .await
+            }) {
+                Ok(Ok(bytes)) => bytes,
+                Ok(Err(err)) => {
+                    return Box::pin(async move {
+                        Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
+                    });
+                }
+                Err(err) => {
+                    return Box::pin(async move {
+                        Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
+                    });
+                }
+            };
+
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
             let new_protobuf_message_bytes: Bytes = match interceptor.handle_request(
