@@ -161,22 +161,16 @@ where
         if is_applicable && interceptor.must_handle_request() {
             let (parts, body) = request.into_parts();
 
-            // Rust requires that we initilaize body_bytes_timeout_result.
-            // Note: We will never use the initilaized value, so using an Ok value is fine.
-            let mut body_bytes_timeout_result = Ok(Ok(Bytes::new()));
-
             // There is a known issue where hyper::body::to_bytes sometimes hangs in the code below.
             // We will use a timeout to break out when this happens.  This fix is a bandaid.  We will
             // implement a better fix after we have upgraded to the latest major version of the hyper crate.
-            futures::executor::block_on(async {
-                body_bytes_timeout_result = async_std::future::timeout(
+            let mut body_bytes: Bytes = match futures::executor::block_on(async {
+                async_std::future::timeout(
                     core::time::Duration::from_secs(5),
                     hyper::body::to_bytes(body),
                 )
-                .await;
-            });
-
-            let mut body_bytes: Bytes = match body_bytes_timeout_result {
+                .await
+            }) {
                 Ok(Ok(bytes)) => bytes,
                 Ok(Err(err)) => {
                     return Box::pin(async move {
