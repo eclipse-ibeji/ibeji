@@ -9,6 +9,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+async-std = { workspace = true }
 bytes = { workspace = true }
 config = { workspace = true }
 core-protobuf-data-access = { path = "../protobuf_data_access" }
