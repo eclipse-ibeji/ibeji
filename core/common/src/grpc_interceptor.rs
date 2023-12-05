@@ -155,7 +155,8 @@ where
         let interceptor = self.interceptor.clone();
 
         let (service_name, method_name) = Self::retrieve_grpc_names_from_uri(request.uri());
-        let is_applicable = interceptor.is_applicable(&service_name, &method_name) && (request.method() == Method::POST);
+        let is_applicable = interceptor.is_applicable(&service_name, &method_name)
+            && (request.method() == Method::POST);
 
         if is_applicable && interceptor.must_handle_request() {
             let (parts, body) = request.into_parts();
@@ -163,24 +164,31 @@ where
             // Rust requires that we initilaize body_bytes_timeout_result.
             // Note: We will never use the initilaized value, so using an Ok value is fine.
             let mut body_bytes_timeout_result = Ok(Ok(Bytes::new()));
+
             // There is a known issue where hyper::body::to_bytes sometimes hangs in the code below.
-            // We will use a timeout to break out when this happens.
+            // We will use a timeout to break out when this happens.  This fix is a bandaid.  We will
+            // implement a better fix after we have upgraded to the latest major version of the hyper crate.
             futures::executor::block_on(async {
-                body_bytes_timeout_result = async_std::future::timeout(core::time::Duration::from_secs(5), hyper::body::to_bytes(body)).await;
+                body_bytes_timeout_result = async_std::future::timeout(
+                    core::time::Duration::from_secs(5),
+                    hyper::body::to_bytes(body),
+                )
+                .await;
             });
+
             let mut body_bytes: Bytes = match body_bytes_timeout_result {
                 Ok(Ok(bytes)) => bytes,
                 Ok(Err(err)) => {
                     return Box::pin(async move {
                         Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
                     });
-                },
+                }
                 Err(err) => {
                     return Box::pin(async move {
                         Err(Box::new(err) as Box<dyn std::error::Error + Sync + Send>)
                     });
                 }
-            };       
+            };
 
             let protobuf_message_bytes: Bytes = body_bytes.split_off(GRPC_HEADER_LENGTH);
             let grpc_header_bytes = body_bytes;
@@ -226,7 +234,9 @@ where
                     vec![Ok(grpc_header_bytes), Ok(new_protobuf_message_bytes)];
                 let stream = futures_util::stream::iter(new_body_chunks);
                 let new_body = tonic::transport::Body::wrap_stream(stream);
-                let new_box_body = HttpBody::map_err(new_body, |e| tonic::Status::from_error(Box::new(e))).boxed_unsync();
+                let new_box_body =
+                    HttpBody::map_err(new_body, |e| tonic::Status::from_error(Box::new(e)))
+                        .boxed_unsync();
                 response = http::response::Response::from_parts(parts, new_box_body);
             }
 
