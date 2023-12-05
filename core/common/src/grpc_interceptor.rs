@@ -8,7 +8,7 @@ use dyn_clone::DynClone;
 use futures_core::task::{Context, Poll};
 use http::uri::Uri;
 use http_body::Body;
-use hyper::{body::HttpBody, Method};
+use hyper::Method;
 use log::warn;
 use regex::Regex;
 use std::error::Error;
@@ -229,8 +229,7 @@ where
                 let stream = futures_util::stream::iter(new_body_chunks);
                 let new_body = tonic::transport::Body::wrap_stream(stream);
                 let new_box_body =
-                    HttpBody::map_err(new_body, |e| tonic::Status::from_error(Box::new(e)))
-                        .boxed_unsync();
+                    new_body.map_err(|e| tonic::Status::from_error(Box::new(e))).boxed_unsync();
                 response = http::response::Response::from_parts(parts, new_box_body);
             }
 
