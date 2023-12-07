@@ -27,6 +27,3 @@ yaml-rust = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }
-
-[features]
-containerize = ["common/containerize"]

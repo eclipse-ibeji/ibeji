@@ -1,5 +1,9 @@
+aarch
 Agemo
 agemo
+amd
+APP
+arg
 br
 build
 cargo
@@ -54,6 +58,7 @@ loopback
 md
 microsoft
 minimalistic
+mnt
 mosquitto
 Mosquitto
 mqtt

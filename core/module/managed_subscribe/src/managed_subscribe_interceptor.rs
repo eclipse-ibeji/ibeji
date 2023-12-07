@@ -9,7 +9,7 @@ use parking_lot::RwLock;
 use prost::Message;
 use std::{collections::HashMap, error::Error, sync::Arc};
 
-use common::{grpc_interceptor::GrpcInterceptor, utils};
+use common::grpc_interceptor::GrpcInterceptor;
 
 use crate::managed_subscribe_store::{CallbackInfo, EntityMetadata, ManagedSubscribeStore};
 
@@ -77,7 +77,7 @@ impl GrpcInterceptor for ManagedSubscribeInterceptor {
 
             for endpoint in &mut endpoints {
                 if endpoint.operations.contains(&Self::MANAGED_SUBSCRIBE_OPERATION.to_string()) {
-                    let entity_callback = utils::get_uri(&endpoint.uri)?;
+                    let entity_callback = endpoint.uri.clone();
                     let callback_protocol = endpoint.protocol.clone();
 
                     // Set endpoint information to the managed subscribe module.

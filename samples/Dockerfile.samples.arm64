@@ -10,27 +10,38 @@
 # Create a stage for building the application.
 
 ARG RUST_VERSION=1.72.1
+ARG APP_NAME=property-consumer
+ARG UID=10001
+
 FROM docker.io/library/rust:${RUST_VERSION}-slim-bullseye AS build
-ARG APP_NAME=invehicle-digital-twin
+ARG APP_NAME
 WORKDIR /sdv
 
 COPY ./ .
 
-# Add Build dependencies.
-RUN apt update && apt upgrade -y && apt install -y protobuf-compiler
-
 # Check that APP_NAME argument is valid.
-RUN sanitized=$(echo "${APP_NAME}" | tr -dc '^[a-zA-Z_0-9-]+$'); \
-[ "$sanitized" = "${APP_NAME}" ] || { \
-    echo "ARG 'APP_NAME' is invalid. APP_NAME='${APP_NAME}' sanitized='${sanitized}'"; \
-    exit 1; \
-}
+RUN /sdv/container/scripts/argument_sanitizer.sh \
+    --arg-value "${APP_NAME}" \
+    --regex "^[a-zA-Z_0-9-]+$" || \
+    ( echo "Argument sanitizer failed for ARG 'APP_NAME'"; exit 1 )
 
-# Build the application with the 'containerize' feature.
-RUN cargo build --release -p "${APP_NAME}" --features "containerize"
+# Add Build dependencies.
+RUN apt update && apt upgrade -y && apt install -y \
+    cmake \
+    libsdl2-dev \
+    libssl-dev \
+    pkg-config \
+    protobuf-compiler \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu
+
+RUN rustup target add aarch64-unknown-linux-gnu
+
+# Build the application.
+RUN cargo build --release --target=aarch64-unknown-linux-gnu --bin "${APP_NAME}"
 
 # Copy the built application to working directory.
-RUN cp ./target/release/"${APP_NAME}" /sdv/service
+RUN cp ./target/aarch64-unknown-linux-gnu/release/"${APP_NAME}" /sdv/service
 
 ################################################################################
 # Create a new stage for running the application that contains the minimal
@@ -43,11 +54,20 @@ RUN cp ./target/release/"${APP_NAME}" /sdv/service
 # most recent version of that tag when you build your Dockerfile. If
 # reproducability is important, consider using a digest
 # (e.g., debian@sha256:ac707220fbd7b67fc19b112cee8170b41a9e97f703f588b2cdbbcdcecdd8af57).
-FROM docker.io/library/debian:bullseye-slim AS final
+FROM docker.io/arm64v8/debian:bullseye-slim AS final
+ARG UID
+
+# Copy container scripts.
+COPY ./container/scripts/*.sh /sdv/scripts/
+
+# Check that UID argument is valid.
+RUN /sdv/scripts/argument_sanitizer.sh \
+    --arg-value "${UID}" \
+    --regex "^[0-9]+$" || \
+    ( echo "Argument sanitizer failed for ARG 'UID'"; exit 1 )
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-ARG UID=10001
 RUN adduser \
     --disabled-password \
     --gecos "" \
@@ -56,6 +76,14 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     appuser
+
+# Create and add user ownership to config directory.
+RUN mkdir -p /sdv/config
+RUN chown appuser /sdv/config
+
+# Create mnt directory to copy override configs into.
+RUN mkdir -p /mnt/config
+
 USER appuser
 
 WORKDIR /sdv
@@ -67,10 +95,7 @@ ENV IBEJI_HOME=/sdv/config
 COPY --from=build /sdv/service /sdv/
 
 # Copy configuration for service.
-COPY --from=build /sdv/container/config/standalone/ /sdv/config
-
-# Expose the port that the application listens on.
-EXPOSE 5010
+COPY --from=build /sdv/samples/container/config/consumer/ /sdv/config
 
 # What the container should run when it is started.
-CMD ["/sdv/service"]
+CMD ["/sdv/scripts/container_startup.sh"]

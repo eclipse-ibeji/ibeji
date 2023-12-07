@@ -310,9 +310,8 @@ rather than having it statically provided in their respective config file, then 
 
 ## <a name="running-in-a-container">Running in a Container</a>
 
-To run the In-Vehicle Digital Twin Service in a container, please refer to [Ibeji Containerization](./container/README.md).
-
-To run the samples in a container, please refer to [Samples Containerization](./samples/container/README.md).
+Please refer to [Ibeji Containers](./container/README.md#ibeji-containers) for information on how
+build and run the In-Vehicle Digital Twin Service or the Sample Applications in a container.
 
 ## <a name="trademarks">Trademarks</a>
 

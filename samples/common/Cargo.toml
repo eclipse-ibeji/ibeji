@@ -20,5 +20,6 @@ tokio = { workspace = true }
 tonic = { workspace = true }
 yaml-rust = { workspace = true }
 
-[features]
-containerize = []
+# If built for aarch64, enable the 'vendored-ssl' feature.
+[target.'cfg(target_arch = "aarch64")'.dependencies]
+sdl2 = { workspace = true, features = [ "bundled", "static-link" ] }
