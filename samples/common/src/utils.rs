@@ -129,14 +129,11 @@ pub async fn discover_digital_twin_provider_using_ibeji(
         })
         .cloned()
     {
-        Some(mut result) => {
+        Some(result) => {
             info!(
                 "Found a matching endpoint for entity id {entity_id} that has URI {}",
                 result.uri
             );
-
-            result.uri = get_uri(&result.uri)
-                .map_err(|err| format!("Failed to get provider URI due to error: {err}"))?;
 
             Ok(result)
         }
@@ -161,10 +158,9 @@ pub async fn discover_service_using_chariott(
     communication_kind: &str,
     communication_reference: &str,
 ) -> Result<String, Status> {
-    let uri = get_uri(chariott_uri)?;
-
-    let mut client =
-        ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
+    let mut client = ServiceRegistryClient::connect(chariott_uri.to_owned())
+        .await
+        .map_err(|e| Status::internal(e.to_string()))?;
 
     let request = Request::new(DiscoverRequest {
         namespace: namespace.to_string(),
@@ -233,39 +229,7 @@ pub async fn retrieve_invehicle_digital_twin_uri(
         }
     };
 
-    get_uri(&result).map_err(|err| {
-        format!("Failed to retrieve the in-vehicle digital twin service's URI due to error: {err}")
-    })
-}
-
-/// If the 'containerize' feature is set, this function will modify the localhost URI to point to
-/// the container's localhost DNS alias. Otherwise, returns the URI as a string.
-///
-/// # Arguments
-/// * `uri` - The uri to potentially modify.
-pub fn get_uri(uri: &str) -> Result<String, Status> {
-    #[cfg(feature = "containerize")]
-    let uri = {
-        // Container env variable names.
-        let host_gateway_env_var: &str = "HOST_GATEWAY";
-        let host_alias_env_var: &str = "LOCALHOST_ALIAS";
-
-        // Return an error if container env variables are not set.
-        let host_gateway = std::env::var(host_gateway_env_var).map_err(|err| {
-            Status::failed_precondition(format!(
-                "Unable to get environment var '{host_gateway_env_var}' with error: {err}"
-            ))
-        })?;
-        let host_alias = std::env::var(host_alias_env_var).map_err(|err| {
-            Status::failed_precondition(format!(
-                "Unable to get environment var '{host_alias_env_var}' with error: {err}"
-            ))
-        })?;
-
-        uri.replace(&host_alias, &host_gateway)
-    };
-
-    Ok(uri.to_string())
+    Ok(result)
 }
 
 #[cfg(test)]

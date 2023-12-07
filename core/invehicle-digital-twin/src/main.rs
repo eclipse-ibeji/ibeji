@@ -5,7 +5,6 @@
 // Module references behind feature flags. Add any necessary module references here.
 // Start: Module references.
 
-use common::utils;
 #[cfg(feature = "managed_subscribe")]
 use managed_subscribe::managed_subscribe_module::ManagedSubscribeModule;
 
@@ -55,10 +54,9 @@ async fn register_invehicle_digital_twin_service_with_chariott(
     chariott_uri: &str,
     invehicle_digital_twin_uri: &str,
 ) -> Result<(), Status> {
-    let uri = utils::get_uri(chariott_uri)?;
-
-    let mut client =
-        ServiceRegistryClient::connect(uri).await.map_err(|e| Status::internal(e.to_string()))?;
+    let mut client = ServiceRegistryClient::connect(chariott_uri.to_owned())
+        .await
+        .map_err(|e| Status::internal(e.to_string()))?;
 
     let service = Some(ServiceMetadata {
         namespace: INVEHICLE_DIGITAL_TWIN_SERVICE_NAMESPACE.to_string(),

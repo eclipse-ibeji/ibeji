@@ -39,5 +39,4 @@ tonic-build = { workspace = true }
 
 [features]
 managed_subscribe = ["dep:managed_subscribe"]
-containerize = ["common/containerize"]
 tokio_console = ["dep:tokio-console-subscriber", "tokio/tracing"]

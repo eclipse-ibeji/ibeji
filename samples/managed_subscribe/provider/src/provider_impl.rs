@@ -16,7 +16,6 @@ use log::{debug, info, warn};
 use paho_mqtt as mqtt;
 use parking_lot::RwLock;
 use samples_common::constants::constraint_type;
-use samples_common::utils;
 use serde_derive::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 use tokio::sync::{mpsc, watch};
@@ -131,9 +130,7 @@ impl ProviderImpl {
         let min_interval_ms = self.min_interval_ms;
 
         // This should not be empty.
-        let mut subscription_info = payload.subscription_info.unwrap();
-
-        subscription_info.uri = utils::get_uri(&subscription_info.uri).unwrap();
+        let subscription_info = payload.subscription_info.unwrap();
 
         // Create stop publish channel.
         let (sender, mut reciever) = mpsc::channel(10);
