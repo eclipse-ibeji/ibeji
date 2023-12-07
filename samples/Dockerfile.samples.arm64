@@ -66,8 +66,6 @@ RUN /sdv/scripts/argument_sanitizer.sh \
     --regex "^[0-9]+$" || \
     ( echo "Argument sanitizer failed for ARG 'UID'"; exit 1 )
 
-# RUN apt update && apt upgrade -y && apt install -y libsdl2-dev
-
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
 RUN adduser \
