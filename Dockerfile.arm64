@@ -29,7 +29,7 @@ RUN /sdv/container/scripts/argument_sanitizer.sh \
 
 # Check that FEATURES argument is valid if the argument is not empty.
 # The regex checks if there is one or more features separated by a single space.
-RUN if [ -n "${FEATURES}" ]; then \ 
+RUN if [ -n "${FEATURES}" ]; then \
     /sdv/container/scripts/argument_sanitizer.sh \
     --arg-value "${FEATURES}" \
     --regex "^[a-zA-Z_0-9-]+(?: [a-zA-Z_0-9-]+)*$" || \

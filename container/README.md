@@ -2,9 +2,6 @@
 
 This document covers how to containerize the services provided in this repository.
 
-To run the samples as
-a container please refer to [Samples Containerization](../samples/container/README.md).
-
 ## Dockerfile Selection
 
 ### In-Vehicle Digital Twin Service
@@ -168,6 +165,8 @@ environment variable called CONFIG_HOME to the path to the config file:
 
 [Install Podman](https://podman.io/docs/installation)
 
+### Running in Podman
+
 To run the service in a Podman container:
 
 >Note: Before running any of the following commands, replace all placeholders (wrapped with `<>`).
@@ -213,6 +212,7 @@ root directory:
     ```shell
     podman run --network=host <image_name>
     ```
+
     >Note: Most images built will require configuration overrides. See
     [Running in Podman with overridden configuration](#running-in-podman-with-overridden-configuration)
     for more details.
