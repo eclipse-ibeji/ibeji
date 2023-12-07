@@ -60,7 +60,7 @@ To run the service in a Docker container:
 Dockerfile:
 
     ```shell
-    docker build -t <image_name> -f <Dockerfile> (optional: --build-arg=APP_NAME=<project name>) (optional: --build-arg=FEATURES="<module name(s)>") .
+    docker build -t <image_name> -f <Dockerfile> [--build-arg=APP_NAME=<project name>] [--build-arg=FEATURES="<module name(s)>"] .
     ```
 
     >Note: The `FEATURES` build arg only applies to the dockerfiles for In-Vehicle Digital Twin Service.
@@ -175,7 +175,7 @@ To run the service in a Podman container:
 Dockerfile:
 
     ```shell
-    podman build -t <image_name> -f <Dockerfile> (optional: --build-arg=APP_NAME=<project name>) (optional: --build-arg=FEATURES="<module name(s)>") .
+    podman build -t <image_name> -f <Dockerfile> [--build-arg=APP_NAME=<project name>] [--build-arg=FEATURES="<module name(s)>"] .
     ```
 
     >Note: The `FEATURES` build arg only applies to the dockerfiles for In-Vehicle Digital Twin Service.
