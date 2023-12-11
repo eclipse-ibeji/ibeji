@@ -1724,13 +1724,13 @@ This page lists the licenses of the projects used in cargo-about.
 - [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.74
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.16
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
-- [itoa]( https://github.com/dtolnay/itoa ) 1.0.9
+- [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.150
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.15
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.70
 - [quote]( https://github.com/dtolnay/quote ) 1.0.33
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
-- [ryu]( https://github.com/dtolnay/ryu ) 1.0.15
+- [ryu]( https://github.com/dtolnay/ryu ) 1.0.16
 - [serde]( https://github.com/serde-rs/serde ) 1.0.193
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.193
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.108
@@ -3921,7 +3921,8 @@ limitations under the License.
 - [num-traits]( https://github.com/rust-num/num-traits ) 0.2.17
 - [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.16.0
 - [object]( https://github.com/gimli-rs/object ) 0.32.1
-- [once_cell]( https://github.com/matklad/once_cell ) 1.18.0
+- [once_cell]( https://github.com/matklad/once_cell ) 1.19.0
+- [openssl-src]( https://github.com/alexcrichton/openssl-src-rs ) 300.2.0+3.2.0
 - [parking]( https://github.com/smol-rs/parking ) 2.2.0
 - [parking_lot]( https://github.com/Amanieu/parking_lot ) 0.12.1
 - [parking_lot_core]( https://github.com/Amanieu/parking_lot ) 0.9.9
@@ -3948,7 +3949,7 @@ limitations under the License.
 - [ron]( https://github.com/ron-rs/ron ) 0.7.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.26
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.28
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
 - [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.2
@@ -3958,7 +3959,7 @@ limitations under the License.
 - [tempfile]( https://github.com/Stebalien/tempfile ) 3.8.1
 - [toml]( https://github.com/toml-rs/toml ) 0.5.11
 - [ucd-trie]( https://github.com/BurntSushi/ucd-generate ) 0.1.6
-- [unicode-bidi]( https://github.com/servo/unicode-bidi ) 0.3.13
+- [unicode-bidi]( https://github.com/servo/unicode-bidi ) 0.3.14
 - [unicode-normalization]( https://github.com/unicode-rs/unicode-normalization ) 0.1.22
 - [url]( https://github.com/servo/rust-url ) 2.5.0
 - [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
@@ -7079,7 +7080,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 #### Used by
 
-- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.96
+- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.97
 
 #### License
 
@@ -7116,7 +7117,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [mio]( https://github.com/tokio-rs/mio ) 0.8.9
+- [mio]( https://github.com/tokio-rs/mio ) 0.8.10
 
 #### License
 
@@ -7411,13 +7412,12 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [try-lock]( https://github.com/seanmonstar/try-lock ) 0.2.4
+- [want]( https://github.com/seanmonstar/want ) 0.3.1
 
 #### License
 
 ```text
-Copyright (c) 2018 Sean McArthur
-Copyright (c) 2016 Alex Crichton
+Copyright (c) 2018-2019 Sean McArthur
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -7444,12 +7444,13 @@ THE SOFTWARE.
 
 #### Used by
 
-- [want]( https://github.com/seanmonstar/want ) 0.3.1
+- [try-lock]( https://github.com/seanmonstar/try-lock ) 0.2.5
 
 #### License
 
 ```text
-Copyright (c) 2018-2019 Sean McArthur
+Copyright (c) 2018-2023 Sean McArthur
+Copyright (c) 2016 Alex Crichton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -7614,7 +7615,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [http-body]( https://github.com/hyperium/http-body ) 0.4.5
+- [http-body]( https://github.com/hyperium/http-body ) 0.4.6
 
 #### License
 
@@ -7761,7 +7762,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.34.0
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.35.0
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.14
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.10
 
