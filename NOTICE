@@ -1720,21 +1720,21 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.75
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.74
+- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.76
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.75
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.16
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.151
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.15
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.70
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.71
 - [quote]( https://github.com/dtolnay/quote ) 1.0.33
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.16
 - [serde]( https://github.com/serde-rs/serde ) 1.0.193
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.193
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.108
-- [syn]( https://github.com/dtolnay/syn ) 2.0.41
+- [syn]( https://github.com/dtolnay/syn ) 2.0.42
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.51
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.51
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
@@ -3861,7 +3861,7 @@ limitations under the License.
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 3.2.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
-- [async-task]( https://github.com/smol-rs/async-task ) 4.5.0
+- [async-task]( https://github.com/smol-rs/async-task ) 4.6.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
 - [autocfg]( https://github.com/cuviper/autocfg ) 1.1.0
 - [backtrace]( https://github.com/rust-lang/backtrace-rs ) 0.3.69
@@ -3884,7 +3884,7 @@ limitations under the License.
 - [either]( https://github.com/bluss/either ) 1.9.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
-- [event-listener]( https://github.com/smol-rs/event-listener ) 4.0.0
+- [event-listener]( https://github.com/smol-rs/event-listener ) 4.0.1
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.4.0
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
 - [fastrand]( https://github.com/smol-rs/fastrand ) 2.0.1
@@ -3934,7 +3934,7 @@ limitations under the License.
 - [pest_meta]( https://github.com/pest-parser/pest ) 2.7.5
 - [petgraph]( https://github.com/petgraph/petgraph ) 0.6.4
 - [piper]( https://github.com/notgull/piper ) 0.2.1
-- [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.27
+- [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.28
 - [png]( https://github.com/image-rs/image-png.git ) 0.17.10
 - [polling]( https://github.com/smol-rs/polling ) 3.3.1
 - [prost]( https://github.com/tokio-rs/prost ) 0.12.3
@@ -7161,7 +7161,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 #### Used by
 
-- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.97
+- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.98
 
 #### License
 
@@ -7261,7 +7261,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [hyper]( https://github.com/hyperium/hyper ) 0.14.27
+- [hyper]( https://github.com/hyperium/hyper ) 0.14.28
 
 #### License
 
@@ -7843,7 +7843,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.35.0
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.35.1
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.14
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.10
 
