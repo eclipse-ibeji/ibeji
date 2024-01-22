@@ -1914,7 +1914,7 @@ This page lists the licenses of the projects used in cargo-about.
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.16
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
-- [libc]( https://github.com/rust-lang/libc ) 0.2.151
+- [libc]( https://github.com/rust-lang/libc ) 0.2.152
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.16
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.76
 - [quote]( https://github.com/dtolnay/quote ) 1.0.35
@@ -4048,14 +4048,14 @@ limitations under the License.
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
 - [async-io]( https://github.com/smol-rs/async-io ) 2.2.2
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
-- [async-lock]( https://github.com/smol-rs/async-lock ) 3.2.0
+- [async-lock]( https://github.com/smol-rs/async-lock ) 3.3.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.7.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
 - [autocfg]( https://github.com/cuviper/autocfg ) 1.1.0
 - [backtrace]( https://github.com/rust-lang/backtrace-rs ) 0.3.69
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.13.1
-- [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.5
+- [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.7
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
 - [bitflags]( https://github.com/bitflags/bitflags ) 2.4.1
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
@@ -4066,10 +4066,10 @@ limitations under the License.
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [cmake]( https://github.com/rust-lang/cmake-rs ) 0.1.50
 - [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.4.0
-- [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.10
-- [crossbeam-deque]( https://github.com/crossbeam-rs/crossbeam ) 0.8.4
-- [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.17
-- [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.18
+- [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.11
+- [crossbeam-deque]( https://github.com/crossbeam-rs/crossbeam ) 0.8.5
+- [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.18
+- [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.19
 - [either]( https://github.com/bluss/either ) 1.9.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
@@ -4096,8 +4096,8 @@ limitations under the License.
 - [io-lifetimes]( https://github.com/sunfishcode/io-lifetimes ) 1.0.11
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.3
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
-- [jpeg-decoder]( https://github.com/image-rs/jpeg-decoder ) 0.3.0
-- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.66
+- [jpeg-decoder]( https://github.com/image-rs/jpeg-decoder ) 0.3.1
+- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.67
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.12
@@ -4105,8 +4105,6 @@ limitations under the License.
 - [log]( https://github.com/rust-lang/log ) 0.4.20
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
 - [multimap]( https://github.com/havarnov/multimap ) 0.8.3
-- [num-integer]( https://github.com/rust-num/num-integer ) 0.1.45
-- [num-rational]( https://github.com/rust-num/num-rational ) 0.4.1
 - [num-traits]( https://github.com/rust-num/num-traits ) 0.2.17
 - [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.16.0
 - [object]( https://github.com/gimli-rs/object ) 0.32.2
@@ -4124,7 +4122,7 @@ limitations under the License.
 - [petgraph]( https://github.com/petgraph/petgraph ) 0.6.4
 - [piper]( https://github.com/notgull/piper ) 0.2.1
 - [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.28
-- [png]( https://github.com/image-rs/image-png.git ) 0.17.10
+- [png]( https://github.com/image-rs/image-png ) 0.17.11
 - [polling]( https://github.com/smol-rs/polling ) 3.3.1
 - [prost]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-build]( https://github.com/tokio-rs/prost ) 0.12.3
@@ -4138,10 +4136,10 @@ limitations under the License.
 - [ron]( https://github.com/ron-rs/ron ) 0.7.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.28
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.30
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
-- [smallvec]( https://github.com/servo/rust-smallvec ) 1.11.2
+- [smallvec]( https://github.com/servo/rust-smallvec ) 1.12.0
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.10
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.5.5
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
@@ -4154,17 +4152,17 @@ limitations under the License.
 - [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
 - [uuid]( https://github.com/uuid-rs/uuid ) 1.6.1
 - [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.6.1
-- [value-bag]( https://github.com/sval-rs/value-bag ) 1.4.3
+- [value-bag]( https://github.com/sval-rs/value-bag ) 1.6.0
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
-- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.89
-- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.89
-- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.39
-- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.89
-- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.89
-- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.89
-- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.66
+- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.90
+- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.90
+- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.40
+- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.90
+- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.90
+- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.90
+- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.67
 - [yaml-rust]( https://github.com/chyh1990/yaml-rust ) 0.4.5
 
 #### License
@@ -5197,7 +5195,7 @@ APPENDIX: How to apply the Apache License to your work.
 
 #### Used by
 
-- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.11
+- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.12
 - [rand_chacha]( https://github.com/rust-random/rand ) 0.3.1
 
 #### License
@@ -7578,7 +7576,7 @@ SOFTWARE.
 
 #### Used by
 
-- [h2]( https://github.com/hyperium/h2 ) 0.3.22
+- [h2]( https://github.com/hyperium/h2 ) 0.3.23
 
 #### License
 
@@ -8119,7 +8117,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### Used by
 
-- [tiff]( https://github.com/image-rs/image-tiff ) 0.9.0
+- [tiff]( https://github.com/image-rs/image-tiff ) 0.9.1
 
 #### License
 
@@ -8455,7 +8453,7 @@ SOFTWARE.
 
 #### Used by
 
-- [image]( https://github.com/image-rs/image ) 0.24.7
+- [image]( https://github.com/image-rs/image ) 0.24.8
 
 #### License
 
@@ -8511,7 +8509,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.0
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.1
 
 #### License
 
@@ -8645,7 +8643,6 @@ SOFTWARE.
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
-- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.0
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.6
 
 #### License
