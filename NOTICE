@@ -10,6 +10,7 @@ This page lists the licenses of the projects used in cargo-about.
 - Eclipse Public License 1.0 (2)
 - ISC License (1)
 - Unicode License Agreement - Data Files and Software (2016) (1)
+- zlib License (1)
 
 ## All license text
 
@@ -17,10 +18,10 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [fdeflate]( https://github.com/image-rs/fdeflate ) 0.3.3
+- [fdeflate]( https://github.com/image-rs/fdeflate ) 0.3.4
 - [miniz_oxide]( https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide ) 0.7.1
-- [pin-project]( https://github.com/taiki-e/pin-project ) 1.1.3
-- [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.1.3
+- [pin-project]( https://github.com/taiki-e/pin-project ) 1.1.4
+- [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.1.4
 - [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.13
 - [sync_wrapper]( https://github.com/Actyx/sync_wrapper ) 0.1.2
 
@@ -1060,9 +1061,9 @@ This page lists the licenses of the projects used in cargo-about.
 
 - [abnf]( https://github.com/duesee/abnf ) 0.13.0
 - [abnf-core]( https://github.com/duesee/abnf-core ) 0.5.0
-- [ciborium]( https://github.com/enarx/ciborium ) 0.2.1
-- [ciborium-io]( https://github.com/enarx/ciborium ) 0.2.1
-- [ciborium-ll]( https://github.com/enarx/ciborium ) 0.2.1
+- [ciborium]( https://github.com/enarx/ciborium ) 0.2.2
+- [ciborium-io]( https://github.com/enarx/ciborium ) 0.2.2
+- [ciborium-ll]( https://github.com/enarx/ciborium ) 0.2.2
 
 #### License
 
@@ -1490,7 +1491,7 @@ This page lists the licenses of the projects used in cargo-about.
 #### Used by
 
 - [crc32fast]( https://github.com/srijs/rust-crc32fast ) 1.3.2
-- [env_logger]( https://github.com/rust-cli/env_logger ) 0.10.1
+- [env_logger]( https://github.com/rust-cli/env_logger ) 0.10.2
 - [humantime]( https://github.com/tailhook/humantime ) 2.1.0
 - [tokio-io-timeout]( https://github.com/sfackler/tokio-io-timeout ) 1.2.0
 
@@ -1916,13 +1917,13 @@ This page lists the licenses of the projects used in cargo-about.
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.152
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.16
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.76
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.78
 - [quote]( https://github.com/dtolnay/quote ) 1.0.35
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.16
-- [serde]( https://github.com/serde-rs/serde ) 1.0.195
-- [serde_derive]( https://github.com/serde-rs/serde ) 1.0.195
-- [serde_json]( https://github.com/serde-rs/json ) 1.0.111
+- [serde]( https://github.com/serde-rs/serde ) 1.0.196
+- [serde_derive]( https://github.com/serde-rs/serde ) 1.0.196
+- [serde_json]( https://github.com/serde-rs/json ) 1.0.112
 - [syn]( https://github.com/dtolnay/syn ) 2.0.48
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.56
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.56
@@ -3827,7 +3828,7 @@ limitations under the License.
 
 - [gif]( https://github.com/image-rs/image-gif ) 0.12.0
 - [hex_fmt]( https://github.com/poanetwork/hex_fmt ) 0.3.0
-- [weezl]( https://github.com/image-rs/lzw.git ) 0.1.7
+- [weezl]( https://github.com/image-rs/lzw ) 0.1.8
 
 #### License
 
@@ -4046,7 +4047,7 @@ limitations under the License.
 - [async-executor]( https://github.com/smol-rs/async-executor ) 1.8.0
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.4.1
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
-- [async-io]( https://github.com/smol-rs/async-io ) 2.2.2
+- [async-io]( https://github.com/smol-rs/async-io ) 2.3.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 3.3.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
@@ -4057,7 +4058,7 @@ limitations under the License.
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.13.1
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.7
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
-- [bitflags]( https://github.com/bitflags/bitflags ) 2.4.1
+- [bitflags]( https://github.com/bitflags/bitflags ) 2.4.2
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
 - [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.14.0
@@ -4087,7 +4088,7 @@ limitations under the License.
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.12.3
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.3
 - [heck]( https://github.com/withoutboats/heck ) 0.4.1
-- [hermit-abi]( https://github.com/hermitcore/hermit-rs ) 0.3.3
+- [hermit-abi]( https://github.com/hermitcore/hermit-rs ) 0.3.4
 - [httparse]( https://github.com/seanmonstar/httparse ) 1.8.0
 - [hyper-timeout]( https://github.com/hjr3/hyper-timeout ) 0.4.1
 - [idna]( https://github.com/servo/rust-url/ ) 0.5.0
@@ -4100,7 +4101,7 @@ limitations under the License.
 - [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.67
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
-- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.12
+- [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.13
 - [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.11
 - [log]( https://github.com/rust-lang/log ) 0.4.20
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
@@ -4121,17 +4122,17 @@ limitations under the License.
 - [pest_meta]( https://github.com/pest-parser/pest ) 2.7.6
 - [petgraph]( https://github.com/petgraph/petgraph ) 0.6.4
 - [piper]( https://github.com/notgull/piper ) 0.2.1
-- [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.28
+- [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.29
 - [png]( https://github.com/image-rs/image-png ) 0.17.11
-- [polling]( https://github.com/smol-rs/polling ) 3.3.1
+- [polling]( https://github.com/smol-rs/polling ) 3.3.2
 - [prost]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-build]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-types]( https://github.com/tokio-rs/prost ) 0.12.3
-- [rayon]( https://github.com/rayon-rs/rayon ) 1.8.0
-- [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.0
-- [regex]( https://github.com/rust-lang/regex ) 1.10.2
-- [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.3
+- [rayon]( https://github.com/rayon-rs/rayon ) 1.8.1
+- [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
+- [regex]( https://github.com/rust-lang/regex ) 1.10.3
+- [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.5
 - [regex-syntax]( https://github.com/rust-lang/regex/tree/master/regex-syntax ) 0.8.2
 - [ron]( https://github.com/ron-rs/ron ) 0.7.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
@@ -4139,19 +4140,19 @@ limitations under the License.
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.30
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
-- [smallvec]( https://github.com/servo/rust-smallvec ) 1.12.0
+- [smallvec]( https://github.com/servo/rust-smallvec ) 1.13.1
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.10
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.5.5
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
 - [tempfile]( https://github.com/Stebalien/tempfile ) 3.9.0
 - [toml]( https://github.com/toml-rs/toml ) 0.5.11
 - [ucd-trie]( https://github.com/BurntSushi/ucd-generate ) 0.1.6
-- [unicode-bidi]( https://github.com/servo/unicode-bidi ) 0.3.14
+- [unicode-bidi]( https://github.com/servo/unicode-bidi ) 0.3.15
 - [unicode-normalization]( https://github.com/unicode-rs/unicode-normalization ) 0.1.22
 - [url]( https://github.com/servo/rust-url ) 2.5.0
 - [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
-- [uuid]( https://github.com/uuid-rs/uuid ) 1.6.1
-- [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.6.1
+- [uuid]( https://github.com/uuid-rs/uuid ) 1.7.0
+- [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.7.0
 - [value-bag]( https://github.com/sval-rs/value-bag ) 1.6.0
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
@@ -6264,7 +6265,7 @@ limitations under the License.
 
 #### Used by
 
-- [flume]( https://github.com/zesterer/flume ) 0.11.0
+- [flume]( https://github.com/zesterer/flume ) 0.10.14
 
 #### License
 
@@ -6736,8 +6737,7 @@ limitations under the License.
 
 - [btree-range-map]( https://github.com/timothee-haudebourg/btree-range-map ) 0.7.2
 - [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.6
-- [half]( https://github.com/starkat99/half-rs ) 1.8.2
-- [half]( https://github.com/starkat99/half-rs ) 2.2.1
+- [half]( https://github.com/starkat99/half-rs ) 2.3.1
 - [range-traits]( https://github.com/timothee-haudebourg/range-traits ) 0.3.2
 - [static-regular-grammar]( https://github.com/timothee-haudebourg/static-regular-grammar ) 1.1.1
 - [winapi-i686-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
@@ -6827,7 +6827,7 @@ limitations under the License.
 
 #### Used by
 
-- [bytemuck]( https://github.com/Lokathor/bytemuck ) 1.14.0
+- [bytemuck]( https://github.com/Lokathor/bytemuck ) 1.14.1
 
 #### License
 
@@ -6931,8 +6931,7 @@ MIT OR Apache-2.0
 
 #### Used by
 
-- [half]( https://github.com/starkat99/half-rs ) 1.8.2
-- [half]( https://github.com/starkat99/half-rs ) 2.2.1
+- [half]( https://github.com/starkat99/half-rs ) 2.3.1
 
 #### License
 
@@ -6994,7 +6993,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #### Used by
 
-- [exr]( https://github.com/johannesvollmer/exrs ) 1.71.0
+- [exr]( https://github.com/johannesvollmer/exrs ) 1.6.4
 
 #### License
 
@@ -7348,7 +7347,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 #### Used by
 
-- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.98
+- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.99
 
 #### License
 
@@ -7576,7 +7575,7 @@ SOFTWARE.
 
 #### Used by
 
-- [h2]( https://github.com/hyperium/h2 ) 0.3.23
+- [h2]( https://github.com/hyperium/h2 ) 0.3.24
 
 #### License
 
@@ -8643,6 +8642,7 @@ SOFTWARE.
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
+- [termcolor]( https://github.com/BurntSushi/termcolor ) 1.4.1
 - [winapi-util]( https://github.com/BurntSushi/winapi-util ) 0.1.6
 
 #### License
@@ -8685,6 +8685,40 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA FILES OR SOFTWARE.
 
 Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to promote the sale, use or other dealings in these Data Files or Software without prior written authorization of the copyright holder.
+
+```
+
+### Zlib (zlib License)
+
+#### Used by
+
+- [nanorand]( https://github.com/Absolucy/nanorand-rs ) 0.7.0
+
+#### License
+
+```text
+The zlib/libpng License
+=======================
+
+Copyright (c) 2021 lucy
+
+This software is provided 'as-is', without any express or implied warranty. In
+no event will the authors be held liable for any damages arising from the use of
+this software.
+
+Permission is granted to anyone to use this software for any purpose, including
+commercial applications, and to alter it and redistribute it freely, subject to
+the following restrictions:
+
+1.  The origin of this software must not be misrepresented; you must not claim
+    that you wrote the original software. If you use this software in a product,
+    an acknowledgment in the product documentation would be appreciated but is
+    not required.
+
+2.  Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
+
+3.  This notice may not be removed or altered from any source distribution.
 
 ```
 
