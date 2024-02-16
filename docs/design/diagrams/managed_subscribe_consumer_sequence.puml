@@ -1,4 +1,4 @@
-@startuml Managed Subscribe Consumer
+@startuml
 title Managed Subscribe Sequence from Consumer's Perspective
 participant "Digital Twin Consumer" as DTConsumer
 participant Ibeji
