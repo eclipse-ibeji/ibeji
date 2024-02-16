@@ -1,4 +1,4 @@
-@startuml Managed Subscribe Module
+@startuml
 title Managed Subscribe Module Sequence
 participant "Digital Twin Provider" as DTProvider
 box "Ibeji"

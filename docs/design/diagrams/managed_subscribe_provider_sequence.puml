@@ -1,4 +1,4 @@
-@startuml Managed Subscribe Provider
+@startuml
 title Managed Subscribe Sequence from Provider's Perspective
 participant "Digital Twin Provider" as DTProvider
 participant Ibeji
