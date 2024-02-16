@@ -40,7 +40,7 @@ DOTNET_SRC_DIRECTORY="dtdl-tools/"
 echo "Appending .NET Third Party licenses to $NOTICE_FILENAME"
 ./tools/dotnet_notice_generation.sh $NOTICE_FILENAME $DOTNET_SRC_DIRECTORY ./devops/cg/license_url_to_type.json
 
-if [ -z "$(git diff --name-only $NOTICE_FILENAME)" ]
+if [ -z "$(git diff --name-only $NOTICE_FILENAME)" ] && [ -z "$(git ls-files --others --exclude-standard)"]
 then
       echo "File not changed"
 else

@@ -1,6 +1,12 @@
 name: generate plantuml
 
-on: push
+on:
+  push:
+    branches-ignore:
+      - 'main'
+      - 'release/**'
+    paths:
+      - '**.puml'
 
 jobs:
   generate_plantuml:
@@ -9,11 +15,16 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-    - name: plantuml
-      id: plantuml
-      uses: grassedge/generate-plantuml-action@v1.5
+    - name: generate plantuml
+      run: |
+        sudo apt-get install -y plantuml graphviz
+        # This uses a slightly off-white background color because #ffffff renders as transparent for some reason
+        plantuml -tsvg -SbackgroundColor=fefefe -checkmetadata -v **/*.puml
+      shell: bash
+    - name: commit changes
+      uses: EndBug/add-and-commit@v9
       with:
-        path: .
-        message: "Render PlantUML files"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        author_name: Automated Notice Generation Pipeline
+        author_email: ibeji-bot@eclipse.org
+        message: Generate PlantUML Diagrams
+        pathspec_error_handling: exitAtEnd
