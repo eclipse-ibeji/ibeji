@@ -1,0 +1,116 @@
+{ 
+  "@context": ["dtmi:dtdl:context;3"], 
+  "@type": "Interface", 
+  "@id": "dtmi:sdv:airbag_seat_massager;1",
+  "description": "Airbag Seat Massager Interface", 
+  "extends": "dtmi:sdv:seat_massager;1",
+  "contents": [
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:airbag_seat_massager:store_sequence;1",
+      "name": "store_sequence",
+      "request": {
+        "name": "request",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "sequence",
+              "schema": "dtmi:sdv:massage_sequence;1"
+            }
+          ]
+        }
+      },
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:airbag_seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:airbag_seat_massager:perform_step;1",      
+      "name": "perfom_step",
+      "request": {
+        "name": "request",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "sequence",
+              "schema": "dtmi:sdv:massage_sequence;1"
+            }
+          ]
+        }
+      },
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:airbag_seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "@id": "dtmi:sdv:airbag_seat_massager:status;1",
+      "@type": "Object",
+      "fields": [
+        {
+          "name": "code",
+          "schema": "integer"
+        },
+        {
+          "name": "message",
+          "schema": "string"
+        }
+      ]
+    },
+    {
+      "@id": "dtmi:sdv:massage_sequence;1",
+      "@type": "Array",
+      "elementSchema": "dtmi:sdv:massage_step;1"
+    },
+    {
+      "@id": "dtmi:sdv:massage_step;1",
+      "@type": "Array",
+      "elementSchema": "dtmi:sdv:airbag_adjustments;1"
+    },
+    {
+      "@id": "dtmi:sdv:airbag_adjustments;1",
+      "@type": "Array",
+      "elementSchema": "dtmi:sdv:airbag_adjustment;1"
+    },
+    {
+      "@id": "dtmi:sdv:airbag_adjustment;1",
+      "@type": "Object",
+      "fields": [
+        {
+          "name": "airbag_identifier",
+          "schema": "integer"
+        },
+        {
+          "name": "inflation_level",
+          "schema": "integer"
+        },
+        {
+          "name": "duration",
+          "schema": "duration"
+        }
+      ]
+    }
+  ]
+} 

@@ -85,7 +85,7 @@ sudo apt install -y libsdl2-dev
 You will need to install dotnet-sdk for the dtdl-tools crate. This can be done by executing:
 
 ```shell
-sudo apt install -y dotnet-sdk-7.0
+sudo apt install -y dotnet-sdk-8.0
 ```
 
 ### <a name="install-mqtt-broker">Install MQTT Broker</a>

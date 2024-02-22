@@ -1,0 +1,110 @@
+{ 
+  "@context": ["dtmi:dtdl:context;3"], 
+  "@type": "Interface", 
+  "@id": "dtmi:sdv:seat_massager;1", 
+  "description": "Seat Massager Interface",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "sequence_names",
+      "@id": "dtmi:sdv:seat_massager:sequence_names;1", 
+      "description": "The name of each of the stored sequences.",
+      "schema": {
+        "@type": "Array",
+        "elementSchema": "string"
+      }
+    },
+    {
+      "@type": "Command",
+      "name": "load_sequence",
+      "request": {
+        "name": "request",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "sequence_name",
+              "schema": "string"
+            }
+          ]
+        }
+      },
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seatmassager:status;1"
+            }
+          ]
+        }
+      } 
+    },
+    {
+      "@type": "Command",
+      "name": "pause",
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seatmassager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "name": "play",
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seatmassager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "name": "reset",
+      "response": {
+        "name": "response",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seatmassager:status;1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "@id": "dtmi:sdv:seatmassager:status;1",
+      "@type": "Object",
+      "fields": [
+        {
+          "name": "code",
+          "schema": "integer"
+        },
+        {
+          "name": "message",
+          "schema": "string"
+        }
+      ]
+    }
+  ]
+} 

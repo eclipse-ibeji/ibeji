@@ -1,0 +1,62 @@
+{ 
+  "@context": ["dtmi:dtdl:context;3"], 
+  "@type": "Interface", 
+  "@id": "dtmi:sdv:cabin;1", 
+  "description": "Cabin Interface", 
+  "contents": [ 
+    { 
+      "@type": "Relationship", 
+      "@id": "dtmi:sdv:cabin:has_infotainment;1", 
+      "target": "dtmi:sdv:infotainment;1",
+      "name": "has_infotainment",
+      "maxMultiplicity": 1
+    },
+    {
+      "@type": "Relationship",
+      "@id": "dtmi:sdv:cabin:has_hvac;1",
+      "target": "dtmi:sdv:hvac;1",
+      "name": "has_hvac",
+      "maxMultiplicity": 1
+    },      
+    {
+      "@type": "Relationship",
+      "@id": "dtmi:sdv:cabin:has_seat;1", 
+      "name": "has_seat",
+      "target": "dtmi:sdv:seat;1",
+      "properties": [
+        {
+          "@type": "Property",
+          "@id": "dtmi:sdv:seat:seat_row;1",
+          "name": "seat_row",
+          "schema": "integer"
+        },
+        {
+          "@type": "Property",
+          "@id": "dtmi:sdv:Seat:seat_position;1",
+          "name": "seat_position",
+          "schema": {
+            "@type": "Enum",
+            "valueSchema": "string",
+            "enumValues": [
+              {
+                "name": "left",
+                "displayName": "left",
+                "enumValue": "left"
+              },
+              {
+                "name": "center",
+                "displayName": "center",
+                "enumValue": "center"
+              },
+              {
+                "name": "right",
+                "displayName": "right",
+                "enumValue": "right"
+              }
+            ]
+          }
+        }
+      ]
+    }    
+  ]
+} 

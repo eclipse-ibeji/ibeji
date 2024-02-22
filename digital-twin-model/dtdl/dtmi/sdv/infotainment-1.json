@@ -1,0 +1,15 @@
+{ 
+  "@context": ["dtmi:dtdl:context;3"], 
+  "@type": "Interface", 
+  "@id": "dtmi:sdv:infotainment;1", 
+  "description": "Infotainment Interface", 
+  "contents": [ 
+    { 
+      "@type": "Relationship", 
+      "@id": "dtmi:sdv:infotainment:has_hmi;1", 
+      "target": "dtmi:sdv:hmi;1", 
+      "name": "has_hmi",
+      "maxMultiplicity": 1
+    }    
+  ]
+} 

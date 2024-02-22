@@ -26,6 +26,7 @@ pub mod chariott {
     }
 }
 
+
 pub mod sample_grpc {
     pub mod v1 {
         pub mod digital_twin_consumer {
@@ -36,6 +37,19 @@ pub mod sample_grpc {
             tonic::include_proto!("digital_twin_provider");
         }
     }
+    pub mod v2 {
+        pub mod digital_twin_common {
+            tonic::include_proto!("sample_grpc.v2.digital_twin_common");
+        }
+         
+        pub mod digital_twin_consumer {
+            tonic::include_proto!("sample_grpc.v2.digital_twin_consumer");
+        }
+
+        pub mod digital_twin_provider {        
+            tonic::include_proto!("sample_grpc.v2.digital_twin_provider");
+        }
+    }    
 }
 
 pub mod tutorial_grpc {

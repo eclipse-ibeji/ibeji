@@ -4,6 +4,8 @@
 
 using DTDLParser;
 using DTDLParser.Models;
+using Azure;
+using Azure.IoT.ModelsRepository;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -19,6 +21,13 @@ class Program
     // Exit codes.
     private const int EXIT_SUCCESS = 0;
     private const int EXIT_FAILURE = 1;
+
+    static string ConvertToDTMI(string filepath, string dirpath, string extension)
+    {
+        string relativepath = filepath.Substring(dirpath.Length + 1, filepath.Length - dirpath.Length - extension.Length - 2);
+        string dtmi = relativepath.Replace('/', ':').Replace('-', ';'); // .ToLower();
+        return dtmi;
+    }
 
     /// <summary>
     /// This method validates all of the DTDL files with the provided extension that are located
@@ -46,17 +55,29 @@ class Program
             return EXIT_FAILURE;
         }
 
-        var parser = new ModelParser();
+        var dmrClient = new ModelsRepositoryClient(new Uri(directory.FullName));
+
+        var parser = new ModelParser(new ParsingOptions()
+        {
+            DtmiResolverAsync = dmrClient.ParserDtmiResolverAsync
+        });
 
         bool failureOccured = false;
         foreach (var file in files)
         {
             try
-            {
-                var dtdl = File.ReadAllText(file);
-                parser.ParseAsync(dtdl).GetAwaiter().GetResult();
+            {                
+                string dtmi = ConvertToDTMI(file, directory.FullName, extension);
+                Console.WriteLine("DTMI = {0}", dtmi);
+
+                // var dtdl = File.ReadAllText(file);
+                // parser.ParseAsync(dtdl).GetAwaiter().GetResult();
+                var model = dmrClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
+                Console.WriteLine("For {0} the model cardinality is {1}", dtmi, model.Content.Count);
+                // Console.WriteLine("Content = {0}", model.Content[dtmi]);
+                var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();                
                 Console.WriteLine($"{file} - ok");
-            }
+            }    
             catch (ParsingException ex)
             {
                 Console.WriteLine($"{file} - failed");
@@ -65,6 +86,18 @@ class Program
                 }
                 failureOccured = true;
             }
+            catch (ResolutionException ex)
+            {
+                Console.WriteLine($"{file} - failed");
+                Console.WriteLine($"  {ex.ToString()}");
+                failureOccured = true;
+            }           
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{file} - failed");
+                Console.WriteLine($"  {ex.ToString()}");
+                failureOccured = true;
+            }                 
         }
 
         if (failureOccured)

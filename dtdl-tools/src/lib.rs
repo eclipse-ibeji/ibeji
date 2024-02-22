@@ -15,7 +15,7 @@ mod dtdl_tools_tests {
     const OUT_DIR: &str = env!("OUT_DIR");
 
     const DTDL_VALIDATOR_FILENAME: &str = "dtdl-validator";
-    const DTDL_VALIDATOR_BIN_DIR: &str = "Debug/net7.0";
+    const DTDL_VALIDATOR_BIN_DIR: &str = "Debug/net8.0";
     const DTDL_VALIDATOR_EXT_OPTION: &str = "-e";
 
     /// Validate DTDL files.
@@ -27,7 +27,7 @@ mod dtdl_tools_tests {
         let dtdl_validator_command_path =
             Path::new(OUT_DIR).join(DTDL_VALIDATOR_BIN_DIR).join(DTDL_VALIDATOR_FILENAME);
 
-        println!("dtdl_validator_command_path = '{:?}", dtdl_validator_command_path);
+        println!("dtdl_validator_command_path = {:?}", dtdl_validator_command_path);
 
         let dtdl_validator_output = Command::new(dtdl_validator_command_path)
             .arg(directory)

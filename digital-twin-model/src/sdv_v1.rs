@@ -4,15 +4,6 @@
 
 // Note: In the future this code should be generated from a DTDL spec.
 
-pub mod airbag_seat_massager {
-    pub mod massage_airbags {
-        pub const ID: &str = "dtmi:sdv:AirbagSeatMassager:MassageAirbags;1";
-        pub const NAME: &str = "MassageAirbags";
-        pub const DESCRIPTION: &str = "The inflation level (0..100) for each massage airbag.";
-        pub type TYPE = Vec<i32>;
-    }
-}
-
 #[allow(dead_code)]
 pub mod camera {
     pub mod feed {
@@ -46,25 +37,79 @@ pub mod hmi {
 
 pub mod hvac {
     pub mod ambient_air_temperature {
-        pub const ID: &str = "dtmi:sdv:HVAC:AmbientAirTemperature;1";
-        pub const NAME: &str = "AmbientAirTemperature";
+        pub const ID: &str = "dtmi:sdv:hvac:ambient_air_temperature;1";
+        pub const NAME: &str = "ambient_air_temperature";
         pub const DESCRIPTION: &str = "The immediate surroundings air temperature (in Fahrenheit).";
         pub type TYPE = i32;
     }
 
     pub mod is_air_conditioning_active {
-        pub const ID: &str = "dtmi:sdv:HVAC:IsAirConditioningActive;1";
-        pub const NAME: &str = "IsAirConditioningActive";
+        pub const ID: &str = "dtmi:sdv:HVAC:is_air_conditioning_active;1";
+        pub const NAME: &str = "is_air_conditioning_active";
         pub const DESCRIPTION: &str = "Is air conditioning active?";
         pub type TYPE = bool;
     }
 }
 
 pub mod obd {
+    pub const ID: &str = "dtmi:sdv:obd;1";
+    pub const DESCRIPTION: &str = "On-board Diagnostics Interface";  
     pub mod hybrid_battery_remaining {
-        pub const ID: &str = "dtmi:sdv:OBD:HybridBatteryRemaining;1";
-        pub const NAME: &str = "HybridBatteryRemaining";
+        pub const ID: &str = "dtmi:sdv:obd:hybrid_battery_remaining;1";
+        pub const NAME: &str = "hybrid_battery_remaining";
         pub const DESCRIPTION: &str = "The remaining hybrid battery life.";
         pub type TYPE = i32;
+    }
+}
+
+pub mod seat_massager {
+    pub const ID: &str = "dtmi:sdv:seatmassager;1";
+    pub const DESCRIPTION: &str = "Seat Massager Interface";      
+    pub mod massage_airbags {
+        pub const ID: &str = "dtmi:sdv:massage_seat:sequence_names;1";
+        pub const NAME: &str = "sequence_names";
+        pub const DESCRIPTION: &str = "The name of each of the stored sequences.";
+        pub type TYPE = Vec<String>;
+    }
+}
+
+pub mod basic_airbag_seat_massager {
+    pub const ID: &str = "dtmi:sdv:basic_airbag_seat_massager;1";
+    pub const DESCRIPTION: &str = "Basic Airbag Seat Massager Interface";      
+}
+
+pub mod premium_airbag_seat_massager {
+    pub const ID: &str = "dtmi:sdv:premium_airbag_seat_massager;1";
+    pub const DESCRIPTION: &str = "Premium Airbag Seat Massager Interface";    
+}
+
+pub mod airbag_seat_massager {
+    pub const ID: &str = "dtmi:sdv:airbag_seat_massager;1";
+    pub const DESCRIPTION: &str = "Airbag Seat Massager Interface";
+}
+
+pub mod seat {
+    pub const ID: &str = "dtmi:sdv:seat;1";
+    pub const DESCRIPTION: &str = "Seat Interface";  
+}
+
+pub mod cabin {
+    pub const ID: &str = "dtmi:sdv:cabin;1";
+    pub const DESCRIPTION: &str = "Cabin Interface";
+}
+
+pub mod vehicle {
+    pub const ID: &str = "dtmi:sdv:vehcile;1";
+    pub const DESCRIPTION: &str = "Vehicle Interface";
+    pub mod vehicle_identification {
+        pub const ID: &str = "dtmi:sdv:vehicle:vehicle_identification;1";
+        pub const NAME: &str = "vehicle_identification";
+        pub const DESCRIPTION: &str = "Vehicle Identification";
+        pub mod vin {
+            pub const ID: &str = "dtmi:sdv:vehicle:vehicle_identification:vin;1";
+            pub const NAME: &str = "vin";
+            pub const DESCRIPTION: &str = "Vehicle Identification Number";
+            pub type TYPE = String;
+        }
     }
 }

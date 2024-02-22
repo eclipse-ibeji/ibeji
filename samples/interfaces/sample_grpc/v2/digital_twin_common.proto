@@ -1,0 +1,12 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package sample_grpc.v2.digital_twin_common;
+
+message Status {
+   int32 code = 1;
+   string message = 2;
+}

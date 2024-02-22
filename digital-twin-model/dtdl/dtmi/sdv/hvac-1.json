@@ -1,0 +1,22 @@
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
+  "@id": "dtmi:sdv:hvac;1",
+  "description": "Heat, Ventilation and Air Conditioning",
+  "contents": [
+    {
+      "@type": "Property",
+      "@id": "dtmi:sdv:hvac:ambient_air_temperature;1",
+      "name": "ambient_air_temperature",
+      "description": "The immediate surroundings' air temperature (in Fahrenheit).",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "@id": "dtmi:sdv:hvac:is_air_conditioning_active;1",
+      "name": "is_air_conditioning_active",
+      "description": "Is air conditioning active?",
+      "schema": "boolean"
+    }
+  ]
+}
