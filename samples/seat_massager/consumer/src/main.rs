@@ -6,14 +6,16 @@ mod respond_impl;
 
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-use log::{debug, info, LevelFilter, warn};
+use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri};
 use samples_common::consumer_config;
-use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::RespondServer;
+use samples_common::utils::{
+    discover_digital_twin_provider_using_ibeji, retrieve_invehicle_digital_twin_uri,
+};
 use samples_protobuf_data_access::async_rpc::v1::request::request_client::RequestClient;
-use samples_protobuf_data_access::async_rpc::v1::request::{AskRequest};
-use samples_protobuf_data_access::async_rpc::v1::respond::{AnswerRequest};
+use samples_protobuf_data_access::async_rpc::v1::request::AskRequest;
+use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::RespondServer;
+use samples_protobuf_data_access::async_rpc::v1::respond::AnswerRequest;
 use std::net::SocketAddr;
 use tokio::sync::mpsc;
 use tokio::time::{sleep, Duration};
@@ -26,7 +28,12 @@ use seat_massager_common::TargetedPayload;
 ///
 /// # Arguments
 /// `provider_uri` - The provider uri.
-fn start_seat_massage_steps(consumer_uri: String, instance_id: String, provider_uri: String, mut rx: mpsc::Receiver<AnswerRequest>) {
+fn start_seat_massage_steps(
+    consumer_uri: String,
+    instance_id: String,
+    provider_uri: String,
+    mut rx: mpsc::Receiver<AnswerRequest>,
+) {
     debug!("Starting the consumer's seat massage sequence.");
 
     tokio::spawn(async move {
@@ -41,11 +48,16 @@ fn start_seat_massage_steps(consumer_uri: String, instance_id: String, provider_
 
             let request_id = Uuid::new_v4().to_string();
 
-            let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE = sdv::airbag_seat_massager::perform_step::request::TYPE {
-                step: vec!(vec!(sdv::airbag_seat_massager::airbag_adjustment::TYPE { airbag_identifier: 1, inflation_level: 10 }))
-            };
+            let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
+                sdv::airbag_seat_massager::perform_step::request::TYPE {
+                    step: vec![vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
+                        airbag_identifier: 1,
+                        inflation_level: 10,
+                    }]],
+                };
 
-            let request_payload_json: String = serde_json::to_string_pretty(&request_payload).unwrap();
+            let request_payload_json: String =
+                serde_json::to_string_pretty(&request_payload).unwrap();
 
             let targeted_payload = TargetedPayload {
                 model_id: sdv::airbag_seat_massager::ID.to_string(),
@@ -60,13 +72,13 @@ fn start_seat_massage_steps(consumer_uri: String, instance_id: String, provider_
             let request = tonic::Request::new(AskRequest {
                 respond_uri: consumer_uri.clone(),
                 request_id: request_id.clone(),
-                payload: targeted_payload_json.clone()
+                payload: targeted_payload_json.clone(),
             });
 
             let response = client.ask(request).await;
             if let Err(status) = response {
                 warn!("{status:?}");
-                continue
+                continue;
             }
 
             if let Some(answer_request) = rx.recv().await {
@@ -108,8 +120,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the HTTP server.
     let addr: SocketAddr = consumer_authority.parse().unwrap();
-    let server_future =
-        Server::builder().add_service(RespondServer::new(respond_impl)).serve(addr);
+    let server_future = Server::builder().add_service(RespondServer::new(respond_impl)).serve(addr);
     info!("The HTTP server is listening on address '{consumer_authority}'");
 
     // Retrieve the provider URI.

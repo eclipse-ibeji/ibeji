@@ -98,7 +98,7 @@ pub mod airbag_seat_massager {
             pub const DESCRIPTION: &str = "The request to perform a step in the sequence.";
             #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
             pub struct TYPE {
-                pub step: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE
+                pub step: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE,
             }
         }
         pub mod response {
@@ -107,7 +107,7 @@ pub mod airbag_seat_massager {
             pub const DESCRIPTION: &str = "The response to performing a step in the sequence.";
             #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
             pub struct TYPE {
-                pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE
+                pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE,
             }
         }
     }
@@ -118,7 +118,7 @@ pub mod airbag_seat_massager {
         #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
         pub struct TYPE {
             pub airbag_identifier: i32,
-            pub inflation_level: i32
+            pub inflation_level: i32,
         }
     }
     pub mod airbag_adjustments {
@@ -140,7 +140,7 @@ pub mod airbag_seat_massager {
         #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
         pub struct TYPE {
             pub code: i32,
-            pub message: String
+            pub message: String,
         }
     }
 }

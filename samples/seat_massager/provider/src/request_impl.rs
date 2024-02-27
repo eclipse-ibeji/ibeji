@@ -4,11 +4,10 @@
 
 use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, info, warn};
-use parking_lot::{Mutex};
+use parking_lot::Mutex;
 use samples_protobuf_data_access::async_rpc::v1::common::Status;
 use samples_protobuf_data_access::async_rpc::v1::request::{
-    request_server::Request, AskRequest, AskResponse, NotifyRequest,
-    NotifyResponse,
+    request_server::Request, AskRequest, AskResponse, NotifyRequest, NotifyResponse,
 };
 use samples_protobuf_data_access::async_rpc::v1::respond::{
     respond_client::RespondClient, AnswerRequest,
@@ -16,20 +15,17 @@ use samples_protobuf_data_access::async_rpc::v1::respond::{
 use std::sync::Arc;
 
 #[derive(Debug, Default)]
-pub struct RequestState {
-}
+pub struct RequestState {}
 
 #[derive(Debug, Default)]
 pub struct RequestImpl {
     pub state: Arc<Mutex<RequestState>>,
 }
 
-impl RequestImpl {
-}
+impl RequestImpl {}
 
 #[tonic::async_trait]
 impl Request for RequestImpl {
-
     /// Ask implementation.
     ///
     /// # Arguments
@@ -53,30 +49,30 @@ impl Request for RequestImpl {
 
         tokio::spawn(async move {
             // if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
-                let client_result = RespondClient::connect(respond_uri).await;
-                if let Err(error_message) = client_result {
-                    warn!("Unable to connect due to {error_message}");
-                    return;
-                }
-                let mut client = client_result.unwrap();
+            let client_result = RespondClient::connect(respond_uri).await;
+            if let Err(error_message) = client_result {
+                warn!("Unable to connect due to {error_message}");
+                return;
+            }
+            let mut client = client_result.unwrap();
 
-                let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE = sdv::airbag_seat_massager::perform_step::response::TYPE {
+            let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE =
+                sdv::airbag_seat_massager::perform_step::response::TYPE {
                     status: sdv::airbag_seat_massager::status::TYPE {
                         code: 200,
                         message: "Ok".to_string(),
                     },
                 };
 
-                let response_payload_json: String = serde_json::to_string_pretty(&response_payload).unwrap();
+            let response_payload_json: String =
+                serde_json::to_string_pretty(&response_payload).unwrap();
 
-                let answer_request = tonic::Request::new(AnswerRequest {
-                    request_id,
-                    payload: response_payload_json,
-                });
-                let response = client.answer(answer_request).await;
-                if let Err(status) = response {
-                    warn!("Answer failed: {status:?}");
-                }
+            let answer_request =
+                tonic::Request::new(AnswerRequest { request_id, payload: response_payload_json });
+            let response = client.answer(answer_request).await;
+            if let Err(status) = response {
+                warn!("Answer failed: {status:?}");
+            }
             // } else {
             //    warn!("The entity id {entity_id} is not recognized.");
             // }
@@ -85,7 +81,7 @@ impl Request for RequestImpl {
         debug!("Completed the ask request.");
 
         Ok(tonic::Response::new(AskResponse {
-            status: Some(Status{ code: 200, message: "Ok".to_string() })
+            status: Some(Status { code: 200, message: "Ok".to_string() }),
         }))
     }
 

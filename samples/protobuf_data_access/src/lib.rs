@@ -26,7 +26,6 @@ pub mod chariott {
     }
 }
 
-
 pub mod sample_grpc {
     pub mod v1 {
         pub mod digital_twin_consumer {

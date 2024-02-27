@@ -12,5 +12,5 @@ pub struct TargetedPayload {
     pub instance_id: String,
     pub member_name: String,
     pub operation: String,
-    pub payload: String
+    pub payload: String,
 }

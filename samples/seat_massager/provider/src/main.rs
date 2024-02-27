@@ -9,15 +9,17 @@ use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use parking_lot::Mutex;
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
-use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
 use samples_common::provider_config;
-use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
-use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
+use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_based_on_status};
 use samples_protobuf_data_access::async_rpc::v1::request::request_server::RequestServer;
+use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
+use samples_protobuf_data_access::invehicle_digital_twin::v1::{
+    EndpointInfo, EntityAccessInfo, RegisterRequest,
+};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::time::Duration;
-use tonic::{Status, transport::Server};
+use tonic::{transport::Server, Status};
 
 use crate::request_impl::{RequestImpl, RequestState};
 
@@ -41,7 +43,7 @@ async fn register_airbag_massager(
     };
 
     let entity_access_info = EntityAccessInfo {
-        name: String::new(),    // no name, so we will use an empty name
+        name: String::new(), // no name, so we will use an empty name
         id: sdv::premium_airbag_seat_massager::ID.to_string(),
         description: sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
         endpoint_info_list: vec![endpoint_info],
@@ -79,10 +81,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;
-    let state = Arc::new(Mutex::new(RequestState { }));
+    let state = Arc::new(Mutex::new(RequestState {}));
     let request_impl = RequestImpl { state };
-    let server_future =
-        Server::builder().add_service(RequestServer::new(request_impl)).serve(addr);
+    let server_future = Server::builder().add_service(RequestServer::new(request_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
     info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
