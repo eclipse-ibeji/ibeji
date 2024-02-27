@@ -36,24 +36,27 @@ pub mod sample_grpc {
         pub mod digital_twin_provider {
             tonic::include_proto!("digital_twin_provider");
         }
-    }
-    pub mod v2 {
-        pub mod digital_twin_common {
-            tonic::include_proto!("sample_grpc.v2.digital_twin_common");
-        }
-         
-        pub mod digital_twin_consumer {
-            tonic::include_proto!("sample_grpc.v2.digital_twin_consumer");
-        }
-
-        pub mod digital_twin_provider {        
-            tonic::include_proto!("sample_grpc.v2.digital_twin_provider");
-        }
-    }    
+    }   
 }
 
 pub mod tutorial_grpc {
     pub mod v1 {
         tonic::include_proto!("digital_twin_provider_tutorial");
     }
+}
+
+pub mod async_rpc {
+    pub mod v1 {
+        pub mod common {
+            tonic::include_proto!("async_rpc.v1.common");
+        }
+         
+        pub mod responder {
+            tonic::include_proto!("async_rpc.v1.responder");
+        }
+
+        pub mod requestor {        
+            tonic::include_proto!("async_rpc.v1.requestor");
+        }
+    }    
 }

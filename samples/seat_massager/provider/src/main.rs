@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-mod provider_impl;
+mod requestor_impl;
 
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
@@ -13,13 +13,13 @@ use samples_common::utils::{retrieve_invehicle_digital_twin_uri, retry_async_bas
 use samples_common::provider_config;
 use samples_protobuf_data_access::invehicle_digital_twin::v1::invehicle_digital_twin_client::InvehicleDigitalTwinClient;
 use samples_protobuf_data_access::invehicle_digital_twin::v1::{EndpointInfo, EntityAccessInfo, RegisterRequest};
-use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::digital_twin_provider_server::DigitalTwinProviderServer;
+use samples_protobuf_data_access::async_rpc::v1::requestor::requestor_server::RequestorServer;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::time::Duration;
 use tonic::{Status, transport::Server};
 
-use crate::provider_impl::{ProviderImpl, ProviderProperties};
+use crate::requestor_impl::{RequestorImpl, RequestorState};
 
 /// Register the airbag seat massager's massage airbags property.
 ///
@@ -34,16 +34,16 @@ async fn register_massage_airbags(
         protocol: digital_twin_protocol::GRPC.to_string(),
         operations: vec![
             digital_twin_operation::GET.to_string(),
-            digital_twin_operation::SET.to_string(),
+            digital_twin_operation::INVOKE.to_string(),
         ],
         uri: provider_uri.to_string(),
-        context: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
+        context: sdv::airbag_seat_massager::ID.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
-        name: sdv::airbag_seat_massager::massage_airbags::NAME.to_string(),
-        id: sdv::airbag_seat_massager::massage_airbags::ID.to_string(),
-        description: sdv::airbag_seat_massager::massage_airbags::DESCRIPTION.to_string(),
+        name: String::new(),    // no name, so we will use an empty name
+        id: sdv::airbag_seat_massager::ID.to_string(),
+        description: sdv::airbag_seat_massager::DESCRIPTION.to_string(),
         endpoint_info_list: vec![endpoint_info],
     };
 
@@ -79,10 +79,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;
-    let properties = Arc::new(Mutex::new(ProviderProperties { massage_airbags: Vec::new() }));
-    let provider_impl = ProviderImpl { properties: properties.clone() };
+    let state = Arc::new(Mutex::new(RequestorState { }));
+    let requestor_impl = RequestorImpl { state };
     let server_future =
-        Server::builder().add_service(DigitalTwinProviderServer::new(provider_impl)).serve(addr);
+        Server::builder().add_service(RequestorServer::new(requestor_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
     info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");

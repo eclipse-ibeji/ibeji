@@ -355,3 +355,6 @@ target/
 
 # VSCodeCounter Extension
 .VSCodeCounter/
+
+# VS Code
+.vscode

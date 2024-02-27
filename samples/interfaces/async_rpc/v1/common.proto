@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package sample_grpc.v2.digital_twin_common;
+package async_rpc.v1.common;
 
 message Status {
    int32 code = 1;

@@ -30,7 +30,7 @@ members = [
   "samples/managed_subscribe",
   "samples/mixed",
   "samples/property",
-  # "samples/seat_massager",
+  "samples/seat_massager",
   "samples/streaming",
   "samples/tutorial"
 ]

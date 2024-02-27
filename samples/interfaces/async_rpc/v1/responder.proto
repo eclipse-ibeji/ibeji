@@ -1,0 +1,22 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+import "common.proto";
+
+package async_rpc.v1.responder;
+
+service Responder {
+    rpc Answer (AnswerRequest) returns (AnswerResponse);
+}
+
+message AnswerRequest {
+    string request_id = 1;
+    string payload = 2;
+}
+
+message AnswerResponse {
+    async_rpc.v1.common.Status status = 1;
+}

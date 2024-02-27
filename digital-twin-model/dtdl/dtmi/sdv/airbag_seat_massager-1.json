@@ -44,8 +44,8 @@
           "@type": "Object",
           "fields": [
             {
-              "name": "sequence",
-              "schema": "dtmi:sdv:massage_sequence;1"
+              "name": "step",
+              "schema": "dtmi:sdv:massage_step;1"
             }
           ]
         }

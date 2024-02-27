@@ -5,9 +5,9 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::compile_protos("../interfaces/sample_grpc/v1/digital_twin_consumer.proto")?;
     tonic_build::compile_protos("../interfaces/sample_grpc/v1/digital_twin_provider.proto")?;
-    tonic_build::compile_protos("../interfaces/sample_grpc/v2/digital_twin_common.proto")?;    
-    tonic_build::compile_protos("../interfaces/sample_grpc/v2/digital_twin_consumer.proto")?;
-    tonic_build::compile_protos("../interfaces/sample_grpc/v2/digital_twin_provider.proto")?;
+    tonic_build::compile_protos("../interfaces/async_rpc/v1/common.proto")?;    
+    tonic_build::compile_protos("../interfaces/async_rpc/v1/responder.proto")?;
+    tonic_build::compile_protos("../interfaces/async_rpc/v1/requestor.proto")?;
     tonic_build::configure()
         .message_attribute("EndpointInfo", "#[derive(serde::Deserialize, serde::Serialize)]")
         .message_attribute("EntityAccessInfo", "#[derive(serde::Deserialize, serde::Serialize)]")
