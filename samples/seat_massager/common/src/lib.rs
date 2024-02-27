@@ -4,7 +4,7 @@
 
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct TargetedPayload {
     #[serde(rename = "@type")]
     pub model_id: String,
