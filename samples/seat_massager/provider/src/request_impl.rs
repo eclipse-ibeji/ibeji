@@ -17,7 +17,6 @@ use std::sync::Arc;
 
 #[derive(Debug, Default)]
 pub struct RequestState {
-
 }
 
 #[derive(Debug, Default)]
@@ -26,7 +25,6 @@ pub struct RequestImpl {
 }
 
 impl RequestImpl {
- 
 }
 
 #[tonic::async_trait]

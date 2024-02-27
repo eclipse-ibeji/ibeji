@@ -69,7 +69,7 @@ class Program
             {
                 string dtmi = ConvertToDTMI(file, directory.FullName, extension);
                 var model = dmrClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
-                var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();          
+                var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();      
                 Console.WriteLine($"{file} - ok");
             }
             catch (ParsingException ex)
