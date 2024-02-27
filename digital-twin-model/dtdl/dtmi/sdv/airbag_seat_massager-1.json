@@ -1,8 +1,8 @@
-{ 
-  "@context": ["dtmi:dtdl:context;3"], 
-  "@type": "Interface", 
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
   "@id": "dtmi:sdv:airbag_seat_massager;1",
-  "description": "Airbag Seat Massager Interface", 
+  "description": "Airbag Seat Massager Interface",
   "extends": "dtmi:sdv:seat_massager;1",
   "contents": [
     {
@@ -36,7 +36,7 @@
     },
     {
       "@type": "Command",
-      "@id": "dtmi:sdv:airbag_seat_massager:perform_step;1",      
+      "@id": "dtmi:sdv:airbag_seat_massager:perform_step;1",
       "name": "perfom_step",
       "request": {
         "name": "request",
@@ -113,4 +113,4 @@
       ]
     }
   ]
-} 
+}

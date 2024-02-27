@@ -51,12 +51,12 @@ pub mod async_rpc {
             tonic::include_proto!("async_rpc.v1.common");
         }
          
-        pub mod responder {
-            tonic::include_proto!("async_rpc.v1.responder");
+        pub mod respond {
+            tonic::include_proto!("async_rpc.v1.respond");
         }
 
-        pub mod requestor {        
-            tonic::include_proto!("async_rpc.v1.requestor");
+        pub mod request {        
+            tonic::include_proto!("async_rpc.v1.request");
         }
     }    
 }

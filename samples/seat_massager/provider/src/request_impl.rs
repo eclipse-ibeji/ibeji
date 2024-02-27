@@ -6,38 +6,31 @@ use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, info, warn};
 use parking_lot::{Mutex};
 use samples_protobuf_data_access::async_rpc::v1::common::Status;
-use samples_protobuf_data_access::async_rpc::v1::requestor::{
-    requestor_server::Requestor, AskRequest, AskResponse, NotifyRequest,
+use samples_protobuf_data_access::async_rpc::v1::request::{
+    request_server::Request, AskRequest, AskResponse, NotifyRequest,
     NotifyResponse,
 };
-use samples_protobuf_data_access::async_rpc::v1::responder::{
-    responder_client::ResponderClient, AnswerRequest,
+use samples_protobuf_data_access::async_rpc::v1::respond::{
+    respond_client::RespondClient, AnswerRequest,
 };
-// use samples_protobuf_data_access::async_rpc::v1::requestor::requestor_client::RequestorClient;
-// use samples_protobuf_data_access::async_rpc::v1::requestor::{AskRequest, AskResponse};
-// use serde_derive::{Deserialize, Serialize};
-// use std::pin::Pin;
 use std::sync::Arc;
-// use std::vec::Vec;
-// use tokio_stream::Stream;
-use tonic;
 
 #[derive(Debug, Default)]
-pub struct RequestorState {
+pub struct RequestState {
 
 }
 
 #[derive(Debug, Default)]
-pub struct RequestorImpl {
-    pub state: Arc<Mutex<RequestorState>>,
+pub struct RequestImpl {
+    pub state: Arc<Mutex<RequestState>>,
 }
 
-impl RequestorImpl {
+impl RequestImpl {
  
 }
 
 #[tonic::async_trait]
-impl Requestor for RequestorImpl {
+impl Request for RequestImpl {
 
     /// Ask implementation.
     ///
@@ -48,13 +41,13 @@ impl Requestor for RequestorImpl {
         request: tonic::Request<AskRequest>,
     ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
         let request_inner = request.into_inner();
-        let responder_uri: String = request_inner.responder_uri.clone();
+        let respond_uri: String = request_inner.respond_uri.clone();
         let request_id: String = request_inner.request_id.clone();
         let payload: String = request_inner.payload.clone();
 
         info!("Received an ask request");
 
-        info!("responder_uri: {responder_uri}");
+        info!("respond_uri: {respond_uri}");
         info!("request_id: {request_id}");
         info!("payload: {payload}");
 
@@ -62,7 +55,7 @@ impl Requestor for RequestorImpl {
 
         tokio::spawn(async move {
             // if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
-                let client_result = ResponderClient::connect(responder_uri).await;
+                let client_result = RespondClient::connect(respond_uri).await;
                 if let Err(error_message) = client_result {
                     warn!("Unable to connect due to {error_message}");
                     return;

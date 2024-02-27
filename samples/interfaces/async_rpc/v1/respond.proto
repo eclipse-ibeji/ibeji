@@ -6,9 +6,9 @@ syntax = "proto3";
 
 import "common.proto";
 
-package async_rpc.v1.responder;
+package async_rpc.v1.respond;
 
-service Responder {
+service Respond {
     rpc Answer (AnswerRequest) returns (AnswerResponse);
 }
 

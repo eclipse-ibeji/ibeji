@@ -5,28 +5,27 @@
 // use digital_twin_model::{sdv_v1 as sdv};
 use log::{debug, info};
 use samples_protobuf_data_access::async_rpc::v1::common::Status;
-use samples_protobuf_data_access::async_rpc::v1::responder::responder_server::Responder;
-use samples_protobuf_data_access::async_rpc::v1::responder::{
+use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::Respond;
+use samples_protobuf_data_access::async_rpc::v1::respond::{
     AnswerRequest, AnswerResponse,
 };
 use tokio::sync::mpsc;
-use tonic;
 
 #[derive(Debug)]
-pub struct ResponderImpl {
+pub struct RespondImpl {
     pub tx: mpsc::Sender<AnswerRequest>
 }
 
-impl ResponderImpl {
-    pub fn new(tx: mpsc::Sender<AnswerRequest>) -> ResponderImpl {
-        ResponderImpl {
+impl RespondImpl {
+    pub fn new(tx: mpsc::Sender<AnswerRequest>) -> RespondImpl {
+        RespondImpl {
             tx
         }
     }
 }
 
 #[tonic::async_trait]
-impl Responder for ResponderImpl {
+impl Respond for RespondImpl {
 
     /// Answer implementation.
     ///
@@ -46,7 +45,7 @@ impl Responder for ResponderImpl {
         debug!("Completed the answer request.");
 
         Ok(tonic::Response::new(AnswerResponse {
-            status: Some(Status{ code: 200.into(), message: "Ok".to_string() })
+            status: Some(Status{ code: 200, message: "Ok".to_string() })
         }))
     }
 }

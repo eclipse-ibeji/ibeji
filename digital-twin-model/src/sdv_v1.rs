@@ -54,7 +54,7 @@ pub mod hvac {
 
 pub mod obd {
     pub const ID: &str = "dtmi:sdv:obd;1";
-    pub const DESCRIPTION: &str = "On-board Diagnostics Interface";  
+    pub const DESCRIPTION: &str = "On-board Diagnostics Interface";
     pub mod hybrid_battery_remaining {
         pub const ID: &str = "dtmi:sdv:obd:hybrid_battery_remaining;1";
         pub const NAME: &str = "hybrid_battery_remaining";
@@ -65,7 +65,7 @@ pub mod obd {
 
 pub mod seat_massager {
     pub const ID: &str = "dtmi:sdv:seatmassager;1";
-    pub const DESCRIPTION: &str = "Seat Massager Interface";      
+    pub const DESCRIPTION: &str = "Seat Massager Interface";
     pub mod sequence_names {
         pub const ID: &str = "dtmi:sdv:massage_seat:sequence_names;1";
         pub const NAME: &str = "sequence_names";
@@ -76,18 +76,18 @@ pub mod seat_massager {
 
 pub mod basic_airbag_seat_massager {
     pub const ID: &str = "dtmi:sdv:basic_airbag_seat_massager;1";
-    pub const DESCRIPTION: &str = "Basic Airbag Seat Massager Interface";      
+    pub const DESCRIPTION: &str = "Basic Airbag Seat Massager Interface";
 }
 
 pub mod premium_airbag_seat_massager {
     pub const ID: &str = "dtmi:sdv:premium_airbag_seat_massager;1";
-    pub const DESCRIPTION: &str = "Premium Airbag Seat Massager Interface";    
+    pub const DESCRIPTION: &str = "Premium Airbag Seat Massager Interface";
 }
 
 #[allow(dead_code)]
 pub mod airbag_seat_massager {
     pub const ID: &str = "dtmi:sdv:airbag_seat_massager;1";
-    pub const DESCRIPTION: &str = "Airbag Seat Massager Interface";  
+    pub const DESCRIPTION: &str = "Airbag Seat Massager Interface";
     pub mod perform_step {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:perform_step;1";
         pub const NAME: &str = "perform_step";
@@ -120,7 +120,7 @@ pub mod airbag_seat_massager {
             pub airbag_identifier: i32,
             pub inflation_level: i32
         }
-    }    
+    }
     pub mod airbag_adjustments {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:airbag_adjustments;1";
         pub const NAME: &str = "airbag_adjustments";
@@ -142,12 +142,12 @@ pub mod airbag_seat_massager {
             pub code: i32,
             pub message: String
         }
-    }      
+    }
 }
 
 pub mod seat {
     pub const ID: &str = "dtmi:sdv:seat;1";
-    pub const DESCRIPTION: &str = "Seat Interface";  
+    pub const DESCRIPTION: &str = "Seat Interface";
 }
 
 pub mod cabin {

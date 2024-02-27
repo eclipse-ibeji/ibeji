@@ -66,15 +66,9 @@ class Program
         foreach (var file in files)
         {
             try
-            {                
+            {     
                 string dtmi = ConvertToDTMI(file, directory.FullName, extension);
-                Console.WriteLine("DTMI = {0}", dtmi);
-
-                // var dtdl = File.ReadAllText(file);
-                // parser.ParseAsync(dtdl).GetAwaiter().GetResult();
                 var model = dmrClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
-                Console.WriteLine("For {0} the model cardinality is {1}", dtmi, model.Content.Count);
-                // Console.WriteLine("Content = {0}", model.Content[dtmi]);
                 var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();                
                 Console.WriteLine($"{file} - ok");
             }    
@@ -91,13 +85,13 @@ class Program
                 Console.WriteLine($"{file} - failed");
                 Console.WriteLine($"  {ex.ToString()}");
                 failureOccured = true;
-            }           
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"{file} - failed");
                 Console.WriteLine($"  {ex.ToString()}");
                 failureOccured = true;
-            }                 
+            }
         }
 
         if (failureOccured)

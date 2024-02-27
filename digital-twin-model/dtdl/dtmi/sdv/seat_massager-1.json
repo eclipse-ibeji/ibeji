@@ -1,13 +1,13 @@
-{ 
-  "@context": ["dtmi:dtdl:context;3"], 
-  "@type": "Interface", 
-  "@id": "dtmi:sdv:seat_massager;1", 
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
+  "@id": "dtmi:sdv:seat_massager;1",
   "description": "Seat Massager Interface",
   "contents": [
     {
       "@type": "Property",
       "name": "sequence_names",
-      "@id": "dtmi:sdv:seat_massager:sequence_names;1", 
+      "@id": "dtmi:sdv:seat_massager:sequence_names;1",
       "description": "The name of each of the stored sequences.",
       "schema": {
         "@type": "Array",
@@ -40,7 +40,7 @@
             }
           ]
         }
-      } 
+      }
     },
     {
       "@type": "Command",
@@ -107,4 +107,4 @@
       ]
     }
   ]
-} 
+}

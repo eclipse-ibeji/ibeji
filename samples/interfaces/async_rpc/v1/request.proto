@@ -6,15 +6,15 @@ syntax = "proto3";
 
 import "common.proto";
 
-package async_rpc.v1.requestor;
+package async_rpc.v1.request;
 
-service Requestor {
+service Request {
     rpc Ask (AskRequest) returns (AskResponse);
-    rpc Notify (NotifyRequest) returns (NotifyResponse);    
+    rpc Notify (NotifyRequest) returns (NotifyResponse);
 }
 
 message AskRequest {
-   string responder_uri = 1;
+   string respond_uri = 1;
    string request_id = 2;
    string payload = 3;
 }
