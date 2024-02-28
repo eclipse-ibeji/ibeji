@@ -2,7 +2,7 @@
   "@context": "dtmi:dtdl:context;3",
   "@type": "Interface",
   "@id": "dtmi:sdv:obd;1",
-  "description": "On-board Diagnostics Interface",
+  "description": "On-board Diagnostics Interface.",
   "contents": [
     {
       "@type": "Property",

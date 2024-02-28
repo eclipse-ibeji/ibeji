@@ -32,7 +32,7 @@ struct IsAirConditioningActiveProperty {
 #[derive(Debug, Serialize, Deserialize)]
 struct ShowNotificationRequestPayload {
     #[serde(rename = "Notification")]
-    notification: sdv::hmi::show_notification::request::TYPE,
+    notification: String,
     #[serde(rename = "$metadata")]
     metadata: Metadata,
 }

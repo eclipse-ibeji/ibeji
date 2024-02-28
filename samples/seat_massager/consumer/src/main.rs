@@ -53,6 +53,7 @@ fn start_seat_massage_steps(
                     step: vec![vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
                         airbag_identifier: 1,
                         inflation_level: 10,
+                        duration_in_seconds: 1,
                     }]],
                 };
 

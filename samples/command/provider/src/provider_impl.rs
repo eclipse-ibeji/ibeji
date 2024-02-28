@@ -88,7 +88,7 @@ impl DigitalTwinProvider for ProviderImpl {
             .map_err(|error| Status::invalid_argument(error.to_string()))?;
         let notification_json = request_payload_json.get("Notification").unwrap();
 
-        let notification: sdv::hmi::show_notification::request::TYPE =
+        let notification: String =
             serde_json::from_value(notification_json.clone()).unwrap();
 
         debug!(

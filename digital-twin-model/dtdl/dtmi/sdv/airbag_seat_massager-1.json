@@ -2,18 +2,24 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:airbag_seat_massager;1",
-  "description": "Airbag Seat Massager Interface",
+  "description": "Airbag Seat Massager Interface.",
   "extends": "dtmi:sdv:seat_massager;1",
   "contents": [
     {
       "@type": "Command",
       "@id": "dtmi:sdv:airbag_seat_massager:store_sequence;1",
       "name": "store_sequence",
+      "description": "Store a massage sequence.",
       "request": {
         "name": "request",
+        "description": "Request.",
         "schema": {
           "@type": "Object",
           "fields": [
+            {
+              "name": "sequence_name",
+              "schema": "string"
+            },
             {
               "name": "sequence",
               "schema": "dtmi:sdv:massage_sequence;1"
@@ -23,6 +29,7 @@
       },
       "response": {
         "name": "response",
+        "description": "Response.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -38,8 +45,10 @@
       "@type": "Command",
       "@id": "dtmi:sdv:airbag_seat_massager:perform_step;1",
       "name": "perfom_step",
+      "description": "Perform a step in the sequence.",
       "request": {
         "name": "request",
+        "description": "Request.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -107,8 +116,8 @@
           "schema": "integer"
         },
         {
-          "name": "duration",
-          "schema": "duration"
+          "name": "duration_in_seconds",
+          "schema": "integer"
         }
       ]
     }

@@ -2,6 +2,6 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:basic_airbag_seat_massager;1",
-  "description": "Basic Airbag Seat Massager Interface",
+  "description": "Basic Airbag Seat Massager Interface.",
   "extends": "dtmi:sdv:airbag_seat_massager;1"
 }

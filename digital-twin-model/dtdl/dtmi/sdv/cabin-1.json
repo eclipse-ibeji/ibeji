@@ -2,7 +2,7 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:cabin;1",
-  "description": "Cabin Interface",
+  "description": "Cabin Interface.",
   "contents": [
     {
       "@type": "Relationship",

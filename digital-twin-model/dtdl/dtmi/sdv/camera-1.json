@@ -2,13 +2,13 @@
   "@context": "dtmi:dtdl:context;3",
   "@type": "Interface",
   "@id": "dtmi:sdv:camera;1",
-  "description": "Cabin camera.",
+  "description": "Camera Interface.",
   "contents": [
     {
       "@type": "Property",
       "@id": "dtmi:sdv:camera:feed;1",
-      "name": "Feed",
-      "description": "The camera feed inside of the cabin.",
+      "name": "feed",
+      "description": "The camera feed.",
       "schema": {
         "@type": "Object",
         "fields": [

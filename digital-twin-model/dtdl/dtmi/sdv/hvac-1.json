@@ -2,7 +2,7 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:hvac;1",
-  "description": "Heat, Ventilation and Air Conditioning",
+  "description": "Heat, Ventilation and Air Conditioning (HVAC) Interface.",
   "contents": [
     {
       "@type": "Property",

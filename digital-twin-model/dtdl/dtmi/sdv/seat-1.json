@@ -2,5 +2,5 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:seat;1",
-  "description": "Seat Interface"
+  "description": "Seat Interface."
 }

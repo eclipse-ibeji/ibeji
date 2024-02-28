@@ -2,7 +2,7 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:seat_massager;1",
-  "description": "Seat Massager Interface",
+  "description": "Seat Massager Interface.",
   "contents": [
     {
       "@type": "Property",
@@ -16,9 +16,12 @@
     },
     {
       "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:load_sequence;1",
       "name": "load_sequence",
+      "description": "Load a sequence of massage steps.",
       "request": {
         "name": "request",
+        "description": "Request.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -31,6 +34,7 @@
       },
       "response": {
         "name": "response",
+        "description": "Response.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -44,9 +48,12 @@
     },
     {
       "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:pause;1",
       "name": "pause",
+      "description": "Pause whatever is currently playing.",
       "response": {
         "name": "response",
+        "description": "Response.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -60,9 +67,12 @@
     },
     {
       "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:play;1",
       "name": "play",
+      "description": "Start/continue.",
       "response": {
         "name": "response",
+        "description": "Response.",
         "schema": {
           "@type": "Object",
           "fields": [
@@ -76,9 +86,12 @@
     },
     {
       "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:reset;1",
       "name": "reset",
+      "description": "Reset.",
       "response": {
         "name": "response",
+        "description": "Response.",
         "schema": {
           "@type": "Object",
           "fields": [
