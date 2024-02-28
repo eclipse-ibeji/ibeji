@@ -88,8 +88,7 @@ impl DigitalTwinProvider for ProviderImpl {
             .map_err(|error| Status::invalid_argument(error.to_string()))?;
         let notification_json = request_payload_json.get("Notification").unwrap();
 
-        let notification: String =
-            serde_json::from_value(notification_json.clone()).unwrap();
+        let notification: String = serde_json::from_value(notification_json.clone()).unwrap();
 
         debug!(
             "Received an invoke request from for entity id {entity_id} with payload'{payload}' from consumer URI {consumer_uri}"
@@ -149,7 +148,7 @@ mod provider_impl_tests {
     #[derive(Debug, Serialize, Deserialize)]
     struct ShowNotificationRequestPayload {
         #[serde(rename = "Notification")]
-        notification: sdv::hmi::show_notification::request::TYPE,
+        notification: String,
         #[serde(rename = "$metadata")]
         metadata: Metadata,
     }

@@ -16,7 +16,7 @@ pub mod airbag_seat_massager {
             pub const ID: &str = "dtmi:sdv:airbag_seat_massager:store_sequence:request;1";
             pub const NAME: &str = "request";
             pub const DESCRIPTION: &str = "Request.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub sequence_name: String,
                 pub sequence: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE,
@@ -26,7 +26,7 @@ pub mod airbag_seat_massager {
             pub const ID: &str = "dtmi:sdv:airbag_seat_massager:store_sequence:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "Response.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE,
             }
@@ -40,7 +40,7 @@ pub mod airbag_seat_massager {
             pub const ID: &str = "dtmi:sdv:airbag_seat_massager:perform_step:request;1";
             pub const NAME: &str = "request";
             pub const DESCRIPTION: &str = "The request to perform a step in the sequence.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub step: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE,
             }
@@ -49,7 +49,7 @@ pub mod airbag_seat_massager {
             pub const ID: &str = "dtmi:sdv:airbag_seat_massager:perform_step:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "The response to performing a step in the sequence.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE,
             }
@@ -59,7 +59,7 @@ pub mod airbag_seat_massager {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:airbag_adjustment;1";
         pub const NAME: &str = "airbag_adjustment";
         pub const DESCRIPTION: &str = "The airbag adjustments.";
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
             pub airbag_identifier: i32,
             pub inflation_level: i32,
@@ -82,10 +82,10 @@ pub mod airbag_seat_massager {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:status;1";
         pub const NAME: &str = "status";
         pub const DESCRIPTION: &str = "The status.";
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
             pub code: i32,
-            pub message: String
+            pub message: String,
         }
     }
 }
@@ -108,7 +108,7 @@ pub mod camera {
         pub const ID: &str = "dtmi:sdv:camera:feed;1";
         pub const NAME: &str = "feed";
         pub const DESCRIPTION: &str = "The camera feed.";
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
             pub media_type: String,
             pub media_content: Vec<u8>,
@@ -127,7 +127,7 @@ pub mod hmi {
             pub const ID: &str = "dtmi:sdv:hmi:show_notification::request;1";
             pub const NAME: &str = "request";
             pub const DESCRIPTION: &str = "The request.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub notification: String,
             }
@@ -140,7 +140,7 @@ pub mod hmi {
         pub const ID: &str = "dtmi:sdv:hmi:status;1";
         pub const NAME: &str = "status";
         pub const DESCRIPTION: &str = "The status.";
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
             pub code: i32,
             pub message: String,
@@ -204,7 +204,7 @@ pub mod seat_massager {
             pub const ID: &str = "dtmi:sdv:seat_massager:load_sequence:request;1";
             pub const NAME: &str = "request";
             pub const DESCRIPTION: &str = "Request.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub sequence_name: String,
             }
@@ -213,7 +213,7 @@ pub mod seat_massager {
             pub const ID: &str = "dtmi:sdv:seat_massager:load_sequence:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "Response.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::seat_massager::status::TYPE,
             }
@@ -227,7 +227,7 @@ pub mod seat_massager {
             pub const ID: &str = "dtmi:sdv:seat_massager:pause:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "The response.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::seat_massager::status::TYPE,
             }
@@ -241,7 +241,7 @@ pub mod seat_massager {
             pub const ID: &str = "dtmi:sdv:seat_massager:play:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "The response.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::seat_massager::status::TYPE,
             }
@@ -255,7 +255,7 @@ pub mod seat_massager {
             pub const ID: &str = "dtmi:sdv:seat_massager:reset:response;1";
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "The response.";
-            #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+            #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
                 pub status: crate::sdv_v1::seat_massager::status::TYPE,
             }
@@ -265,7 +265,7 @@ pub mod seat_massager {
         pub const ID: &str = "dtmi:sdv:seat_massager:status;1";
         pub const NAME: &str = "status";
         pub const DESCRIPTION: &str = "The status.";
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
             pub code: i32,
             pub message: String,
