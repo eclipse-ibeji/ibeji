@@ -5,13 +5,13 @@
 use digital_twin_model::sdv_v2 as sdv;
 use log::{debug, info, warn};
 use parking_lot::Mutex;
-use samples_protobuf_data_access::async_rpc::v1::common::Status;
 use samples_protobuf_data_access::async_rpc::v1::request::{
     request_server::Request, AskRequest, AskResponse, NotifyRequest, NotifyResponse,
 };
 use samples_protobuf_data_access::async_rpc::v1::respond::{
     respond_client::RespondClient, AnswerRequest,
 };
+use seat_massager_common::TargetedPayload;
 use std::sync::Arc;
 
 #[derive(Debug, Default)]
@@ -40,15 +40,30 @@ impl Request for RequestImpl {
         let payload: String = request_inner.payload.clone();
 
         info!("Received an ask request");
-
         info!("respond_uri: {respond_uri}");
         info!("request_id: {request_id}");
         info!("payload: {payload}");
 
-        // let payload_json: serde_json::Value = serde_json::from_str(payload).unwrap();
+        let targetted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
+        info!("instance_id: {}", targetted_payload_json.instance_id);
+        info!("member_path: {}", targetted_payload_json.member_path);
+        info!("operation: {}", targetted_payload_json.operation);
+        info!("inner payload: {}", targetted_payload_json.payload);
+
+        let request_payload_json: serde_json::Value =
+            serde_json::from_str(&targetted_payload_json.payload)
+                .map_err(|error| tonic::Status::invalid_argument(error.to_string()))?;
+
+        let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
+        let type_id: String = serde_json::from_value(type_id_json.clone()).unwrap();
+
+        info!("type_id: {type_id}");
+
+        if type_id != sdv::airbag_seat_massager::perform_step::request::ID {
+            return Err(tonic::Status::invalid_argument(format!("Unexpected type_id '{type_id}'")));
+        }
 
         tokio::spawn(async move {
-            // if entity_id == sdv::airbag_seat_massager::massage_airbags::ID {
             let client_result = RespondClient::connect(respond_uri).await;
             if let Err(error_message) = client_result {
                 warn!("Unable to connect due to {error_message}");
@@ -74,16 +89,11 @@ impl Request for RequestImpl {
             if let Err(status) = response {
                 warn!("Answer failed: {status:?}");
             }
-            // } else {
-            //    warn!("The entity id {entity_id} is not recognized.");
-            // }
         });
 
         debug!("Completed the ask request.");
 
-        Ok(tonic::Response::new(AskResponse {
-            status: Some(Status { code: 200, message: "Ok".to_string() }),
-        }))
+        Ok(tonic::Response::new(AskResponse {}))
     }
 
     /// Notify implementation.

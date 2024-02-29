@@ -4,8 +4,6 @@
 
 syntax = "proto3";
 
-import "common.proto";
-
 package async_rpc.v1.respond;
 
 service Respond {
@@ -18,5 +16,4 @@ message AnswerRequest {
 }
 
 message AnswerResponse {
-    async_rpc.v1.common.Status status = 1;
 }

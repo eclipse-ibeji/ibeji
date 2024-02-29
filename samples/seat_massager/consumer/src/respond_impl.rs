@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 use log::{debug, info};
-use samples_protobuf_data_access::async_rpc::v1::common::Status;
 use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::Respond;
 use samples_protobuf_data_access::async_rpc::v1::respond::{AnswerRequest, AnswerResponse};
 use tokio::sync::mpsc;
@@ -39,8 +38,6 @@ impl Respond for RespondImpl {
 
         debug!("Completed the answer request.");
 
-        Ok(tonic::Response::new(AnswerResponse {
-            status: Some(Status { code: 200, message: "Ok".to_string() }),
-        }))
+        Ok(tonic::Response::new(AnswerResponse {}))
     }
 }

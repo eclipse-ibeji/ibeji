@@ -6,8 +6,8 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct TargetedPayload {
-    #[serde(rename = "@id")]
     pub instance_id: String,
+    pub member_path: String,
     pub operation: String,
     pub payload: String,
 }

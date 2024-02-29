@@ -45,9 +45,6 @@ pub mod tutorial_grpc {
 
 pub mod async_rpc {
     pub mod v1 {
-        pub mod common {
-            tonic::include_proto!("async_rpc.v1.common");
-        }
         pub mod respond {
             tonic::include_proto!("async_rpc.v1.respond");
         }

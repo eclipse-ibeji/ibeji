@@ -65,6 +65,7 @@ fn start_seat_massage_steps(
 
             let targeted_payload = TargetedPayload {
                 instance_id: instance_id.clone(),
+                member_path: sdv::airbag_seat_massager::perform_step::NAME.to_string(),
                 operation: digital_twin_operation::INVOKE.to_string(),
                 payload: request_payload_json,
             };

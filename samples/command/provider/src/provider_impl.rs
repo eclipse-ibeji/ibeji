@@ -86,9 +86,11 @@ impl DigitalTwinProvider for ProviderImpl {
 
         let request_payload_json: serde_json::Value = serde_json::from_str(&payload)
             .map_err(|error| Status::invalid_argument(error.to_string()))?;
-        let notification_json = request_payload_json.get("Notification").unwrap();
+        let notification_json =
+            request_payload_json.get(sdv::hmi::show_notification::request::NAME).unwrap();
 
-        let notification: String = serde_json::from_value(notification_json.clone()).unwrap();
+        let notification: sdv::hmi::show_notification::request::TYPE =
+            serde_json::from_value(notification_json.clone()).unwrap();
 
         debug!(
             "Received an invoke request from for entity id {entity_id} with payload'{payload}' from consumer URI {consumer_uri}"
