@@ -27,6 +27,8 @@ use seat_massager_common::TargetedPayload;
 /// Start the seat massage steps.
 ///
 /// # Arguments
+/// `consumer_uri` - The consumer uri.
+/// `instance_id` - The instance id.
 /// `provider_uri` - The provider uri.
 fn start_seat_massage_steps(
     consumer_uri: String,

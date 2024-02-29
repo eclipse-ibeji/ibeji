@@ -28,9 +28,11 @@ use crate::request_impl::{RequestImpl, RequestState};
 /// # Arguments
 /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
 /// * `provider_uri` - The provider's URI.
+/// * `instance_id` - The instance id.
 async fn register_airbag_massager(
     invehicle_digital_twin_uri: &str,
     provider_uri: &str,
+    instance_id: &str,
 ) -> Result<(), Status> {
     let endpoint_info = EndpointInfo {
         protocol: digital_twin_protocol::GRPC.to_string(),
@@ -39,7 +41,7 @@ async fn register_airbag_massager(
             digital_twin_operation::INVOKE.to_string(),
         ],
         uri: provider_uri.to_string(),
-        context: sdv::premium_airbag_seat_massager::ID.to_string(),
+        context: instance_id.to_string(),
     };
 
     let entity_access_info = EntityAccessInfo {
@@ -79,6 +81,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Construct the provider URI from the provider authority.
     let provider_uri = format!("http://{provider_authority}"); // Devskim: ignore DS137138
 
+    let instance_id = format!("pub_{}", uuid::Uuid::new_v4());
+
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;
     let state = Arc::new(Mutex::new(RequestState {}));
@@ -88,7 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
     retry_async_based_on_status(30, Duration::from_secs(1), || {
-        register_airbag_massager(&invehicle_digital_twin_uri, &provider_uri)
+        register_airbag_massager(&invehicle_digital_twin_uri, &provider_uri, &instance_id)
     })
     .await?;
 
