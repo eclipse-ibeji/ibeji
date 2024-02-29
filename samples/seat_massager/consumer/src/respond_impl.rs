@@ -13,6 +13,10 @@ pub struct RespondImpl {
 }
 
 impl RespondImpl {
+    /// New.
+    ///
+    /// # Arguments
+    /// * `tx` - The sender for the asynchrnous channel for AnswerRequest's.
     pub fn new(tx: mpsc::Sender<AnswerRequest>) -> RespondImpl {
         RespondImpl { tx }
     }
@@ -23,7 +27,7 @@ impl Respond for RespondImpl {
     /// Answer implementation.
     ///
     /// # Arguments
-    /// * `request` - Respond request.
+    /// * `request` - The answer's request.
     async fn answer(
         &self,
         request: tonic::Request<AnswerRequest>,

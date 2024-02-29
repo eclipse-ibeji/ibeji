@@ -7,6 +7,9 @@ mod respond_impl;
 use digital_twin_model::sdv_v2 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
+use rand::rngs::StdRng;
+use rand::Rng;
+use rand::SeedableRng; // trait needed to initialize StdRng
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::consumer_config;
 use samples_common::utils::{
@@ -30,13 +33,14 @@ use seat_massager_common::TargetedPayload;
 /// `consumer_uri` - The consumer uri.
 /// `instance_id` - The instance id.
 /// `provider_uri` - The provider uri.
+/// `rx` - The receiver for the asynchrnous channel for AnswerRequest's.
 fn start_seat_massage_steps(
     consumer_uri: String,
     instance_id: String,
     provider_uri: String,
     mut rx: mpsc::Receiver<AnswerRequest>,
 ) {
-    debug!("Starting the consumer's seat massage sequence.");
+    debug!("Starting the perform steps sequence.");
 
     tokio::spawn(async move {
         loop {
@@ -50,12 +54,17 @@ fn start_seat_massage_steps(
 
             let request_id = Uuid::new_v4().to_string();
 
+            let mut rng = StdRng::from_entropy();
+            let airbag_identifier = rng.gen_range(1..=15);
+            let inflation_level = rng.gen_range(1..=10);
+            let duration_in_seconds = rng.gen_range(1..=5);
+
             let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
                 sdv::airbag_seat_massager::perform_step::request::TYPE {
                     step: vec![vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
-                        airbag_identifier: 1,
-                        inflation_level: 10,
-                        duration_in_seconds: 1,
+                        airbag_identifier: airbag_identifier,
+                        inflation_level: inflation_level,
+                        duration_in_seconds: duration_in_seconds,
                     }]],
                     ..Default::default()
                 };
@@ -113,13 +122,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await?;
 
-    let (tx, rx) = mpsc::channel(100);
-
-    let respond_impl = respond_impl::RespondImpl::new(tx);
-
     let consumer_authority = settings
         .consumer_authority
         .expect("consumer_authority must be specified in the config file");
+
+    // Setup the asynchrnous channel for AnswerRequest's.
+    let (tx, rx) = mpsc::channel(100);
+
+    let respond_impl = respond_impl::RespondImpl::new(tx);
 
     // Setup the HTTP server.
     let addr: SocketAddr = consumer_authority.parse().unwrap();
@@ -137,7 +147,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .unwrap();
     let provider_uri = provider_endpoint_info.uri;
     let instance_id = provider_endpoint_info.context;
-    info!("The URI for the massage airbags property's provider is {provider_uri}");
+    info!("The URI for the premium seat massager's provider is {provider_uri}");
 
     let consumer_uri = format!("http://{consumer_authority}"); // Devskim: ignore DS137138
 

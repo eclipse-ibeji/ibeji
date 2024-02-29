@@ -14,6 +14,7 @@ digital-twin-model = { path = "../../digital-twin-model" }
 env_logger= { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
+rand = { workspace = true }
 samples-common = { path = "../common" }
 samples-protobuf-data-access = { path = "../protobuf_data_access" }
 serde = { workspace = true }
