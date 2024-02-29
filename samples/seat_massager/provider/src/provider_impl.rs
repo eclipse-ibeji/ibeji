@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::{sdv_v1 as sdv, Metadata};
+use digital_twin_model::{sdv_v2 as sdv, Metadata};
 use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_provider::{

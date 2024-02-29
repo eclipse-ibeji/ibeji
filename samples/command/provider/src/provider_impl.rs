@@ -148,7 +148,7 @@ mod provider_impl_tests {
     #[derive(Debug, Serialize, Deserialize)]
     struct ShowNotificationRequestPayload {
         #[serde(rename = "Notification")]
-        notification: String,
+        notification: sdv::hmi::show_notification::request::TYPE,
         #[serde(rename = "$metadata")]
         metadata: Metadata,
     }

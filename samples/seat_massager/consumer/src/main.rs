@@ -4,7 +4,7 @@
 
 mod respond_impl;
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::sdv_v2 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};

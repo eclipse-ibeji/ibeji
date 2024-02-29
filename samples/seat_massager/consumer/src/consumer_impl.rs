@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::{sdv_v1 as sdv};
+use digital_twin_model::{sdv_v2 as sdv};
 use log::{info, warn};
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::digital_twin_consumer_server::DigitalTwinConsumer;
 use samples_protobuf_data_access::sample_grpc::v1::digital_twin_consumer::{

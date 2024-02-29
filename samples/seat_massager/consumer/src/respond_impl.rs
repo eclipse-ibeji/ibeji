@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// use digital_twin_model::{sdv_v1 as sdv};
 use log::{debug, info};
 use samples_protobuf_data_access::async_rpc::v1::common::Status;
 use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::Respond;
