@@ -62,6 +62,7 @@ impl Request for RequestImpl {
                         code: 200,
                         message: "Ok".to_string(),
                     },
+                    ..Default::default()
                 };
 
             let response_payload_json: String =

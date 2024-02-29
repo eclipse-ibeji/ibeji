@@ -39,6 +39,7 @@ members = [
 async-std = "^1.5"
 bytes = "1.4.0"
 config = "0.13.3"
+derivative = "2.2.0"
 dyn-clone = "1.0.14"
 env_logger= "0.10.0"
 futures = "0.3.28"

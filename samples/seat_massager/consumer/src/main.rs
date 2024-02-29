@@ -55,15 +55,14 @@ fn start_seat_massage_steps(
                         inflation_level: 10,
                         duration_in_seconds: 1,
                     }]],
+                    ..Default::default()
                 };
 
             let request_payload_json: String =
                 serde_json::to_string_pretty(&request_payload).unwrap();
 
             let targeted_payload = TargetedPayload {
-                model_id: sdv::airbag_seat_massager::ID.to_string(),
                 instance_id: instance_id.clone(),
-                member_name: sdv::airbag_seat_massager::perform_step::NAME.to_string(),
                 operation: digital_twin_operation::INVOKE.to_string(),
                 payload: request_payload_json,
             };
