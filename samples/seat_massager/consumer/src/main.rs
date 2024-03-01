@@ -94,7 +94,7 @@ fn start_seat_massage_steps(
             }
 
             if let Some(answer_request) = rx.recv().await {
-                info!("Received an answer request: {:?}", answer_request);
+                info!("Received an answer request.  The request_id is '{}'. The payload is '{}", answer_request.request_id, answer_request.payload);
             } else {
                 warn!("Failed to receive the answer request.");
                 continue;
