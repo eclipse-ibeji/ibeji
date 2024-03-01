@@ -14,7 +14,7 @@ internal static class ModelsRepositoryClientExtensions
     /// </summary>
     /// <param name="modelRepoClient">The models repository client.</param>
     /// <param name="dtmis"></param>
-    /// <param name="cancellationToken">The cancellation topken.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The model definitions for the provided DTMIs.</returns>
     public static async IAsyncEnumerable<string> ParserDtmiResolverAsync(
         this ModelsRepositoryClient modelRepoClient, IReadOnlyCollection<Dtmi> dtmis,

@@ -37,7 +37,7 @@ class Program
         // Strip off the directory path and the extension.
         string dtmiPath = dtdlFilePath.Substring(dtdlDirPath.Length + 1, dtdlFilePath.Length - dtdlDirPath.Length - extension.Length - 2);
         // Replace each directory separator with a colon and the hyphen with a semicolon.
-        string dtmi = dtmiPath.Replace('/', ':').Replace('-', ';');
+        string dtmi = dtmiPath.Replace(Path.DirectorySeparatorChar, ':').Replace('-', ';');
         return dtmi;
     }
 
@@ -90,12 +90,6 @@ class Program
                 foreach (var error in ex.Errors) {
                     Console.WriteLine($"  {error}");
                 }
-                failureOccured = true;
-            }
-            catch (ResolutionException ex)
-            {
-                Console.WriteLine($"{file} - failed");
-                Console.WriteLine($"  {ex.ToString()}");
                 failureOccured = true;
             }
             catch (Exception ex)

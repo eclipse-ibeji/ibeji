@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use digital_twin_model::sdv_v2 as sdv;
-use log::{debug, info, warn};
+use log::{debug, error, info, warn};
 use parking_lot::Mutex;
 use samples_protobuf_data_access::async_rpc::v1::request::{
     request_server::Request, AskRequest, AskResponse, NotifyRequest, NotifyResponse,
@@ -41,14 +41,15 @@ impl Request for RequestImpl {
         info!("respond_uri: {respond_uri}");
         info!("ask_id: {ask_id}");
 
-        let targetted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
-        info!("instance_id: {}", targetted_payload_json.instance_id);
-        info!("member_path: {}", targetted_payload_json.member_path);
-        info!("operation: {}", targetted_payload_json.operation);
-        info!("inner payload: {}", targetted_payload_json.payload);
+        let targeted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
+
+        info!("instance_id: {}", targeted_payload_json.instance_id);
+        info!("member_path: {}", targeted_payload_json.member_path);
+        info!("operation: {}", targeted_payload_json.operation);
+        info!("inner payload: {}", targeted_payload_json.payload);
 
         let request_payload_json: serde_json::Value =
-            serde_json::from_str(&targetted_payload_json.payload)
+            serde_json::from_str(&targeted_payload_json.payload)
                 .map_err(|error| tonic::Status::invalid_argument(error.to_string()))?;
 
         let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
@@ -63,7 +64,7 @@ impl Request for RequestImpl {
         tokio::spawn(async move {
             let client_result = RespondClient::connect(respond_uri).await;
             if let Err(error_message) = client_result {
-                warn!("Unable to connect due to {error_message}");
+                error!("Unable to connect due to {error_message}");
                 return;
             }
             let mut client = client_result.unwrap();
@@ -84,7 +85,8 @@ impl Request for RequestImpl {
                 tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
             let response = client.answer(answer_request).await;
             if let Err(status) = response {
-                warn!("Answer failed: {status:?}");
+                error!("Answer failed: {status:?}");
+                return;
             }
         });
 
