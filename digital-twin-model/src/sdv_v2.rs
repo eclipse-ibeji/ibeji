@@ -4,6 +4,10 @@
 
 // Note: In the future this code should be generated from a DTDL spec.
 
+pub fn context() -> Vec<String> {
+    vec!["dtmi:dtdl:context;2".to_string(), "dtmi:sdv:context;2".to_string()]
+}
+
 #[allow(dead_code)]
 pub mod airbag_seat_massager {
     pub const ID: &str = "dtmi:sdv:airbag_seat_massager;1";
@@ -72,6 +76,9 @@ pub mod airbag_seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::airbag_seat_massager::perform_step::request::id()"
@@ -91,6 +98,9 @@ pub mod airbag_seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::airbag_seat_massager::perform_step::response::id()"
