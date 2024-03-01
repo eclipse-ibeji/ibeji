@@ -29,12 +29,17 @@ pub mod airbag_seat_massager {
             }
             pub const NAME: &str = "request";
             pub const DESCRIPTION: &str = "Request.";
+            #[derive(derivative::Derivative)]
+            #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
-                #[serde(
-                    rename = "@type",
-                    default = "crate::sdv_v2::airbag_seat_massager::store_sequence::request::id"
-                )]
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
+                #[serde(rename = "@type")]
+                #[derivative(Default(
+                    value = "crate::sdv_v2::airbag_seat_massager::store_sequence::request::id()"
+                ))]
                 pub model_id: String,
                 pub sequence_name: String,
                 pub sequence: crate::sdv_v2::airbag_seat_massager::massage_step::TYPE,
@@ -47,12 +52,17 @@ pub mod airbag_seat_massager {
             }
             pub const NAME: &str = "response";
             pub const DESCRIPTION: &str = "Response.";
+            #[derive(derivative::Derivative)]
+            #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
-                #[serde(
-                    rename = "@type",
-                    default = "crate::sdv_v2::airbag_seat_massager::store_sequence::response::id"
-                )]
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
+                #[serde(rename = "@type")]
+                #[derivative(Default(
+                    value = "crate::sdv_v2::airbag_seat_massager::store_sequence::response::id()"
+                ))]
                 pub model_id: String,
                 pub status: crate::sdv_v2::airbag_seat_massager::status::TYPE,
             }
@@ -191,6 +201,9 @@ pub mod camera {
         #[derivative(Default)]
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
+            #[serde(rename = "@context")]
+            #[derivative(Default(value = "crate::sdv_v2::context()"))]
+            pub context: Vec<String>,
             #[serde(rename = "@type")]
             #[derivative(Default(value = "crate::sdv_v2::camera::feed::id()"))]
             pub model_id: String,
@@ -224,6 +237,9 @@ pub mod hmi {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::hmi::show_notification::request::id()"
@@ -243,6 +259,9 @@ pub mod hmi {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::hmi::show_notification::response::id()"
@@ -344,6 +363,9 @@ pub mod seat_massager {
         #[derivative(Default)]
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
+            #[serde(rename = "@context")]
+            #[derivative(Default(value = "crate::sdv_v2::context()"))]
+            pub context: Vec<String>,
             #[serde(rename = "@type")]
             #[derivative(Default(value = "crate::sdv_v2::seat_massager::sequence_names::id()"))]
             pub model_id: String,
@@ -368,6 +390,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::load_sequence::request::id()"
@@ -387,6 +412,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::load_sequence::response::id()"
@@ -411,6 +439,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::pause::request::id()"
@@ -429,6 +460,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::pause::response::id()"
@@ -456,6 +490,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::play::request::id()"
@@ -474,6 +511,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::play::response::id()"
@@ -501,6 +541,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::reset::request::id()"
@@ -519,6 +562,9 @@ pub mod seat_massager {
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
             pub struct TYPE {
+                #[serde(rename = "@context")]
+                #[derivative(Default(value = "crate::sdv_v2::context()"))]
+                pub context: Vec<String>,
                 #[serde(rename = "@type")]
                 #[derivative(Default(
                     value = "crate::sdv_v2::seat_massager::reset::response::id()"
@@ -569,6 +615,9 @@ pub mod vehicle {
         #[derivative(Default)]
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct TYPE {
+            #[serde(rename = "@context")]
+            #[derivative(Default(value = "crate::sdv_v2::context()"))]
+            pub context: Vec<String>,
             #[serde(rename = "@type")]
             #[derivative(Default(value = "crate::sdv_v2::vehicle::vehicle_identification::id()"))]
             pub model_id: String,
