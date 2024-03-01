@@ -19,6 +19,7 @@ pub struct TargetedPayload {
 }
 
 
+/// Status codes and messages. 
 pub mod status {
     pub mod ok {
         pub const CODE: i32 = 200;
