@@ -16,6 +16,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// The DTDL Validator app.
+/// </summary>
 class Program
 {
     // Exit codes.
@@ -23,11 +26,11 @@ class Program
     private const int EXIT_FAILURE = 1;
 
     /// <summary>
-    /// Convert a DTDL file's path to a DTMI.
+    /// Convert a DTDL file's path to a Digital Twin Model Identifier (DTMI).
     /// </summary>
     /// <param name="dtdlFilePath">The DTDL file's full path.</param>
     /// <param name="dtdlDirPath">The DTDL directory's path.</param>
-    /// <param name="extension">The extensin used by the DTDL files.</param>
+    /// <param name="extension">The extension used by the DTDL files.</param>
     /// <returns>The corresponding DTMI.</returns>
     static string ConvertToDTMI(string dtdlFilePath, string dtdlDirPath, string extension)
     {
@@ -78,7 +81,7 @@ class Program
             {
                 string dtmi = ConvertToDTMI(file, dtdlDirectory.FullName, extension);
                 var model = modelRepoClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
-                var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();
+                var modelDictionary = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();
                 Console.WriteLine($"{file} - ok");
             }
             catch (ParsingException ex)

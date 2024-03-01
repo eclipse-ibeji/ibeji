@@ -10,8 +10,9 @@ internal static class ModelsRepositoryClientExtensions
 {
     /// <summary>
     /// The Parser's DTMI resolver.
+    /// It asynchronously gets from the models repositpory the DTDL content associated witn each of the provided DTMIs.
     /// </summary>
-    /// <param name="modelRepoClient">The model's repository client.</param>
+    /// <param name="modelRepoClient">The models repository client.</param>
     /// <param name="dtmis"></param>
     /// <param name="cancellationToken">The cancellation topken.</param>
     /// <returns>The model definitions for the provided DTMIs.</returns>
