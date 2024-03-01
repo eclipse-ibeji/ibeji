@@ -19,7 +19,7 @@ jobs:
           ./tools/check_spelling.sh ./README.md
           ./tools/check_spelling.sh ./container/README.md
           ./tools/check_spelling.sh ./core/common/README.md
-          ./tools/check_spelling.sh ./dtdl-parser/README.md
+          ./tools/check_spelling.sh ./dtdl-tools/README.md
           ./tools/check_spelling.sh ./docs/design/README.md
           ./tools/check_spelling.sh ./samples/managed_subscribe/README.md
         shell: bash
