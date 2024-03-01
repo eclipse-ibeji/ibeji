@@ -22,8 +22,6 @@ pub struct RequestImpl {
     pub state: Arc<Mutex<RequestState>>,
 }
 
-impl RequestImpl {}
-
 #[tonic::async_trait]
 impl Request for RequestImpl {
     /// Ask implementation.

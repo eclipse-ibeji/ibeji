@@ -44,7 +44,7 @@
     {
       "@type": "Command",
       "@id": "dtmi:sdv:airbag_seat_massager:perform_step;1",
-      "name": "perfom_step",
+      "name": "perform_step",
       "description": "Perform a step in the sequence.",
       "request": {
         "name": "request",

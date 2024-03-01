@@ -40,7 +40,7 @@
           "fields": [
             {
               "name": "status",
-              "schema": "dtmi:sdv:seatmassager:status;1"
+              "schema": "dtmi:sdv:seat_massager:status;1"
             }
           ]
         }
@@ -59,7 +59,7 @@
           "fields": [
             {
               "name": "status",
-              "schema": "dtmi:sdv:seatmassager:status;1"
+              "schema": "dtmi:sdv:seat_massager:status;1"
             }
           ]
         }
@@ -78,7 +78,7 @@
           "fields": [
             {
               "name": "status",
-              "schema": "dtmi:sdv:seatmassager:status;1"
+              "schema": "dtmi:sdv:seat_massager:status;1"
             }
           ]
         }
@@ -97,7 +97,7 @@
           "fields": [
             {
               "name": "status",
-              "schema": "dtmi:sdv:seatmassager:status;1"
+              "schema": "dtmi:sdv:seat_massager:status;1"
             }
           ]
         }
@@ -106,7 +106,7 @@
   ],
   "schemas": [
     {
-      "@id": "dtmi:sdv:seatmassager:status;1",
+      "@id": "dtmi:sdv:seat_massager:status;1",
       "@type": "Object",
       "fields": [
         {

@@ -6,7 +6,7 @@
   "contents": [
     {
       "@type": "Property",
-      "@id": "dtmi:sdv:obd:hybri_bBattery_remaining;1",
+      "@id": "dtmi:sdv:obd:hybrid_battery_remaining;1",
       "name": "hybrid_battery_remaining",
       "description": "The remaining hybrid battery life.",
       "schema": "integer"

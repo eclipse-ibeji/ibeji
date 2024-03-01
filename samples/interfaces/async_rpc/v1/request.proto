@@ -11,7 +11,7 @@ service Request {
    rpc Ask (AskRequest) returns (AskResponse);
 
    // Send a notification.
-   // This is similar to an ask expect that there is no corresponding answer.
+   // This is similar to an ask except that there is no corresponding answer.
    rpc Notify (NotifyRequest) returns (NotifyResponse);
 }
 
