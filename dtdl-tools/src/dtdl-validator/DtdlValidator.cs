@@ -22,10 +22,19 @@ class Program
     private const int EXIT_SUCCESS = 0;
     private const int EXIT_FAILURE = 1;
 
-    static string ConvertToDTMI(string filepath, string dirpath, string extension)
+    /// <summary>
+    /// Convert a DTDL file's path to a DTMI.
+    /// </summary>
+    /// <param name="dtdlFilePath">The DTDL file's full path.</param>
+    /// <param name="dtdlDirPath">The DTDL directory's path.</param>
+    /// <param name="extension">The extensin used by the DTDL files.</param>
+    /// <returns>The corresponding DTMI.</returns>
+    static string ConvertToDTMI(string dtdlFilePath, string dtdlDirPath, string extension)
     {
-        string relativepath = filepath.Substring(dirpath.Length + 1, filepath.Length - dirpath.Length - extension.Length - 2);
-        string dtmi = relativepath.Replace('/', ':').Replace('-', ';'); // .ToLower();
+        // Strip off the directory path and the extension.
+        string dtmiPpath = dtdlFilePath.Substring(dtdlDirPath.Length + 1, dtdlFilePath.Length - dtdlDirPath.Length - extension.Length - 2);
+        // Replace each directory separator with a colon and the hyphen with a semicolon.
+        string dtmi = dtmiPpath.Replace('/', ':').Replace('-', ';');
         return dtmi;
     }
 
@@ -33,33 +42,33 @@ class Program
     /// This method validates all of the DTDL files with the provided extension that are located
     /// under the provided directory.
     /// </summary>
-    /// <param name="directory">The directory that contains the DTDL files that we wish to validate.</param>
+    /// <param name="dtdlDirectory">The directory that contains the DTDL files that we wish to validate.</param>
     /// <param name="extension">The extension used by the DTDL files.</param>
     /// <returns>
     /// EXIT_SUCCESS when all if the DTDL files are valid.
     /// EXIT_FAILURE when any of the DTDL files are NOT valid.
     /// </returns>
-    static int ValidateDtdl(DirectoryInfo directory, String extension)
+    static int ValidateDtdl(DirectoryInfo dtdlDirectory, String extension)
     {
-        if (!directory.Exists)
+        if (!dtdlDirectory.Exists)
         {
-            Console.WriteLine($"Directory {directory.FullName} does not exist.");
+            Console.WriteLine($"Directory {dtdlDirectory.FullName} does not exist.");
             return EXIT_FAILURE;
         }
 
-        var files = Directory.GetFiles(directory.FullName, $"*.{extension}", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(dtdlDirectory.FullName, $"*.{extension}", SearchOption.AllDirectories);
 
         if (!files.Any())
         {
-            Console.WriteLine($"No files with extension .{extension} found in directory {directory}");
+            Console.WriteLine($"No files with extension .{extension} found in directory {dtdlDirectory}");
             return EXIT_FAILURE;
         }
 
-        var dmrClient = new ModelsRepositoryClient(new Uri(directory.FullName));
+        var modelRepoClient = new ModelsRepositoryClient(new Uri(dtdlDirectory.FullName));
 
         var parser = new ModelParser(new ParsingOptions()
         {
-            DtmiResolverAsync = dmrClient.ParserDtmiResolverAsync
+            DtmiResolverAsync = modelRepoClient.ParserDtmiResolverAsync
         });
 
         bool failureOccured = false;
@@ -67,8 +76,8 @@ class Program
         {
             try
             {
-                string dtmi = ConvertToDTMI(file, directory.FullName, extension);
-                var model = dmrClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
+                string dtmi = ConvertToDTMI(file, dtdlDirectory.FullName, extension);
+                var model = modelRepoClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
                 var dictParsed = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();
                 Console.WriteLine($"{file} - ok");
             }
