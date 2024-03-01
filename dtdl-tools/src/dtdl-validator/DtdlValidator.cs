@@ -35,9 +35,9 @@ class Program
     static string ConvertToDTMI(string dtdlFilePath, string dtdlDirPath, string extension)
     {
         // Strip off the directory path and the extension.
-        string dtmiPpath = dtdlFilePath.Substring(dtdlDirPath.Length + 1, dtdlFilePath.Length - dtdlDirPath.Length - extension.Length - 2);
+        string dtmiPath = dtdlFilePath.Substring(dtdlDirPath.Length + 1, dtdlFilePath.Length - dtdlDirPath.Length - extension.Length - 2);
         // Replace each directory separator with a colon and the hyphen with a semicolon.
-        string dtmi = dtmiPpath.Replace('/', ':').Replace('-', ';');
+        string dtmi = dtmiPath.Replace('/', ':').Replace('-', ';');
         return dtmi;
     }
 
