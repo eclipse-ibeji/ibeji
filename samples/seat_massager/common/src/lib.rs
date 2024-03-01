@@ -17,3 +17,11 @@ pub struct TargetedPayload {
     /// The operation's payload.
     pub payload: String,
 }
+
+
+pub mod status {
+    pub mod ok {
+        pub const CODE: i32 = 200;
+        pub const MESSAGE: &str = "Ok";
+    }
+}

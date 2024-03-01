@@ -11,7 +11,7 @@ use samples_protobuf_data_access::async_rpc::v1::request::{
 use samples_protobuf_data_access::async_rpc::v1::respond::{
     respond_client::RespondClient, AnswerRequest,
 };
-use seat_massager_common::TargetedPayload;
+use seat_massager_common::{status, TargetedPayload};
 use std::sync::Arc;
 
 #[derive(Debug, Default)]
@@ -40,7 +40,6 @@ impl Request for RequestImpl {
         info!("Received an ask request");
         info!("respond_uri: {respond_uri}");
         info!("ask_id: {ask_id}");
-        info!("payload: {payload}");
 
         let targetted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
         info!("instance_id: {}", targetted_payload_json.instance_id);
@@ -72,8 +71,8 @@ impl Request for RequestImpl {
             let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE =
                 sdv::airbag_seat_massager::perform_step::response::TYPE {
                     status: sdv::airbag_seat_massager::status::TYPE {
-                        code: 200,
-                        message: "Ok".to_string(),
+                        code: status::ok::CODE,
+                        message: status::ok::MESSAGE.to_string(),
                     },
                     ..Default::default()
                 };
