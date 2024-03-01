@@ -61,11 +61,11 @@ fn start_seat_massage_steps(
 
             let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
                 sdv::airbag_seat_massager::perform_step::request::TYPE {
-                    step: vec![vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
+                    step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
                         airbag_identifier,
                         inflation_level,
                         duration_in_seconds,
-                    }]],
+                    }],
                     ..Default::default()
                 };
 

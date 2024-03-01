@@ -134,15 +134,6 @@ pub mod airbag_seat_massager {
             pub duration_in_seconds: i32,
         }
     }
-    pub mod airbag_adjustments {
-        pub const ID: &str = "dtmi:sdv:airbag_seat_massager:airbag_adjustments;1";
-        pub fn id() -> String {
-            ID.to_string()
-        }
-        pub const NAME: &str = "airbag_adjustments";
-        pub const DESCRIPTION: &str = "The airbag adjustments.";
-        pub type TYPE = Vec<crate::sdv_v2::airbag_seat_massager::airbag_adjustment::TYPE>;
-    }
     pub mod massage_step {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:massage_step;1";
         pub fn id() -> String {
@@ -150,7 +141,7 @@ pub mod airbag_seat_massager {
         }
         pub const NAME: &str = "massage_step";
         pub const DESCRIPTION: &str = "The massage step.";
-        pub type TYPE = Vec<crate::sdv_v2::airbag_seat_massager::airbag_adjustments::TYPE>;
+        pub type TYPE = Vec<crate::sdv_v2::airbag_seat_massager::airbag_adjustment::TYPE>;
     }
     pub mod status {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:status;1";

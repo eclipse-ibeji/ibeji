@@ -96,11 +96,6 @@
     {
       "@id": "dtmi:sdv:massage_step;1",
       "@type": "Array",
-      "elementSchema": "dtmi:sdv:airbag_adjustments;1"
-    },
-    {
-      "@id": "dtmi:sdv:airbag_adjustments;1",
-      "@type": "Array",
       "elementSchema": "dtmi:sdv:airbag_adjustment;1"
     },
     {
