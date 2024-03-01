@@ -52,7 +52,7 @@ fn start_seat_massage_steps(
             }
             let mut client = client_result.unwrap();
 
-            let request_id = Uuid::new_v4().to_string();
+            let ask_id = Uuid::new_v4().to_string();
 
             let mut rng = StdRng::from_entropy();
             let airbag_identifier = rng.gen_range(1..=15);
@@ -83,7 +83,7 @@ fn start_seat_massage_steps(
 
             let request = tonic::Request::new(AskRequest {
                 respond_uri: consumer_uri.clone(),
-                request_id: request_id.clone(),
+                ask_id: ask_id.clone(),
                 payload: targeted_payload_json.clone(),
             });
 
@@ -95,8 +95,8 @@ fn start_seat_massage_steps(
 
             if let Some(answer_request) = rx.recv().await {
                 info!(
-                    "Received an answer request.  The request_id is '{}'. The payload is '{}",
-                    answer_request.request_id, answer_request.payload
+                    "Received an answer request.  The ask_id is '{}'. The payload is '{}",
+                    answer_request.ask_id, answer_request.payload
                 );
             } else {
                 warn!("Failed to receive the answer request.");

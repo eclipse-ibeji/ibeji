@@ -36,12 +36,12 @@ impl Request for RequestImpl {
     ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
         let request_inner = request.into_inner();
         let respond_uri: String = request_inner.respond_uri.clone();
-        let request_id: String = request_inner.request_id.clone();
+        let ask_id: String = request_inner.ask_id.clone();
         let payload: String = request_inner.payload.clone();
 
         info!("Received an ask request");
         info!("respond_uri: {respond_uri}");
-        info!("request_id: {request_id}");
+        info!("ask_id: {ask_id}");
         info!("payload: {payload}");
 
         let targetted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
@@ -84,7 +84,7 @@ impl Request for RequestImpl {
                 serde_json::to_string_pretty(&response_payload).unwrap();
 
             let answer_request =
-                tonic::Request::new(AnswerRequest { request_id, payload: response_payload_json });
+                tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
             let response = client.answer(answer_request).await;
             if let Err(status) = response {
                 warn!("Answer failed: {status:?}");

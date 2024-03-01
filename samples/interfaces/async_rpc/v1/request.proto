@@ -7,13 +7,20 @@ syntax = "proto3";
 package async_rpc.v1.request;
 
 service Request {
-    rpc Ask (AskRequest) returns (AskResponse);
-    rpc Notify (NotifyRequest) returns (NotifyResponse);
+   // Make an asynchronous ask.
+   rpc Ask (AskRequest) returns (AskResponse);
+
+   // Send a notification.
+   // This is similar to an ask expect that there is no corresponding answer.
+   rpc Notify (NotifyRequest) returns (NotifyResponse);
 }
 
 message AskRequest {
+   // The URI where the answer for the ask should be sent.
    string respond_uri = 1;
-   string request_id = 2;
+   // The ask's id (must be universally unique).
+   string ask_id = 2;
+   // The request's payload.
    string payload = 3;
 }
 
