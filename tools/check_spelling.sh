@@ -16,9 +16,9 @@ TARGET_DIR=`dirname $1`
 ACCEPTED_WORDS_FILEPATH="$TARGET_DIR/.accepted_words.txt"
 
 if [ -e $ACCEPTED_WORDS_FILEPATH ]; then
-  spell -d $ACCEPTED_WORDS_FILEPATH $1 | sort -u > $TEMP_FILE
+  spell -d $ACCEPTED_WORDS_FILEPATH $1 | sort -uf > $TEMP_FILE
 else
-  spell $1 | sort -u > $TEMP_FILE
+  spell $1 | sort -uf > $TEMP_FILE
 fi
 NUM_SPELLING_ERRORS=`wc -l $TEMP_FILE | cut -d ' ' -f 1`
 
