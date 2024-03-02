@@ -86,7 +86,6 @@ impl Request for RequestImpl {
             let response = client.answer(answer_request).await;
             if let Err(status) = response {
                 error!("Answer failed: {status:?}");
-                return;
             }
         });
 
