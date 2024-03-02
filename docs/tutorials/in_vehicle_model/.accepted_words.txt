@@ -5,14 +5,19 @@ com
 const
 dir
 displayName
+DTDL
+dtdl
 DTMI
 DTMIs
 fabrikam
 github
 HMI
+hmi
 html
 HVAC
+hvac
 Ibeji
+ibeji
 Ibeji's
 Identifer
 industrialProducts
@@ -21,6 +26,7 @@ IsAirConditioningActive
 json
 md
 OBD
+obd
 opendigitaltwins
 repo
 sdv

@@ -6,12 +6,15 @@ com
 dev
 dir
 DTDL
+dtdl
 fn
 GetRequest
 GetResponse
 github
 gRPC
+grpc
 Ibeji
+ibeji
 Ibeji's
 impl
 invehicle
@@ -20,6 +23,7 @@ InvokeResponse
 io
 md
 MQTT
+mqtt
 org
 proto
 protobuf
