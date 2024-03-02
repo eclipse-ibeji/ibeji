@@ -280,7 +280,9 @@ pub mod seat_massager {
             #[derivative(Default(value = "crate::sdv_v2::context()"))]
             pub context: Vec<String>,
             #[serde(rename = "@type")]
-            #[derivative(Default(value = "crate::sdv_v2::seat_massager::sequence_names::ID.to_string()"))]
+            #[derivative(Default(
+                value = "crate::sdv_v2::seat_massager::sequence_names::ID.to_string()"
+            ))]
             pub model_id: String,
             pub sequence_names: Vec<String>,
         }
@@ -490,7 +492,9 @@ pub mod vehicle {
             #[derivative(Default(value = "crate::sdv_v2::context()"))]
             pub context: Vec<String>,
             #[serde(rename = "@type")]
-            #[derivative(Default(value = "crate::sdv_v2::vehicle::vehicle_identification::ID.to_string()"))]
+            #[derivative(Default(
+                value = "crate::sdv_v2::vehicle::vehicle_identification::ID.to_string()"
+            ))]
             pub model_id: String,
             pub vin: crate::sdv_v2::vehicle::vehicle_identification::vin::TYPE,
         }
