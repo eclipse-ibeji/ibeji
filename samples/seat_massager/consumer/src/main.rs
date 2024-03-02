@@ -129,7 +129,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .consumer_authority
         .expect("consumer_authority must be specified in the config file");
 
-    // Setup the asynchrnous channel for AnswerRequest's.
+    // Setup the asynchronous channel for AnswerRequest's.
     let (tx, rx) = mpsc::channel(100);
 
     let respond_impl = respond_impl::RespondImpl::new(tx);

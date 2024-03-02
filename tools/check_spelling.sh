@@ -22,10 +22,8 @@ else
 fi
 NUM_SPELLING_ERRORS=`wc -l $TEMP_FILE | cut -d ' ' -f 1`
 
-if [ $NUM_SPELLING_ERRORS -eq 0 ]; then
-  echo "$1 has no spelling mistakes."
-else
-  echo "Error: $1 has spelling mistakes. Please fix them."
+if [ $NUM_SPELLING_ERRORS -ne 0 ]; then
+  echo "$1 has the following spelling mistakes. Please fix them."
   cat $TEMP_FILE
 fi
 
