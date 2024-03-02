@@ -17,5 +17,5 @@ jobs:
       - name: Check spelling
         # Check the spelling in all README.ms files, excluding those in submodules and those in target directories.
         run: |
-          find . -name README.md | grep -v external | grep -v target | xargs  -I % ./tools/check_spelling.sh %
+          find . -name README.md | grep -v external | grep -v target | xargs  -I % ./tools/check_spelling.sh "%" || exit 255
         shell: bash
