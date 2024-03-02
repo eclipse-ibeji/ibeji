@@ -8,6 +8,7 @@ displayName
 DTDL
 dtdl
 DTMI
+dtmi
 DTMIs
 fabrikam
 github
