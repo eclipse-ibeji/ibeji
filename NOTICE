@@ -4,8 +4,8 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
-- Apache License 2.0 (38)
-- MIT License (37)
+- Apache License 2.0 (252)
+- MIT License (66)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (2)
 - Creative Commons Zero v1.0 Universal (1)
@@ -430,21 +430,21 @@ This page lists the licenses of the projects used in cargo-about.
 - [windows-sys]( https://github.com/microsoft/windows-rs ) 0.48.0
 - [windows-sys]( https://github.com/microsoft/windows-rs ) 0.52.0
 - [windows-targets]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows-targets]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows-targets]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.4
 - [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.3
+- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
 
 #### License
 
@@ -1303,7 +1303,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 #### Used by
 
-- [anstream]( https://github.com/rust-cli/anstyle.git ) 0.6.12
+- [anstream]( https://github.com/rust-cli/anstyle.git ) 0.6.13
 - [anstyle]( https://github.com/rust-cli/anstyle.git ) 1.0.6
 - [anstyle-query]( https://github.com/rust-cli/anstyle ) 1.0.2
 - [anstyle-wincon]( https://github.com/rust-cli/anstyle.git ) 3.0.2
@@ -1922,7 +1922,7 @@ END OF TERMS AND CONDITIONS
 
 - [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.80
 - [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.77
-- [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.16
+- [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.17
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.153
@@ -1934,7 +1934,7 @@ END OF TERMS AND CONDITIONS
 - [serde]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.114
-- [syn]( https://github.com/dtolnay/syn ) 2.0.50
+- [syn]( https://github.com/dtolnay/syn ) 2.0.52
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.57
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.57
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
@@ -4071,14 +4071,14 @@ limitations under the License.
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
 - [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.15.3
-- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.87
+- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.88
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 2.0.0
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [cmake]( https://github.com/rust-lang/cmake-rs ) 0.1.50
 - [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.4.0
 - [const-random]( https://github.com/tkaitchuck/constrandom ) 0.1.17
 - [const-random-macro]( https://github.com/tkaitchuck/constrandom ) 0.1.16
-- [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.11
+- [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.12
 - [crossbeam-deque]( https://github.com/crossbeam-rs/crossbeam ) 0.8.5
 - [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.18
 - [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.19
@@ -4086,7 +4086,7 @@ limitations under the License.
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
 - [event-listener]( https://github.com/smol-rs/event-listener ) 4.0.3
-- [event-listener]( https://github.com/smol-rs/event-listener ) 5.1.0
+- [event-listener]( https://github.com/smol-rs/event-listener ) 5.2.0
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.4.0
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.5.0
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
@@ -4103,12 +4103,12 @@ limitations under the License.
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.13.2
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.3
 - [heck]( https://github.com/withoutboats/heck ) 0.4.1
-- [hermit-abi]( https://github.com/hermit-os/hermit-rs ) 0.3.8
+- [hermit-abi]( https://github.com/hermit-os/hermit-rs ) 0.3.9
 - [httparse]( https://github.com/seanmonstar/httparse ) 1.8.0
 - [hyper-timeout]( https://github.com/hjr3/hyper-timeout ) 0.4.1
 - [idna]( https://github.com/servo/rust-url/ ) 0.5.0
 - [indexmap]( https://github.com/bluss/indexmap ) 1.9.3
-- [indexmap]( https://github.com/indexmap-rs/indexmap ) 2.2.3
+- [indexmap]( https://github.com/indexmap-rs/indexmap ) 2.2.5
 - [io-lifetimes]( https://github.com/sunfishcode/io-lifetimes ) 1.0.11
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.4
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
@@ -4118,23 +4118,22 @@ limitations under the License.
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.13
 - [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.11
-- [log]( https://github.com/rust-lang/log ) 0.4.20
+- [log]( https://github.com/rust-lang/log ) 0.4.21
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
 - [multimap]( https://github.com/havarnov/multimap ) 0.8.3
 - [num-traits]( https://github.com/rust-num/num-traits ) 0.2.18
 - [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.16.0
 - [object]( https://github.com/gimli-rs/object ) 0.32.2
 - [once_cell]( https://github.com/matklad/once_cell ) 1.19.0
-- [openssl-src]( https://github.com/alexcrichton/openssl-src-rs ) 300.2.3+3.2.1
 - [parking]( https://github.com/smol-rs/parking ) 2.2.0
 - [parking_lot]( https://github.com/Amanieu/parking_lot ) 0.12.1
 - [parking_lot_core]( https://github.com/Amanieu/parking_lot ) 0.9.9
 - [pct-str]( https://github.com/timothee-haudebourg/pct-str ) 2.0.0
 - [percent-encoding]( https://github.com/servo/rust-url/ ) 2.3.1
-- [pest]( https://github.com/pest-parser/pest ) 2.7.7
-- [pest_derive]( https://github.com/pest-parser/pest ) 2.7.7
-- [pest_generator]( https://github.com/pest-parser/pest ) 2.7.7
-- [pest_meta]( https://github.com/pest-parser/pest ) 2.7.7
+- [pest]( https://github.com/pest-parser/pest ) 2.7.8
+- [pest_derive]( https://github.com/pest-parser/pest ) 2.7.8
+- [pest_generator]( https://github.com/pest-parser/pest ) 2.7.8
+- [pest_meta]( https://github.com/pest-parser/pest ) 2.7.8
 - [petgraph]( https://github.com/petgraph/petgraph ) 0.6.4
 - [piper]( https://github.com/notgull/piper ) 0.2.1
 - [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.30
@@ -4144,7 +4143,7 @@ limitations under the License.
 - [prost-build]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-types]( https://github.com/tokio-rs/prost ) 0.12.3
-- [rayon]( https://github.com/rayon-rs/rayon ) 1.8.1
+- [rayon]( https://github.com/rayon-rs/rayon ) 1.9.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
 - [regex]( https://github.com/rust-lang/regex ) 1.10.3
 - [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.5
@@ -4159,7 +4158,7 @@ limitations under the License.
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.10
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.5.6
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
-- [tempfile]( https://github.com/Stebalien/tempfile ) 3.10.0
+- [tempfile]( https://github.com/Stebalien/tempfile ) 3.10.1
 - [ucd-trie]( https://github.com/BurntSushi/ucd-generate ) 0.1.6
 - [unicode-bidi]( https://github.com/servo/unicode-bidi ) 0.3.15
 - [unicode-normalization]( https://github.com/unicode-rs/unicode-normalization ) 0.1.23
@@ -6751,7 +6750,7 @@ limitations under the License.
 
 - [btree-range-map]( https://github.com/timothee-haudebourg/btree-range-map ) 0.7.2
 - [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.6
-- [half]( https://github.com/starkat99/half-rs ) 2.3.1
+- [half]( https://github.com/starkat99/half-rs ) 2.4.0
 - [range-traits]( https://github.com/timothee-haudebourg/range-traits ) 0.3.2
 - [static-regular-grammar]( https://github.com/timothee-haudebourg/static-regular-grammar ) 1.1.1
 - [winapi-i686-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
@@ -6914,25 +6913,32 @@ limitations under the License.
 
 #### Used by
 
-- [typenum]( https://github.com/paholg/typenum ) 1.17.0
+- [unicode-normalization]( https://github.com/unicode-rs/unicode-normalization ) 0.1.23
+- [unicode-segmentation]( https://github.com/unicode-rs/unicode-segmentation ) 1.11.0
 
 #### License
 
 ```text
-MIT OR Apache-2.0
+Licensed under the Apache License, Version 2.0
+<LICENSE-APACHE or
+http://www.apache.org/licenses/LICENSE-2.0> or the MIT
+license <LICENSE-MIT or http://opensource.org/licenses/MIT>,
+at your option. All files in the project carrying such
+notice may not be copied, modified, or distributed except
+according to those terms.
+
 ```
 
 ### Apache-2.0 (Apache License 2.0)
 
 #### Used by
 
-- [half]( https://github.com/starkat99/half-rs ) 2.3.1
+- [typenum]( https://github.com/paholg/typenum ) 1.17.0
 
 #### License
 
 ```text
 MIT OR Apache-2.0
-
 ```
 
 ### Apache-2.0 (Apache License 2.0)
@@ -6982,6 +6988,50 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+```
+
+### BSD-3-Clause (BSD 3-Clause "New" or "Revised" License)
+
+#### Used by
+
+- [exr]( https://github.com/johannesvollmer/exrs ) 1.72.0
+
+#### License
+
+```text
+# Licenses
+
+This Rust implementation of the OpenEXR image format
+and the exrs crate are not affiliated with the 
+[OpenEXR project](https://www.openexr.com/) or the 
+[ACADEMY SOFTWARE FOUNDATION](https://www.aswf.io/).
+
+
+## The OpenEXR Image Format: [BSD-3-Clause](https://github.com/AcademySoftwareFoundation/openexr/blob/master/LICENSE.md)
+Copyright (c) Contributors to the OpenEXR Project. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## The `exrs` Project, and independent Rust implementation of the official OpenEXR Image Format: Also [BSD-3-Clause](https://github.com/AcademySoftwareFoundation/openexr/blob/master/LICENSE.md)
+Copyright (c) Contributors to the exrs Project. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
 ### BSD-3-Clause (BSD 3-Clause "New" or "Revised" License)
@@ -7099,29 +7149,6 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-```
-
-### BSD-3-Clause (BSD 3-Clause "New" or "Revised" License)
-
-#### Used by
-
-- [exr]( https://github.com/johannesvollmer/exrs ) 1.72.0
-
-#### License
-
-```text
-Copyright (c) <year> <owner>. 
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ```
 
@@ -7491,7 +7518,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [mio]( https://github.com/tokio-rs/mio ) 0.8.10
+- [mio]( https://github.com/tokio-rs/mio ) 0.8.11
 
 #### License
 
@@ -8459,7 +8486,7 @@ SOFTWARE.
 
 #### Used by
 
-- [winnow]( https://github.com/winnow-rs/winnow ) 0.6.2
+- [winnow]( https://github.com/winnow-rs/winnow ) 0.6.5
 
 #### License
 
