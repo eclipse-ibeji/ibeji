@@ -27,6 +27,15 @@ class Program
 
     /// <summary>
     /// Convert a DTDL file's path to a Digital Twin Model Identifier (DTMI).
+    /// 
+    /// The DTMI is constructed by:
+    /// * taking the DTDL file's full path
+    /// * stripping off the DTDL directory path (as the DTMI is relative to the repository's root directory)
+    /// * strippig off the extension (as the extension is not part of the identifier)
+    /// * replacing each directory separator with a colon (as the DTMI is a hierarchical identifier, where each colon denotes a level in the hierarchy)
+    /// * replacing the hyphen (which denotes the version) with a semicolon.
+    /// 
+    /// For example, if the file is located at "C:\path\to\file\dtmi\com\example\1.json", then the correspoinding DTMI is "dtmi:com:example:1".
     /// </summary>
     /// <param name="dtdlFilePath">The DTDL file's full path.</param>
     /// <param name="dtdlDirPath">The DTDL directory's path.</param>

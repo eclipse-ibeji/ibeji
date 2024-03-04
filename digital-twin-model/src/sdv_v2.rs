@@ -110,7 +110,7 @@ pub mod airbag_seat_massager {
         pub struct TYPE {
             pub airbag_identifier: i32,
             pub inflation_level: i32,
-            pub duration_in_seconds: i32,
+            pub inflation_duration_in_seconds: i32,
         }
     }
     pub mod massage_step {

@@ -111,7 +111,7 @@
           "schema": "integer"
         },
         {
-          "name": "duration_in_seconds",
+          "name": "inflation_duration_in_seconds",
           "schema": "integer"
         }
       ]

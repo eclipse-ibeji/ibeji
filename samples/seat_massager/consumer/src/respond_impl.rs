@@ -13,10 +13,10 @@ pub struct RespondImpl {
 }
 
 impl RespondImpl {
-    /// New.
+    /// Create a new instance of a RespondImpl.
     ///
     /// # Arguments
-    /// * `tx` - The sender for the asynchrnous channel for AnswerRequest's.
+    /// * `tx` - The sender for the asynchronous channel for AnswerRequest's.
     pub fn new(tx: mpsc::Sender<AnswerRequest>) -> RespondImpl {
         RespondImpl { tx }
     }

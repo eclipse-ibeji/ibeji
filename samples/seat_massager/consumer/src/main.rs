@@ -6,7 +6,7 @@ mod respond_impl;
 
 use digital_twin_model::sdv_v2 as sdv;
 use env_logger::{Builder, Target};
-use log::{debug, info, warn, LevelFilter};
+use log::{debug, error, info, warn, LevelFilter};
 use rand::rngs::StdRng;
 use rand::Rng;
 use rand::SeedableRng; // trait needed to initialize StdRng
@@ -21,7 +21,7 @@ use samples_protobuf_data_access::async_rpc::v1::respond::respond_server::Respon
 use samples_protobuf_data_access::async_rpc::v1::respond::AnswerRequest;
 use std::net::SocketAddr;
 use tokio::sync::mpsc;
-use tokio::time::{sleep, Duration};
+use tokio::time::{sleep, timeout, Duration};
 use tonic::transport::Server;
 use uuid::Uuid;
 
@@ -33,7 +33,7 @@ use seat_massager_common::TargetedPayload;
 /// `consumer_uri` - The consumer uri.
 /// `instance_id` - The instance id.
 /// `provider_uri` - The provider uri.
-/// `rx` - The receiver for the asynchrnous channel for AnswerRequest's.
+/// `rx` - The receiver for the asynchronous channel for AnswerRequest's.
 fn start_seat_massage_steps(
     consumer_uri: String,
     instance_id: String,
@@ -57,14 +57,14 @@ fn start_seat_massage_steps(
             let mut rng = StdRng::from_entropy();
             let airbag_identifier = rng.gen_range(1..=15);
             let inflation_level = rng.gen_range(1..=10);
-            let duration_in_seconds = rng.gen_range(1..=5);
+            let inflation_duration_in_seconds = rng.gen_range(1..=5);
 
             let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
                 sdv::airbag_seat_massager::perform_step::request::TYPE {
                     step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
                         airbag_identifier,
                         inflation_level,
-                        duration_in_seconds,
+                        inflation_duration_in_seconds,
                     }],
                     ..Default::default()
                 };
@@ -89,22 +89,46 @@ fn start_seat_massage_steps(
 
             let response = client.ask(request).await;
             if let Err(status) = response {
-                warn!("{status:?}");
+                warn!("Unable to call ask, due to {status:?}\nWe will retry in a moment.");
+                sleep(Duration::from_secs(1)).await;
                 continue;
             }
 
-            if let Some(answer_request) = rx.recv().await {
-                info!(
-                    "Received an answer request.  The ask_id is '{}'. The payload is '{}",
-                    answer_request.ask_id, answer_request.payload
-                );
-            } else {
-                warn!("Failed to receive the answer request.");
-                continue;
+            let mut answer_request: AnswerRequest = Default::default();
+            let mut attempts_after_failure = 0;
+            while attempts_after_failure < 10 {
+                match timeout(Duration::from_secs(5), rx.recv()).await {
+                    Ok(Some(request)) => {
+                        if ask_id == request.ask_id {
+                            // We have received the answer request that we are expecting.
+                            answer_request = request;
+                            break;
+                        } else {
+                            // Ignore this answer request, as it is not the one that we are expecting, and try again
+                            continue;
+                        }
+                    }
+                    Ok(None) => {
+                        error!("Unable to receive an answer request, as the channel is closed.  We will not perform any more steps.");
+                        return;
+                    }
+                    Err(error_message) => {
+                        warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
+                        sleep(Duration::from_secs(1)).await;
+                        attempts_after_failure += 1;
+                        continue;
+                    }
+                }
             }
+
+            info!(
+                "Received an answer request.  The ask_id is '{}'. The payload is '{}",
+                answer_request.ask_id, answer_request.payload
+            );
 
             debug!("Completed the massage step request.");
 
+            // Wait for a second before performing the next step.
             sleep(Duration::from_secs(1)).await;
         }
     });
