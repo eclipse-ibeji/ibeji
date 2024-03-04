@@ -107,6 +107,7 @@ fn start_seat_massage_steps(
                             break;
                         } else {
                             // Ignore this answer request, as it is not the one that we are expecting.
+                            warn!("Received an unexpected answer request with ask_id '{}'.  We will retry in a moment.", request.ask_id);
                             // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
                             continue;
                         }
