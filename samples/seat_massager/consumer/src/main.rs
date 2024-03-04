@@ -94,9 +94,11 @@ fn start_seat_massage_steps(
                 continue;
             }
 
+            // Wait for the answer request.
             let mut answer_request: AnswerRequest = Default::default();
             let mut attempts_after_failure = 0;
-            while attempts_after_failure < 10 {
+            const MAX_ATTEMPTS_AFTER_FAILURE: u8 = 10;
+            while attempts_after_failure < MAX_ATTEMPTS_AFTER_FAILURE {
                 match timeout(Duration::from_secs(5), rx.recv()).await {
                     Ok(Some(request)) => {
                         if ask_id == request.ask_id {
@@ -104,7 +106,8 @@ fn start_seat_massage_steps(
                             answer_request = request;
                             break;
                         } else {
-                            // Ignore this answer request, as it is not the one that we are expecting, and try again
+                            // Ignore this answer request, as it is not the one that we are expecting.
+                            // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
                             continue;
                         }
                     }
