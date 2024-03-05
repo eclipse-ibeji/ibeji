@@ -76,7 +76,7 @@ The digital twin providers and consumers need to reference the Digital Twin Mode
 - the property definitions to exchange the associated values
 - the command definitions to send and receive the appropriate payloads.
 
-We need to make this content accessible as code. Each programming language will need its own variant. In this code repository, we will
+We need to make the digital twin model accessible as code. Each programming language will need its own variant. In this code repository, we will
 provide a Rust variant. We will place all of the code for the model's content in a single file named after the model and its version. In
 this code repository, that file will be the 'digital-twin-model/src/sdv_v1.rs' file.
 

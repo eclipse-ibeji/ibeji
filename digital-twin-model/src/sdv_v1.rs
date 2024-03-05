@@ -10,7 +10,7 @@ fn context() -> Vec<String> {
     vec!["dtmi:dtdl:context;3".to_string(), "dtmi:sdv:context;1".to_string()]
 }
 
-/// Constants and type defintitions (including JSON serialization/deserialization) for each interface in the SDV model.
+/// Constants and type definitions (including JSON serialization/deserialization) for each interface in the SDV model.
 #[allow(dead_code)]
 pub mod airbag_seat_massager {
     pub const ID: &str = "dtmi:sdv:airbag_seat_massager;1";

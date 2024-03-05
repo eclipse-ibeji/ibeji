@@ -52,7 +52,7 @@ fn start_seat_massage_steps(
             }
             let mut client = client_result.unwrap();
 
-            // Note: The ask id must be a univerally unique value.
+            // Note: The ask id must be a universally unique value.
             let ask_id = Uuid::new_v4().to_string();
 
             // Randomly generate the airbag adjustment field values.
