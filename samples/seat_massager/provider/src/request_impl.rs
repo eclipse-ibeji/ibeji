@@ -38,29 +38,31 @@ impl Request for RequestImpl {
         let payload: String = request_inner.payload.clone();
 
         info!("Received an ask request");
-        info!("respond_uri: {respond_uri}");
-        info!("ask_id: {ask_id}");
+        info!("  respond_uri: {respond_uri}");
+        info!("  ask_id: {ask_id}");
 
+        // Deserialize the targeted payload.
         let targeted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
 
-        info!("instance_id: {}", targeted_payload_json.instance_id);
-        info!("member_path: {}", targeted_payload_json.member_path);
-        info!("operation: {}", targeted_payload_json.operation);
-        info!("inner payload: {}", targeted_payload_json.payload);
+        info!("  instance_id: {}", targeted_payload_json.instance_id);
+        info!("  member_path: {}", targeted_payload_json.member_path);
+        info!("  operation: {}", targeted_payload_json.operation);
 
+        // Deserialize the request payload.
         let request_payload_json: serde_json::Value =
             serde_json::from_str(&targeted_payload_json.payload)
                 .map_err(|error| tonic::Status::invalid_argument(error.to_string()))?;
 
+        // Extract the type_id from the request payload.
         let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
         let type_id: String = serde_json::from_value(type_id_json.clone()).unwrap();
 
-        info!("type_id: {type_id}");
-
+        // Check to make sure that the type_id is for a perform_request request.
         if type_id != sdv::airbag_seat_massager::perform_step::request::ID {
             return Err(tonic::Status::invalid_argument(format!("Unexpected type_id '{type_id}'")));
         }
 
+        // Asynchronously perform the step.
         tokio::spawn(async move {
             let client_result = RespondClient::connect(respond_uri).await;
             if let Err(error_message) = client_result {
@@ -69,6 +71,20 @@ impl Request for RequestImpl {
             }
             let mut client = client_result.unwrap();
 
+            // Extract the request from the request payload.
+            let perform_step_request_opt: Option<
+                sdv::airbag_seat_massager::perform_step::request::TYPE,
+            > = serde_json::from_value(request_payload_json)
+                .expect("Failed to deserialize the request.");
+            if perform_step_request_opt.is_none() {
+                error!("Failed to deserialize the request.");
+                return;
+            }
+            let perform_step_request = perform_step_request_opt.unwrap();
+
+            info!("Performing the step: {:?}", perform_step_request.step);
+
+            // Prepare the perform_step response payload.
             let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE =
                 sdv::airbag_seat_massager::perform_step::response::TYPE {
                     status: sdv::airbag_seat_massager::status::TYPE {
@@ -78,11 +94,14 @@ impl Request for RequestImpl {
                     ..Default::default()
                 };
 
+            // Serilaize the response payload.
             let response_payload_json: String =
                 serde_json::to_string_pretty(&response_payload).unwrap();
 
             let answer_request =
                 tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
+
+            // Send the answer.
             let response = client.answer(answer_request).await;
             if let Err(status) = response {
                 error!("Answer failed: {status:?}");

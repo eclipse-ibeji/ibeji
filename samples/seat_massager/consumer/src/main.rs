@@ -71,7 +71,7 @@ fn start_seat_massage_steps(
                     ..Default::default()
                 };
 
-            // Serliazie the request payload.
+            // Serialize the request payload.
             let request_payload_json: String =
                 serde_json::to_string_pretty(&request_payload).unwrap();
 
@@ -82,7 +82,7 @@ fn start_seat_massage_steps(
                 payload: request_payload_json,
             };
 
-            // Serliazie the targeted payload.
+            // Serialize the targeted payload.
             let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
 
             let request = tonic::Request::new(AskRequest {
@@ -91,6 +91,7 @@ fn start_seat_massage_steps(
                 payload: targeted_payload_json.clone(),
             });
 
+            // Send the ask.
             let response = client.ask(request).await;
             if let Err(status) = response {
                 warn!("Unable to call ask, due to {status:?}\nWe will retry in a moment.");
