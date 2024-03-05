@@ -20,7 +20,7 @@ pub mod airbag_seat_massager {
         pub const ID: &str = "dtmi:sdv:airbag_seat_massager:store_sequence;1";
         pub const NAME: &str = "store_sequence";
         pub const DESCRIPTION: &str = "Store a massage sequence.";
-    
+
         pub mod request {
             pub const ID: &str = "dtmi:sdv:airbag_seat_massager:store_sequence:request;1";
             pub const NAME: &str = "request";
