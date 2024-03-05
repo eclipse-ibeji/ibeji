@@ -6,6 +6,11 @@
 # If you need more help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
 
+# This Dockerfile builds an "integrated" version of Ibeji. Specifically, it builds
+# Ibeji with the managed_subscribe feature to integrate with Eclipse Agemo and
+# the "integrated" configuration to work with Eclipse Chariott Service Discovery
+# and Agemo managed subscribe.
+
 ################################################################################
 # Create a stage for building the application.
 

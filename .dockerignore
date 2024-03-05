@@ -11,5 +11,3 @@ target/
 devops/
 docs/
 tools/
-
-Cargo.lock
