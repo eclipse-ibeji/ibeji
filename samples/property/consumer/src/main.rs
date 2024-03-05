@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::sdv_v0 as sdv;
 use env_logger::{Builder, Target};
 use log::{debug, info, LevelFilter};
 use paho_mqtt as mqtt;

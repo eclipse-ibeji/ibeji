@@ -4,7 +4,7 @@
 
 mod streaming_consumer_config;
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_model::sdv_v0 as sdv;
 use env_logger::{Builder, Target};
 use image::{DynamicImage, io::Reader as ImageReader};
 use log::{info, LevelFilter, warn};
