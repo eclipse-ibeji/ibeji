@@ -76,13 +76,13 @@ The digital twin providers and consumers need to use the Digital Twin Model to p
 - They need property definitions to exchange the associated values.
 - They need commands definitions of their request and response to send and receive the appropriate payloads.
 
-We need to make this content accessible as code.  Each programming language will need its own variant.  We will discuss what a Rust
-variant may look like.  For Rust, we will place all of the code for the model's content in a single file named after the model and its version.  In this
-repository it will be the 'digital-twin-model/src/sdv_v1.rs' file.
+We need to make this content accessible as code.  Each programming language will need its own variant.  In this code repository, we will
+provide a Rust variant. We will place all of the code for the model's content in a single file named after the model and its version. In
+this code repositor,y, that file will be the 'digital-twin-model/src/sdv_v1.rs' file.
 
-The sdv_v1.rs file is based on the model content from the DTDL files located under 'digital-twin-model/dtdl/dtmi/sdv'.
+The 'sdv_v1.rs' file is based on the model content from the DTDL files located under 'digital-twin-model/dtdl/dtmi/sdv'.
 
-The sdv_v1.rs file will setup namespaces based on the DTMIs used in the DTDL files.  These namespaces will allow developers to provide fully
+The 'sdv_v1.rs' file will setup namespaces based on the DTMIs used in the DTDL files.  These namespaces will allow developers to provide fully
 qualified names that look similar to the DTMIs (minus the 'dtmi:sdv:' prefix).
 
 For each namespace, we will define:
