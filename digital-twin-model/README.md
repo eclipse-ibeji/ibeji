@@ -1,7 +1,7 @@
 # Digital Twin Model
 
 ## Specifying the Digital Twin Model
-The digital twin model is specified using [DTDL V3](https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v3/DTDL.v3.md. The DTDL is stored under the `digital-twin-model/dtdl` folder and each file defines a DTDL interface.
+The digital twin model is specified using [DTDL V3](https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v3/DTDL.v3.md). The DTDL is stored under the `digital-twin-model/dtdl` folder and each file defines a DTDL interface.
 
 DTDL's behavior is defined by several metamodel classes. Initially, we will only use some of these metamodel classes, namely, Interface, Property, Command and Relationship.
 
@@ -72,18 +72,18 @@ In this example, the `hasFloor` field is an array of identifiers for `Floor` ins
 The digital twin providers and consumers need to use the Digital Twin Model to perform digital twin interactions:
 - They need to use the model identifiers (denoted by "@id" in the DTDL) to identify the part of the model that they want or use.
 - They need and the model names (denoted by "name" in the DTDL model) to identify the member of a model part that they want or use.
-- They need property definitions to exchange the assocaited values.
-- They need commands definitions of their request and reponse to send and receive the appropriate payloads.
+- They need property definitions to exchange the associated values.
+- They need commands definitions of their request and response to send and receive the appropriate payloads.
 
 We need to make this content accessible as code.  Each programming language will need its own variant.  We will discuss what a Rust
-variant may look like.  For Rust, we will place all of the code for the model's content in a single file nameed after the model and its version.  In this
+variant may look like.  For Rust, we will place all of the code for the model's content in a single file named after the model and its version.  In this
 repository it will be the 'digital-twin-model/src/sdv_v1.rs' file.
 
 The sdv_v1.rs file is based on the model content from the DTDL files located under 'digital-twin-model/dtdl/dtmi/sdv'.
 
 The sdv_v1.rs file will setup namespaces based on the DTMIs used in the DTDL files.  These namespaces will allow developers to provide fully
-qualified names that look simiar to the DTMIs (minus the 'dtmi:sdv:' prefix).
+qualified names that look similar to the DTMIs (minus the 'dtmi:sdv:' prefix).
 
-For each namespace, we’ll define:
+For each namespace, we will define:
 - Constants for model ids (“ID”), model descriptions (“DESCRIPTION”), and model member names (“NAME”).
 - Structs named “TYPE” to define property values, command request payloads, command response payloads, and schema types.
