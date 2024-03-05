@@ -78,7 +78,7 @@ The digital twin providers and consumers need to use the Digital Twin Model to p
 
 We need to make this content accessible as code.  Each programming language will need its own variant.  In this code repository, we will
 provide a Rust variant. We will place all of the code for the model's content in a single file named after the model and its version. In
-this code repositor,y, that file will be the 'digital-twin-model/src/sdv_v1.rs' file.
+this code repository, that file will be the 'digital-twin-model/src/sdv_v1.rs' file.
 
 The 'sdv_v1.rs' file is based on the model content from the DTDL files located under 'digital-twin-model/dtdl/dtmi/sdv'.
 
