@@ -109,7 +109,7 @@ COPY --from=build /sdv/service /sdv/
 # Copy configuration for service.
 COPY --from=build /sdv/container/config/integrated/ /sdv/config
 
-# Expose the port that the application listens on.
+# Expose the port that the in-vehicle digital twin service listens on.
 EXPOSE 5010
 
 # What the container should run when it is started.
