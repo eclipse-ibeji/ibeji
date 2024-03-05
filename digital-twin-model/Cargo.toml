@@ -9,6 +9,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+derivative = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 

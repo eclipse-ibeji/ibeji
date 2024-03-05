@@ -1,0 +1,15 @@
+{
+  "@context": "dtmi:dtdl:context;3",
+  "@type": "Interface",
+  "@id": "dtmi:sdv:obd;1",
+  "description": "On-board Diagnostics Interface.",
+  "contents": [
+    {
+      "@type": "Property",
+      "@id": "dtmi:sdv:obd:hybrid_battery_remaining;1",
+      "name": "hybrid_battery_remaining",
+      "description": "The remaining hybrid battery life.",
+      "schema": "integer"
+    }
+  ]
+}

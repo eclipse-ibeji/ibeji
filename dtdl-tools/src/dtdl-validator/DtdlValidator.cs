@@ -4,6 +4,8 @@
 
 using DTDLParser;
 using DTDLParser.Models;
+using Azure;
+using Azure.IoT.ModelsRepository;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -14,6 +16,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// The DTDL Validator app.
+/// </summary>
 class Program
 {
     // Exit codes.
@@ -21,40 +26,71 @@ class Program
     private const int EXIT_FAILURE = 1;
 
     /// <summary>
+    /// Convert a DTDL file's path to a Digital Twin Model Identifier (DTMI).
+    ///
+    /// The DTMI is constructed by:
+    /// * taking the DTDL file's full path
+    /// * stripping off the DTDL directory path (as the DTMI is relative to the repository's root directory)
+    /// * strippig off the extension (as the extension is not part of the identifier)
+    /// * replacing each directory separator with a colon (as the DTMI is a hierarchical identifier, where each colon denotes a level in the hierarchy)
+    /// * replacing the hyphen (which denotes the version) with a semicolon.
+    ///
+    /// For example, if the file is located at "C:\path\to\file\dtmi\com\example\1.json", then the correspoinding DTMI is "dtmi:com:example:1".
+    /// </summary>
+    /// <param name="dtdlFilePath">The DTDL file's full path.</param>
+    /// <param name="dtdlDirPath">The DTDL directory's path.</param>
+    /// <param name="extension">The extension used by the DTDL files.</param>
+    /// <returns>The corresponding DTMI.</returns>
+    static string ConvertToDTMI(string dtdlFilePath, string dtdlDirPath, string extension)
+    {
+        // Strip off the directory path and the extension.
+        string dtmiPath = dtdlFilePath.Substring(dtdlDirPath.Length + 1, dtdlFilePath.Length - dtdlDirPath.Length - extension.Length - 2);
+        // Replace each directory separator with a colon and the hyphen with a semicolon.
+        string dtmi = dtmiPath.Replace(Path.DirectorySeparatorChar, ':').Replace('-', ';');
+        return dtmi;
+    }
+
+    /// <summary>
     /// This method validates all of the DTDL files with the provided extension that are located
     /// under the provided directory.
     /// </summary>
-    /// <param name="directory">The directory that contains the DTDL files that we wish to validate.</param>
+    /// <param name="dtdlDirectory">The directory that contains the DTDL files that we wish to validate.</param>
     /// <param name="extension">The extension used by the DTDL files.</param>
     /// <returns>
     /// EXIT_SUCCESS when all if the DTDL files are valid.
     /// EXIT_FAILURE when any of the DTDL files are NOT valid.
     /// </returns>
-    static int ValidateDtdl(DirectoryInfo directory, String extension)
+    static int ValidateDtdl(DirectoryInfo dtdlDirectory, String extension)
     {
-        if (!directory.Exists)
+        if (!dtdlDirectory.Exists)
         {
-            Console.WriteLine($"Directory {directory.FullName} does not exist.");
+            Console.WriteLine($"Directory {dtdlDirectory.FullName} does not exist.");
             return EXIT_FAILURE;
         }
 
-        var files = Directory.GetFiles(directory.FullName, $"*.{extension}", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(dtdlDirectory.FullName, $"*.{extension}", SearchOption.AllDirectories);
 
         if (!files.Any())
         {
-            Console.WriteLine($"No files with extension .{extension} found in directory {directory}");
+            Console.WriteLine($"No files with extension .{extension} found in directory {dtdlDirectory}");
             return EXIT_FAILURE;
         }
 
-        var parser = new ModelParser();
+        var modelRepoClient = new ModelsRepositoryClient(new Uri(dtdlDirectory.FullName));
+
+        var parser = new ModelParser(new ParsingOptions()
+        {
+            DtmiResolverAsync = modelRepoClient.ParserDtmiResolverAsync
+        });
 
         bool failureOccured = false;
         foreach (var file in files)
         {
             try
             {
-                var dtdl = File.ReadAllText(file);
-                parser.ParseAsync(dtdl).GetAwaiter().GetResult();
+                string dtmi = ConvertToDTMI(file, dtdlDirectory.FullName, extension);
+                var model = modelRepoClient.GetModelAsync(dtmi).GetAwaiter().GetResult();
+                var modelDictionary = parser.ParseAsync(model.Content[dtmi]).GetAwaiter().GetResult();
                 Console.WriteLine($"{file} - ok");
             }
             catch (ParsingException ex)
@@ -63,6 +99,12 @@ class Program
                 foreach (var error in ex.Errors) {
                     Console.WriteLine($"  {error}");
                 }
+                failureOccured = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{file} - failed");
+                Console.WriteLine($"  {ex.ToString()}");
                 failureOccured = true;
             }
         }

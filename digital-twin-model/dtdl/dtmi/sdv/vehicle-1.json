@@ -1,0 +1,32 @@
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
+  "@id": "dtmi:sdv:vehicle;1",
+  "description": "Vehicle Interface.",
+  "contents": [
+    {
+      "@type": "Property",
+      "@id": "dtmi:sdv:vehicle:vehicle_identification;1",
+      "name": "vehicle_identification",
+      "description": "Vehicle Identification.",
+      "schema": {
+        "@type": "Object",
+        "fields": [
+          {
+            "@id": "dtmi:sdv:vehicle:vehicle_identification:vin;1",
+            "name": "vin",
+            "description": "Vehicle Identification Number.",
+            "schema": "string"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Relationship",
+      "@id": "dtmi:sdv:vehicle:has_cabin;1",
+      "target": "dtmi:sdv:cabin;1",
+      "name": "has_cabin",
+      "maxMultiplicity": 1
+    }
+  ]
+}

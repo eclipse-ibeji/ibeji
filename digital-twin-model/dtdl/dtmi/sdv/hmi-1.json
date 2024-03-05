@@ -1,0 +1,58 @@
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
+  "@id": "dtmi:sdv:hmi;1",
+  "description": "Human Machine Interface.",
+  "contents": [
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:hmi:show_notification;1",
+      "name": "show_notification",
+      "description": "Show a notification on the HMI.",
+      "request": {
+        "@id": "dtmi:sdv:hmi:show_notification:request;1",
+        "name": "request",
+        "description": "The request.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "notification",
+              "schema": "string"
+            }
+          ]
+        }
+      },
+      "response": {
+        "@id": "dtmi:sdv:hmi:show_notification:response;1",
+        "name": "response",
+        "description": "The response.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "string"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "@id": "dtmi:sdv:show_notification:status;1",
+      "@type": "Object",
+      "fields": [
+        {
+          "name": "code",
+          "schema": "integer"
+        },
+        {
+          "name": "message",
+          "schema": "string"
+        }
+      ]
+    }
+  ]
+}

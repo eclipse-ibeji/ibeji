@@ -5,7 +5,7 @@
 mod provider_impl;
 mod vehicle;
 
-use digital_twin_model::{sdv_v1 as sdv, Metadata};
+use digital_twin_model::{sdv_v0 as sdv, Metadata};
 use env_logger::{Builder, Target};
 use log::{debug, info, warn, LevelFilter};
 use parking_lot::{Mutex, MutexGuard};

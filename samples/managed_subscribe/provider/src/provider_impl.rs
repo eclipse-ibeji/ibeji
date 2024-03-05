@@ -11,7 +11,7 @@ use samples_protobuf_data_access::module::managed_subscribe::v1::{
     CallbackPayload, TopicManagementRequest, TopicManagementResponse,
 };
 
-use digital_twin_model::{sdv_v1 as sdv, Metadata};
+use digital_twin_model::{sdv_v0 as sdv, Metadata};
 use log::{debug, info, warn};
 use paho_mqtt as mqtt;
 use parking_lot::RwLock;

@@ -1,0 +1,22 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package async_rpc.v1.respond;
+
+service Respond {
+    // Send an answer for an ask.
+    rpc Answer (AnswerRequest) returns (AnswerResponse);
+}
+
+message AnswerRequest {
+    // The associated ask's id.
+    string ask_id = 1;
+    // The payload.
+    string payload = 2;
+}
+
+message AnswerResponse {
+}

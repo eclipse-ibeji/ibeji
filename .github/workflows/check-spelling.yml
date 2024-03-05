@@ -15,11 +15,7 @@ jobs:
       - name: Install spell
         run: sudo apt-get install -y spell
       - name: Check spelling
+        # Check the spelling in all README.md files, excluding those in submodules and those in target directories.
         run: |
-          ./tools/check_spelling.sh ./README.md
-          ./tools/check_spelling.sh ./container/README.md
-          ./tools/check_spelling.sh ./core/common/README.md
-          ./tools/check_spelling.sh ./dtdl-parser/README.md
-          ./tools/check_spelling.sh ./docs/design/README.md
-          ./tools/check_spelling.sh ./samples/managed_subscribe/README.md
+          find . -name README.md | grep -v external | grep -v target | xargs  -I % ./tools/check_spelling.sh "%" || exit 255
         shell: bash

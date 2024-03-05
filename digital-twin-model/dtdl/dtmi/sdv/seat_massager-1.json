@@ -1,0 +1,123 @@
+{
+  "@context": ["dtmi:dtdl:context;3"],
+  "@type": "Interface",
+  "@id": "dtmi:sdv:seat_massager;1",
+  "description": "Seat Massager Interface.",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "sequence_names",
+      "@id": "dtmi:sdv:seat_massager:sequence_names;1",
+      "description": "The name of each of the stored sequences.",
+      "schema": {
+        "@type": "Array",
+        "elementSchema": "string"
+      }
+    },
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:load_sequence;1",
+      "name": "load_sequence",
+      "description": "Load a sequence of massage steps.",
+      "request": {
+        "name": "request",
+        "description": "Request.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "sequence_name",
+              "schema": "string"
+            }
+          ]
+        }
+      },
+      "response": {
+        "name": "response",
+        "description": "Response.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:pause;1",
+      "name": "pause",
+      "description": "Pause whatever is currently playing.",
+      "response": {
+        "name": "response",
+        "description": "Response.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:play;1",
+      "name": "play",
+      "description": "Start/continue.",
+      "response": {
+        "name": "response",
+        "description": "Response.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "@type": "Command",
+      "@id": "dtmi:sdv:seat_massager:reset;1",
+      "name": "reset",
+      "description": "Reset.",
+      "response": {
+        "name": "response",
+        "description": "Response.",
+        "schema": {
+          "@type": "Object",
+          "fields": [
+            {
+              "name": "status",
+              "schema": "dtmi:sdv:seat_massager:status;1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "@id": "dtmi:sdv:seat_massager:status;1",
+      "@type": "Object",
+      "fields": [
+        {
+          "name": "code",
+          "schema": "integer"
+        },
+        {
+          "name": "message",
+          "schema": "string"
+        }
+      ]
+    }
+  ]
+}

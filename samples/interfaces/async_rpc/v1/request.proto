@@ -1,0 +1,35 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package async_rpc.v1.request;
+
+service Request {
+   // Make an asynchronous ask.
+   rpc Ask (AskRequest) returns (AskResponse);
+
+   // Send a notification.
+   // This is similar to an ask except that there is no corresponding answer.
+   rpc Notify (NotifyRequest) returns (NotifyResponse);
+}
+
+message AskRequest {
+   // The URI where the answer for the ask should be sent.
+   string respond_uri = 1;
+   // The ask's id (must be universally unique).
+   string ask_id = 2;
+   // The request's payload.
+   string payload = 3;
+}
+
+message AskResponse {
+}
+
+message NotifyRequest {
+   string payload = 1;
+}
+
+message NotifyResponse {
+}

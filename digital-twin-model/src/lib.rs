@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+pub mod sdv_v0;
 pub mod sdv_v1;
 
 use serde_derive::{Deserialize, Serialize};

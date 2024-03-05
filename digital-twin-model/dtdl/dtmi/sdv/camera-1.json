@@ -1,0 +1,31 @@
+{
+  "@context": "dtmi:dtdl:context;3",
+  "@type": "Interface",
+  "@id": "dtmi:sdv:camera;1",
+  "description": "Camera Interface.",
+  "contents": [
+    {
+      "@type": "Property",
+      "@id": "dtmi:sdv:camera:feed;1",
+      "name": "feed",
+      "description": "The camera feed.",
+      "schema": {
+        "@type": "Object",
+        "fields": [
+          {
+            "name": "media_type",
+            "schema": "string"
+          },
+          {
+            "name": "media_content",
+            "description": "An array of bytes (represented by integers here).",
+            "schema": {
+              "@type": "Array",
+              "elementSchema": "integer"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -96,7 +96,7 @@ This section uses the same *sample* Rust implementation of the digital twin cons
 1. One function of interest in the [code for the sample digital twin consumer](../../../samples/tutorial/consumer/src/main.rs) is the `discover_digital_twin_provider_using_ibeji` helper function in the [sample commons utils](../../../samples/common/src/utils.rs). This is a helper function for discovering a digital twin provider through the In-Vehicle Digital Twin Service.
 
     ```rust
-    /// Use Ibeji to discover the endpoint for a digital twin provider that satifies the requirements.
+    /// Use Ibeji to discover the endpoint for a digital twin provider that satisfies the requirements.
     ///
     /// # Arguments
     /// * `invehicle_digitial_twin_service_uri` - In-vehicle digital twin service URI.
