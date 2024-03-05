@@ -34,6 +34,7 @@ impl Respond for RespondImpl {
     ) -> Result<tonic::Response<AnswerResponse>, tonic::Status> {
         info!("Received an answer request");
 
+        // Send the request to the channel.
         if let Err(err_msg) = self.tx.send(request.into_inner()).await {
             return Err(tonic::Status::internal(format!(
                 "Failed to send the answer request due to {err_msg}"

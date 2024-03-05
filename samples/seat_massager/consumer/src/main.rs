@@ -52,8 +52,10 @@ fn start_seat_massage_steps(
             }
             let mut client = client_result.unwrap();
 
+            // Note: The ask id must be a univerally unique value.
             let ask_id = Uuid::new_v4().to_string();
 
+            // Randomly generate the airbag adjustment field values.
             let mut rng = StdRng::from_entropy();
             let airbag_identifier = rng.gen_range(1..=15);
             let inflation_level = rng.gen_range(1..=10);
@@ -69,6 +71,7 @@ fn start_seat_massage_steps(
                     ..Default::default()
                 };
 
+            // Serliazie the request payload.
             let request_payload_json: String =
                 serde_json::to_string_pretty(&request_payload).unwrap();
 
@@ -79,6 +82,7 @@ fn start_seat_massage_steps(
                 payload: request_payload_json,
             };
 
+            // Serliazie the targeted payload.
             let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
 
             let request = tonic::Request::new(AskRequest {
