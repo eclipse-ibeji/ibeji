@@ -6,12 +6,17 @@
 # If you need more help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
 
+# This Dockerfile builds an "integrated" version of Ibeji. Specifically, it builds
+# Ibeji with the managed_subscribe feature to integrate with Eclipse Agemo and
+# the "integrated" configuration to work with Eclipse Chariott Service Discovery
+# and Agemo managed subscribe.
+
 ################################################################################
 # Create a stage for building the application.
 
 ARG RUST_VERSION=1.72.1
 ARG APP_NAME=invehicle-digital-twin
-ARG FEATURES=""
+ARG FEATURES=managed_subscribe
 ARG UID=10001
 
 FROM docker.io/library/rust:${RUST_VERSION}-slim-bullseye AS build
@@ -102,9 +107,9 @@ ENV IBEJI_HOME=/sdv/config
 COPY --from=build /sdv/service /sdv/
 
 # Copy configuration for service.
-COPY --from=build /sdv/container/config/standalone/ /sdv/config
+COPY --from=build /sdv/container/config/integrated/ /sdv/config
 
-# Expose the port that the application listens on.
+# Expose the port that the in-vehicle digital twin service listens on.
 EXPOSE 5010
 
 # What the container should run when it is started.

@@ -6,12 +6,17 @@
 # If you need more help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
 
+# This Dockerfile builds an "integrated" version of Ibeji. Specifically, it builds
+# Ibeji with the managed_subscribe feature to integrate with Eclipse Agemo and
+# the "integrated" configuration to work with Eclipse Chariott Service Discovery
+# and Agemo managed subscribe.
+
 ################################################################################
 # Create a stage for building the application.
 
 ARG RUST_VERSION=1.72.1
 ARG APP_NAME=invehicle-digital-twin
-ARG FEATURES=""
+ARG FEATURES=managed_subscribe
 ARG UID=10001
 
 FROM docker.io/library/rust:${RUST_VERSION}-slim-bullseye AS build
@@ -37,17 +42,13 @@ RUN if [ -n "${FEATURES}" ]; then \
     fi
 
 # Add Build dependencies.
-RUN apt update && apt upgrade -y && apt install -y \
-    protobuf-compiler \
-    gcc-aarch64-linux-gnu
-
-RUN rustup target add aarch64-unknown-linux-gnu
+RUN apt update && apt upgrade -y && apt install -y protobuf-compiler
 
 # Build the application (with features if provided).
-RUN cargo build --release --target=aarch64-unknown-linux-gnu -p "${APP_NAME}" --features "${FEATURES}"
+RUN cargo build --release -p "${APP_NAME}" --features "${FEATURES}"
 
 # Copy the built application to working directory.
-RUN cp ./target/aarch64-unknown-linux-gnu/release/"${APP_NAME}" /sdv/service
+RUN cp ./target/release/"${APP_NAME}" /sdv/service
 
 ################################################################################
 # Create a new stage for running the application that contains the minimal
@@ -60,7 +61,7 @@ RUN cp ./target/aarch64-unknown-linux-gnu/release/"${APP_NAME}" /sdv/service
 # most recent version of that tag when you build your Dockerfile. If
 # reproducibility is important, consider using a digest
 # (e.g., debian@sha256:ac707220fbd7b67fc19b112cee8170b41a9e97f703f588b2cdbbcdcecdd8af57).
-FROM docker.io/arm64v8/debian:bullseye-slim AS final
+FROM docker.io/library/debian:bullseye-slim AS final
 ARG UID
 
 # Copy container scripts.
@@ -102,9 +103,9 @@ ENV IBEJI_HOME=/sdv/config
 COPY --from=build /sdv/service /sdv/
 
 # Copy configuration for service.
-COPY --from=build /sdv/container/config/standalone/ /sdv/config
+COPY --from=build /sdv/container/config/integrated/ /sdv/config
 
-# Expose the port that the application listens on.
+# Expose the port that the in-vehicle digital twin service listens on.
 EXPOSE 5010
 
 # What the container should run when it is started.
