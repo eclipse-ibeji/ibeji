@@ -59,13 +59,17 @@ Here's an example of how a relationship might be represented in a DTDL instance:
   "@id": "dtmi:com:example:Building:building1;1",  // Unique identifier for the instance
   "@type": "dtmi:com:example:Building;1",  // The DTDL model that the instance is based on
   "hasFloor": [
-    "dtmi:com:example:Floor:floor1;1",
-    "dtmi:com:example:Floor:floor2;1"
+    {
+      "@id": "dtmi:com:example:Floor:floor1;1"
+    },
+    {
+      "@id": "dtmi:com:example:Floor:floor2;1"
+    }
   ]
 }
 ```
 
-In this example, the `hasFloor` field is an array of identifiers for `Floor` instances that are related to the `Building` instance.
+In this example, the `hasFloor` field is an array of objects that contain identifiers for `Floor` instances that are related to the `Building` instance.
 
 ## Using the Digital Twin Model in the Code
 
