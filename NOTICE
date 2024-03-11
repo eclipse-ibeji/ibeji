@@ -4,7 +4,7 @@ This page lists the licenses of the projects used in cargo-about.
 
 ## Overview of licenses
 
-- Apache License 2.0 (252)
+- Apache License 2.0 (254)
 - MIT License (66)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (2)
@@ -21,8 +21,8 @@ This page lists the licenses of the projects used in cargo-about.
 - [fdeflate]( https://github.com/image-rs/fdeflate ) 0.3.4
 - [image]( https://github.com/image-rs/image ) 0.24.9
 - [miniz_oxide]( https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide ) 0.7.2
-- [pin-project]( https://github.com/taiki-e/pin-project ) 1.1.4
-- [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.1.4
+- [pin-project]( https://github.com/taiki-e/pin-project ) 1.1.5
+- [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.1.5
 - [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.13
 - [sync_wrapper]( https://github.com/Actyx/sync_wrapper ) 0.1.2
 
@@ -1310,7 +1310,7 @@ This page lists the licenses of the projects used in cargo-about.
 - [colorchoice]( https://github.com/rust-cli/anstyle ) 1.0.0
 - [crc32fast]( https://github.com/srijs/rust-crc32fast ) 1.4.0
 - [env_filter]( https://github.com/rust-cli/env_logger ) 0.1.0
-- [env_logger]( https://github.com/rust-cli/env_logger ) 0.11.2
+- [env_logger]( https://github.com/rust-cli/env_logger ) 0.11.3
 - [humantime]( https://github.com/tailhook/humantime ) 2.1.0
 - [serde_spanned]( https://github.com/toml-rs/toml ) 0.6.5
 - [tokio-io-timeout]( https://github.com/sfackler/tokio-io-timeout ) 1.2.0
@@ -2985,7 +2985,7 @@ limitations under the License.
 
 #### Used by
 
-- [http]( https://github.com/hyperium/http ) 0.2.11
+- [http]( https://github.com/hyperium/http ) 0.2.12
 
 #### License
 
@@ -4070,18 +4070,19 @@ limitations under the License.
 - [bitflags]( https://github.com/bitflags/bitflags ) 2.4.2
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
-- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.15.3
-- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.88
+- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.15.4
+- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.90
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 2.0.0
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [cmake]( https://github.com/rust-lang/cmake-rs ) 0.1.50
 - [concurrent-queue]( https://github.com/smol-rs/concurrent-queue ) 2.4.0
-- [const-random]( https://github.com/tkaitchuck/constrandom ) 0.1.17
+- [const-random]( https://github.com/tkaitchuck/constrandom ) 0.1.18
 - [const-random-macro]( https://github.com/tkaitchuck/constrandom ) 0.1.16
 - [crossbeam-channel]( https://github.com/crossbeam-rs/crossbeam ) 0.5.12
 - [crossbeam-deque]( https://github.com/crossbeam-rs/crossbeam ) 0.8.5
 - [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.18
 - [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.19
+- [derivative]( https://github.com/mcarton/rust-derivative ) 2.2.0
 - [either]( https://github.com/rayon-rs/either ) 1.10.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
@@ -4113,7 +4114,7 @@ limitations under the License.
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.4
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
 - [jpeg-decoder]( https://github.com/image-rs/jpeg-decoder ) 0.3.1
-- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.68
+- [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.69
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.3.8
 - [linux-raw-sys]( https://github.com/sunfishcode/linux-raw-sys ) 0.4.13
@@ -4146,7 +4147,7 @@ limitations under the License.
 - [rayon]( https://github.com/rayon-rs/rayon ) 1.9.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
 - [regex]( https://github.com/rust-lang/regex ) 1.10.3
-- [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.5
+- [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.6
 - [regex-syntax]( https://github.com/rust-lang/regex/tree/master/regex-syntax ) 0.8.2
 - [ron]( https://github.com/ron-rs/ron ) 0.8.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
@@ -4171,13 +4172,13 @@ limitations under the License.
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
-- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.91
-- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.91
-- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.41
-- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.91
-- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.91
-- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.91
-- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.68
+- [wasm-bindgen]( https://github.com/rustwasm/wasm-bindgen ) 0.2.92
+- [wasm-bindgen-backend]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/backend ) 0.2.92
+- [wasm-bindgen-futures]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/futures ) 0.4.42
+- [wasm-bindgen-macro]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro ) 0.2.92
+- [wasm-bindgen-macro-support]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/macro-support ) 0.2.92
+- [wasm-bindgen-shared]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/shared ) 0.2.92
+- [web-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys ) 0.3.69
 - [yaml-rust]( https://github.com/chyh1990/yaml-rust ) 0.4.5
 
 #### License
@@ -6945,6 +6946,19 @@ MIT OR Apache-2.0
 
 #### Used by
 
+- [half]( https://github.com/starkat99/half-rs ) 2.4.0
+
+#### License
+
+```text
+MIT OR Apache-2.0
+
+```
+
+### Apache-2.0 (Apache License 2.0)
+
+#### Used by
+
 - [minimal-lexical]( https://github.com/Alexhuszagh/minimal-lexical ) 0.2.1
 
 #### License
@@ -8790,6 +8804,54 @@ This NOTICE file has been generated with the usage of [cargo-about](https://gith
 # .NET Third Party Licenses
 The following lists the licenses of the .NET projects used.
 
+### MIT
+
+#### Used by
+
+- [Azure.IoT.ModelsRepository]( https://github.com/Azure/azure-sdk-for-net/blob/Azure.IoT.ModelsRepository_1.0.0-preview.5/sdk/modelsrepository/Azure.IoT.ModelsRepository/README.md ) 1.0.0-preview.5
+
+#### License
+
+```text
+ 
+MIT License
+SPDX identifier
+MIT
+License text
+
+MIT License
+
+Copyright (c) <year> <copyright holders> 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files(the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice (including the next
+paragraph)shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERSBE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+SPDX web page
+  * https://spdx.org/licenses/MIT.html
+Notice
+
+This license content is provided by the SPDX project. For more information about
+licenses.nuget.org, see our documentation. 
+
+Data pulled from spdx/license-list-data on February 9, 2023.
+
+ 
+```
 ### MIT
 
 #### Used by
