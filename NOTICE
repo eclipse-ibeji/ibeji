@@ -1314,9 +1314,9 @@ This page lists the licenses of the projects used in cargo-about.
 - [humantime]( https://github.com/tailhook/humantime ) 2.1.0
 - [serde_spanned]( https://github.com/toml-rs/toml ) 0.6.5
 - [tokio-io-timeout]( https://github.com/sfackler/tokio-io-timeout ) 1.2.0
-- [toml]( https://github.com/toml-rs/toml ) 0.8.10
+- [toml]( https://github.com/toml-rs/toml ) 0.8.11
 - [toml_datetime]( https://github.com/toml-rs/toml ) 0.6.5
-- [toml_edit]( https://github.com/toml-rs/toml ) 0.22.6
+- [toml_edit]( https://github.com/toml-rs/toml ) 0.22.7
 
 #### License
 
@@ -1920,23 +1920,23 @@ END OF TERMS AND CONDITIONS
 
 #### Used by
 
-- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.80
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.77
+- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.81
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.78
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.17
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.153
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.16
-- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.78
+- [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.79
 - [quote]( https://github.com/dtolnay/quote ) 1.0.35
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.17
 - [serde]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.114
-- [syn]( https://github.com/dtolnay/syn ) 2.0.52
-- [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.57
-- [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.57
+- [syn]( https://github.com/dtolnay/syn ) 2.0.53
+- [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.58
+- [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.58
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
 - [utf8parse]( https://github.com/alacritty/vte ) 0.2.1
 
@@ -4057,7 +4057,7 @@ limitations under the License.
 - [async-executor]( https://github.com/smol-rs/async-executor ) 1.8.0
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.4.1
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
-- [async-io]( https://github.com/smol-rs/async-io ) 2.3.1
+- [async-io]( https://github.com/smol-rs/async-io ) 2.3.2
 - [async-lock]( https://github.com/smol-rs/async-lock ) 2.8.0
 - [async-lock]( https://github.com/smol-rs/async-lock ) 3.3.0
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
@@ -4168,7 +4168,7 @@ limitations under the License.
 - [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
 - [uuid]( https://github.com/uuid-rs/uuid ) 1.7.0
 - [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.7.0
-- [value-bag]( https://github.com/sval-rs/value-bag ) 1.7.0
+- [value-bag]( https://github.com/sval-rs/value-bag ) 1.8.0
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
@@ -6841,7 +6841,7 @@ limitations under the License.
 
 #### Used by
 
-- [bytemuck]( https://github.com/Lokathor/bytemuck ) 1.14.3
+- [bytemuck]( https://github.com/Lokathor/bytemuck ) 1.15.0
 
 #### License
 
@@ -7723,7 +7723,7 @@ SOFTWARE.
 
 #### Used by
 
-- [h2]( https://github.com/hyperium/h2 ) 0.3.24
+- [h2]( https://github.com/hyperium/h2 ) 0.3.25
 
 #### License
 
@@ -8148,7 +8148,7 @@ THE SOFTWARE.
 #### Used by
 
 - [tokio]( https://github.com/tokio-rs/tokio ) 1.36.0
-- [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.14
+- [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.15
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.10
 
 #### License
@@ -8330,8 +8330,8 @@ SOFTWARE.
 
 #### Used by
 
-- [strum]( https://github.com/Peternator7/strum ) 0.26.1
-- [strum_macros]( https://github.com/Peternator7/strum ) 0.26.1
+- [strum]( https://github.com/Peternator7/strum ) 0.26.2
+- [strum_macros]( https://github.com/Peternator7/strum ) 0.26.2
 
 #### License
 
