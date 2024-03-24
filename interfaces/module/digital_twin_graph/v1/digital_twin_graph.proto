@@ -1,0 +1,49 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package digital_twin_graph.v1.digital_twin_graph;
+
+service DigitalTwinGraph {
+   rpc Find (FindRequest) returns (FindResponse);
+   rpc Get (GetRequest) returns (GetResponse);
+   rpc Set (SetRequest) returns (SetResponse);
+   rpc Invoke (InvokeRequest) returns (InvokeResponse);      
+}
+
+message FindRequest {
+   string model_id = 1;
+}
+
+message FindResponse {
+   repeated string values = 1;
+}
+
+message GetRequest {
+   string instance_id = 1;
+   string member_path = 2;
+}
+
+message GetResponse {
+   string value = 1;
+}
+
+message SetRequest {
+   string instance_id = 1;
+   string member_path = 2;
+   string value = 3;
+}
+
+message SetResponse {
+}
+
+message InvokeRequest {
+   string instance_id = 1;
+   string request_payload = 2;
+}
+
+message InvokeResponse {
+   string response_payload = 1;
+}

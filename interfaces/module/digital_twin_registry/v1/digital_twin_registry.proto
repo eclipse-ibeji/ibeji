@@ -1,0 +1,50 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+
+package digital_twin_registry.v1.digital_twin_registry;
+
+service DigitalTwinRegistry {
+   rpc FindByModelId (FindByModelIdRequest) returns (FindByModelIdResponse);
+   rpc FindByInstanceId (FindByInstanceIdRequest) returns (FindByInstanceIdResponse);
+   rpc Register (RegisterRequest) returns (RegisterResponse);
+}
+
+message EndpointInfo {
+   string protocol = 1;
+   repeated string operations = 2;
+   string uri = 3;
+   string context = 4;
+}
+
+message EntityAccessInfo {
+   string name = 1;
+   string id = 2;
+   string description = 3;
+   repeated EndpointInfo endpointInfoList = 4;
+}
+
+message FindByModelIdRequest {
+   string model_id = 1;
+}
+
+message FindByModelIdResponse {
+   repeated EntityAccessInfo entityAccessInfoList = 1;
+}
+
+message FindByInstanceIdRequest {
+   string instance_id = 1;
+}
+
+message FindByInstanceIdResponse {
+   repeated EntityAccessInfo entityAccessInfoList = 1;
+}
+
+message RegisterRequest {
+   repeated EntityAccessInfo entityAccessInfoList = 1;
+}
+
+message RegisterResponse {
+}

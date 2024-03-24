@@ -8,6 +8,12 @@
 #[cfg(feature = "managed_subscribe")]
 use managed_subscribe::managed_subscribe_module::ManagedSubscribeModule;
 
+#[cfg(feature = "digital_twin_graph")]
+use digital_twin_graph::digital_twin_graph_module::DigitalTwinGraphModule;
+
+#[cfg(feature = "digital_twin_registry")]
+use digital_twin_registry::digital_twin_registry_module::DigitalTwinRegistryModule;
+
 // End: Module references.
 
 #[allow(unused_imports)]
@@ -108,7 +114,7 @@ where
 
     #[cfg(feature = "managed_subscribe")]
     // (1) Adds the Managed Subscribe module to the service.
-    let server = {
+    let mut server = {
         // (2) Initialize the Managed Subscribe module, which implements GrpcModule.
         let managed_subscribe_module = ManagedSubscribeModule::new().await.map_err(|error| {
             error!("Unable to create Managed Subscribe module.");
@@ -127,6 +133,36 @@ where
 
         // (5) Add the module with the updated middleware stack to the server.
         server.add_module(new_middleware, Box::new(managed_subscribe_module))
+    };
+
+    #[cfg(feature = "digital_twin_graph")]
+    // (1) Adds the Managed Subscribe module to the service.
+    let mut server = {
+        // (2) Initialize the Digital Twin Graph module, which implements GrpcModule.
+        let digital_twin_graph_module = DigitalTwinGraphModule::new().await.map_err(|error| {
+            error!("Unable to create Digital Twin Graph module.");
+            error
+        })?;
+
+        info!("Initialized Digital Twin Graph module.");
+
+        // (3) Add the module with the updated middleware stack to the server.
+        server.add_module(server.middleware.clone(), Box::new(digital_twin_graph_module))
+    };
+
+    #[cfg(feature = "digital_twin_registry")]
+    // (1) Adds the Managed Subscribe module to the service.
+    let mut server = {
+        // (2) Initialize the Digital Twin Registry module, which implements GrpcModule.
+        let digital_twin_registry_module = DigitalTwinRegistryModule::new().await.map_err(|error| {
+            error!("Unable to create Digital Twin Registry module.");
+            error
+        })?;
+
+        info!("Initialized Digital Twin Registry module.");
+
+        // (3) Add the module with the updated middleware stack to the server.
+        server.add_module(server.middleware.clone(), Box::new(digital_twin_registry_module))
     };
 
     // Construct the server.

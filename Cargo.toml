@@ -16,6 +16,8 @@ members = [
 
   # extension
   "core/module/managed_subscribe",
+  "core/module/digital_twin_graph",
+  "core/module/digital_twin_registry",  
 
   # DTDL tools
   "dtdl-tools",
@@ -27,6 +29,7 @@ members = [
   "samples/common",
   "samples/protobuf_data_access",
   "samples/command",
+  "samples/graph",
   "samples/managed_subscribe",
   "samples/mixed",
   "samples/property",
@@ -67,6 +70,7 @@ strum = "0.26.1"
 strum_macros = "0.26.1"
 tokio = "1.29.1"
 tokio-console-subscriber = { version = "0.2.0", package = "console-subscriber" }
+tokio-retry = "0.3"
 tokio-stream = "0.1.14"
 tonic = "0.11.0"
 tonic-build = "0.11.0"

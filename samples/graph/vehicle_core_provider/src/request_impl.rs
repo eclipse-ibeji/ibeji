@@ -2,20 +2,32 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use digital_twin_model::sdv_v1 as sdv;
+use digital_twin_graph::TargetedPayload;
+// use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, error, info, warn};
-use parking_lot::Mutex;
+use parking_lot::{Mutex, MutexGuard};
+use samples_common::constants::digital_twin_operation;
 use samples_protobuf_data_access::async_rpc::v1::request::{
     request_server::Request, AskRequest, AskResponse, NotifyRequest, NotifyResponse,
 };
 use samples_protobuf_data_access::async_rpc::v1::respond::{
     respond_client::RespondClient, AnswerRequest,
 };
-use seat_massager_common::{status, TargetedPayload};
+// use seat_massager_common::{status, TargetedPayload};
+use std::collections::HashMap;
 use std::sync::Arc;
 
+#[derive(Clone, Debug, Default)]
+pub struct InstanceData {
+    pub model_id: String,
+    pub description: String,
+    pub serialized_value: String,
+}
+
 #[derive(Debug, Default)]
-pub struct RequestState {}
+pub struct RequestState {
+    pub instance_map: HashMap<String, InstanceData>,
+}
 
 #[derive(Debug, Default)]
 pub struct RequestImpl {
@@ -47,24 +59,37 @@ impl Request for RequestImpl {
         info!("  instance_id: {}", targeted_payload_json.instance_id);
         info!("  member_path: {}", targeted_payload_json.member_path);
         info!("  operation: {}", targeted_payload_json.operation);
-        info!("  payload: {}", targeted_payload_json.payload);
-
-        // Deserialize the request payload.
-        let request_payload_json: serde_json::Value =
-            serde_json::from_str(&targeted_payload_json.payload)
-                .map_err(|error| tonic::Status::invalid_argument(error.to_string()))?;
 
         // Extract the type_id from the request payload.
-        let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
-        let type_id: String = serde_json::from_value(type_id_json.clone()).unwrap();
+        // let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
+        // let type_id: String = serde_json::from_value(type_id_json.clone()).unwrap();
 
         // Check to make sure that the type_id is for a perform_request request.
-        if type_id != sdv::airbag_seat_massager::perform_step::request::ID {
-            return Err(tonic::Status::invalid_argument(format!("Unexpected type_id '{type_id}'")));
+        if targeted_payload_json.operation != digital_twin_operation::GET {
+            return Err(tonic::Status::invalid_argument(format!("Unexpected operation '{}'", targeted_payload_json.operation)));
         }
+
+        if !targeted_payload_json.payload.is_empty() {
+            return Err(tonic::Status::invalid_argument(format!("Unexpected payload, it should be empty, not '{}'", targeted_payload_json.payload)));
+        }
+
+        let state: Arc<Mutex<RequestState>> = self.state.clone();
 
         // Asynchronously perform the step.
         tokio::spawn(async move {
+            let instance_data: InstanceData = {
+                let lock: MutexGuard<RequestState> = state.lock();
+                match lock.instance_map.get(&targeted_payload_json.instance_id) {
+                    Some(instance_data) => instance_data.clone(),
+                    None => {
+                        error!("Instance not found for instance id '{}'", targeted_payload_json.instance_id);
+                        return;
+                    }
+                }
+            };
+
+            let response_payload_json = instance_data.serialized_value.clone();
+
             let client_result = RespondClient::connect(respond_uri).await;
             if let Err(error_message) = client_result {
                 error!("Unable to connect due to {error_message}");
@@ -72,32 +97,9 @@ impl Request for RequestImpl {
             }
             let mut client = client_result.unwrap();
 
-            // Extract the request from the request payload.
-            let perform_step_request_opt: Option<
-                sdv::airbag_seat_massager::perform_step::request::TYPE,
-            > = serde_json::from_value(request_payload_json)
-                .expect("Failed to deserialize the request.");
-            if perform_step_request_opt.is_none() {
-                error!("Failed to deserialize the request.");
-                return;
-            }
-            let perform_step_request = perform_step_request_opt.unwrap();
-
-            info!("Performing the step: {:?}", perform_step_request.step);
-
-            // Prepare the perform_step response payload.
-            let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE =
-                sdv::airbag_seat_massager::perform_step::response::TYPE {
-                    status: sdv::airbag_seat_massager::status::TYPE {
-                        code: status::ok::CODE,
-                        message: status::ok::MESSAGE.to_string(),
-                    },
-                    ..Default::default()
-                };
-
             // Serilaize the response payload.
-            let response_payload_json: String =
-                serde_json::to_string_pretty(&response_payload).unwrap();
+            // let response_payload_json: String =
+            //    serde_json::to_string_pretty(&response_payload).unwrap();
 
             let answer_request =
                 tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
