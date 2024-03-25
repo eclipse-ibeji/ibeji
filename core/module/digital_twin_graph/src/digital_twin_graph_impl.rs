@@ -88,8 +88,7 @@ pub async fn discover_digital_twin_providers_with_model_id(
     Ok(response_inner
         .entity_access_info_list
         .iter()
-        .map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-        .flatten()
+        .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
         .filter(|endpoint_info| {
             endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations)
         })

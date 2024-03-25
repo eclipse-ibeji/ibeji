@@ -30,7 +30,7 @@ impl GrpcModule for DigitalTwinGraphModule {
     /// # Arguments
     /// * `builder` - A tonic::RoutesBuilder that contains the grpc services to build.
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
-        // TODO: Setup config
+        // Note: The authority is hardcoded for now, but it should be configurable in the future.
         let invehicle_digital_twin_authority = "0.0.0.0:5010";
         let invehicle_digital_twin_uri = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138
         let respond_authority = "0.0.0.0:5010";

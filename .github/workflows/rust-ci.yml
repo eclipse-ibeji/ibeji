@@ -67,5 +67,5 @@ jobs:
         # Build the project with the `managed_subscribe` and `digital_twin_graph` features enabled.
         run: cargo build --features "managed_subscribe,digital_twin_graph,digital_twin_registry"
       - name: Test
-        # Test the project with the `managed_subscribe` and `digital_twin_graph` features enabled.      
+        # Test the project with the `managed_subscribe` and `digital_twin_graph` features enabled.
         run: cargo test --features "managed_subscribe,digital_twin_graph,digital_twin_registry"
