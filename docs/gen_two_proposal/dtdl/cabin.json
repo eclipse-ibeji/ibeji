@@ -1,0 +1,84 @@
+[ 
+  { 
+    "@context": ["dtmi:dtdl:context;3"], 
+    "@type": "Interface", 
+    "@id": "dtmi:sdv:Cabin;1", 
+    "description": "Cabin", 
+    "contents": [ 
+      { 
+          "@type": "Relationship", 
+          "@id": "dtmi:sdv:Cabin:HasHVAC;1", 
+          "target": "dtmi:sdv:HVAC;1", 
+          "name": "HasHVAC",
+          "maxMultiplicity": 1
+      }, 
+      { 
+          "@type": "Relationship", 
+          "@id": "dtmi:sdv:Cabin:HasInfotainment;1", 
+          "target": "dtmi:sdv:Infotainment;1", 
+          "name": "HasInfotainment",
+          "maxMultiplicity": 1
+      },
+      {
+        "@type": "Relationship",
+        "@id": "dtmi:sdv:Cabin:HasSeat;1", 
+        "name": "HasSeat",
+        "target": "dtmi:sdv:Seat;1",
+        "properties": [
+          {
+            "@type": "Property",
+            "@id": "dtmi:sdv:Seat:Row;1",
+            "name": "SeatRow",
+            "schema": {
+              "@type": "Enum",
+              "valueSchema": "string",
+              "enumValues": [
+                {
+                  "name": "front",
+                  "displayName": "front",
+                  "enumValue": "front"
+                },
+                {
+                  "name": "center",
+                  "displayName": "center",
+                  "enumValue": "center"
+                },
+                {
+                  "name": "back",
+                  "displayName": "back",
+                  "enumValue": "back"
+                }
+              ]
+            }
+          },
+          {
+            "@type": "Property",
+            "@id": "dtmi:sdv:Seat:Position;1",
+            "name": "SeatPosition",
+            "schema": {
+              "@type": "Enum",
+              "valueSchema": "string",
+              "enumValues": [
+                {
+                  "name": "left",
+                  "displayName": "left",
+                  "enumValue": "left"
+                },
+                {
+                  "name": "center",
+                  "displayName": "center",
+                  "enumValue": "center"
+                },
+                {
+                  "name": "right",
+                  "displayName": "right",
+                  "enumValue": "right"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  } 
+] 

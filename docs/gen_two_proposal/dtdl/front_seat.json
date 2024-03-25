@@ -1,0 +1,18 @@
+[ 
+  { 
+    "@context": ["dtmi:dtdl:context;3"], 
+    "@type": "Interface", 
+    "@id": "dtmi:sdv:FrontSeat;1", 
+    "description": "Front Seat", 
+    "extends": "dtmi:sdv:Seat;1",
+    "contents": [ 
+      { 
+          "@type": "Relationship", 
+          "@id": "dtmi:sdv:FrontSeat:HasSeatMassager;1", 
+          "target": "dtmi:sdv:SeatMassager;1", 
+          "name": "HasSeatMassager",
+          "maxMultiplicity": 1
+      } 
+    ] 
+  } 
+] 
