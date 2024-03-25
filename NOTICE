@@ -5,7 +5,7 @@ This page lists the licenses of the projects used in cargo-about.
 ## Overview of licenses
 
 - Apache License 2.0 (254)
-- MIT License (66)
+- MIT License (65)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (2)
 - Creative Commons Zero v1.0 Universal (1)
@@ -1314,9 +1314,9 @@ This page lists the licenses of the projects used in cargo-about.
 - [humantime]( https://github.com/tailhook/humantime ) 2.1.0
 - [serde_spanned]( https://github.com/toml-rs/toml ) 0.6.5
 - [tokio-io-timeout]( https://github.com/sfackler/tokio-io-timeout ) 1.2.0
-- [toml]( https://github.com/toml-rs/toml ) 0.8.11
+- [toml]( https://github.com/toml-rs/toml ) 0.8.12
 - [toml_datetime]( https://github.com/toml-rs/toml ) 0.6.5
-- [toml_edit]( https://github.com/toml-rs/toml ) 0.22.7
+- [toml_edit]( https://github.com/toml-rs/toml ) 0.22.9
 
 #### License
 
@@ -1923,7 +1923,7 @@ END OF TERMS AND CONDITIONS
 - [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.81
 - [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.78
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.17
-- [indoc]( https://github.com/dtolnay/indoc ) 2.0.4
+- [indoc]( https://github.com/dtolnay/indoc ) 2.0.5
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
 - [libc]( https://github.com/rust-lang/libc ) 0.2.153
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.16
@@ -4064,10 +4064,10 @@ limitations under the License.
 - [async-task]( https://github.com/smol-rs/async-task ) 4.7.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
 - [autocfg]( https://github.com/cuviper/autocfg ) 1.1.0
-- [backtrace]( https://github.com/rust-lang/backtrace-rs ) 0.3.69
+- [backtrace]( https://github.com/rust-lang/backtrace-rs ) 0.3.71
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.7
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
-- [bitflags]( https://github.com/bitflags/bitflags ) 2.4.2
+- [bitflags]( https://github.com/bitflags/bitflags ) 2.5.0
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
 - [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.15.4
@@ -4097,7 +4097,7 @@ limitations under the License.
 - [fnv]( https://github.com/servo/rust-fnv ) 1.0.7
 - [form_urlencoded]( https://github.com/servo/rust-url ) 1.2.1
 - [futures-lite]( https://github.com/smol-rs/futures-lite ) 1.13.0
-- [futures-lite]( https://github.com/smol-rs/futures-lite ) 2.2.0
+- [futures-lite]( https://github.com/smol-rs/futures-lite ) 2.3.0
 - [futures-timer]( https://github.com/async-rs/futures-timer ) 3.0.3
 - [gimli]( https://github.com/gimli-rs/gimli ) 0.28.1
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.12.3
@@ -4109,7 +4109,7 @@ limitations under the License.
 - [hyper-timeout]( https://github.com/hjr3/hyper-timeout ) 0.4.1
 - [idna]( https://github.com/servo/rust-url/ ) 0.5.0
 - [indexmap]( https://github.com/bluss/indexmap ) 1.9.3
-- [indexmap]( https://github.com/indexmap-rs/indexmap ) 2.2.5
+- [indexmap]( https://github.com/indexmap-rs/indexmap ) 2.2.6
 - [io-lifetimes]( https://github.com/sunfishcode/io-lifetimes ) 1.0.11
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.4
 - [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
@@ -4146,16 +4146,16 @@ limitations under the License.
 - [prost-types]( https://github.com/tokio-rs/prost ) 0.12.3
 - [rayon]( https://github.com/rayon-rs/rayon ) 1.9.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
-- [regex]( https://github.com/rust-lang/regex ) 1.10.3
+- [regex]( https://github.com/rust-lang/regex ) 1.10.4
 - [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.6
 - [regex-syntax]( https://github.com/rust-lang/regex/tree/master/regex-syntax ) 0.8.2
 - [ron]( https://github.com/ron-rs/ron ) 0.8.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
-- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.31
+- [rustix]( https://github.com/bytecodealliance/rustix ) 0.38.32
 - [scopeguard]( https://github.com/bluss/scopeguard ) 1.2.0
 - [signal-hook-registry]( https://github.com/vorner/signal-hook ) 1.4.1
-- [smallvec]( https://github.com/servo/rust-smallvec ) 1.13.1
+- [smallvec]( https://github.com/servo/rust-smallvec ) 1.13.2
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.4.10
 - [socket2]( https://github.com/rust-lang/socket2 ) 0.5.6
 - [syn]( https://github.com/dtolnay/syn ) 1.0.109
@@ -4166,9 +4166,9 @@ limitations under the License.
 - [unicode-segmentation]( https://github.com/unicode-rs/unicode-segmentation ) 1.11.0
 - [url]( https://github.com/servo/rust-url ) 2.5.0
 - [utf8-decode]( https://github.com/timothee-haudebourg/utf8-decode ) 1.0.1
-- [uuid]( https://github.com/uuid-rs/uuid ) 1.7.0
-- [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.7.0
-- [value-bag]( https://github.com/sval-rs/value-bag ) 1.8.0
+- [uuid]( https://github.com/uuid-rs/uuid ) 1.8.0
+- [uuid-macro-internal]( https://crates.io/crates/uuid-macro-internal ) 1.8.0
+- [value-bag]( https://github.com/sval-rs/value-bag ) 1.8.1
 - [version_check]( https://github.com/SergioBenitez/version_check ) 0.9.4
 - [waker-fn]( https://github.com/smol-rs/waker-fn ) 1.1.1
 - [wasi]( https://github.com/bytecodealliance/wasi ) 0.11.0+wasi-snapshot-preview1
@@ -7760,7 +7760,7 @@ DEALINGS IN THE SOFTWARE.
 
 #### Used by
 
-- [bytes]( https://github.com/tokio-rs/bytes ) 1.5.0
+- [bytes]( https://github.com/tokio-rs/bytes ) 1.6.0
 
 #### License
 
@@ -8648,7 +8648,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### Used by
 
-- [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
+- [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.3
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
 
@@ -8748,7 +8748,6 @@ SOFTWARE.
 
 #### Used by
 
-- [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.2
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
 - [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
 
