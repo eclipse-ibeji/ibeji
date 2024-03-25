@@ -5,9 +5,7 @@
 use common::grpc_module::GrpcModule;
 use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_server::DigitalTwinRegistryServer;
 
-// use log::{debug, error, info};
 use tonic::transport::server::RoutesBuilder;
-// use tonic::{Request, Response, Status};
 
 use crate::digital_twin_registry_impl::DigitalTwinRegistryImpl;
 

@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 use digital_twin_graph::TargetedPayload;
-// use digital_twin_model::sdv_v1 as sdv;
 use log::{debug, error, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::digital_twin_operation;
@@ -13,7 +12,6 @@ use samples_protobuf_data_access::async_rpc::v1::request::{
 use samples_protobuf_data_access::async_rpc::v1::respond::{
     respond_client::RespondClient, AnswerRequest,
 };
-// use seat_massager_common::{status, TargetedPayload};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -60,11 +58,7 @@ impl Request for RequestImpl {
         info!("  member_path: {}", targeted_payload_json.member_path);
         info!("  operation: {}", targeted_payload_json.operation);
 
-        // Extract the type_id from the request payload.
-        // let type_id_json: serde_json::Value = request_payload_json.get("@type").unwrap().clone();
-        // let type_id: String = serde_json::from_value(type_id_json.clone()).unwrap();
-
-        // Check to make sure that the type_id is for a perform_request request.
+        // Check to make sure that the targeted operation is a GET.
         if targeted_payload_json.operation != digital_twin_operation::GET {
             return Err(tonic::Status::invalid_argument(format!(
                 "Unexpected operation '{}'",
@@ -105,10 +99,6 @@ impl Request for RequestImpl {
                 return;
             }
             let mut client = client_result.unwrap();
-
-            // Serilaize the response payload.
-            // let response_payload_json: String =
-            //    serde_json::to_string_pretty(&response_payload).unwrap();
 
             let answer_request =
                 tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
