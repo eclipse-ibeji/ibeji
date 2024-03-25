@@ -6,7 +6,8 @@ extern crate iref;
 
 use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_server::DigitalTwinRegistry;
 use core_protobuf_data_access::module::digital_twin_registry::v1::{
-    EntityAccessInfo, EndpointInfo, FindByModelIdRequest, FindByModelIdResponse, FindByInstanceIdRequest, FindByInstanceIdResponse, RegisterRequest, RegisterResponse,
+    EndpointInfo, EntityAccessInfo, FindByInstanceIdRequest, FindByInstanceIdResponse,
+    FindByModelIdRequest, FindByModelIdResponse, RegisterRequest, RegisterResponse,
 };
 use log::{debug, info};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
@@ -17,7 +18,7 @@ use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinRegistryImpl {
-    pub entity_access_info_map: Arc<RwLock<HashMap<String, Vec::<EntityAccessInfo>>>>,
+    pub entity_access_info_map: Arc<RwLock<HashMap<String, Vec<EntityAccessInfo>>>>,
 }
 
 #[tonic::async_trait]
@@ -38,7 +39,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Vec::<EntityAccessInfo>>> =
+            let lock: RwLockReadGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.read();
             info!("entity_access_info_map size: {}", lock.len());
             entity_access_info_list = lock.get(&model_id).cloned();
@@ -50,7 +51,8 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
             return Err(Status::not_found("Unable to find any entities with model id {model_id}"));
         }
 
-        let response = FindByModelIdResponse { entity_access_info_list: entity_access_info_list.unwrap() };
+        let response =
+            FindByModelIdResponse { entity_access_info_list: entity_access_info_list.unwrap() };
 
         debug!("Responded to the find_by_model_id request.");
 
@@ -73,13 +75,13 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, Vec::<EntityAccessInfo>>> =
+            let lock: RwLockReadGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.read();
             info!("entity_access_info_map size: {}", lock.len());
             for entity_access_info_list in lock.values() {
                 for entity_access_info in entity_access_info_list {
                     let mut instance_found: bool = false;
-                    let mut new_endpoint_info_list: Vec::<EndpointInfo> = Vec::new();
+                    let mut new_endpoint_info_list: Vec<EndpointInfo> = Vec::new();
                     for endpoint_info_ in entity_access_info.endpoint_info_list.iter() {
                         if endpoint_info_.context == instance_id {
                             instance_found = true;
@@ -100,10 +102,13 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         }
 
         if new_entity_access_info_list.is_empty() {
-            return Err(Status::not_found("Unable to find any entities with instance id {instance_id}"));
+            return Err(Status::not_found(
+                "Unable to find any entities with instance id {instance_id}",
+            ));
         }
 
-        let response = FindByInstanceIdResponse { entity_access_info_list: new_entity_access_info_list };
+        let response =
+            FindByInstanceIdResponse { entity_access_info_list: new_entity_access_info_list };
 
         debug!("Responded to the find_by_instance_id request.");
 
@@ -142,17 +147,20 @@ impl DigitalTwinRegistryImpl {
     fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, Vec::<EntityAccessInfo>>> =
+            let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.write();
             let get_result = lock.get(&entity_access_info.id);
             match get_result {
                 Some(_) => {
-                    info!("Registered another entity access info for entity {}", &entity_access_info.id);                    
+                    info!(
+                        "Registered another entity access info for entity {}",
+                        &entity_access_info.id
+                    );
                     lock.get_mut(&entity_access_info.id).unwrap().push(entity_access_info.clone());
                 }
                 None => {
                     info!("Registered entity {}", &entity_access_info.id);
-                    lock.insert(entity_access_info.id.clone(), vec!(entity_access_info.clone()));
+                    lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
                 }
             };
         }

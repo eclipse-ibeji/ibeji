@@ -66,11 +66,17 @@ impl Request for RequestImpl {
 
         // Check to make sure that the type_id is for a perform_request request.
         if targeted_payload_json.operation != digital_twin_operation::GET {
-            return Err(tonic::Status::invalid_argument(format!("Unexpected operation '{}'", targeted_payload_json.operation)));
+            return Err(tonic::Status::invalid_argument(format!(
+                "Unexpected operation '{}'",
+                targeted_payload_json.operation
+            )));
         }
 
         if !targeted_payload_json.payload.is_empty() {
-            return Err(tonic::Status::invalid_argument(format!("Unexpected payload, it should be empty, not '{}'", targeted_payload_json.payload)));
+            return Err(tonic::Status::invalid_argument(format!(
+                "Unexpected payload, it should be empty, not '{}'",
+                targeted_payload_json.payload
+            )));
         }
 
         let state: Arc<Mutex<RequestState>> = self.state.clone();
@@ -82,7 +88,10 @@ impl Request for RequestImpl {
                 match lock.instance_map.get(&targeted_payload_json.instance_id) {
                     Some(instance_data) => instance_data.clone(),
                     None => {
-                        error!("Instance not found for instance id '{}'", targeted_payload_json.instance_id);
+                        error!(
+                            "Instance not found for instance id '{}'",
+                            targeted_payload_json.instance_id
+                        );
                         return;
                     }
                 }

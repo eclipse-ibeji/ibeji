@@ -155,7 +155,7 @@ pub mod basic_airbag_seat_massager {
 
     #[derive(derivative::Derivative)]
     #[derivative(Default)]
-    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]    
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
     pub struct TYPE {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
@@ -165,7 +165,7 @@ pub mod basic_airbag_seat_massager {
             value = "crate::sdv_v1::basic_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
-    }    
+    }
 }
 
 pub mod cabin {
@@ -179,13 +179,13 @@ pub mod cabin {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]        
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-   
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;        
+
+        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     pub mod hvac {
@@ -195,13 +195,13 @@ pub mod cabin {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]        
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-   
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;        
+
+        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     pub mod seat {
@@ -211,30 +211,28 @@ pub mod cabin {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]        
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-   
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;        
+
+        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
     #[derivative(Default)]
-    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]    
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
     pub struct TYPE {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
         #[serde(rename = "@type")]
-        #[derivative(Default(
-            value = "crate::sdv_v1::cabin::ID.to_string()"
-        ))]
+        #[derivative(Default(value = "crate::sdv_v1::cabin::ID.to_string()"))]
         pub model_id: String,
         pub infotainment: crate::sdv_v1::cabin::infotainment::TYPE,
         pub hvac: crate::sdv_v1::cabin::hvac::TYPE,
-        pub seat: crate::sdv_v1::cabin::seat::TYPE,        
+        pub seat: crate::sdv_v1::cabin::seat::TYPE,
     }
 }
 
@@ -369,7 +367,7 @@ pub mod premium_airbag_seat_massager {
 
     #[derive(derivative::Derivative)]
     #[derivative(Default)]
-    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]    
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
     pub struct TYPE {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
@@ -379,7 +377,7 @@ pub mod premium_airbag_seat_massager {
             value = "crate::sdv_v1::premium_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
-    }    
+    }
 }
 
 pub mod seat {
@@ -393,29 +391,27 @@ pub mod seat {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]        
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-   
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;        
+
+        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
     #[derivative(Default)]
-    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]    
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
     pub struct TYPE {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
         #[serde(rename = "@type")]
-        #[derivative(Default(
-            value = "crate::sdv_v1::seat::ID.to_string()"
-        ))]
+        #[derivative(Default(value = "crate::sdv_v1::seat::ID.to_string()"))]
         pub model_id: String,
         pub seat_massager: crate::sdv_v1::seat::seat_massager::TYPE,
-    }    
+    }
 }
 
 pub mod seat_massager {
@@ -685,28 +681,26 @@ pub mod vehicle {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]        
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-   
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;        
+
+        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
     #[derivative(Default)]
-    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]    
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
     pub struct TYPE {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
         #[serde(rename = "@type")]
-        #[derivative(Default(
-            value = "crate::sdv_v1::vehicle::ID.to_string()"
-        ))]
+        #[derivative(Default(value = "crate::sdv_v1::vehicle::ID.to_string()"))]
         pub model_id: String,
-        pub vehicle_identification: crate::sdv_v1::vehicle::vehicle_identification::TYPE,   
+        pub vehicle_identification: crate::sdv_v1::vehicle::vehicle_identification::TYPE,
         pub cabin: crate::sdv_v1::vehicle::cabin::TYPE,
     }
 }

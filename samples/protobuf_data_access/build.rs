@@ -31,11 +31,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::configure().compile(
         &["../../interfaces/module/digital_twin_graph/v1/digital_twin_graph.proto"],
         &["../../interfaces/module/digital_twin_graph/v1/"],
-        )?;
+    )?;
     tonic_build::configure().compile(
         &["../../interfaces/module/digital_twin_registry/v1/digital_twin_registry.proto"],
         &["../../interfaces/module/digital_twin_registry/v1/"],
-        )?;            
+    )?;
     tonic_build::configure().compile(
         &["../../external/chariott/service_discovery/proto/core/v1/service_registry.proto"],
         &["../../external/chariott/service_discovery/proto/core/v1/"],

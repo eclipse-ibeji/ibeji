@@ -2,9 +2,9 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use log::{debug, info};
 use core_protobuf_data_access::async_rpc::v1::respond::respond_server::Respond;
 use core_protobuf_data_access::async_rpc::v1::respond::{AnswerRequest, AnswerResponse};
+use log::{debug, info};
 use std::sync::Arc;
 use tokio::sync::broadcast;
 

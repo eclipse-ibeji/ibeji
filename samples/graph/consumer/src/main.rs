@@ -16,20 +16,20 @@ use tokio_retry::strategy::{ExponentialBackoff, jitter};
 ///
 /// # Arguments
 /// `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
-async fn interact_with_digital_twin(
-    invehicle_digital_twin_uri: String
-) -> Result<(), String> {    
+async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Result<(), String> {
     let retry_strategy = ExponentialBackoff::from_millis(100)
         .map(jitter) // add jitter to delays
-        .take(10);    // limit to 10 retries
+        .take(10); // limit to 10 retries
 
     let client_result = Retry::spawn(retry_strategy.clone(), || async {
-        let client_result = DigitalTwinGraphClient::connect(invehicle_digital_twin_uri.clone()).await;
+        let client_result =
+            DigitalTwinGraphClient::connect(invehicle_digital_twin_uri.clone()).await;
         if client_result.is_err() {
             return Err("Unable to connect.".to_string());
         }
         Ok(client_result.unwrap())
-    }).await;
+    })
+    .await;
 
     if client_result.is_err() {
         return Err("Unable to connect".to_string());
@@ -37,9 +37,7 @@ async fn interact_with_digital_twin(
 
     let client = client_result.unwrap();
 
-    let request: FindRequest = FindRequest {
-        model_id: sdv::vehicle::ID.to_string(),
-    };
+    let request: FindRequest = FindRequest { model_id: sdv::vehicle::ID.to_string() };
 
     let response_result = Retry::spawn(retry_strategy.clone(), || async {
         // Make a local mutable copy for use only within this cloure body.
@@ -51,7 +49,8 @@ async fn interact_with_digital_twin(
             return Err("Unable to call find".to_string());
         }
         Ok(response_result.unwrap())
-    }).await;
+    })
+    .await;
 
     if response_result.is_err() {
         return Err("Unable to call find".to_string());
@@ -75,10 +74,8 @@ async fn interact_with_digital_twin(
 
     let cabin_instance_id = cabin_instance_id_opt.unwrap();
 
-    let get_cabin_request: GetRequest = GetRequest {
-        instance_id: cabin_instance_id,
-        member_path: "".to_string()
-    };
+    let get_cabin_request: GetRequest =
+        GetRequest { instance_id: cabin_instance_id, member_path: "".to_string() };
 
     let get_cabin_response_result = Retry::spawn(retry_strategy, || async {
         // Make a local mutable copy for use only within this cloure body.
@@ -90,7 +87,8 @@ async fn interact_with_digital_twin(
             return Err("Unable to call get".to_string());
         }
         Ok(get_cabin_response_result.unwrap())
-    }).await;
+    })
+    .await;
 
     if get_cabin_response_result.is_err() {
         return Err("Unable to call get".to_string());

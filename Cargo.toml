@@ -17,7 +17,7 @@ members = [
   # extension
   "core/module/managed_subscribe",
   "core/module/digital_twin_graph",
-  "core/module/digital_twin_registry",  
+  "core/module/digital_twin_registry",
 
   # DTDL tools
   "dtdl-tools",

@@ -3,21 +3,19 @@
 // SPDX-License-Identifier: MIT
 
 use common::grpc_module::GrpcModule;
-use core_protobuf_data_access::module::digital_twin_graph::v1::digital_twin_graph_server::DigitalTwinGraphServer;
 use core_protobuf_data_access::async_rpc::v1::respond::respond_server::RespondServer;
+use core_protobuf_data_access::module::digital_twin_graph::v1::digital_twin_graph_server::DigitalTwinGraphServer;
 // use log::{debug, error, info};
 use std::sync::Arc;
-use tonic::transport::server::RoutesBuilder;
 use tokio::sync::broadcast;
+use tonic::transport::server::RoutesBuilder;
 
 use crate::digital_twin_graph_impl::DigitalTwinGraphImpl;
 use crate::respond_impl::RespondImpl;
 
 /// Digital Twin Graph Module.
 #[derive(Clone, Debug)]
-pub struct DigitalTwinGraphModule {
-
-}
+pub struct DigitalTwinGraphModule {}
 
 impl DigitalTwinGraphModule {
     /// Creates a new instance of the DigitalTwinGraphModule.
@@ -34,7 +32,7 @@ impl GrpcModule for DigitalTwinGraphModule {
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
         // TODO: Setup config
         let invehicle_digital_twin_authority = "0.0.0.0:5010";
-        let invehicle_digital_twin_uri = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138        
+        let invehicle_digital_twin_uri = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138
         let respond_authority = "0.0.0.0:5010";
         let respond_uri = format!("http://{respond_authority}"); // Devskim: ignore DS137138
 
@@ -46,7 +44,8 @@ impl GrpcModule for DigitalTwinGraphModule {
         let respond_service = RespondServer::new(respond_impl);
 
         // Setup the digital twin graph service.
-        let digital_twin_graph_impl = DigitalTwinGraphImpl::new(&invehicle_digital_twin_uri, &respond_uri, tx);
+        let digital_twin_graph_impl =
+            DigitalTwinGraphImpl::new(&invehicle_digital_twin_uri, &respond_uri, tx);
         let digital_twin_graph_service = DigitalTwinGraphServer::new(digital_twin_graph_impl);
 
         builder.add_service(digital_twin_graph_service);

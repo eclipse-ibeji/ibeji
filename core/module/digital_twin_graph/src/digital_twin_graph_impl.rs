@@ -2,14 +2,19 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-use log::{debug, info, warn};
-use core_protobuf_data_access::async_rpc::v1::request::{request_client::RequestClient, AskRequest};
-use core_protobuf_data_access::async_rpc::v1::respond::AnswerRequest;
-use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_client::DigitalTwinRegistryClient;
-use core_protobuf_data_access::module::digital_twin_registry::v1::{EndpointInfo, FindByModelIdRequest, FindByInstanceIdRequest};
-use core_protobuf_data_access::module::digital_twin_graph::v1::{
-    digital_twin_graph_server::DigitalTwinGraph, FindRequest, FindResponse, GetRequest, GetResponse, SetRequest, SetResponse, InvokeRequest, InvokeResponse,
+use core_protobuf_data_access::async_rpc::v1::request::{
+    request_client::RequestClient, AskRequest,
 };
+use core_protobuf_data_access::async_rpc::v1::respond::AnswerRequest;
+use core_protobuf_data_access::module::digital_twin_graph::v1::{
+    digital_twin_graph_server::DigitalTwinGraph, FindRequest, FindResponse, GetRequest,
+    GetResponse, InvokeRequest, InvokeResponse, SetRequest, SetResponse,
+};
+use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_client::DigitalTwinRegistryClient;
+use core_protobuf_data_access::module::digital_twin_registry::v1::{
+    EndpointInfo, FindByInstanceIdRequest, FindByModelIdRequest,
+};
+use log::{debug, info, warn};
 use std::sync::Arc;
 use tokio::sync::broadcast;
 use tokio::time::{sleep, timeout, Duration};
@@ -19,7 +24,7 @@ use crate::{digital_twin_operation, digital_twin_protocol, TargetedPayload};
 
 #[derive(Debug)]
 pub struct DigitalTwinGraphImpl {
-    invehicle_digital_twin_uri: String,    
+    invehicle_digital_twin_uri: String,
     respond_uri: String,
     tx: Arc<broadcast::Sender<AnswerRequest>>,
 }
@@ -32,14 +37,14 @@ impl DigitalTwinGraphImpl {
     /// * `respond_uri` - The uri for the respond service.
     /// * `tx` - The sender for the asynchronous channel for AnswerRequest's.
     pub fn new(
-        invehicle_digital_twin_uri: &str,        
+        invehicle_digital_twin_uri: &str,
         respond_uri: &str,
         tx: Arc<broadcast::Sender<AnswerRequest>>,
     ) -> DigitalTwinGraphImpl {
         DigitalTwinGraphImpl {
-            invehicle_digital_twin_uri: invehicle_digital_twin_uri.to_string(),            
+            invehicle_digital_twin_uri: invehicle_digital_twin_uri.to_string(),
             respond_uri: respond_uri.to_string(),
-            tx: tx,
+            tx,
         }
     }
 }
@@ -67,7 +72,7 @@ pub async fn discover_digital_twin_providers_with_model_id(
     model_id: &str,
     protocol: &str,
     operations: &[String],
-) -> Result<Vec::<EndpointInfo>, String> {
+) -> Result<Vec<EndpointInfo>, String> {
     info!("Sending a find_by_model_id request for model id {model_id} to the Digital Twin Registry Service at {digitial_twin_registry_service_uri}");
 
     let mut client =
@@ -80,19 +85,16 @@ pub async fn discover_digital_twin_providers_with_model_id(
     debug!("Received the response for the find_by_model_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info_list);
 
-    
-    // Ok(response_inner.entity_access_info_list.iter().map(|entity_access_info| entity_access_info.endpoint_info_list.clone()).flatten().collect())
-
-    Ok(response_inner.entity_access_info_list.iter()
+    Ok(response_inner
+        .entity_access_info_list
+        .iter()
         .map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
         .flatten()
         .filter(|endpoint_info| {
-            endpoint_info.protocol == protocol
-                && is_subset(operations, &endpoint_info.operations)
+            endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations)
         })
         .collect())
 }
-
 
 /// Use Ibeji to discover the endpoints for digital twin providers that satisfy the requirements.
 ///
@@ -106,25 +108,26 @@ pub async fn discover_digital_twin_providers_with_instance_id(
     instance_id: &str,
     protocol: &str,
     operations: &[String],
-) -> Result<Vec::<EndpointInfo>, String> {
+) -> Result<Vec<EndpointInfo>, String> {
     info!("Sending a find_by_instance_id request for instance id {instance_id} to the Digital Twin Registry Service at {digitial_twin_registry_service_uri}");
 
     let mut client =
         DigitalTwinRegistryClient::connect(digitial_twin_registry_service_uri.to_string())
             .await
             .map_err(|error| format!("{error}"))?;
-    let request = tonic::Request::new(FindByInstanceIdRequest { instance_id: instance_id.to_string() });
+    let request =
+        tonic::Request::new(FindByInstanceIdRequest { instance_id: instance_id.to_string() });
     let response = client.find_by_instance_id(request).await.map_err(|error| error.to_string())?;
     let response_inner = response.into_inner();
     debug!("Received the response for the find_by_instance_id request");
     info!("response_payload: {:?}", response_inner.entity_access_info_list);
 
-    Ok(response_inner.entity_access_info_list.iter()
-        .map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-        .flatten()
+    Ok(response_inner
+        .entity_access_info_list
+        .iter()
+        .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
         .filter(|endpoint_info| {
-            endpoint_info.protocol == protocol
-                && is_subset(operations, &endpoint_info.operations)
+            endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations)
         })
         .collect())
 }
@@ -151,7 +154,8 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::GET.to_string()],
         )
-        .await.map_err(|error| tonic::Status::internal(error))?;
+        .await
+        .map_err(tonic::Status::internal)?;
 
         info!(">> Found the provider endpoint info list: {provider_endpoint_info_list:?}");
 
@@ -261,7 +265,8 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             digital_twin_protocol::GRPC,
             &[digital_twin_operation::GET.to_string()],
         )
-        .await.map_err(|error| tonic::Status::internal(error))?;
+        .await
+        .map_err(tonic::Status::internal)?;
 
         info!(">> Found the provider endpoint info list: {provider_endpoint_info_list:?}");
 
@@ -293,7 +298,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
 
             // Serialize the targeted payload.
             let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
-        
+
             let request = tonic::Request::new(AskRequest {
                 respond_uri: self.respond_uri.clone(),
                 ask_id: ask_id.clone(),
@@ -352,11 +357,11 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             return Err(tonic::Status::not_found("No values found"));
         }
 
-        Ok(tonic::Response::new(GetResponse { value: values[0].clone()}))
+        Ok(tonic::Response::new(GetResponse { value: values[0].clone() }))
     }
 
     /// Set implementation.
-    /// 
+    ///
     /// # Arguments
     /// * `request` - Set request.
     async fn set(

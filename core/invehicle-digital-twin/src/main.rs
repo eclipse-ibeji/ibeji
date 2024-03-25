@@ -154,10 +154,11 @@ where
     // (1) Adds the Managed Subscribe module to the service.
     let mut server = {
         // (2) Initialize the Digital Twin Registry module, which implements GrpcModule.
-        let digital_twin_registry_module = DigitalTwinRegistryModule::new().await.map_err(|error| {
-            error!("Unable to create Digital Twin Registry module.");
-            error
-        })?;
+        let digital_twin_registry_module =
+            DigitalTwinRegistryModule::new().await.map_err(|error| {
+                error!("Unable to create Digital Twin Registry module.");
+                error
+            })?;
 
         info!("Initialized Digital Twin Registry module.");
 

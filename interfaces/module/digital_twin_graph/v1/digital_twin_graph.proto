@@ -10,7 +10,7 @@ service DigitalTwinGraph {
    rpc Find (FindRequest) returns (FindResponse);
    rpc Get (GetRequest) returns (GetResponse);
    rpc Set (SetRequest) returns (SetResponse);
-   rpc Invoke (InvokeRequest) returns (InvokeResponse);      
+   rpc Invoke (InvokeRequest) returns (InvokeResponse);
 }
 
 message FindRequest {

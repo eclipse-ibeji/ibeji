@@ -25,15 +25,13 @@ use tonic::{transport::Server, Status};
 use crate::request_impl::{InstanceData, RequestImpl, RequestState};
 
 fn create_request_state() -> RequestState {
-    let mut result: RequestState = RequestState {
-        instance_map: HashMap::new()
-    };
+    let mut result: RequestState = RequestState { instance_map: HashMap::new() };
 
     // Seat massager ids.
 
     let front_left_airbag_seat_massager_instance_id: &str = "front_left_airbag_seat_massager";
 
-    let front_right_airbag_seat_massager_instance_id: &str = "front_right_airbag_seat_massager";  
+    let front_right_airbag_seat_massager_instance_id: &str = "front_right_airbag_seat_massager";
 
     let back_left_airbag_seat_massager_instance_id: &str = "back_left_airbag_seat_massager";
 
@@ -45,83 +43,88 @@ fn create_request_state() -> RequestState {
 
     let front_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let front_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
-        seat_massager: vec! [
-            sdv::seat::seat_massager::RELATIONSHIP_TYPE {
-                instance_id: front_left_airbag_seat_massager_instance_id.to_string(),
-            },
-        ],
+        seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
+            instance_id: front_left_airbag_seat_massager_instance_id.to_string(),
+        }],
         ..Default::default()
     };
-    result.instance_map.insert(front_left_seat_instance_id.to_string(), InstanceData {
-        model_id: sdv::seat::ID.to_string(),
-        description: sdv::seat::DESCRIPTION.to_string(),        
-        serialized_value: serde_json::to_string(&front_left_seat).unwrap(),
-    });
+    result.instance_map.insert(
+        front_left_seat_instance_id.to_string(),
+        InstanceData {
+            model_id: sdv::seat::ID.to_string(),
+            description: sdv::seat::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&front_left_seat).unwrap(),
+        },
+    );
 
     let front_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let front_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
-        seat_massager: vec! [
-            sdv::seat::seat_massager::RELATIONSHIP_TYPE {
-                instance_id: front_right_airbag_seat_massager_instance_id.to_string(),
-            },
-        ],
+        seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
+            instance_id: front_right_airbag_seat_massager_instance_id.to_string(),
+        }],
         ..Default::default()
     };
-    result.instance_map.insert(front_right_seat_instance_id.to_string(), InstanceData {
-        model_id: sdv::seat::ID.to_string(),
-        description: sdv::seat::DESCRIPTION.to_string(),        
-        serialized_value: serde_json::to_string(&front_right_seat).unwrap(),
-    });    
+    result.instance_map.insert(
+        front_right_seat_instance_id.to_string(),
+        InstanceData {
+            model_id: sdv::seat::ID.to_string(),
+            description: sdv::seat::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&front_right_seat).unwrap(),
+        },
+    );
 
     let back_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
-        seat_massager: vec! [
-            sdv::seat::seat_massager::RELATIONSHIP_TYPE {
-                instance_id: back_left_airbag_seat_massager_instance_id.to_string(),
-            },
-        ],
+        seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
+            instance_id: back_left_airbag_seat_massager_instance_id.to_string(),
+        }],
         ..Default::default()
     };
-    result.instance_map.insert(back_left_seat_instance_id.to_string(), InstanceData {
-        model_id: sdv::seat::ID.to_string(),
-        description: sdv::seat::DESCRIPTION.to_string(),        
-        serialized_value: serde_json::to_string(&back_left_seat).unwrap(),
-    });
+    result.instance_map.insert(
+        back_left_seat_instance_id.to_string(),
+        InstanceData {
+            model_id: sdv::seat::ID.to_string(),
+            description: sdv::seat::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&back_left_seat).unwrap(),
+        },
+    );
 
     let back_center_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_center_seat: sdv::seat::TYPE = sdv::seat::TYPE {
-        seat_massager: vec! [
-            sdv::seat::seat_massager::RELATIONSHIP_TYPE {
-                instance_id: back_center_airbag_seat_massager_instance_id.to_string(),
-            },
-        ],
+        seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
+            instance_id: back_center_airbag_seat_massager_instance_id.to_string(),
+        }],
         ..Default::default()
     };
-    result.instance_map.insert(back_center_seat_instance_id.to_string(), InstanceData {
-        model_id: sdv::seat::ID.to_string(),
-        description: sdv::seat::DESCRIPTION.to_string(),
-        serialized_value: serde_json::to_string(&back_center_seat).unwrap(),
-    });
+    result.instance_map.insert(
+        back_center_seat_instance_id.to_string(),
+        InstanceData {
+            model_id: sdv::seat::ID.to_string(),
+            description: sdv::seat::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&back_center_seat).unwrap(),
+        },
+    );
 
     let back_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
-        seat_massager: vec! [
-            sdv::seat::seat_massager::RELATIONSHIP_TYPE {
-                instance_id: back_right_airbag_seat_massager_instance_id.to_string(),
-            },
-        ],
+        seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
+            instance_id: back_right_airbag_seat_massager_instance_id.to_string(),
+        }],
         ..Default::default()
-    };  
-    result.instance_map.insert(back_right_seat_instance_id.to_string(), InstanceData {
-        model_id: sdv::seat::ID.to_string(),
-        description: sdv::seat::DESCRIPTION.to_string(),
-        serialized_value: serde_json::to_string(&back_right_seat).unwrap(),
-    });
+    };
+    result.instance_map.insert(
+        back_right_seat_instance_id.to_string(),
+        InstanceData {
+            model_id: sdv::seat::ID.to_string(),
+            description: sdv::seat::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&back_right_seat).unwrap(),
+        },
+    );
 
     // Create the cabin.
     let cabin_instance_id = format!("{}", uuid::Uuid::new_v4());
     let cabin_value: sdv::cabin::TYPE = sdv::cabin::TYPE {
-        seat: vec! [
+        seat: vec![
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: front_left_seat_instance_id.to_string(),
             },
@@ -132,7 +135,7 @@ fn create_request_state() -> RequestState {
                 instance_id: back_left_seat_instance_id.to_string(),
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
-                instance_id: back_center_seat_instance_id.to_string()
+                instance_id: back_center_seat_instance_id.to_string(),
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: back_right_seat_instance_id.to_string(),
@@ -140,27 +143,29 @@ fn create_request_state() -> RequestState {
         ],
         ..Default::default()
     };
-    result.instance_map.insert(cabin_instance_id.clone(), InstanceData {
-        model_id: sdv::cabin::ID.to_string(),
-        description: sdv::cabin::DESCRIPTION.to_string(),
-        serialized_value: serde_json::to_string(&cabin_value).unwrap(),
-    });
+    result.instance_map.insert(
+        cabin_instance_id.clone(),
+        InstanceData {
+            model_id: sdv::cabin::ID.to_string(),
+            description: sdv::cabin::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&cabin_value).unwrap(),
+        },
+    );
 
     // Create the vehicle.
     let vehicle_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let  _vehicle_value: sdv::vehicle::TYPE = sdv::vehicle::TYPE {
-        cabin: vec! [
-            sdv::vehicle::cabin::RELATIONSHIP_TYPE {
-                instance_id: cabin_instance_id,
-            },        
-        ],
-        ..Default::default()        
+    let _vehicle_value: sdv::vehicle::TYPE = sdv::vehicle::TYPE {
+        cabin: vec![sdv::vehicle::cabin::RELATIONSHIP_TYPE { instance_id: cabin_instance_id }],
+        ..Default::default()
     };
-    result.instance_map.insert(vehicle_instance_id, InstanceData {
-        model_id: sdv::vehicle::ID.to_string(),
-        description: sdv::vehicle::DESCRIPTION.to_string(),
-        serialized_value: serde_json::to_string(&_vehicle_value).unwrap(),
-    });    
+    result.instance_map.insert(
+        vehicle_instance_id,
+        InstanceData {
+            model_id: sdv::vehicle::ID.to_string(),
+            description: sdv::vehicle::DESCRIPTION.to_string(),
+            serialized_value: serde_json::to_string(&_vehicle_value).unwrap(),
+        },
+    );
 
     result
 }
@@ -176,17 +181,17 @@ async fn register_vehicle_parts(
     provider_uri: &str,
     state: Arc<Mutex<RequestState>>,
 ) -> Result<(), Status> {
-
     let mut entity_access_info_list: Vec<EntityAccessInfo> = Vec::new();
 
     state.lock().instance_map.iter().for_each(|(instance_id, instance_data)| {
-        info!("Registering the instance with the instance id '{}' and the model id '{}'", instance_id, instance_data.model_id);
+        info!(
+            "Registering the instance with the instance id '{}' and the model id '{}'",
+            instance_id, instance_data.model_id
+        );
 
         let endpoint_info = EndpointInfo {
             protocol: digital_twin_protocol::GRPC.to_string(),
-            operations: vec![
-                digital_twin_operation::GET.to_string(),
-            ],
+            operations: vec![digital_twin_operation::GET.to_string()],
             uri: provider_uri.to_string(),
             context: instance_id.to_string(),
         };
@@ -195,7 +200,7 @@ async fn register_vehicle_parts(
             name: String::new(), // no name, so we will use an empty name
             id: instance_data.model_id.to_string(),
             description: instance_data.description.to_string(),
-            endpoint_info_list: vec!(endpoint_info),
+            endpoint_info_list: vec![endpoint_info],
         };
 
         entity_access_info_list.push(entity_access_info);
@@ -204,8 +209,7 @@ async fn register_vehicle_parts(
     let mut client = DigitalTwinRegistryClient::connect(invehicle_digital_twin_uri.to_string())
         .await
         .map_err(|e| Status::internal(e.to_string()))?;
-    let request =
-        tonic::Request::new(RegisterRequest { entity_access_info_list });
+    let request = tonic::Request::new(RegisterRequest { entity_access_info_list });
     let _response = client.register(request).await?;
 
     Ok(())

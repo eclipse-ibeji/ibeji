@@ -13,9 +13,7 @@ use crate::digital_twin_registry_impl::DigitalTwinRegistryImpl;
 
 /// Digital Twin Registry Module.
 #[derive(Clone, Debug)]
-pub struct DigitalTwinRegistryModule {
-
-}
+pub struct DigitalTwinRegistryModule {}
 
 impl DigitalTwinRegistryModule {
     /// Creates a new instance of the DigitalTwinRegistryModule.
@@ -31,7 +29,8 @@ impl GrpcModule for DigitalTwinRegistryModule {
     /// * `builder` - A tonic::RoutesBuilder that contains the grpc services to build.
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
         // Create the gRPC services.
-        let digital_twin_registry_service = DigitalTwinRegistryServer::new(DigitalTwinRegistryImpl::default());
+        let digital_twin_registry_service =
+            DigitalTwinRegistryServer::new(DigitalTwinRegistryImpl::default());
 
         builder.add_service(digital_twin_registry_service);
     }
