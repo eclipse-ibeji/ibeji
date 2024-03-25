@@ -18,6 +18,6 @@ jobs:
       # Ignored advisories:
       # - https://rustsec.org/advisories/RUSTSEC-2024-0320 : yaml-rust is unmaintained
       #   - This is a dependency of the config crate, which does not have a version without yaml-rust.
-      #     See https://github.com/mehcode/config-rs/issues/473     
+      #     See https://github.com/mehcode/config-rs/issues/473
       - run: |
           cargo audit --deny warnings --ignore RUSTSEC-2024-0320

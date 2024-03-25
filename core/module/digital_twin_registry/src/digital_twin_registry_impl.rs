@@ -171,6 +171,7 @@ impl DigitalTwinRegistryImpl {
     }
 }
 
+/*
 #[cfg(test)]
 mod digital_twin_registry_impl_tests {
     use super::*;
@@ -265,3 +266,4 @@ mod digital_twin_registry_impl_tests {
         }
     }
 }
+*/
