@@ -19,6 +19,8 @@ http = { workspace = true }
 iref = { workspace = true }
 log = { workspace = true }
 common = { path = "../common" }
+digital_twin_graph = { path = "../module/digital_twin_graph", optional = true }
+digital_twin_registry = { path = "../module/digital_twin_registry", optional = true }
 managed_subscribe = { path = "../module/managed_subscribe", optional = true }
 parking_lot = { workspace = true }
 prost = { workspace = true }
@@ -38,5 +40,7 @@ yaml-rust = { workspace = true }
 tonic-build = { workspace = true }
 
 [features]
+digital_twin_graph = ["dep:digital_twin_graph"]
+digital_twin_registry = ["dep:digital_twin_registry"]
 managed_subscribe = ["dep:managed_subscribe"]
 tokio_console = ["dep:tokio-console-subscriber", "tokio/tracing"]

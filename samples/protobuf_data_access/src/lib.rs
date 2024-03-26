@@ -8,6 +8,22 @@ pub mod invehicle_digital_twin {
     }
 }
 
+pub mod digital_twin_graph {
+    pub mod v1 {
+        pub mod digital_twin_graph {
+            tonic::include_proto!("digital_twin_graph.v1.digital_twin_graph");
+        }
+    }
+}
+
+pub mod digital_twin_registry {
+    pub mod v1 {
+        pub mod digital_twin_registry {
+            tonic::include_proto!("digital_twin_registry.v1.digital_twin_registry");
+        }
+    }
+}
+
 pub mod module {
     pub mod managed_subscribe {
         pub mod v1 {

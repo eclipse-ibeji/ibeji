@@ -6,9 +6,9 @@
   "contents": [
     {
       "@type": "Relationship",
-      "@id": "dtmi:sdv:infotainment:has_hmi;1",
+      "@id": "dtmi:sdv:infotainment:hmi;1",
       "target": "dtmi:sdv:hmi;1",
-      "name": "has_hmi",
+      "name": "hmi",
       "maxMultiplicity": 1
     }
   ]

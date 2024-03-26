@@ -23,9 +23,9 @@
     },
     {
       "@type": "Relationship",
-      "@id": "dtmi:sdv:vehicle:has_cabin;1",
+      "@id": "dtmi:sdv:vehicle:cabin;1",
       "target": "dtmi:sdv:cabin;1",
-      "name": "has_cabin",
+      "name": "cabin",
       "maxMultiplicity": 1
     }
   ]

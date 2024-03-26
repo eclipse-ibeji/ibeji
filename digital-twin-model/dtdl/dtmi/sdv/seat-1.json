@@ -2,5 +2,14 @@
   "@context": ["dtmi:dtdl:context;3"],
   "@type": "Interface",
   "@id": "dtmi:sdv:seat;1",
-  "description": "Seat Interface."
+  "description": "Seat Interface.",
+  "contents": [
+    {
+      "@type": "Relationship",
+      "@id": "dtmi:sdv:seat:seat_massager;1",
+      "target": "dtmi:sdv:seatmassager;1",
+      "name": "seat_massager",
+      "maxMultiplicity": 1
+    }
+  ]
 }
