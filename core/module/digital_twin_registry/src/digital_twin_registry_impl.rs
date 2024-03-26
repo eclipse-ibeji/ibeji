@@ -171,58 +171,104 @@ impl DigitalTwinRegistryImpl {
     }
 }
 
-/*
 #[cfg(test)]
 mod digital_twin_registry_impl_tests {
     use super::*;
-    use core_protobuf_data_access::invehicle_digital_twin::v1::EndpointInfo;
+    // use core_protobuf_data_access::module::digital_twin_registry::v1::EndpointInfo;
 
     #[tokio::test]
-    async fn find_by_id_test() {
+    async fn find_by_model_id_test() {
         let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            context: String::from("1234567890"),
             operations,
         };
 
         let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
             description: String::from("Ambient air temperature"),
             endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let invehicle_digital_twin_impl =
-            InvehicleDigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let digital_twin_registry_impl =
+            DigitalTwinRegistryImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         // This block controls the lifetime of the lock.
         {
-            let mut lock: RwLockWriteGuard<HashMap<String, EntityAccessInfo>> =
+            let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 entity_access_info_map.write();
-            lock.insert(entity_access_info.id.clone(), entity_access_info.clone());
+            lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
         }
 
-        let request = tonic::Request::new(FindByIdRequest {
-            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+        let request = tonic::Request::new(FindByModelIdRequest {
+            model_id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
         });
-        let result = invehicle_digital_twin_impl.find_by_id(request).await;
+        let result = digital_twin_registry_impl.find_by_model_id(request).await;
         assert!(result.is_ok());
         let response = result.unwrap();
         let response_inner = response.into_inner();
 
-        assert!(response_inner.entity_access_info.is_some());
+        assert!(response_inner.entity_access_info_list.len() == 1);
 
-        let response_entity_access_info = response_inner.entity_access_info.unwrap();
+        let response_entity_access_info = response_inner.entity_access_info_list[0].clone();
 
+        assert_eq!(response_entity_access_info.id, "dtmi:sdv:hvac:ambient_air_temperature;1");
+        assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
         assert_eq!(
-            response_entity_access_info.id,
-            "dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"
+            response_entity_access_info.endpoint_info_list[0].uri,
+            "http://[::1]:40010" // Devskim: ignore DS137138
         );
+    }
+
+    #[tokio::test]
+    async fn find_by_instance_id_test() {
+        let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
+
+        let endpoint_info = EndpointInfo {
+            protocol: String::from("grpc"),
+            uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
+            context: String::from("1234567890"),
+            operations,
+        };
+
+        let entity_access_info = EntityAccessInfo {
+            name: String::from("AmbientAirTemperature"),
+            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
+            description: String::from("Ambient air temperature"),
+            endpoint_info_list: vec![endpoint_info],
+        };
+
+        let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
+
+        let digital_twin_registry_impl =
+            DigitalTwinRegistryImpl { entity_access_info_map: entity_access_info_map.clone() };
+
+        // This block controls the lifetime of the lock.
+        {
+            let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
+                entity_access_info_map.write();
+            lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
+        }
+
+        let request = tonic::Request::new(FindByInstanceIdRequest {
+            instance_id: String::from("1234567890"),
+        });
+        let result = digital_twin_registry_impl.find_by_instance_id(request).await;
+        assert!(result.is_ok());
+        let response = result.unwrap();
+        let response_inner = response.into_inner();
+
+        assert!(response_inner.entity_access_info_list.len() == 1);
+
+        let response_entity_access_info = response_inner.entity_access_info_list[0].clone();
+
+        assert_eq!(response_entity_access_info.endpoint_info_list[0].context, "1234567890");
         assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
         assert_eq!(
             response_entity_access_info.endpoint_info_list[0].uri,
@@ -235,35 +281,34 @@ mod digital_twin_registry_impl_tests {
         let endpoint_info = EndpointInfo {
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-            context: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            context: String::from("1234567890"),
             operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
         };
 
         let entity_access_info = EntityAccessInfo {
             name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:Vehicle:Cabin:HVAC:AmbientAirTemperature;1"),
+            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
             description: String::from("Ambient air temperature"),
             endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
 
-        let invehicle_digital_twin_impl =
-            InvehicleDigitalTwinImpl { entity_access_info_map: entity_access_info_map.clone() };
+        let digital_twin_registry_impl =
+            DigitalTwinRegistryImpl { entity_access_info_map: entity_access_info_map.clone() };
 
         let request = tonic::Request::new(RegisterRequest {
             entity_access_info_list: vec![entity_access_info],
         });
-        let result = invehicle_digital_twin_impl.register(request).await;
+        let result = digital_twin_registry_impl.register(request).await;
         assert!(result.is_ok(), "register result is not okay: {result:?}");
 
         // This block controls the lifetime of the lock.
         {
-            let lock: RwLockReadGuard<HashMap<String, EntityAccessInfo>> =
+            let lock: RwLockReadGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 entity_access_info_map.read();
             // Make sure that we populated the entity map from the contents of the DTDL.
             assert_eq!(lock.len(), 1, "expected length was 1, actual length is {}", lock.len());
         }
     }
 }
-*/
