@@ -5,7 +5,7 @@ This page lists the licenses of the projects used in cargo-about.
 ## Overview of licenses
 
 - Apache License 2.0 (254)
-- MIT License (65)
+- MIT License (66)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (2)
 - Creative Commons Zero v1.0 Universal (1)
@@ -23,7 +23,7 @@ This page lists the licenses of the projects used in cargo-about.
 - [miniz_oxide]( https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide ) 0.7.2
 - [pin-project]( https://github.com/taiki-e/pin-project ) 1.1.5
 - [pin-project-internal]( https://github.com/taiki-e/pin-project ) 1.1.5
-- [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.13
+- [pin-project-lite]( https://github.com/taiki-e/pin-project-lite ) 0.2.14
 - [sync_wrapper]( https://github.com/Actyx/sync_wrapper ) 0.1.2
 
 #### License
@@ -1921,20 +1921,20 @@ END OF TERMS AND CONDITIONS
 #### Used by
 
 - [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.81
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.78
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.79
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.17
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.5
-- [itoa]( https://github.com/dtolnay/itoa ) 1.0.10
+- [itoa]( https://github.com/dtolnay/itoa ) 1.0.11
 - [libc]( https://github.com/rust-lang/libc ) 0.2.153
-- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.16
+- [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.17
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.79
 - [quote]( https://github.com/dtolnay/quote ) 1.0.35
 - [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.17
 - [serde]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.197
-- [serde_json]( https://github.com/serde-rs/json ) 1.0.114
-- [syn]( https://github.com/dtolnay/syn ) 2.0.53
+- [serde_json]( https://github.com/serde-rs/json ) 1.0.115
+- [syn]( https://github.com/dtolnay/syn ) 2.0.57
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.58
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.58
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
@@ -4054,7 +4054,7 @@ limitations under the License.
 - [addr2line]( https://github.com/gimli-rs/addr2line ) 0.21.0
 - [async-channel]( https://github.com/smol-rs/async-channel ) 1.9.0
 - [async-channel]( https://github.com/smol-rs/async-channel ) 2.2.0
-- [async-executor]( https://github.com/smol-rs/async-executor ) 1.8.0
+- [async-executor]( https://github.com/smol-rs/async-executor ) 1.9.1
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.4.1
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
 - [async-io]( https://github.com/smol-rs/async-io ) 2.3.2
@@ -4063,7 +4063,7 @@ limitations under the License.
 - [async-std]( https://github.com/async-rs/async-std ) 1.12.0
 - [async-task]( https://github.com/smol-rs/async-task ) 4.7.0
 - [atomic-waker]( https://github.com/smol-rs/atomic-waker ) 1.1.2
-- [autocfg]( https://github.com/cuviper/autocfg ) 1.1.0
+- [autocfg]( https://github.com/cuviper/autocfg ) 1.2.0
 - [backtrace]( https://github.com/rust-lang/backtrace-rs ) 0.3.71
 - [base64]( https://github.com/marshallpierce/rust-base64 ) 0.21.7
 - [bitflags]( https://github.com/bitflags/bitflags ) 1.3.2
@@ -4089,9 +4089,9 @@ limitations under the License.
 - [event-listener]( https://github.com/smol-rs/event-listener ) 4.0.3
 - [event-listener]( https://github.com/smol-rs/event-listener ) 5.2.0
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.4.0
-- [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.5.0
+- [event-listener-strategy]( https://github.com/smol-rs/event-listener-strategy ) 0.5.1
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
-- [fastrand]( https://github.com/smol-rs/fastrand ) 2.0.1
+- [fastrand]( https://github.com/smol-rs/fastrand ) 2.0.2
 - [fixedbitset]( https://github.com/petgraph/fixedbitset ) 0.4.2
 - [flate2]( https://github.com/rust-lang/flate2-rs ) 1.0.28
 - [fnv]( https://github.com/servo/rust-fnv ) 1.0.7
@@ -4139,16 +4139,16 @@ limitations under the License.
 - [piper]( https://github.com/notgull/piper ) 0.2.1
 - [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.30
 - [png]( https://github.com/image-rs/image-png ) 0.17.13
-- [polling]( https://github.com/smol-rs/polling ) 3.5.0
+- [polling]( https://github.com/smol-rs/polling ) 3.6.0
 - [prost]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-build]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.3
 - [prost-types]( https://github.com/tokio-rs/prost ) 0.12.3
-- [rayon]( https://github.com/rayon-rs/rayon ) 1.9.0
+- [rayon]( https://github.com/rayon-rs/rayon ) 1.10.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
 - [regex]( https://github.com/rust-lang/regex ) 1.10.4
 - [regex-automata]( https://github.com/rust-lang/regex/tree/master/regex-automata ) 0.4.6
-- [regex-syntax]( https://github.com/rust-lang/regex/tree/master/regex-syntax ) 0.8.2
+- [regex-syntax]( https://github.com/rust-lang/regex/tree/master/regex-syntax ) 0.8.3
 - [ron]( https://github.com/ron-rs/ron ) 0.8.1
 - [rustc-demangle]( https://github.com/alexcrichton/rustc-demangle ) 0.1.23
 - [rustix]( https://github.com/bytecodealliance/rustix ) 0.37.27
@@ -7495,7 +7495,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 #### Used by
 
-- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.101
+- [openssl-sys]( https://github.com/sfackler/rust-openssl ) 0.9.102
 
 #### License
 
@@ -8147,7 +8147,7 @@ THE SOFTWARE.
 
 #### Used by
 
-- [tokio]( https://github.com/tokio-rs/tokio ) 1.36.0
+- [tokio]( https://github.com/tokio-rs/tokio ) 1.37.0
 - [tokio-stream]( https://github.com/tokio-rs/tokio ) 0.1.15
 - [tokio-util]( https://github.com/tokio-rs/tokio ) 0.7.10
 
@@ -8650,7 +8650,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 - [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.3
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
-- [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
+- [memchr]( https://github.com/BurntSushi/memchr ) 2.7.2
 
 #### License
 
@@ -8748,8 +8748,9 @@ SOFTWARE.
 
 #### Used by
 
+- [aho-corasick]( https://github.com/BurntSushi/aho-corasick ) 1.1.3
 - [byteorder]( https://github.com/BurntSushi/byteorder ) 1.5.0
-- [memchr]( https://github.com/BurntSushi/memchr ) 2.7.1
+- [memchr]( https://github.com/BurntSushi/memchr ) 2.7.2
 
 #### License
 
