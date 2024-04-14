@@ -5,7 +5,7 @@ This page lists the licenses of the projects used in cargo-about.
 ## Overview of licenses
 
 - Apache License 2.0 (254)
-- MIT License (66)
+- MIT License (65)
 - BSD 3-Clause "New" or "Revised" License (4)
 - Eclipse Public License 1.0 (2)
 - Creative Commons Zero v1.0 Universal (1)
@@ -430,21 +430,22 @@ This page lists the licenses of the projects used in cargo-about.
 - [windows-sys]( https://github.com/microsoft/windows-rs ) 0.48.0
 - [windows-sys]( https://github.com/microsoft/windows-rs ) 0.52.0
 - [windows-targets]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows-targets]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows-targets]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_aarch64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_aarch64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_i686_gnu]( https://github.com/microsoft/windows-rs ) 0.52.5
+- [windows_i686_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_i686_msvc]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_x86_64_gnu]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_x86_64_gnullvm]( https://github.com/microsoft/windows-rs ) 0.52.5
 - [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.48.5
-- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.4
+- [windows_x86_64_msvc]( https://github.com/microsoft/windows-rs ) 0.52.5
 
 #### License
 
@@ -1920,21 +1921,21 @@ END OF TERMS AND CONDITIONS
 
 #### Used by
 
-- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.81
-- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.79
+- [anyhow]( https://github.com/dtolnay/anyhow ) 1.0.82
+- [async-trait]( https://github.com/dtolnay/async-trait ) 0.1.80
 - [dyn-clone]( https://github.com/dtolnay/dyn-clone ) 1.0.17
 - [indoc]( https://github.com/dtolnay/indoc ) 2.0.5
 - [itoa]( https://github.com/dtolnay/itoa ) 1.0.11
 - [libc]( https://github.com/rust-lang/libc ) 0.2.153
 - [prettyplease]( https://github.com/dtolnay/prettyplease ) 0.2.17
 - [proc-macro2]( https://github.com/dtolnay/proc-macro2 ) 1.0.79
-- [quote]( https://github.com/dtolnay/quote ) 1.0.35
-- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.14
+- [quote]( https://github.com/dtolnay/quote ) 1.0.36
+- [rustversion]( https://github.com/dtolnay/rustversion ) 1.0.15
 - [ryu]( https://github.com/dtolnay/ryu ) 1.0.17
 - [serde]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_derive]( https://github.com/serde-rs/serde ) 1.0.197
 - [serde_json]( https://github.com/serde-rs/json ) 1.0.115
-- [syn]( https://github.com/dtolnay/syn ) 2.0.57
+- [syn]( https://github.com/dtolnay/syn ) 2.0.58
 - [thiserror]( https://github.com/dtolnay/thiserror ) 1.0.58
 - [thiserror-impl]( https://github.com/dtolnay/thiserror ) 1.0.58
 - [unicode-ident]( https://github.com/dtolnay/unicode-ident ) 1.0.12
@@ -4054,7 +4055,7 @@ limitations under the License.
 - [addr2line]( https://github.com/gimli-rs/addr2line ) 0.21.0
 - [async-channel]( https://github.com/smol-rs/async-channel ) 1.9.0
 - [async-channel]( https://github.com/smol-rs/async-channel ) 2.2.0
-- [async-executor]( https://github.com/smol-rs/async-executor ) 1.9.1
+- [async-executor]( https://github.com/smol-rs/async-executor ) 1.10.0
 - [async-global-executor]( https://github.com/Keruspe/async-global-executor ) 2.4.1
 - [async-io]( https://github.com/smol-rs/async-io ) 1.13.0
 - [async-io]( https://github.com/smol-rs/async-io ) 2.3.2
@@ -4070,8 +4071,8 @@ limitations under the License.
 - [bitflags]( https://github.com/bitflags/bitflags ) 2.5.0
 - [blocking]( https://github.com/smol-rs/blocking ) 1.5.1
 - [btree-slab]( https://github.com/timothee-haudebourg/btree-slab ) 0.6.1
-- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.15.4
-- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.90
+- [bumpalo]( https://github.com/fitzgen/bumpalo ) 3.16.0
+- [cc]( https://github.com/rust-lang/cc-rs ) 1.0.94
 - [cc-traits]( https://github.com/timothee-haudebourg/cc-traits ) 2.0.0
 - [cfg-if]( https://github.com/alexcrichton/cfg-if ) 1.0.0
 - [cmake]( https://github.com/rust-lang/cmake-rs ) 0.1.50
@@ -4083,11 +4084,11 @@ limitations under the License.
 - [crossbeam-epoch]( https://github.com/crossbeam-rs/crossbeam ) 0.9.18
 - [crossbeam-utils]( https://github.com/crossbeam-rs/crossbeam ) 0.8.19
 - [derivative]( https://github.com/mcarton/rust-derivative ) 2.2.0
-- [either]( https://github.com/rayon-rs/either ) 1.10.0
+- [either]( https://github.com/rayon-rs/either ) 1.11.0
 - [equivalent]( https://github.com/cuviper/equivalent ) 1.0.1
 - [event-listener]( https://github.com/smol-rs/event-listener ) 2.5.3
 - [event-listener]( https://github.com/smol-rs/event-listener ) 4.0.3
-- [event-listener]( https://github.com/smol-rs/event-listener ) 5.2.0
+- [event-listener]( https://github.com/smol-rs/event-listener ) 5.3.0
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener ) 0.4.0
 - [event-listener-strategy]( https://github.com/smol-rs/event-listener-strategy ) 0.5.1
 - [fastrand]( https://github.com/smol-rs/fastrand ) 1.9.0
@@ -4104,6 +4105,7 @@ limitations under the License.
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.13.2
 - [hashbrown]( https://github.com/rust-lang/hashbrown ) 0.14.3
 - [heck]( https://github.com/withoutboats/heck ) 0.4.1
+- [heck]( https://github.com/withoutboats/heck ) 0.5.0
 - [hermit-abi]( https://github.com/hermit-os/hermit-rs ) 0.3.9
 - [httparse]( https://github.com/seanmonstar/httparse ) 1.8.0
 - [hyper-timeout]( https://github.com/hjr3/hyper-timeout ) 0.4.1
@@ -4112,7 +4114,7 @@ limitations under the License.
 - [indexmap]( https://github.com/indexmap-rs/indexmap ) 2.2.6
 - [io-lifetimes]( https://github.com/sunfishcode/io-lifetimes ) 1.0.11
 - [iref]( https://github.com/timothee-haudebourg/iref ) 3.1.4
-- [itertools]( https://github.com/rust-itertools/itertools ) 0.11.0
+- [itertools]( https://github.com/rust-itertools/itertools ) 0.12.1
 - [jpeg-decoder]( https://github.com/image-rs/jpeg-decoder ) 0.3.1
 - [js-sys]( https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys ) 0.3.69
 - [lazy_static]( https://github.com/rust-lang-nursery/lazy-static.rs ) 1.4.0
@@ -4121,7 +4123,7 @@ limitations under the License.
 - [lock_api]( https://github.com/Amanieu/parking_lot ) 0.4.11
 - [log]( https://github.com/rust-lang/log ) 0.4.21
 - [mime]( https://github.com/hyperium/mime ) 0.3.17
-- [multimap]( https://github.com/havarnov/multimap ) 0.8.3
+- [multimap]( https://github.com/havarnov/multimap ) 0.10.0
 - [num-traits]( https://github.com/rust-num/num-traits ) 0.2.18
 - [num_cpus]( https://github.com/seanmonstar/num_cpus ) 1.16.0
 - [object]( https://github.com/gimli-rs/object ) 0.32.2
@@ -4131,19 +4133,19 @@ limitations under the License.
 - [parking_lot_core]( https://github.com/Amanieu/parking_lot ) 0.9.9
 - [pct-str]( https://github.com/timothee-haudebourg/pct-str ) 2.0.0
 - [percent-encoding]( https://github.com/servo/rust-url/ ) 2.3.1
-- [pest]( https://github.com/pest-parser/pest ) 2.7.8
-- [pest_derive]( https://github.com/pest-parser/pest ) 2.7.8
-- [pest_generator]( https://github.com/pest-parser/pest ) 2.7.8
-- [pest_meta]( https://github.com/pest-parser/pest ) 2.7.8
+- [pest]( https://github.com/pest-parser/pest ) 2.7.9
+- [pest_derive]( https://github.com/pest-parser/pest ) 2.7.9
+- [pest_generator]( https://github.com/pest-parser/pest ) 2.7.9
+- [pest_meta]( https://github.com/pest-parser/pest ) 2.7.9
 - [petgraph]( https://github.com/petgraph/petgraph ) 0.6.4
 - [piper]( https://github.com/notgull/piper ) 0.2.1
 - [pkg-config]( https://github.com/rust-lang/pkg-config-rs ) 0.3.30
 - [png]( https://github.com/image-rs/image-png ) 0.17.13
 - [polling]( https://github.com/smol-rs/polling ) 3.6.0
-- [prost]( https://github.com/tokio-rs/prost ) 0.12.3
-- [prost-build]( https://github.com/tokio-rs/prost ) 0.12.3
-- [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.3
-- [prost-types]( https://github.com/tokio-rs/prost ) 0.12.3
+- [prost]( https://github.com/tokio-rs/prost ) 0.12.4
+- [prost-build]( https://github.com/tokio-rs/prost ) 0.12.4
+- [prost-derive]( https://github.com/tokio-rs/prost ) 0.12.4
+- [prost-types]( https://github.com/tokio-rs/prost ) 0.12.4
 - [rayon]( https://github.com/rayon-rs/rayon ) 1.10.0
 - [rayon-core]( https://github.com/rayon-rs/rayon ) 1.12.1
 - [regex]( https://github.com/rust-lang/regex ) 1.10.4
@@ -5211,7 +5213,7 @@ APPENDIX: How to apply the Apache License to your work.
 
 #### Used by
 
-- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.12
+- [getrandom]( https://github.com/rust-random/getrandom ) 0.2.14
 - [rand_chacha]( https://github.com/rust-random/rand ) 0.3.1
 
 #### License
@@ -5426,7 +5428,6 @@ limitations under the License.
 #### Used by
 
 - [adler]( https://github.com/jonas-schievink/adler.git ) 1.0.2
-- [home]( https://github.com/rust-lang/cargo ) 0.5.9
 
 #### License
 
@@ -6751,7 +6752,7 @@ limitations under the License.
 
 - [btree-range-map]( https://github.com/timothee-haudebourg/btree-range-map ) 0.7.2
 - [gloo-timers]( https://github.com/rustwasm/gloo/tree/master/crates/timers ) 0.2.6
-- [half]( https://github.com/starkat99/half-rs ) 2.4.0
+- [half]( https://github.com/starkat99/half-rs ) 2.4.1
 - [range-traits]( https://github.com/timothee-haudebourg/range-traits ) 0.3.2
 - [static-regular-grammar]( https://github.com/timothee-haudebourg/static-regular-grammar ) 1.1.1
 - [winapi-i686-pc-windows-gnu]( https://github.com/retep998/winapi-rs ) 0.4.0
@@ -6940,19 +6941,6 @@ according to those terms.
 
 ```text
 MIT OR Apache-2.0
-```
-
-### Apache-2.0 (Apache License 2.0)
-
-#### Used by
-
-- [half]( https://github.com/starkat99/half-rs ) 2.4.0
-
-#### License
-
-```text
-MIT OR Apache-2.0
-
 ```
 
 ### Apache-2.0 (Apache License 2.0)
@@ -7626,37 +7614,6 @@ THE SOFTWARE.
 
 #### Used by
 
-- [which]( https://github.com/harryfei/which-rs.git ) 4.4.2
-
-#### License
-
-```text
-Copyright (c) 2015 fangyuanziti
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-```
-
-### MIT (MIT License)
-
-#### Used by
-
 - [redox_syscall]( https://gitlab.redox-os.org/redox-os/syscall ) 0.4.1
 
 #### License
@@ -7723,7 +7680,7 @@ SOFTWARE.
 
 #### Used by
 
-- [h2]( https://github.com/hyperium/h2 ) 0.3.25
+- [h2]( https://github.com/hyperium/h2 ) 0.3.26
 
 #### License
 
@@ -8500,7 +8457,7 @@ SOFTWARE.
 
 #### Used by
 
-- [winnow]( https://github.com/winnow-rs/winnow ) 0.6.5
+- [winnow]( https://github.com/winnow-rs/winnow ) 0.6.6
 
 #### License
 
