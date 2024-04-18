@@ -6,7 +6,7 @@ use crate::utils;
 
 use serde_derive::Deserialize;
 
-const CONFIG_FILENAME: &str = "provider_settings";
+const DEFAULT_CONFIG_FILENAME: &str = "provider_settings";
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
@@ -15,7 +15,12 @@ pub struct Settings {
     pub invehicle_digital_twin_uri: Option<String>,
 }
 
-/// Load the settings.
+/// Load the settings using the default config filename.
 pub fn load_settings() -> Settings {
-    utils::load_settings(CONFIG_FILENAME).unwrap()
+    load_settings_with_config_filename(DEFAULT_CONFIG_FILENAME)
+}
+
+// Load the settings using the specified config filename.
+pub fn load_settings_with_config_filename(config_filename: &str) -> Settings {
+    utils::load_settings(config_filename).unwrap()
 }

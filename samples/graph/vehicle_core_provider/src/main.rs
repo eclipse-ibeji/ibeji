@@ -29,20 +29,21 @@ fn create_request_state() -> RequestState {
 
     // Seat massager ids.
 
-    let front_left_airbag_seat_massager_instance_id: &str = "front_left_airbag_seat_massager";
+    let front_left_airbag_seat_massager_instance_id = "front_left_airbag_seat_massager".to_string();   
 
-    let front_right_airbag_seat_massager_instance_id: &str = "front_right_airbag_seat_massager";
+    let front_right_airbag_seat_massager_instance_id = "front_right_airbag_seat_massager".to_string();
 
-    let back_left_airbag_seat_massager_instance_id: &str = "back_left_airbag_seat_massager";
+    let back_left_airbag_seat_massager_instance_id = "back_left_airbag_seat_massager".to_string();   
 
-    let back_center_airbag_seat_massager_instance_id: &str = "back_center_airbag_seat_massager";
+    let back_center_airbag_seat_massager_instance_id = "back_center_airbag_seat_massager".to_string();
 
-    let back_right_airbag_seat_massager_instance_id: &str = "back_right_airbag_seat_massager";
+    let back_right_airbag_seat_massager_instance_id = "back_right_airbag_seat_massager".to_string();
 
     // Create the seats.
 
     let front_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let front_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+        instance_id: front_left_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: front_left_airbag_seat_massager_instance_id.to_string(),
         }],
@@ -59,6 +60,7 @@ fn create_request_state() -> RequestState {
 
     let front_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let front_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+        instance_id: front_right_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: front_right_airbag_seat_massager_instance_id.to_string(),
         }],
@@ -75,6 +77,7 @@ fn create_request_state() -> RequestState {
 
     let back_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+        instance_id: back_left_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: back_left_airbag_seat_massager_instance_id.to_string(),
         }],
@@ -91,6 +94,7 @@ fn create_request_state() -> RequestState {
 
     let back_center_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_center_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+        instance_id: back_center_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: back_center_airbag_seat_massager_instance_id.to_string(),
         }],
@@ -107,6 +111,7 @@ fn create_request_state() -> RequestState {
 
     let back_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
     let back_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+        instance_id: back_right_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: back_right_airbag_seat_massager_instance_id.to_string(),
         }],
@@ -124,21 +129,32 @@ fn create_request_state() -> RequestState {
     // Create the cabin.
     let cabin_instance_id = format!("{}", uuid::Uuid::new_v4());
     let cabin_value: sdv::cabin::TYPE = sdv::cabin::TYPE {
+        instance_id: cabin_instance_id.clone(),
         seat: vec![
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: front_left_seat_instance_id.to_string(),
+                seat_row: 1,
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::left,
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: front_right_seat_instance_id.to_string(),
+                seat_row: 1,
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::right,                
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: back_left_seat_instance_id.to_string(),
+                seat_row: 2,
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::left,
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: back_center_seat_instance_id.to_string(),
+                seat_row: 2,
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::center,
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: back_right_seat_instance_id.to_string(),
+                seat_row: 2,
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::right,
             },
         ],
         ..Default::default()
@@ -154,7 +170,8 @@ fn create_request_state() -> RequestState {
 
     // Create the vehicle.
     let vehicle_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let _vehicle_value: sdv::vehicle::TYPE = sdv::vehicle::TYPE {
+    let vehicle_value: sdv::vehicle::TYPE = sdv::vehicle::TYPE {
+        instance_id: vehicle_instance_id.clone(),
         cabin: vec![sdv::vehicle::cabin::RELATIONSHIP_TYPE { instance_id: cabin_instance_id }],
         ..Default::default()
     };
@@ -163,7 +180,7 @@ fn create_request_state() -> RequestState {
         InstanceData {
             model_id: sdv::vehicle::ID.to_string(),
             description: sdv::vehicle::DESCRIPTION.to_string(),
-            serialized_value: serde_json::to_string(&_vehicle_value).unwrap(),
+            serialized_value: serde_json::to_string(&vehicle_value).unwrap(),
         },
     );
 

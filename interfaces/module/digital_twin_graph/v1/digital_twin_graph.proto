@@ -41,7 +41,8 @@ message SetResponse {
 
 message InvokeRequest {
    string instance_id = 1;
-   string request_payload = 2;
+   string member_path = 2;
+   string request_payload = 3;
 }
 
 message InvokeResponse {

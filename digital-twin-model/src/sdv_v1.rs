@@ -160,6 +160,8 @@ pub mod basic_airbag_seat_massager {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
+        #[serde(rename = "@id")]
+        pub instance_id: String,          
         #[serde(rename = "@type")]
         #[derivative(Default(
             value = "crate::sdv_v1::basic_airbag_seat_massager::ID.to_string()"
@@ -209,12 +211,29 @@ pub mod cabin {
         pub const NAME: &str = "seat";
         pub const DESCRIPTION: &str = "The seats.";
 
+        pub type SEAT_ROW_TYPE = i32;
+
+        #[derive(derivative::Derivative)]
+        #[derivative(Default)]
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
+        #[derive(PartialEq)]    
+        pub enum SEAT_POSITION_TYPE {
+            #[derivative(Default)]
+            /// No value
+            none,
+            left,
+            center,
+            right,
+        }
+
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
         pub struct RELATIONSHIP_TYPE {
             #[serde(rename = "@id")]
             pub instance_id: String,
+            pub seat_row: SEAT_ROW_TYPE,
+            pub seat_position: SEAT_POSITION_TYPE,
         }
 
         pub type TYPE = Vec<RELATIONSHIP_TYPE>;
@@ -227,6 +246,8 @@ pub mod cabin {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
+        #[serde(rename = "@id")]
+        pub instance_id: String,
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::cabin::ID.to_string()"))]
         pub model_id: String,
@@ -372,6 +393,8 @@ pub mod premium_airbag_seat_massager {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
+        #[serde(rename = "@id")]
+        pub instance_id: String,        
         #[serde(rename = "@type")]
         #[derivative(Default(
             value = "crate::sdv_v1::premium_airbag_seat_massager::ID.to_string()"
@@ -407,6 +430,8 @@ pub mod seat {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
+        #[serde(rename = "@id")]
+        pub instance_id: String,
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::seat::ID.to_string()"))]
         pub model_id: String,
@@ -697,6 +722,8 @@ pub mod vehicle {
         #[serde(rename = "@context")]
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
+        #[serde(rename = "@id")]
+        pub instance_id: String,
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::vehicle::ID.to_string()"))]
         pub model_id: String,
