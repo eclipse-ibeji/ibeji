@@ -29,13 +29,15 @@ fn create_request_state() -> RequestState {
 
     // Seat massager ids.
 
-    let front_left_airbag_seat_massager_instance_id = "front_left_airbag_seat_massager".to_string();   
+    let front_left_airbag_seat_massager_instance_id = "front_left_airbag_seat_massager".to_string();
 
-    let front_right_airbag_seat_massager_instance_id = "front_right_airbag_seat_massager".to_string();
+    let front_right_airbag_seat_massager_instance_id =
+        "front_right_airbag_seat_massager".to_string();
 
-    let back_left_airbag_seat_massager_instance_id = "back_left_airbag_seat_massager".to_string();   
+    let back_left_airbag_seat_massager_instance_id = "back_left_airbag_seat_massager".to_string();
 
-    let back_center_airbag_seat_massager_instance_id = "back_center_airbag_seat_massager".to_string();
+    let back_center_airbag_seat_massager_instance_id =
+        "back_center_airbag_seat_massager".to_string();
 
     let back_right_airbag_seat_massager_instance_id = "back_right_airbag_seat_massager".to_string();
 
@@ -139,7 +141,7 @@ fn create_request_state() -> RequestState {
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: front_right_seat_instance_id.to_string(),
                 seat_row: 1,
-                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::right,                
+                seat_position: sdv::cabin::seat::SEAT_POSITION_TYPE::right,
             },
             sdv::cabin::seat::RELATIONSHIP_TYPE {
                 instance_id: back_left_seat_instance_id.to_string(),

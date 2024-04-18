@@ -161,7 +161,7 @@ pub mod basic_airbag_seat_massager {
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
         #[serde(rename = "@id")]
-        pub instance_id: String,          
+        pub instance_id: String,
         #[serde(rename = "@type")]
         #[derivative(Default(
             value = "crate::sdv_v1::basic_airbag_seat_massager::ID.to_string()"
@@ -215,8 +215,7 @@ pub mod cabin {
 
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
-        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
-        #[derive(PartialEq)]    
+        #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug, PartialEq)]
         pub enum SEAT_POSITION_TYPE {
             #[derivative(Default)]
             /// No value
@@ -394,7 +393,7 @@ pub mod premium_airbag_seat_massager {
         #[derivative(Default(value = "crate::sdv_v1::context()"))]
         pub context: Vec<String>,
         #[serde(rename = "@id")]
-        pub instance_id: String,        
+        pub instance_id: String,
         #[serde(rename = "@type")]
         #[derivative(Default(
             value = "crate::sdv_v1::premium_airbag_seat_massager::ID.to_string()"

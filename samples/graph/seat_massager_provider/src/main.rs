@@ -30,10 +30,11 @@ fn create_request_state() -> RequestState {
     // Create the seat massagers.
 
     let front_left_airbag_seat_massager_instance_id = "front_left_airbag_seat_massager".to_string();
-    let front_left_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE = sdv::premium_airbag_seat_massager::TYPE {
-        instance_id: front_left_airbag_seat_massager_instance_id.clone(),
-        ..Default::default()
-    };
+    let front_left_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+        sdv::premium_airbag_seat_massager::TYPE {
+            instance_id: front_left_airbag_seat_massager_instance_id.clone(),
+            ..Default::default()
+        };
     result.instance_map.insert(
         front_left_airbag_seat_massager_instance_id.to_string(),
         InstanceData {
@@ -41,13 +42,15 @@ fn create_request_state() -> RequestState {
             description: sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
             serialized_value: serde_json::to_string(&front_left_airbag_seat_massager).unwrap(),
         },
-    );    
+    );
 
-    let front_right_airbag_seat_massager_instance_id = "front_right_airbag_seat_massager".to_string();
-    let front_right_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE = sdv::premium_airbag_seat_massager::TYPE {
-        instance_id: front_right_airbag_seat_massager_instance_id.clone(),
-        ..Default::default()
-    };
+    let front_right_airbag_seat_massager_instance_id =
+        "front_right_airbag_seat_massager".to_string();
+    let front_right_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+        sdv::premium_airbag_seat_massager::TYPE {
+            instance_id: front_right_airbag_seat_massager_instance_id.clone(),
+            ..Default::default()
+        };
     result.instance_map.insert(
         front_right_airbag_seat_massager_instance_id.to_string(),
         InstanceData {
@@ -58,10 +61,11 @@ fn create_request_state() -> RequestState {
     );
 
     let back_left_airbag_seat_massager_instance_id = "back_left_airbag_seat_massager".to_string();
-    let back_left_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE = sdv::basic_airbag_seat_massager::TYPE {
-        instance_id: back_left_airbag_seat_massager_instance_id.clone(),
-        ..Default::default()
-    };
+    let back_left_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
+        sdv::basic_airbag_seat_massager::TYPE {
+            instance_id: back_left_airbag_seat_massager_instance_id.clone(),
+            ..Default::default()
+        };
     result.instance_map.insert(
         back_left_airbag_seat_massager_instance_id.to_string(),
         InstanceData {
@@ -69,13 +73,15 @@ fn create_request_state() -> RequestState {
             description: sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
             serialized_value: serde_json::to_string(&back_left_airbag_seat_massager).unwrap(),
         },
-    );    
+    );
 
-    let back_center_airbag_seat_massager_instance_id = "back_center_airbag_seat_massager".to_string();
-    let back_center_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE = sdv::basic_airbag_seat_massager::TYPE {
-        instance_id: back_center_airbag_seat_massager_instance_id.clone(),
-        ..Default::default()
-    };
+    let back_center_airbag_seat_massager_instance_id =
+        "back_center_airbag_seat_massager".to_string();
+    let back_center_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
+        sdv::basic_airbag_seat_massager::TYPE {
+            instance_id: back_center_airbag_seat_massager_instance_id.clone(),
+            ..Default::default()
+        };
     result.instance_map.insert(
         back_center_airbag_seat_massager_instance_id.to_string(),
         InstanceData {
@@ -86,10 +92,11 @@ fn create_request_state() -> RequestState {
     );
 
     let back_right_airbag_seat_massager_instance_id = "back_right_airbag_seat_massager".to_string();
-    let back_right_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE = sdv::basic_airbag_seat_massager::TYPE {
-        instance_id: back_right_airbag_seat_massager_instance_id.clone(),
-        ..Default::default()
-    };
+    let back_right_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
+        sdv::basic_airbag_seat_massager::TYPE {
+            instance_id: back_right_airbag_seat_massager_instance_id.clone(),
+            ..Default::default()
+        };
     result.instance_map.insert(
         back_right_airbag_seat_massager_instance_id.to_string(),
         InstanceData {
@@ -154,7 +161,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("The Seat Massager Provider has started.");
 
-    let settings = provider_config::load_settings_with_config_filename("seat_massager_provider_settings");
+    let settings =
+        provider_config::load_settings_with_config_filename("seat_massager_provider_settings");
 
     let provider_authority = settings.provider_authority;
 
