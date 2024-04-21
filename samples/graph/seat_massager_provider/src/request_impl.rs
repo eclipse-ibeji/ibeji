@@ -17,7 +17,6 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio_retry::strategy::{jitter, ExponentialBackoff};
 use tokio_retry::Retry;
-use tonic;
 
 #[derive(Clone, Debug, Default)]
 pub struct InstanceData {
