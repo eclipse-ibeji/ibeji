@@ -4,15 +4,18 @@
 
 use digital_twin_model::sdv_v1 as sdv;
 use env_logger::{Builder, Target};
-use log::{debug, info, LevelFilter};
+use log::{info, LevelFilter};
+use rand::rngs::StdRng;
+use rand::Rng; // trait needed for gen_range
+use rand::SeedableRng; // trait needed to initialize StdRng
 use samples_common::consumer_config;
 use samples_common::utils::retrieve_invehicle_digital_twin_uri;
 use samples_protobuf_data_access::digital_twin_graph::v1::digital_twin_graph::digital_twin_graph_client::DigitalTwinGraphClient;
-use samples_protobuf_data_access::digital_twin_graph::v1::digital_twin_graph::{FindRequest, GetRequest};
+use samples_protobuf_data_access::digital_twin_graph::v1::digital_twin_graph::{FindRequest, GetRequest, InvokeRequest};
 use tokio_retry::Retry;
 use tokio_retry::strategy::{ExponentialBackoff, jitter};
 
-/// Start the seat massage steps.
+/// Series of interactions with the digital twin.
 ///
 /// # Arguments
 /// `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
@@ -32,13 +35,10 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
     })
     .await?;
 
-    // Find vehicle instances.
+    // Find all vehicle instances.
     let find_vehicle_response = Retry::spawn(retry_strategy.clone(), || async {
-        // Make a local mutable copy for use only within this closure body.
         let mut client = client.clone();
-
         let request: FindRequest = FindRequest { model_id: sdv::vehicle::ID.to_string() };
-
         client
             .find(request)
             .await
@@ -46,7 +46,6 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
     })
     .await?;
     let find_vehicle_response_inner = find_vehicle_response.into_inner();
-
     if find_vehicle_response_inner.values.is_empty() {
         return Err("Unable to find vehicle instances".to_string());
     }
@@ -54,8 +53,9 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
     // For now, we will just use the first vehicle instance.
     let vehicle: sdv::vehicle::TYPE =
         serde_json::from_str(&find_vehicle_response_inner.values[0]).unwrap();
-    // info!("The vehicle is: {:?}", vehicle);
     info!("The vehicle's instance id is: {:?}", vehicle.instance_id);
+
+    // Get the cabin instance id.
     if vehicle.cabin.is_empty() {
         return Err("The vehicle does not have a cabin".to_string());
     }
@@ -64,23 +64,22 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
 
     // Get the cabin instance.
     let get_cabin_response = Retry::spawn(retry_strategy.clone(), || async {
-        // Make a local mutable copy for use only within this closure body.
         let mut client = client.clone();
-
         let request: GetRequest =
             GetRequest { instance_id: cabin_instance_id.clone(), member_path: "".to_string() };
-
         client
             .get(request.clone())
             .await
-            .map_err(|err_msg| format!("Unable to call get due to: {err_msg}"))
+            .map_err(|err_msg| format!("Unable to get the cabin instance due to: {err_msg}"))
     })
     .await?;
     let get_cabin_response_inner = get_cabin_response.into_inner();
 
-    let mut front_left_seat_instance_id_option: Option<String> = None;
+    // Deserialize the cabin instance.
     let cabin: sdv::cabin::TYPE = serde_json::from_str(&get_cabin_response_inner.value).unwrap();
-    // info!("The cabin is: {:?}", cabin);
+
+    // Find the front left seat instance id.
+    let mut front_left_seat_instance_id_option: Option<String> = None;
     for seat_relationship in cabin.seat.iter() {
         if (seat_relationship.seat_row == 1)
             && (seat_relationship.seat_position == sdv::cabin::seat::SEAT_POSITION_TYPE::left)
@@ -89,33 +88,30 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
             front_left_seat_instance_id_option = Some(seat_relationship.instance_id.clone());
         }
     }
-
     if front_left_seat_instance_id_option.is_none() {
         return Err("The front left seat is not found".to_string());
     }
-
     let front_left_seat_instance_id = front_left_seat_instance_id_option.unwrap();
 
     // Get the seat instance.
     let get_seat_response = Retry::spawn(retry_strategy.clone(), || async {
-        // Make a local mutable copy for use only within this closure body.
         let mut client = client.clone();
-
         let request: GetRequest = GetRequest {
             instance_id: front_left_seat_instance_id.clone(),
             member_path: "".to_string(),
         };
-
         client
             .get(request.clone())
             .await
-            .map_err(|err_msg| format!("Unable to call get due to: {err_msg}"))
+            .map_err(|err_msg| format!("Unable to get the seat instance due to: {err_msg}"))
     })
     .await?;
     let get_seat_response_inner = get_seat_response.into_inner();
 
+    // Deserialize the seat instance.
     let seat: sdv::seat::TYPE = serde_json::from_str(&get_seat_response_inner.value).unwrap();
-    // info!("The seat is: {:?}", seat);
+
+    // Get the seat massager instance id.
     if seat.seat_massager.is_empty() {
         return Err("The seat does not have a seat massage".to_string());
     }
@@ -124,35 +120,62 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
 
     // Get the seat massager instance.
     let get_seat_massager_response = Retry::spawn(retry_strategy.clone(), || async {
-        // Make a local mutable copy for use only within this closure body.
         let mut client = client.clone();
-
         let request: GetRequest = GetRequest {
             instance_id: seat_massager_instance_id.clone(),
             member_path: "".to_string(),
         };
-
-        client
-            .get(request.clone())
-            .await
-            .map_err(|err_msg| format!("Unable to call get due to: {err_msg}"))
+        client.get(request.clone()).await.map_err(|err_msg| {
+            format!("Unable to get the seat massager instance due to: {err_msg}")
+        })
     })
     .await?;
     let get_seat_massager_response_inner = get_seat_massager_response.into_inner();
-
     let seat_massager_json: serde_json::Value =
         serde_json::from_str(&get_seat_massager_response_inner.value).unwrap();
-
     if seat_massager_json["@type"] != sdv::premium_airbag_seat_massager::ID {
         return Err(format!(
             "The seat massager instance is not of the expected model, instead it is a {0}",
             seat_massager_json["@type"]
         ));
     }
-    let seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+    let _seat_massager: sdv::premium_airbag_seat_massager::TYPE =
         serde_json::from_value(seat_massager_json.clone()).unwrap();
 
-    info!("The seat massager is: {:?}", seat_massager);
+    // Invoke the perform_step call on the seat massager instance.
+    let _perform_step_response = Retry::spawn(retry_strategy.clone(), || async {
+        let mut client = client.clone();
+
+        // Randomly generate the airbag adjustment field values.
+        let mut rng = StdRng::from_entropy();
+        let airbag_identifier = rng.gen_range(1..=15);
+        let inflation_level = rng.gen_range(1..=10);
+        let inflation_duration_in_seconds = rng.gen_range(1..=5);
+
+        let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
+            sdv::airbag_seat_massager::perform_step::request::TYPE {
+                step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
+                    airbag_identifier,
+                    inflation_level,
+                    inflation_duration_in_seconds,
+                }],
+                ..Default::default()
+            };
+
+        let request_payload_json: String = serde_json::to_string_pretty(&request_payload).unwrap();
+
+        let request: InvokeRequest = InvokeRequest {
+            instance_id: seat_massager_instance_id.clone(),
+            member_path: sdv::airbag_seat_massager::perform_step::NAME.to_string(),
+            request_payload: request_payload_json,
+        };
+
+        client
+            .invoke(request.clone())
+            .await
+            .map_err(|err_msg| format!("Unable to call get due to: {err_msg}"))
+    })
+    .await?;
 
     Ok(())
 }
@@ -174,7 +197,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     interact_with_digital_twin(invehicle_digital_twin_uri).await?;
 
-    debug!("The Consumer has completed.");
+    info!("The Consumer has completed.");
 
     Ok(())
 }

@@ -234,7 +234,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             }
 
             info!(
-                "Received an answer request.  The ask_id is '{}'. The payload is '{}",
+                "Received an answer request.  The ask_id is '{}'. The payload is '{}'",
                 answer_request.ask_id, answer_request.payload
             );
 

@@ -130,7 +130,10 @@ async fn register_seat_massagers(
 
         let endpoint_info = EndpointInfo {
             protocol: digital_twin_protocol::GRPC.to_string(),
-            operations: vec![digital_twin_operation::GET.to_string()],
+            operations: vec![
+                digital_twin_operation::GET.to_string(),
+                digital_twin_operation::INVOKE.to_string(),
+            ],
             uri: provider_uri.to_string(),
             context: instance_id.to_string(),
         };
