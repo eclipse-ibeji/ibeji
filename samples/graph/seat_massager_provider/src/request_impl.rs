@@ -36,6 +36,9 @@ pub struct RequestImpl {
 }
 
 impl RequestImpl {
+    const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
+    const MAX_RETRIES: usize = 10;
+
     /// Get implementation.
     ///
     /// # Arguments
@@ -57,9 +60,9 @@ impl RequestImpl {
         let state: Arc<Mutex<RequestState>> = self.state.clone();
 
         // Define a retry strategy.
-        let retry_strategy = ExponentialBackoff::from_millis(100)
+        let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
             .map(jitter) // add jitter to delays
-            .take(10); // limit to 10 retries
+            .take(Self::MAX_RETRIES);
 
         // Asynchronously perform the step.
         tokio::spawn(async move {
@@ -123,9 +126,9 @@ impl RequestImpl {
         let state: Arc<Mutex<RequestState>> = self.state.clone();
 
         // Define a retry strategy.
-        let retry_strategy = ExponentialBackoff::from_millis(100)
+        let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
             .map(jitter) // add jitter to delays
-            .take(10); // limit to 10 retries
+            .take(Self::MAX_RETRIES);
 
         // Asynchronously perform the step.
         tokio::spawn(async move {

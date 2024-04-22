@@ -21,16 +21,14 @@ const MAX_RETRIES: usize = 10;
 /// Connect to the digital twin graph service.
 ///
 /// # Arguments
-/// - `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
+/// * `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
 async fn connect_to_digital_twin_graph_service(
     invehicle_digital_twin_uri: String,
 ) -> Result<DigitalTwinGraphClient<tonic::transport::Channel>, String> {
-    // Define a retry strategy.
     let retry_strategy = ExponentialBackoff::from_millis(BACKOFF_BASE_DURATION_IN_MILLIS)
         .map(jitter) // add jitter to delays
         .take(MAX_RETRIES);
 
-    // Connect to the digital twin graph service.
     let client: DigitalTwinGraphClient<tonic::transport::Channel> =
         Retry::spawn(retry_strategy.clone(), || async {
             DigitalTwinGraphClient::connect(invehicle_digital_twin_uri.clone()).await.map_err(
@@ -47,8 +45,8 @@ async fn connect_to_digital_twin_graph_service(
 /// Find all instances of a model.
 ///
 /// # Arguments
-/// - `client` - The digital twin graph client.
-/// - `model_id` - The model id.
+/// * `client` - The digital twin graph client.
+/// * `model_id` - The model id.
 async fn find(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     model_id: String,
@@ -58,6 +56,7 @@ async fn find(
         .take(MAX_RETRIES);
 
     let request = FindRequest { model_id: model_id.clone() };
+
     let find_vehicle_response = Retry::spawn(retry_strategy.clone(), || async {
         let mut client = client.clone();
         client
@@ -65,21 +64,18 @@ async fn find(
             .await
             .map_err(|err_msg| format!("Unable to call find due to: {err_msg}"))
     })
-    .await?;
-    let find_vehicle_response_inner = find_vehicle_response.into_inner();
-    if find_vehicle_response_inner.values.is_empty() {
-        return Err("Unable to find vehicle instances".to_string());
-    }
+    .await?
+    .into_inner();
 
-    Ok(find_vehicle_response_inner)
+    Ok(find_vehicle_response)
 }
 
 /// Get an instance.
 ///
 /// # Arguments
-/// - `client` - The digital twin graph client.
-/// - `instance_id` - The instance id.
-/// - `member_path` - The member path.
+/// * `client` - The digital twin graph client.
+/// * `instance_id` - The instance id.
+/// * `member_path` - The member path.
 async fn get(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     instance_id: String,
@@ -90,51 +86,55 @@ async fn get(
         .take(MAX_RETRIES);
 
     let request = GetRequest { instance_id: instance_id.clone(), member_path: member_path.clone() };
+
     let get_response = Retry::spawn(retry_strategy.clone(), || async {
         let mut client = client.clone();
+
         client
             .get(request.clone())
             .await
             .map_err(|err_msg| format!("Unable to get the instance due to: {err_msg}"))
     })
-    .await?;
+    .await?
+    .into_inner();
 
-    Ok(get_response.into_inner())
+    Ok(get_response)
 }
 
 /// Invoke an instance's operation.
 ///
 /// # Arguments
-/// - `client` - The digital twin graph client.
-/// - `instance_id` - The instance id.
-/// - `member_path` - The member path.
-/// - `request_payload` - The request payload.
+/// * `client` - The digital twin graph client.
+/// * `instance_id` - The instance id.
+/// * `member_path` - The member path.
+/// * `request_payload` - The request payload.
 async fn invoke(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     instance_id: String,
     member_path: String,
     request_payload: String,
 ) -> Result<InvokeResponse, String> {
+    let mut client = client.clone();
+
     let request = InvokeRequest {
         instance_id: instance_id.clone(),
         member_path: member_path.clone(),
         request_payload: request_payload.clone(),
     };
 
-    let mut client = client.clone();
-
     let invoke_response = client
         .invoke(request.clone())
         .await
-        .map_err(|err_msg| format!("Unable to invoke the instance due to: {err_msg}"))?;
+        .map_err(|err_msg| format!("Unable to invoke the instance due to: {err_msg}"))?
+        .into_inner();
 
-    Ok(invoke_response.into_inner())
+    Ok(invoke_response)
 }
 
 /// Perform a series of interactions with a vehicle digital twin.
 ///
 /// # Arguments
-/// - `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
+/// * `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
 async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Result<(), String> {
     // Connect to the digital twin graph service.
     let client: DigitalTwinGraphClient<tonic::transport::Channel> =
