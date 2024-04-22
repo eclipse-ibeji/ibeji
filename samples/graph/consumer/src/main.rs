@@ -62,7 +62,7 @@ async fn find(
         client
             .find(request.clone())
             .await
-            .map_err(|err_msg| format!("Unable to call find due to: {err_msg}"))
+            .map_err(|err_msg| format!("Unable to call find the instances due to: {err_msg}"))
     })
     .await?
     .into_inner();
@@ -125,7 +125,7 @@ async fn invoke(
     let invoke_response = client
         .invoke(request.clone())
         .await
-        .map_err(|err_msg| format!("Unable to invoke the instance due to: {err_msg}"))?
+        .map_err(|err_msg| format!("Unable to invoke the instance's operation due to: {err_msg}"))?
         .into_inner();
 
     Ok(invoke_response)
