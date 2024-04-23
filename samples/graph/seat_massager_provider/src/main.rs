@@ -42,10 +42,7 @@ fn add_entry_to_instance_map(
     description: String,
     serialized_value: String,
 ) {
-    instance_map.insert(
-        instance_id,
-        InstanceData { model_id, description, serialized_value, },
-    );
+    instance_map.insert(instance_id, InstanceData { model_id, description, serialized_value });
 }
 
 /// Create the provider's state.
