@@ -18,21 +18,27 @@ use std::sync::Arc;
 use tokio_retry::strategy::{jitter, ExponentialBackoff};
 use tokio_retry::Retry;
 
+/// Instance data.
 #[derive(Clone, Debug, Default)]
 pub struct InstanceData {
+    /// Model ID.
     pub model_id: String,
+    /// Description.
     pub description: String,
+    /// Serialized value (using JSON-LD as a string).
     pub serialized_value: String,
 }
 
+/// The provider's state.
 #[derive(Debug, Default)]
-pub struct RequestState {
+pub struct ProviderState {
+    /// Maps an instance id to its associated instance data.
     pub instance_map: HashMap<String, InstanceData>,
 }
 
 #[derive(Debug, Default)]
 pub struct RequestImpl {
-    pub state: Arc<Mutex<RequestState>>,
+    pub provider_state: Arc<Mutex<ProviderState>>,
 }
 
 impl RequestImpl {
@@ -57,7 +63,7 @@ impl RequestImpl {
             ));
         }
 
-        let state: Arc<Mutex<RequestState>> = self.state.clone();
+        let state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
 
         // Define a retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
@@ -68,7 +74,7 @@ impl RequestImpl {
         tokio::spawn(async move {
             let response_payload_json: String = {
                 let instance_data: InstanceData = {
-                    let lock: MutexGuard<RequestState> = state.lock();
+                    let lock: MutexGuard<ProviderState> = state.lock();
                     match lock.instance_map.get(&targeted_payload_json.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {
@@ -123,7 +129,7 @@ impl RequestImpl {
             ));
         }
 
-        let state: Arc<Mutex<RequestState>> = self.state.clone();
+        let state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
 
         // Define a retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
@@ -134,7 +140,7 @@ impl RequestImpl {
         tokio::spawn(async move {
             let instance_value_json_str: String = {
                 let instance_data: InstanceData = {
-                    let lock: MutexGuard<RequestState> = state.lock();
+                    let lock: MutexGuard<ProviderState> = state.lock();
                     match lock.instance_map.get(&targeted_payload_json.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {

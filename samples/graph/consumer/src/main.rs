@@ -16,7 +16,7 @@ use tokio_retry::Retry;
 use tokio_retry::strategy::{ExponentialBackoff, jitter};
 
 const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
-const MAX_RETRIES: usize = 10;
+const MAX_RETRIES: usize = 100;
 
 /// Connect to the digital twin graph service.
 ///
