@@ -44,7 +44,7 @@ fn add_entry_to_instance_map(
 ) {
     instance_map.insert(
         instance_id,
-        InstanceData { model_id, description, serialized_value: serialized_value },
+        InstanceData { model_id, description, serialized_value },
     );
 }
 
