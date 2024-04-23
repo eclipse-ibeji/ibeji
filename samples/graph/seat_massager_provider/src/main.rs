@@ -23,7 +23,7 @@ use tonic::{transport::Server, Status};
 use tokio_retry::Retry;
 use tokio_retry::strategy::{ExponentialBackoff, jitter};
 
-use crate::request_impl::{InstanceData, RequestImpl, ProviderState};
+use crate::request_impl::{InstanceData, ProviderState, RequestImpl};
 
 const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
 const MAX_RETRIES: usize = 100;
@@ -35,14 +35,17 @@ const MAX_RETRIES: usize = 100;
 /// * `model_id` - The model id.
 /// * `description` - The description.
 /// * `serialized_value` - The serialized value.
-fn add_entry_to_instance_map(instance_map: &mut HashMap<String, InstanceData>, instance_id: String, model_id: String, description: String, serialized_value: String) {
+fn add_entry_to_instance_map(
+    instance_map: &mut HashMap<String, InstanceData>,
+    instance_id: String,
+    model_id: String,
+    description: String,
+    serialized_value: String,
+) {
     instance_map.insert(
-    instance_id,
-    InstanceData {
-        model_id,
-        description,
-        serialized_value: serialized_value,
-    });
+        instance_id,
+        InstanceData { model_id, description, serialized_value: serialized_value },
+    );
 }
 
 /// Create the provider's state.
@@ -86,8 +89,8 @@ fn create_provider_state() -> ProviderState {
         sdv::basic_airbag_seat_massager::TYPE {
             instance_id: back_right_airbag_seat_massager_instance_id.clone(),
             ..Default::default()
-        };        
-        
+        };
+
     // Build the instance map.
 
     add_entry_to_instance_map(
@@ -95,35 +98,40 @@ fn create_provider_state() -> ProviderState {
         front_left_airbag_seat_massager_instance_id.clone(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
         sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
-        serde_json::to_string(&front_left_airbag_seat_massager).unwrap());
- 
+        serde_json::to_string(&front_left_airbag_seat_massager).unwrap(),
+    );
+
     add_entry_to_instance_map(
         &mut result.instance_map,
         front_right_airbag_seat_massager_instance_id.clone(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
         sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
-        serde_json::to_string(&front_right_airbag_seat_massager).unwrap());
-            
+        serde_json::to_string(&front_right_airbag_seat_massager).unwrap(),
+    );
+
     add_entry_to_instance_map(
         &mut result.instance_map,
         back_left_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
-        serde_json::to_string(&back_left_airbag_seat_massager).unwrap());
+        serde_json::to_string(&back_left_airbag_seat_massager).unwrap(),
+    );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
         back_center_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
-        serde_json::to_string(&back_center_airbag_seat_massager).unwrap());
+        serde_json::to_string(&back_center_airbag_seat_massager).unwrap(),
+    );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
         back_right_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
-        serde_json::to_string(&back_right_airbag_seat_massager).unwrap());
+        serde_json::to_string(&back_right_airbag_seat_massager).unwrap(),
+    );
 
     result
 }
@@ -181,7 +189,7 @@ async fn register_seat_massagers(
         });
 
         info!("Sending a register request to the In-Vehicle Digital Twin Service URI {invehicle_digital_twin_uri}");
-        
+
         let response: RegisterResponse = client
             .register(request)
             .await
