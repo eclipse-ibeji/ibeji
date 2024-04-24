@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use digital_twin_graph::TargetedPayload;
-use log::{debug, error, info, warn};
+use log::{debug, info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::digital_twin_operation;
 use samples_protobuf_data_access::async_rpc::v1::request::{
@@ -14,6 +14,8 @@ use samples_protobuf_data_access::async_rpc::v1::respond::{
 };
 use std::collections::HashMap;
 use std::sync::Arc;
+use tokio_retry::strategy::{jitter, ExponentialBackoff};
+use tokio_retry::Retry;
 
 #[derive(Clone, Debug, Default)]
 pub struct InstanceData {
@@ -23,13 +25,85 @@ pub struct InstanceData {
 }
 
 #[derive(Debug, Default)]
-pub struct RequestState {
+pub struct ProviderState {
     pub instance_map: HashMap<String, InstanceData>,
 }
 
 #[derive(Debug, Default)]
 pub struct RequestImpl {
-    pub state: Arc<Mutex<RequestState>>,
+    pub provider_state: Arc<Mutex<ProviderState>>,
+}
+impl RequestImpl {
+    const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
+    const MAX_RETRIES: usize = 100;
+
+    /// Get implementation.
+    ///
+    /// # Arguments
+    /// * `respond_uri` - Respond URI.
+    /// * `ask_id` - Ask ID.
+    /// * `targeted_payload` - Targeted payload.
+    async fn get(
+        &self,
+        respond_uri: String,
+        ask_id: String,
+        targeted_payload: TargetedPayload,
+    ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
+        if !targeted_payload.payload.is_empty() {
+            return Err(tonic::Status::invalid_argument(
+                "Unexpected payload, it should be empty".to_string(),
+            ));
+        }
+
+        let state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
+
+        // Define a retry strategy.
+        let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
+            .map(jitter) // add jitter to delays
+            .take(Self::MAX_RETRIES);
+
+        // Asynchronously perform the get.
+        tokio::spawn(async move {
+            // Get the answer's payload.
+            let answer_payload: String = {
+                let instance_data: InstanceData = {
+                    let lock: MutexGuard<ProviderState> = state.lock();
+                    match lock.instance_map.get(&targeted_payload.instance_id) {
+                        Some(instance_data) => instance_data.clone(),
+                        None => {
+                            return Err(format!(
+                                "Instance not found for instance id '{}'",
+                                targeted_payload.instance_id
+                            ));
+                        }
+                    }
+                };
+
+                instance_data.serialized_value.clone()
+            };
+
+            // Send the answer to the consumer.
+            Retry::spawn(retry_strategy, || async {
+                // Connect to the consumer.
+                let mut client = RespondClient::connect(respond_uri.clone())
+                    .await
+                    .map_err(|err_msg| format!("Unable to connect due to: {err_msg}"))?;
+
+                // Send the answer to the consumer.
+                let answer_request = tonic::Request::new(AnswerRequest {
+                    ask_id: ask_id.clone(),
+                    payload: answer_payload.clone(),
+                });
+                client
+                    .answer(answer_request)
+                    .await
+                    .map_err(|status| format!("Answer failed: {status:?}"))
+            })
+            .await
+        });
+
+        Ok(tonic::Response::new(AskResponse {}))
+    }
 }
 
 #[tonic::async_trait]
@@ -54,65 +128,18 @@ impl Request for RequestImpl {
         // Deserialize the targeted payload.
         let targeted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
 
-        info!("  instance_id: {}", targeted_payload_json.instance_id);
-        info!("  member_path: {}", targeted_payload_json.member_path);
-        info!("  operation: {}", targeted_payload_json.operation);
+        debug!("  instance_id: {}", targeted_payload_json.instance_id);
+        debug!("  member_path: {}", targeted_payload_json.member_path);
+        debug!("  operation: {}", targeted_payload_json.operation);
 
-        // Check to make sure that the targeted operation is a GET.
-        if targeted_payload_json.operation != digital_twin_operation::GET {
-            return Err(tonic::Status::invalid_argument(format!(
+        if targeted_payload_json.operation == digital_twin_operation::GET {
+            self.get(respond_uri, ask_id, targeted_payload_json).await
+        } else {
+            Err(tonic::Status::invalid_argument(format!(
                 "Unexpected operation '{}'",
                 targeted_payload_json.operation
-            )));
+            )))
         }
-
-        if !targeted_payload_json.payload.is_empty() {
-            return Err(tonic::Status::invalid_argument(format!(
-                "Unexpected payload, it should be empty, not '{}'",
-                targeted_payload_json.payload
-            )));
-        }
-
-        let state: Arc<Mutex<RequestState>> = self.state.clone();
-
-        // Asynchronously perform the step.
-        tokio::spawn(async move {
-            let instance_data: InstanceData = {
-                let lock: MutexGuard<RequestState> = state.lock();
-                match lock.instance_map.get(&targeted_payload_json.instance_id) {
-                    Some(instance_data) => instance_data.clone(),
-                    None => {
-                        error!(
-                            "Instance not found for instance id '{}'",
-                            targeted_payload_json.instance_id
-                        );
-                        return;
-                    }
-                }
-            };
-
-            let response_payload_json = instance_data.serialized_value.clone();
-
-            let client_result = RespondClient::connect(respond_uri).await;
-            if let Err(error_message) = client_result {
-                error!("Unable to connect due to {error_message}");
-                return;
-            }
-            let mut client = client_result.unwrap();
-
-            let answer_request =
-                tonic::Request::new(AnswerRequest { ask_id, payload: response_payload_json });
-
-            // Send the answer.
-            let response = client.answer(answer_request).await;
-            if let Err(status) = response {
-                error!("Answer failed: {status:?}");
-            }
-        });
-
-        debug!("Completed the ask request.");
-
-        Ok(tonic::Response::new(AskResponse {}))
     }
 
     /// Notify implementation.

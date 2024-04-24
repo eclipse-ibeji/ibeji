@@ -43,21 +43,21 @@ pub struct RequestImpl {
 
 impl RequestImpl {
     const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
-    const MAX_RETRIES: usize = 10;
+    const MAX_RETRIES: usize = 100;
 
     /// Get implementation.
     ///
     /// # Arguments
     /// * `respond_uri` - Respond URI.
     /// * `ask_id` - Ask ID.
-    /// * `targeted_payload_json` - Targeted payload.
+    /// * `targeted_payload` - Targeted payload.
     async fn get(
         &self,
         respond_uri: String,
         ask_id: String,
-        targeted_payload_json: TargetedPayload,
+        targeted_payload: TargetedPayload,
     ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
-        if !targeted_payload_json.payload.is_empty() {
+        if !targeted_payload.payload.is_empty() {
             return Err(tonic::Status::invalid_argument(
                 "Unexpected payload, it should be empty".to_string(),
             ));
@@ -70,17 +70,18 @@ impl RequestImpl {
             .map(jitter) // add jitter to delays
             .take(Self::MAX_RETRIES);
 
-        // Asynchronously perform the step.
+        // Asynchronously perform the get.
         tokio::spawn(async move {
-            let response_payload_json: String = {
+            // Get the answer's payload.
+            let answer_payload: String = {
                 let instance_data: InstanceData = {
                     let lock: MutexGuard<ProviderState> = state.lock();
-                    match lock.instance_map.get(&targeted_payload_json.instance_id) {
+                    match lock.instance_map.get(&targeted_payload.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {
                             return Err(format!(
                                 "Instance not found for instance id '{}'",
-                                targeted_payload_json.instance_id
+                                targeted_payload.instance_id
                             ));
                         }
                     }
@@ -89,6 +90,7 @@ impl RequestImpl {
                 instance_data.serialized_value.clone()
             };
 
+            // Send the answer to the consumer.
             Retry::spawn(retry_strategy, || async {
                 // Connect to the consumer.
                 let mut client = RespondClient::connect(respond_uri.clone())
@@ -98,7 +100,7 @@ impl RequestImpl {
                 // Send the answer to the consumer.
                 let answer_request = tonic::Request::new(AnswerRequest {
                     ask_id: ask_id.clone(),
-                    payload: response_payload_json.clone(),
+                    payload: answer_payload.clone(),
                 });
                 client
                     .answer(answer_request)
@@ -116,14 +118,14 @@ impl RequestImpl {
     /// # Arguments
     /// * `respond_uri` - Respond URI.
     /// * `ask_id` - Ask ID.
-    /// * `targeted_payload_json` - Targeted payload.
+    /// * `targeted_payload` - Targeted payload.
     async fn invoke(
         &self,
         respond_uri: String,
         ask_id: String,
-        targeted_payload_json: TargetedPayload,
+        targeted_payload: TargetedPayload,
     ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
-        if targeted_payload_json.payload.is_empty() {
+        if targeted_payload.payload.is_empty() {
             return Err(tonic::Status::invalid_argument(
                 "Unexpected payload, it should NOT be empty".to_string(),
             ));
@@ -141,12 +143,12 @@ impl RequestImpl {
             let instance_value_json_str: String = {
                 let instance_data: InstanceData = {
                     let lock: MutexGuard<ProviderState> = state.lock();
-                    match lock.instance_map.get(&targeted_payload_json.instance_id) {
+                    match lock.instance_map.get(&targeted_payload.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {
                             return Err(format!(
                                 "Instance not found for instance id '{}'",
-                                targeted_payload_json.instance_id
+                                targeted_payload.instance_id
                             ));
                         }
                     }
@@ -167,7 +169,7 @@ impl RequestImpl {
             if !supported_method {
                 return Err(format!(
                     "The instance with the instance id '{}' does not support the operation '{}'",
-                    targeted_payload_json.instance_id, targeted_payload_json.operation
+                    targeted_payload.instance_id, targeted_payload.operation
                 ));
             }
 

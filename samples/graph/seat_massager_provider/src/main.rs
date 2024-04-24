@@ -197,14 +197,8 @@ async fn register_seat_massagers(
     .await;
 
     match result {
-        Ok(_) => {
-            info!("The registration was successful.");
-            Ok(())
-        }
-        Err(status) => {
-            info!("The registration failed with the status '{}'", status);
-            Err(status)
-        }
+        Ok(_) => Ok(()),
+        Err(status) => Err(status),
     }
 }
 
