@@ -169,7 +169,7 @@ impl RequestImpl {
             if (instance_json["@type"] == sdv::premium_airbag_seat_massager::ID
                 || instance_json["@type"] == sdv::basic_airbag_seat_massager::ID)
                 && targeted_payload.member_path
-                    == sdv::airbag_seat_massager::perform_step::NAME.to_string()
+                    == sdv::airbag_seat_massager::perform_step::NAME
             {
                 supported_method = true;
 
