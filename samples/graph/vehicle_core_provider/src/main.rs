@@ -215,7 +215,7 @@ fn create_provider_state() -> ProviderState {
     result
 }
 
-/// Register the vehicle parts
+/// Register the vehicle parts.
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
