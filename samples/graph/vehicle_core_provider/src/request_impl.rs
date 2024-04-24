@@ -89,11 +89,13 @@ impl RequestImpl {
                     .await
                     .map_err(|err_msg| format!("Unable to connect due to: {err_msg}"))?;
 
-                // Send the answer to the consumer.
+                // Prepare the answer request.
                 let answer_request = tonic::Request::new(AnswerRequest {
                     ask_id: ask_id.clone(),
                     payload: answer_payload.clone(),
                 });
+
+                // Send the answer to the consumer.
                 client
                     .answer(answer_request)
                     .await

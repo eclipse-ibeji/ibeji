@@ -97,11 +97,13 @@ impl RequestImpl {
                     .await
                     .map_err(|err_msg| format!("Unable to connect due to: {err_msg}"))?;
 
-                // Send the answer to the consumer.
+                // Prepare the answer request.
                 let answer_request = tonic::Request::new(AnswerRequest {
                     ask_id: ask_id.clone(),
                     payload: answer_payload.clone(),
                 });
+
+                // Send the answer to the consumer.
                 client
                     .answer(answer_request)
                     .await
@@ -157,13 +159,34 @@ impl RequestImpl {
                 instance_data.serialized_value.clone()
             };
 
-            // Check that the instance can handle the operation.
             let instance_json: serde_json::Value =
                 serde_json::from_str(&instance_value_json_str).unwrap();
 
+            let mut response_payload: String = "".to_string();
+
             let mut supported_method: bool = false;
-            if instance_json["@type"] == sdv::premium_airbag_seat_massager::ID {
+
+            if (instance_json["@type"] == sdv::premium_airbag_seat_massager::ID
+                || instance_json["@type"] == sdv::basic_airbag_seat_massager::ID)
+                && targeted_payload.member_path
+                    == sdv::airbag_seat_massager::perform_step::NAME.to_string()
+            {
                 supported_method = true;
+
+                let response: sdv::airbag_seat_massager::perform_step::response::TYPE =
+                    sdv::airbag_seat_massager::perform_step::response::TYPE {
+                        status: sdv::airbag_seat_massager::status::TYPE {
+                            code: 200,
+                            message: "The step was performed successfully".to_string(),
+                        },
+                        ..Default::default()
+                    };
+                response_payload = serde_json::to_string(&response).unwrap();
+
+                info!(
+                    "Executed the operation {} on instance {}",
+                    targeted_payload.member_path, targeted_payload.instance_id
+                );
             }
 
             if !supported_method {
@@ -179,11 +202,13 @@ impl RequestImpl {
                     .await
                     .map_err(|err_msg| format!("Unable to connect due to: {err_msg}"))?;
 
-                // Send the answer to the consumer.
+                // Prepare the answer request.
                 let answer_request = tonic::Request::new(AnswerRequest {
                     ask_id: ask_id.clone(),
-                    payload: "".to_string(),
+                    payload: response_payload.clone(),
                 });
+
+                // Send the answer to the consumer.
                 client
                     .answer(answer_request)
                     .await
