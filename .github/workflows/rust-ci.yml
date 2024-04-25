@@ -64,8 +64,8 @@ jobs:
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - name: Build
-        # Build the project with the `managed_subscribe` and `digital_twin_graph` features enabled.
+        # Build the project with the `managed_subscribe`, `digital_twin_graph` and `digital_twin_registry` features enabled.
         run: cargo build --features "managed_subscribe,digital_twin_graph,digital_twin_registry"
       - name: Test
-        # Test the project with the `managed_subscribe` and `digital_twin_graph` features enabled.
+        # Test the project with the `managed_subscribe`, `digital_twin_graph` and `digital_twin_registry` features enabled.
         run: cargo test --features "managed_subscribe,digital_twin_graph,digital_twin_registry"

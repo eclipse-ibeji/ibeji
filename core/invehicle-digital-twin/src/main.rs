@@ -113,32 +113,32 @@ where
     let mut server: GrpcServer<Identity> = GrpcServer::new(addr);
 
     #[cfg(feature = "managed_subscribe")]
-    // (1) Adds the Managed Subscribe module to the service.
+    // Adds the Managed Subscribe module to the service.
     let mut server = {
-        // (2) Initialize the Managed Subscribe module, which implements GrpcModule.
+        // Initialize the Managed Subscribe module, which implements GrpcModule.
         let managed_subscribe_module = ManagedSubscribeModule::new().await.map_err(|error| {
             error!("Unable to create Managed Subscribe module.");
             error
         })?;
 
-        // (3) Create interceptor layer to be added to the server.
+        // Create interceptor layer to be added to the server.
         let managed_subscribe_layer =
             GrpcInterceptorLayer::new(Box::new(managed_subscribe_module.create_interceptor()));
 
-        // (4) Add the interceptor(s) to the middleware stack.
+        // Add the interceptor(s) to the middleware stack.
         let current_middleware = server.middleware.clone();
         let new_middleware = current_middleware.layer(managed_subscribe_layer);
 
         info!("Initialized Managed Subscribe module.");
 
-        // (5) Add the module with the updated middleware stack to the server.
+        // Add the module with the updated middleware stack to the server.
         server.add_module(new_middleware, Box::new(managed_subscribe_module))
     };
 
     #[cfg(feature = "digital_twin_graph")]
-    // (1) Adds the Managed Subscribe module to the service.
+    // Adds the Digital Twin Graph module to the service.
     let mut server = {
-        // (2) Initialize the Digital Twin Graph module, which implements GrpcModule.
+        // Initialize the Digital Twin Graph module, which implements GrpcModule.
         let digital_twin_graph_module = DigitalTwinGraphModule::new().await.map_err(|error| {
             error!("Unable to create Digital Twin Graph module.");
             error
@@ -146,14 +146,14 @@ where
 
         info!("Initialized Digital Twin Graph module.");
 
-        // (3) Add the module with the updated middleware stack to the server.
+        // Add the module with the updated middleware stack to the server.
         server.add_module(server.middleware.clone(), Box::new(digital_twin_graph_module))
     };
 
     #[cfg(feature = "digital_twin_registry")]
-    // (1) Adds the Managed Subscribe module to the service.
+    // Adds the Digital Twin Registry module to the service.
     let mut server = {
-        // (2) Initialize the Digital Twin Registry module, which implements GrpcModule.
+        // Initialize the Digital Twin Registry module, which implements GrpcModule.
         let digital_twin_registry_module =
             DigitalTwinRegistryModule::new().await.map_err(|error| {
                 error!("Unable to create Digital Twin Registry module.");
@@ -162,7 +162,7 @@ where
 
         info!("Initialized Digital Twin Registry module.");
 
-        // (3) Add the module with the updated middleware stack to the server.
+        // Add the module with the updated middleware stack to the server.
         server.add_module(server.middleware.clone(), Box::new(digital_twin_registry_module))
     };
 
