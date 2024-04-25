@@ -225,13 +225,14 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
     // Serialize the request payload to a JSON string.
     let request_payload_json: String = serde_json::to_string_pretty(&request_payload).unwrap();
     // Invoke the perform_step operation.
-    let _perform_step_response: InvokeResponse = invoke(
+    let perform_step_response: InvokeResponse = invoke(
         client.clone(),
         seat_massager_instance_id.clone(),
         sdv::airbag_seat_massager::perform_step::NAME.to_string(),
         request_payload_json.clone(),
     )
     .await?;
+    info!("The perform_step operation response is:\n{}", perform_step_response.response_payload);
 
     Ok(())
 }

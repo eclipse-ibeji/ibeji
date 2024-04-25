@@ -4,7 +4,7 @@
 
 use digital_twin_graph::TargetedPayload;
 use digital_twin_model::sdv_v1 as sdv;
-use log::{debug, info, warn};
+use log::{info, warn};
 use parking_lot::{Mutex, MutexGuard};
 use samples_common::constants::digital_twin_operation;
 use samples_protobuf_data_access::async_rpc::v1::request::{
@@ -21,7 +21,7 @@ use tokio_retry::Retry;
 /// Instance data.
 #[derive(Clone, Debug, Default)]
 pub struct InstanceData {
-    /// Model ID.
+    /// Model Id.
     pub model_id: String,
     /// Description.
     pub description: String,
@@ -38,9 +38,11 @@ pub struct ProviderState {
 
 #[derive(Debug, Default)]
 pub struct RequestImpl {
+    /// Provider state.
     pub provider_state: Arc<Mutex<ProviderState>>,
 }
 
+/// The implementation for the Request interface, which is used to handle requests from the consumer.
 impl RequestImpl {
     const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
     const MAX_RETRIES: usize = 100;
@@ -49,7 +51,7 @@ impl RequestImpl {
     ///
     /// # Arguments
     /// * `respond_uri` - Respond URI.
-    /// * `ask_id` - Ask ID.
+    /// * `ask_id` - Ask Id.
     /// * `targeted_payload` - Targeted payload.
     async fn get(
         &self,
@@ -63,7 +65,7 @@ impl RequestImpl {
             ));
         }
 
-        let state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
+        let provider_state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
 
         // Define a retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
@@ -72,10 +74,10 @@ impl RequestImpl {
 
         // Asynchronously perform the get.
         tokio::spawn(async move {
-            // Get the answer's payload.
-            let answer_payload: String = {
+            // Retrieve the instance's value (it will be represented as a JSON string).
+            let instance_value: String = {
                 let instance_data: InstanceData = {
-                    let lock: MutexGuard<ProviderState> = state.lock();
+                    let lock: MutexGuard<ProviderState> = provider_state.lock();
                     match lock.instance_map.get(&targeted_payload.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {
@@ -100,7 +102,7 @@ impl RequestImpl {
                 // Prepare the answer request.
                 let answer_request = tonic::Request::new(AnswerRequest {
                     ask_id: ask_id.clone(),
-                    payload: answer_payload.clone(),
+                    payload: instance_value.clone(),
                 });
 
                 // Send the answer to the consumer.
@@ -121,6 +123,7 @@ impl RequestImpl {
     /// * `respond_uri` - Respond URI.
     /// * `ask_id` - Ask ID.
     /// * `targeted_payload` - Targeted payload.
+    #[allow(unused_assignments)]
     async fn invoke(
         &self,
         respond_uri: String,
@@ -133,7 +136,7 @@ impl RequestImpl {
             ));
         }
 
-        let state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
+        let provider_state: Arc<Mutex<ProviderState>> = self.provider_state.clone();
 
         // Define a retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
@@ -142,9 +145,10 @@ impl RequestImpl {
 
         // Asynchronously perform the step.
         tokio::spawn(async move {
-            let instance_value_json_str: String = {
+            // Retrieve the instance's value (it will be represented as a JSON string).
+            let instance_value: String = {
                 let instance_data: InstanceData = {
-                    let lock: MutexGuard<ProviderState> = state.lock();
+                    let lock: MutexGuard<ProviderState> = provider_state.lock();
                     match lock.instance_map.get(&targeted_payload.instance_id) {
                         Some(instance_data) => instance_data.clone(),
                         None => {
@@ -159,42 +163,25 @@ impl RequestImpl {
                 instance_data.serialized_value.clone()
             };
 
-            let instance_json: serde_json::Value =
-                serde_json::from_str(&instance_value_json_str).unwrap();
+            // Deserialize the instance value JSON.
+            let instance_value_json: serde_json::Value =
+                serde_json::from_str(&instance_value).unwrap();
 
-            let mut response_payload: String = "".to_string();
+            let mut response_payload: String = String::new();
 
-            let mut supported_method: bool = false;
-
-            if (instance_json["@type"] == sdv::premium_airbag_seat_massager::ID
-                || instance_json["@type"] == sdv::basic_airbag_seat_massager::ID)
+            if (instance_value_json["@type"] == sdv::premium_airbag_seat_massager::ID
+                || instance_value_json["@type"] == sdv::basic_airbag_seat_massager::ID)
                 && targeted_payload.member_path == sdv::airbag_seat_massager::perform_step::NAME
             {
-                supported_method = true;
-
-                let response: sdv::airbag_seat_massager::perform_step::response::TYPE =
-                    sdv::airbag_seat_massager::perform_step::response::TYPE {
-                        status: sdv::airbag_seat_massager::status::TYPE {
-                            code: 200,
-                            message: "The step was performed successfully".to_string(),
-                        },
-                        ..Default::default()
-                    };
-                response_payload = serde_json::to_string(&response).unwrap();
-
-                info!(
-                    "Executed the operation {} on instance {}",
-                    targeted_payload.member_path, targeted_payload.instance_id
-                );
-            }
-
-            if !supported_method {
+                response_payload = Self::perform_step(&targeted_payload)?;
+            } else {
                 return Err(format!(
-                    "The instance with the instance id '{}' does not support the operation '{}'",
+                    "The instance with the instance id '{}' does not support the command '{}'",
                     targeted_payload.instance_id, targeted_payload.operation
                 ));
             }
 
+            // Send the answer to the consumer.
             Retry::spawn(retry_strategy, || async {
                 // Connect to the consumer.
                 let mut client = RespondClient::connect(respond_uri.clone())
@@ -218,6 +205,27 @@ impl RequestImpl {
 
         Ok(tonic::Response::new(AskResponse {}))
     }
+
+    /// Perform step implementation.
+    /// # Arguments
+    /// * `targeted_payload` - Targeted payload.
+    fn perform_step(targeted_payload: &TargetedPayload) -> Result<String, String> {
+        info!(
+            "Executed the operation {} on instance {}",
+            targeted_payload.member_path, targeted_payload.instance_id
+        );
+
+        let response = sdv::airbag_seat_massager::perform_step::response::TYPE {
+            status: sdv::airbag_seat_massager::status::TYPE {
+                code: 200,
+                message: "The step was performed successfully".to_string(),
+            },
+            ..Default::default()
+        };
+
+        serde_json::to_string(&response)
+            .map_err(|e| format!("Failed to serialize the response: {}", e))
+    }
 }
 
 #[tonic::async_trait]
@@ -230,30 +238,30 @@ impl Request for RequestImpl {
         &self,
         request: tonic::Request<AskRequest>,
     ) -> Result<tonic::Response<AskResponse>, tonic::Status> {
-        let request_inner = request.into_inner();
-        let respond_uri: String = request_inner.respond_uri.clone();
-        let ask_id: String = request_inner.ask_id.clone();
-        let payload: String = request_inner.payload.clone();
+        let ask_request: AskRequest = request.into_inner();
 
-        info!("Received an ask request");
-        info!("  respond_uri: {respond_uri}");
-        info!("  ask_id: {ask_id}");
+        info!("Received an ask request:");
+        info!("  respond_uri: {}", ask_request.respond_uri);
+        info!("  ask_id: {}", ask_request.ask_id);
 
         // Deserialize the targeted payload.
-        let targeted_payload_json: TargetedPayload = serde_json::from_str(&payload).unwrap();
+        let targeted_payload_json: TargetedPayload =
+            serde_json::from_str(&ask_request.payload).unwrap();
 
-        debug!("  instance_id: {}", targeted_payload_json.instance_id);
-        debug!("  member_path: {}", targeted_payload_json.member_path);
-        debug!("  operation: {}", targeted_payload_json.operation);
+        info!("  instance_id: {}", targeted_payload_json.instance_id);
+        info!("  member_path: {}", targeted_payload_json.member_path);
+        info!("  operation: {}", targeted_payload_json.operation);
 
         if targeted_payload_json.operation == digital_twin_operation::GET {
-            self.get(respond_uri, ask_id, targeted_payload_json).await
+            self.get(ask_request.respond_uri, ask_request.ask_id, targeted_payload_json).await
         } else if targeted_payload_json.operation == digital_twin_operation::INVOKE {
-            self.invoke(respond_uri, ask_id, targeted_payload_json).await
+            self.invoke(ask_request.respond_uri, ask_request.ask_id, targeted_payload_json).await
         } else {
             Err(tonic::Status::invalid_argument(format!(
-                "Unexpected operation '{}'",
-                targeted_payload_json.operation
+                "Unexpected operation '{}'.  Expected '{}' or '{}'.",
+                targeted_payload_json.operation,
+                digital_twin_operation::GET,
+                digital_twin_operation::INVOKE
             )))
         }
     }

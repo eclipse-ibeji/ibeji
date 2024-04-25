@@ -133,7 +133,7 @@ fn create_provider_state() -> ProviderState {
     result
 }
 
-/// Register the airbag seat massagers.
+/// Register the seat massagers.
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
@@ -159,7 +159,7 @@ async fn register_seat_massagers(
                 digital_twin_operation::INVOKE.to_string(),
             ],
             uri: provider_uri.to_string(),
-            context: instance_id.to_string(),
+            context: instance_id.to_string(), // the context holds te
         };
 
         let entity_access_info = EntityAccessInfo {
