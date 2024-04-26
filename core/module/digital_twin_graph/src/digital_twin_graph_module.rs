@@ -5,11 +5,11 @@
 use common::grpc_module::GrpcModule;
 use core_protobuf_data_access::async_rpc::v1::respond::respond_server::RespondServer;
 use core_protobuf_data_access::module::digital_twin_graph::v1::digital_twin_graph_server::DigitalTwinGraphServer;
-// use log::{debug, error, info};
 use std::sync::Arc;
 use tokio::sync::broadcast;
 use tonic::transport::server::RoutesBuilder;
 
+use crate::digital_twin_graph_config;
 use crate::digital_twin_graph_impl::DigitalTwinGraphImpl;
 use crate::respond_impl::RespondImpl;
 
@@ -30,11 +30,12 @@ impl GrpcModule for DigitalTwinGraphModule {
     /// # Arguments
     /// * `builder` - A tonic::RoutesBuilder that contains the grpc services to build.
     fn add_grpc_services(&self, builder: &mut RoutesBuilder) {
-        // Note: The authority is hardcoded for now, but it should be configurable in the future.
-        let invehicle_digital_twin_authority = "0.0.0.0:5010";
-        let invehicle_digital_twin_uri = format!("http://{invehicle_digital_twin_authority}"); // Devskim: ignore DS137138
-        let respond_authority = "0.0.0.0:5010";
-        let respond_uri = format!("http://{respond_authority}"); // Devskim: ignore DS137138
+        // Load the config.
+        let settings = digital_twin_graph_config::load_settings();
+        let base_authority = settings.base_authority;
+
+        let invehicle_digital_twin_uri = format!("http://{base_authority}"); // Devskim: ignore DS137138
+        let respond_uri = format!("http://{base_authority}"); // Devskim: ignore DS137138
 
         let (tx, _rx) = broadcast::channel(100);
         let tx = Arc::new(tx);

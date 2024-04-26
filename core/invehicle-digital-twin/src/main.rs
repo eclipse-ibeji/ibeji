@@ -84,7 +84,7 @@ async fn register_invehicle_digital_twin_service_with_chariott(
     Ok(())
 }
 
-/// Builds the enabled modules for the grpc server and starts the server.
+/// Builds the enabled modules for the app server and starts the app server.
 ///
 /// # Arguments
 /// * `addr` - The address the server will be hosted on.
@@ -98,7 +98,7 @@ async fn register_invehicle_digital_twin_service_with_chariott(
 /// 5. Call and return from the block `.add_module()` on the server with the updated middleware and
 /// module.
 #[allow(unused_assignments, unused_mut)] // Necessary when no extra modules are built.
-async fn build_server_and_serve<S>(
+async fn build_app_server_and_serve<S>(
     addr: SocketAddr,
     base_service: S,
 ) -> Result<(), Box<dyn std::error::Error>>
@@ -113,7 +113,7 @@ where
     let mut server: GrpcServer<Identity> = GrpcServer::new(addr);
 
     #[cfg(feature = "managed_subscribe")]
-    // Adds the Managed Subscribe module to the service.
+    // Adds the Managed Subscribe module to the app server.
     let mut server = {
         // Initialize the Managed Subscribe module, which implements GrpcModule.
         let managed_subscribe_module = ManagedSubscribeModule::new().await.map_err(|error| {
@@ -121,7 +121,7 @@ where
             error
         })?;
 
-        // Create interceptor layer to be added to the server.
+        // Create interceptor layer to be added to the app.
         let managed_subscribe_layer =
             GrpcInterceptorLayer::new(Box::new(managed_subscribe_module.create_interceptor()));
 
@@ -136,7 +136,7 @@ where
     };
 
     #[cfg(feature = "digital_twin_graph")]
-    // Adds the Digital Twin Graph module to the service.
+    // Adds the Digital Twin Graph module to the app server.
     let mut server = {
         // Initialize the Digital Twin Graph module, which implements GrpcModule.
         let digital_twin_graph_module = DigitalTwinGraphModule::new().await.map_err(|error| {
@@ -151,7 +151,7 @@ where
     };
 
     #[cfg(feature = "digital_twin_registry")]
-    // Adds the Digital Twin Registry module to the service.
+    // Adds the Digital Twin Registry module to the app server.
     let mut server = {
         // Initialize the Digital Twin Registry module, which implements GrpcModule.
         let digital_twin_registry_module =
@@ -166,10 +166,10 @@ where
         server.add_module(server.middleware.clone(), Box::new(digital_twin_registry_module))
     };
 
-    // Construct the server.
+    // Construct the app server.
     let builder = server.construct_server().add_service(base_service);
 
-    // Start the server.
+    // Start the app server.
     builder.serve(addr).await.map_err(|error| error.into())
 }
 
@@ -243,8 +243,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let base_service = InvehicleDigitalTwinServer::new(invehicle_digital_twin_impl);
 
-    // Build and start the grpc server.
-    build_server_and_serve(addr, base_service).await?;
+    // Build and start the app server.
+    build_app_server_and_serve(addr, base_service).await?;
 
     debug!("The Digital Twin Service has completed.");
 

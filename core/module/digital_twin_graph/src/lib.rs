@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+pub mod digital_twin_graph_config;
 pub mod digital_twin_graph_impl;
 pub mod digital_twin_graph_module;
 pub mod respond_impl;

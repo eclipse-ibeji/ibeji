@@ -1,0 +1,20 @@
+@startuml
+
+autonumber
+
+participant "Digital Twin Consumer" as CONSUMER
+participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
+participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
+participant "Digital Twin Provider" as PROVIDER
+
+CONSUMER -> DIGITAL_TWIN_GRAPH: Invoke(instance_id: "1234567890", payload: "") - request
+
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(id: "1234567890") - request
+DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - request
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+
+CONSUMER <- DIGITAL_TWIN_GRAPH: Invoke - response
+
+@enduml

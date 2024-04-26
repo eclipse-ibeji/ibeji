@@ -12,123 +12,147 @@ use core_protobuf_data_access::module::digital_twin_graph::v1::{
 };
 use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_client::DigitalTwinRegistryClient;
 use core_protobuf_data_access::module::digital_twin_registry::v1::{
-    EndpointInfo, FindByInstanceIdRequest, FindByModelIdRequest,
+    EndpointInfo, FindByInstanceIdRequest, FindByInstanceIdResponse, FindByModelIdRequest,
+    FindByModelIdResponse,
 };
 use log::{debug, info, warn};
 use std::sync::Arc;
 use tokio::sync::broadcast;
 use tokio::time::{sleep, timeout, Duration};
+use tokio_retry::strategy::{jitter, ExponentialBackoff};
+use tokio_retry::Retry;
 use uuid::Uuid;
 
 use crate::{digital_twin_operation, digital_twin_protocol, TargetedPayload};
 
 #[derive(Debug)]
 pub struct DigitalTwinGraphImpl {
-    invehicle_digital_twin_uri: String,
+    /// Digital Twin Registry URI.
+    digital_twin_registry_uri: String,
+    /// Respond URI.
     respond_uri: String,
+    /// The sender for the asynchronous channel for AnswerRequests.
     tx: Arc<broadcast::Sender<AnswerRequest>>,
 }
 
 impl DigitalTwinGraphImpl {
+    const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
+    const MAX_RETRIES: usize = 100;
+    const TIMEOUT_PERIOD_IN_MILLIS: u64 = 5000;
+
     /// Create a new instance of a DigitalTwinGraphImpl.
     ///
     /// # Arguments
-    /// * `invehicle_digital_twin_uri` - The uri for the invehicle digital twin service.
+    /// * `digital_twin_registry_uri` - The uri for the digital twin registry service.
     /// * `respond_uri` - The uri for the respond service.
     /// * `tx` - The sender for the asynchronous channel for AnswerRequest's.
     pub fn new(
-        invehicle_digital_twin_uri: &str,
+        digital_twin_registry_uri: &str,
         respond_uri: &str,
         tx: Arc<broadcast::Sender<AnswerRequest>>,
     ) -> DigitalTwinGraphImpl {
         DigitalTwinGraphImpl {
-            invehicle_digital_twin_uri: invehicle_digital_twin_uri.to_string(),
+            digital_twin_registry_uri: digital_twin_registry_uri.to_string(),
             respond_uri: respond_uri.to_string(),
             tx,
         }
     }
-}
 
-/// Is the provided subset a subset of the provided superset?
-///
-/// # Arguments
-/// * `subset` - The provided subset.
-/// * `superset` - The provided superset.
-fn is_subset(subset: &[String], superset: &[String]) -> bool {
-    subset.iter().all(|subset_member| {
-        superset.iter().any(|supserset_member| subset_member == supserset_member)
-    })
-}
-
-/// Use Ibeji to discover the endpoints for digital twin providers that satisfy the requirements.
-///
-/// # Arguments
-/// * `digitial_twin_registry_service_uri` - Digital Twin Registry Service URI.
-/// * `model_id` - The matching model id.
-/// * `protocol` - The required protocol.
-/// * `operations` - The required operations.
-pub async fn discover_digital_twin_providers_with_model_id(
-    digitial_twin_registry_service_uri: &str,
-    model_id: &str,
-    protocol: &str,
-    operations: &[String],
-) -> Result<Vec<EndpointInfo>, String> {
-    info!("Sending a find_by_model_id request for model id {model_id} to the Digital Twin Registry Service at {digitial_twin_registry_service_uri}");
-
-    let mut client =
-        DigitalTwinRegistryClient::connect(digitial_twin_registry_service_uri.to_string())
-            .await
-            .map_err(|error| format!("{error}"))?;
-    let request = tonic::Request::new(FindByModelIdRequest { model_id: model_id.to_string() });
-    let response = client.find_by_model_id(request).await.map_err(|error| error.to_string())?;
-    let response_inner = response.into_inner();
-    debug!("Received the response for the find_by_model_id request");
-    info!("response_payload: {:?}", response_inner.entity_access_info_list);
-
-    Ok(response_inner
-        .entity_access_info_list
-        .iter()
-        .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-        .filter(|endpoint_info| {
-            endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations)
+    /// Is the provided subset a subset of the provided superset?
+    ///
+    /// # Arguments
+    /// * `subset` - The provided subset.
+    /// * `superset` - The provided superset.
+    fn is_subset(subset: &[String], superset: &[String]) -> bool {
+        subset.iter().all(|subset_member| {
+            superset.iter().any(|supserset_member| subset_member == supserset_member)
         })
-        .collect())
-}
+    }
 
-/// Use Ibeji to discover the endpoints for digital twin providers that satisfy the requirements.
-///
-/// # Arguments
-/// * `digitial_twin_registry_service_uri` - Digital Twin Registry Service URI.
-/// * `instance_id` - The matching instance id.
-/// * `protocol` - The required protocol.
-/// * `operations` - The required operations.
-pub async fn discover_digital_twin_providers_with_instance_id(
-    digitial_twin_registry_service_uri: &str,
-    instance_id: &str,
-    protocol: &str,
-    operations: &[String],
-) -> Result<Vec<EndpointInfo>, String> {
-    info!("Sending a find_by_instance_id request for instance id {instance_id} to the Digital Twin Registry Service at {digitial_twin_registry_service_uri}");
+    /// Use the Digital Twin Registery service to discover the endpoints for digital twin providers that support the specified model id, protocol and operations.
+    /// Note: This operation will be retried when there is a failure.
+    ///
+    /// # Arguments
+    /// * `model_id` - The matching model id.
+    /// * `protocol` - The required protocol.
+    /// * `operations` - The required operations.
+    pub async fn discover_digital_twin_providers_with_model_id(
+        &self,
+        model_id: &str,
+        protocol: &str,
+        operations: &[String],
+    ) -> Result<Vec<EndpointInfo>, String> {
+        let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
+            .map(jitter) // add jitter to delays
+            .take(Self::MAX_RETRIES);
 
-    let mut client =
-        DigitalTwinRegistryClient::connect(digitial_twin_registry_service_uri.to_string())
-            .await
-            .map_err(|error| format!("{error}"))?;
-    let request =
-        tonic::Request::new(FindByInstanceIdRequest { instance_id: instance_id.to_string() });
-    let response = client.find_by_instance_id(request).await.map_err(|error| error.to_string())?;
-    let response_inner = response.into_inner();
-    debug!("Received the response for the find_by_instance_id request");
-    info!("response_payload: {:?}", response_inner.entity_access_info_list);
+        let response: FindByModelIdResponse = Retry::spawn(retry_strategy.clone(), || async {
+            let mut client =
+                DigitalTwinRegistryClient::connect(self.digital_twin_registry_uri.to_string())
+                    .await
+                    .map_err(|error| format!("{error}"))?;
 
-    Ok(response_inner
-        .entity_access_info_list
-        .iter()
-        .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-        .filter(|endpoint_info| {
-            endpoint_info.protocol == protocol && is_subset(operations, &endpoint_info.operations)
+            let request =
+                tonic::Request::new(FindByModelIdRequest { model_id: model_id.to_string() });
+
+            client.find_by_model_id(request).await.map_err(|error| error.to_string())
         })
-        .collect())
+        .await?
+        .into_inner();
+
+        Ok(response
+            .entity_access_info_list
+            .iter()
+            .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
+            .filter(|endpoint_info| {
+                endpoint_info.protocol == protocol
+                    && Self::is_subset(operations, &endpoint_info.operations)
+            })
+            .collect())
+    }
+
+    /// Use the Digital Twin Registry service to discover the endpoints for digital twin providers that support the specified instance id, protocol and operations.
+    /// Note: This operation will be retried when there is a failure.
+    ///
+    /// # Arguments
+    /// * `instance_id` - The matching instance id.
+    /// * `protocol` - The required protocol.
+    /// * `operations` - The required operations.
+    pub async fn discover_digital_twin_providers_with_instance_id(
+        &self,
+        instance_id: &str,
+        protocol: &str,
+        operations: &[String],
+    ) -> Result<Vec<EndpointInfo>, String> {
+        let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
+            .map(jitter) // add jitter to delays
+            .take(Self::MAX_RETRIES);
+
+        let response: FindByInstanceIdResponse = Retry::spawn(retry_strategy.clone(), || async {
+            let mut client =
+                DigitalTwinRegistryClient::connect(self.digital_twin_registry_uri.to_string())
+                    .await
+                    .map_err(|error| format!("{error}"))?;
+
+            let request = tonic::Request::new(FindByInstanceIdRequest {
+                instance_id: instance_id.to_string(),
+            });
+
+            client.find_by_instance_id(request).await.map_err(|error| error.to_string())
+        })
+        .await?
+        .into_inner();
+
+        Ok(response
+            .entity_access_info_list
+            .iter()
+            .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
+            .filter(|endpoint_info| {
+                endpoint_info.protocol == protocol
+                    && Self::is_subset(operations, &endpoint_info.operations)
+            })
+            .collect())
+    }
 }
 
 #[tonic::async_trait]
@@ -144,19 +168,17 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let request_inner = request.into_inner();
         let model_id = request_inner.model_id;
 
-        info!("Received a find request for model id {model_id}");
+        debug!("Received a find request for model id {model_id}");
 
         // Retrieve the provider details.
-        let provider_endpoint_info_list = discover_digital_twin_providers_with_model_id(
-            &self.invehicle_digital_twin_uri,
-            model_id.as_str(),
-            digital_twin_protocol::GRPC,
-            &[digital_twin_operation::GET.to_string()],
-        )
-        .await
-        .map_err(tonic::Status::internal)?;
-
-        info!(">> Found the provider endpoint info list: {provider_endpoint_info_list:?}");
+        let provider_endpoint_info_list = self
+            .discover_digital_twin_providers_with_model_id(
+                model_id.as_str(),
+                digital_twin_protocol::GRPC,
+                &[digital_twin_operation::GET.to_string()],
+            )
+            .await
+            .map_err(tonic::Status::internal)?;
 
         let mut values = vec![];
 
@@ -196,15 +218,14 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             // Send the ask.
             let response = client.ask(request).await;
             if let Err(status) = response {
-                warn!("Unable to call ask, due to {status:?}\nWe will skip this one..");
+                warn!("Unable to call ask, due to {status:?}\nWe will skip this one.");
                 continue;
             }
 
             // Wait for the answer request.
             let mut answer_request: AnswerRequest = Default::default();
             let mut attempts_after_failure = 0;
-            const MAX_ATTEMPTS_AFTER_FAILURE: u8 = 10;
-            while attempts_after_failure < MAX_ATTEMPTS_AFTER_FAILURE {
+            while attempts_after_failure < Self::MAX_RETRIES {
                 match timeout(Duration::from_secs(5), rx.recv()).await {
                     Ok(Ok(request)) => {
                         if ask_id == request.ask_id {
@@ -220,26 +241,28 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
                     }
                     Ok(Err(error_message)) => {
                         warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_secs(1)).await;
+                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
                         attempts_after_failure += 1;
                         continue;
                     }
                     Err(error_message) => {
                         warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_secs(1)).await;
+                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
                         attempts_after_failure += 1;
                         continue;
                     }
                 }
             }
 
-            info!(
+            debug!(
                 "Received an answer request.  The ask_id is '{}'. The payload is '{}'",
                 answer_request.ask_id, answer_request.payload
             );
 
             values.push(answer_request.payload);
         }
+
+        debug!("Completed the find request");
 
         Ok(tonic::Response::new(FindResponse { values }))
     }
@@ -259,14 +282,14 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         info!("Received a get request for instance id {instance_id}");
 
         // Retrieve the provider details.
-        let provider_endpoint_info_list = discover_digital_twin_providers_with_instance_id(
-            &self.invehicle_digital_twin_uri,
-            instance_id.as_str(),
-            digital_twin_protocol::GRPC,
-            &[digital_twin_operation::GET.to_string()],
-        )
-        .await
-        .map_err(tonic::Status::internal)?;
+        let provider_endpoint_info_list = self
+            .discover_digital_twin_providers_with_instance_id(
+                instance_id.as_str(),
+                digital_twin_protocol::GRPC,
+                &[digital_twin_operation::GET.to_string()],
+            )
+            .await
+            .map_err(tonic::Status::internal)?;
 
         info!("Found the provider endpoint info list: {provider_endpoint_info_list:?}");
 
@@ -308,16 +331,17 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             // Send the ask.
             let response = client.ask(request).await;
             if let Err(status) = response {
-                warn!("Unable to call ask, due to {status:?}\nWe will skip this one..");
+                warn!("Unable to call ask, due to {status:?}\nWe will skip this one.");
                 continue;
             }
 
             // Wait for the answer request.
             let mut answer_request: AnswerRequest = Default::default();
             let mut attempts_after_failure = 0;
-            const MAX_ATTEMPTS_AFTER_FAILURE: u8 = 10;
-            while attempts_after_failure < MAX_ATTEMPTS_AFTER_FAILURE {
-                match timeout(Duration::from_secs(5), rx.recv()).await {
+            while attempts_after_failure < Self::MAX_RETRIES {
+                match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv())
+                    .await
+                {
                     Ok(Ok(request)) => {
                         if ask_id == request.ask_id {
                             // We have received the answer request that we are expecting.
@@ -332,13 +356,13 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
                     }
                     Ok(Err(error_message)) => {
                         warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_secs(1)).await;
+                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
                         attempts_after_failure += 1;
                         continue;
                     }
                     Err(error_message) => {
                         warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_secs(1)).await;
+                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
                         attempts_after_failure += 1;
                         continue;
                     }
@@ -389,14 +413,14 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         info!("Received an invoke request for instance id {instance_id}");
 
         // Retrieve the provider details.
-        let provider_endpoint_info_list = discover_digital_twin_providers_with_instance_id(
-            &self.invehicle_digital_twin_uri,
-            instance_id.as_str(),
-            digital_twin_protocol::GRPC,
-            &[digital_twin_operation::INVOKE.to_string()],
-        )
-        .await
-        .map_err(tonic::Status::internal)?;
+        let provider_endpoint_info_list = self
+            .discover_digital_twin_providers_with_instance_id(
+                instance_id.as_str(),
+                digital_twin_protocol::GRPC,
+                &[digital_twin_operation::INVOKE.to_string()],
+            )
+            .await
+            .map_err(tonic::Status::internal)?;
 
         info!("Found the provider endpoint info list: {provider_endpoint_info_list:?}");
 

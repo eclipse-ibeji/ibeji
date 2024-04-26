@@ -1,0 +1,21 @@
+@startuml
+
+autonumber
+
+participant "Digital Twin Consumer" as CONSUMER
+participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
+participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
+participant "Digital Twin Provider" as PROVIDER
+
+CONSUMER -> DIGITAL_TWIN_GRAPH: Get(instance_id: "1234567890", member_path: "vehicle_identification") - request
+
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "1234567890") - request
+DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - Get
+
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+
+CONSUMER <- DIGITAL_TWIN_GRAPH: Get - response
+
+@enduml
