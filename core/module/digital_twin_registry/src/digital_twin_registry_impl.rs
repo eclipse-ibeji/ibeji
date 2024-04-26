@@ -33,7 +33,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
     ) -> Result<Response<FindByModelIdResponse>, Status> {
         let model_id = request.into_inner().model_id;
 
-        info!("Received a find_by_model_id request for entity id {model_id}");
+        debug!("Received a find_by_model_id request for entity id {model_id}");
 
         let entity_access_info_list;
 
@@ -69,7 +69,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
     ) -> Result<Response<FindByInstanceIdResponse>, Status> {
         let instance_id = request.into_inner().instance_id;
 
-        info!("Received a find_by_instance_id request for instance id {instance_id}");
+        debug!("Received a find_by_instance_id request for instance id {instance_id}");
 
         let mut new_entity_access_info_list = Vec::<EntityAccessInfo>::new();
 
