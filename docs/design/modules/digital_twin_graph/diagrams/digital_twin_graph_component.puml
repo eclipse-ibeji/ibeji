@@ -6,7 +6,7 @@ component "Digital Twin Consumer" {
 component "Digital Twin App Server" {
   component "Digital Twin Graph Service" {
     interface "Digital Twin Graph Interface"
-    interface "Respond Interface" 
+    interface "Respond Interface"
   }
   component "Digital Twin Registry Service" {
     interface "Digital Twin Registry Interface"
