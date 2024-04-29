@@ -11,7 +11,7 @@ Ibeji today provides the foundations for constructing and interacting with the a
 
 ## <a name="architecture">Architecture</a>
 
-Ibeji's Application Server, which we will refer to as "Digital Twin App Server", has a modular architecture that allows new services to easily be added and existing services to easily be removed.  It also has build-time feature switches for controlling which service should be available at run-time.  Ibeji's initial service, the Invehicle Digital Twin service, was developed before the adoption of the modular architecture, but it will eventually be migrated across to it.
+Ibeji's Application Server, which we will refer to as "Digital Twin App Server", has a modular architecture that allows new services to readily be added and existing services to readily be removed.  It also has build-time feature switches for controlling which service should be available at run-time.  Ibeji's initial service, the Invehicle Digital Twin service, was developed before the adoption of the modular architecture, but it will eventually be migrated across to it.
 
 We will introduce a new service named "Digital Twin Graph" that will provide a facade for the Invehicle Digital Twin service and the providers.  Ideally, the consumer will not need to directly interact with provider
 endpoints.  Instead, they will interact with a graph structure that represnts the ditial twin,
