@@ -6,7 +6,7 @@
 
 ## <a name="introduction">Introduction</a>
 
-Ibeji today provides the foundations for constructing and interacting with the a digital twin on an edge device.  These abilities are primitive and do not necessarily provide a consumer with the best experience.  They can be used as building blocks to build facades that provide a consumer with a better experience.  This design specifies a graph-based facade, which will be named the Digital Twin Graph service.
+Ibeji today provides the foundations for constructing and interacting with the a digital twin on an edge device.  These are low-level abilities and do not necessarily provide a consumer with the best experience.  They can be used as building blocks to build facades that provide a consumer with a better experience.  This design specifies a graph-based facade, which will be named the Digital Twin Graph service.
 
 
 ## <a name="architecture">Architecture</a>
