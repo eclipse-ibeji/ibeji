@@ -10,21 +10,22 @@ participant "Digital Twin Provider" as PROVIDER
 CONSUMER -> DIGITAL_TWIN_GRAPH: Find(model_id: "dtmi:sdv:vehicle;1") - request
 
 DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByModeld(model_id: "dtmi:sdv:vehcile;1") - request
-note right
-end note
+
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByModelId - response
 note left
+  list of value (serialized as a JSON-LD string)
 end note
 
 loop Iterate over the results from the FindByModelId call
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - Get
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - Get
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri, ask_id: "1", payload)
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri, ask_id: "2", payload)
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "1", payload)
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "2", payload)
 end
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Find - response
 note left
+  list of EntityAccessInfo
 end note
 
 @enduml

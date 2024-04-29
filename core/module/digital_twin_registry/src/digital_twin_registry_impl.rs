@@ -18,6 +18,7 @@ use tonic::{Request, Response, Status};
 
 #[derive(Debug, Default)]
 pub struct DigitalTwinRegistryImpl {
+    /// Entity access info map.
     pub entity_access_info_map: Arc<RwLock<HashMap<String, Vec<EntityAccessInfo>>>>,
 }
 
@@ -41,11 +42,8 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         {
             let lock: RwLockReadGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.read();
-            info!("entity_access_info_map size: {}", lock.len());
             entity_access_info_list = lock.get(&model_id).cloned();
         }
-
-        info!("{entity_access_info_list:?}");
 
         if entity_access_info_list.is_none() {
             return Err(Status::not_found("Unable to find any entities with model id {model_id}"));
@@ -54,7 +52,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         let response =
             FindByModelIdResponse { entity_access_info_list: entity_access_info_list.unwrap() };
 
-        debug!("Responded to the find_by_model_id request.");
+        debug!("Completed the find_by_model_id request.");
 
         Ok(Response::new(response))
     }
@@ -77,7 +75,6 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         {
             let lock: RwLockReadGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.read();
-            info!("entity_access_info_map size: {}", lock.len());
             for entity_access_info_list in lock.values() {
                 for entity_access_info in entity_access_info_list {
                     let mut instance_found: bool = false;
@@ -110,7 +107,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         let response =
             FindByInstanceIdResponse { entity_access_info_list: new_entity_access_info_list };
 
-        debug!("Responded to the find_by_instance_id request.");
+        debug!("Completed the find_by_instance_id request.");
 
         Ok(Response::new(response))
     }
@@ -126,9 +123,13 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         let request_inner = request.into_inner();
 
         for entity_access_info in &request_inner.entity_access_info_list {
-            info!("Received a register request for the the entity:\n{}", entity_access_info.id);
-
-            self.register_entity(entity_access_info.clone())?;
+            self.register_entity(entity_access_info.clone()).map_err(|e| {
+                Status::internal(format!(
+                    "Failed to register the entity: {}, error: {}",
+                    entity_access_info.id, e
+                ))
+            })?;
+            info!("Registered the entity: {}", entity_access_info.id);
         }
 
         let response = RegisterResponse {};
@@ -140,11 +141,11 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
 }
 
 impl DigitalTwinRegistryImpl {
-    /// Register the entity.
+    /// Register an entity.
     ///
     /// # Arguments
     /// * `entity` - The entity.
-    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), Status> {
+    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
         // This block controls the lifetime of the lock.
         {
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
@@ -165,8 +166,6 @@ impl DigitalTwinRegistryImpl {
             };
         }
 
-        debug!("Completed register entity for {}", &entity_access_info.id);
-
         Ok(())
     }
 }
@@ -174,7 +173,6 @@ impl DigitalTwinRegistryImpl {
 #[cfg(test)]
 mod digital_twin_registry_impl_tests {
     use super::*;
-    // use core_protobuf_data_access::module::digital_twin_registry::v1::EndpointInfo;
 
     #[tokio::test]
     async fn find_by_model_id_test() {
