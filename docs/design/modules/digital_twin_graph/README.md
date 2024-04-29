@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
 - [Architecture](#architecture)
-- [Sequences](#Sequences)
+- [Sequences](#sequences)
 
 ## <a name="introduction">Introduction</a>
 
