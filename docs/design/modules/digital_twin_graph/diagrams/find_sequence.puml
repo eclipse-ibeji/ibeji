@@ -7,25 +7,63 @@ participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
 participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
 participant "Digital Twin Provider" as PROVIDER
 
-CONSUMER -> DIGITAL_TWIN_GRAPH: Find(model_id: "dtmi:sdv:vehicle;1") - request
+CONSUMER -> DIGITAL_TWIN_GRAPH: Find(model_id: "dtmi:sdv:seat;1") - request
 
-DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByModeld(model_id: "dtmi:sdv:vehcile;1") - request
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByModeld(model_id: "dtmi:sdv:seat;1") - request
 
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByModelId - response
 note left
-  list of value (serialized as a JSON-LD string)
+  list of EndpointInfo
+
+  [
+    {
+      model_id : "dtmi:sdv:seat;1"
+      instance_id: "front left seat"
+      protocol: "grpc"
+      operations: ["get", "invoke"]
+      uri: Digital Twin Provider's uri
+    },
+    {
+      model_id : "dtmi:sdv:seat;1"
+      instance_id: "front right seat"
+      protocol: "grpc"
+      operations: ["get", "invoke"]
+      uri: Digital Twin Provider's uri
+    }
+  ]
 end note
 
 loop Iterate over the results from the FindByModelId call
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri, ask_id: "1", payload)
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri, ask_id: "2", payload)
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "1", payload)
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "2", payload)
+  DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "1", payload: {instance_id: "front left seat", operation: "get" })
+  DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "1", payload: instance value as JSON-LD string)
 end
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Find - response
 note left
-  list of EntityAccessInfo
+  list of instance values as JSON-LD string
+
+  [
+    {
+      "@context": [ "dtmi:dtdl:context;3", "dtmi:sdv:context;1"]
+      "@id": "front left seat",
+      "@type": "dtmi:sdv:seat;1",
+      "seat_massager": [
+        {
+          "@id": "front left seat massager"
+        }
+      ]
+    },
+    {
+      "@context": [ "dtmi:dtdl:context;3", "dtmi:sdv:context;1"]
+      "@id": "front right seat",
+      "@type": "dtmi:sdv:seat;1",
+      "seat_massager": [
+        {
+          "@id": "front right seat massager"
+        }
+      ]
+    }
+  ]
 end note
 
 @enduml

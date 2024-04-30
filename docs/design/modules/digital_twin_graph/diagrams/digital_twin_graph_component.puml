@@ -11,20 +11,26 @@ component "Digital Twin App Server" {
   component "Digital Twin Registry Service" {
     interface "Digital Twin Registry Interface"
   }
+  component "Invehicle Digital Twin Service" {
+    interface "Invehicle Digital Twin Interface"
+  }
+  component "Managed Subscribe Service" {
+    interface "Managed Subscribe Interface"
+  }
 }
 
 component "Digital Twin Provider" {
   interface "Request Interface"
 }
 
-"Digital Twin Provider" -left-> "Digital Twin Registry Interface" : Register
+"Digital Twin Provider" -up-> "Digital Twin Registry Interface" : Register
 
-"Digital Twin Consumer" -right-> "Digital Twin Graph Interface" : Find/Get/Set/Invoke
+"Digital Twin Consumer" -down-> "Digital Twin Graph Interface" : Find/Get/Set/Invoke
 
-"Digital Twin Graph Service" -down-> "Digital Twin Registry Interface": FindByModelId
+"Digital Twin Graph Service" -left-> "Digital Twin Registry Interface": FindByModelId
 
-"Digital Twin Graph Service" -right-> "Request Interface": Ask
+"Digital Twin Graph Service" -down-> "Request Interface": Ask
 
-"Digital Twin Provider" -left-> "Respond Interface": Answer
+"Digital Twin Provider" -up-> "Respond Interface": Answer
 
 @enduml

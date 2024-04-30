@@ -7,14 +7,26 @@ participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
 participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
 participant "Digital Twin Provider" as PROVIDER
 
-CONSUMER -> DIGITAL_TWIN_GRAPH: Set(instance_id: "1234567890", member_path: "vehicle_identification/vin", value) - request
+CONSUMER -> DIGITAL_TWIN_GRAPH: Set(instance_id: "the vehicle", member_path: "vehicle_identification/vin", value: value as JSON-LD string) - request
 
-DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "1234567890") - request
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "the vehicle") - request
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+note left
+  list of EndpointInfo
 
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - Set
+  [
+    {
+      model_id : "dtmi:sdv:vehicle;1"
+      instance_id: "the vehicle"
+      protocol: "grpc"
+      operations: ["Get"]
+      uri: Digital Twin Provider's uri
+    }
+  ]
+end note
 
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "4", payload: {instance_id: "the vehicle", operation: "set", member_path: "vehicle_identification/vin", payload: the value as JSON-LD string})
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "4", payload: "")
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Set - response
 

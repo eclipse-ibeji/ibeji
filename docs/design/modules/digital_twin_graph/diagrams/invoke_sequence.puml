@@ -7,14 +7,31 @@ participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
 participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
 participant "Digital Twin Provider" as PROVIDER
 
-CONSUMER -> DIGITAL_TWIN_GRAPH: Invoke(instance_id: "1234567890", payload: "") - request
+CONSUMER -> DIGITAL_TWIN_GRAPH: Invoke(instance_id: "front left seat massager", member_path: "perform_step", request_payload: request payload as JSON-LD string) - request
 
-DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(id: "1234567890") - request
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(id: "front left seat massager") - request
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+note left
+  list of EndpointInfo
 
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - request
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+  [
+    {
+      model_id : "dtmi:sdv:premium_airbag_seat_massager;1"
+      instance_id: "front left seat massager"
+      protocol: "grpc"
+      operations: ["get", "invoke"]
+      uri: Digital Twin Provider's uri
+    }
+  ]
+
+end note
+
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "5", payload: {instance_id: "front left seat massager", operation: "invoke", member_path: "perform_step", payload: the request payload as JSON-LD string})
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "5", payload: response payload as JSON-LD string)
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Invoke - response
+note left
+  response payload as JSON-LD string
+end note
 
 @enduml

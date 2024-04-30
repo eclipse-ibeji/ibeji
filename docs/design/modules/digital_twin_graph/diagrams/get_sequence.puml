@@ -7,15 +7,41 @@ participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
 participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
 participant "Digital Twin Provider" as PROVIDER
 
-CONSUMER -> DIGITAL_TWIN_GRAPH: Get(instance_id: "1234567890", member_path: "vehicle_identification") - request
+CONSUMER -> DIGITAL_TWIN_GRAPH: Get(instance_id: "the vehicle", member_path: "vehicle_identification") - request
 
-DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "1234567890") - request
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "the vehicle") - request
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+note left
+  list of EndpointInfo
 
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask - Get
+  [
+    {
+      model_id : "dtmi:sdv:vehicle;1"
+      instance_id: "the vehicle"
+      protocol: "grpc"
+      operations: ["Get"]
+      uri: Digital Twin Provider's uri
+    }
+  ]
+end note
 
-DIGITAL_TWIN_GRAPH <- PROVIDER: Answer
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "3", payload: {instance_id: "the vehicle", operation: "get", member_path: "vehicle_identification"})
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "3", payload: instance value as JSON-LD string)
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Get - response
+note left
+  instance value as JSON-LD string
+
+  {
+    "@context": [ "dtmi:dtdl:context;3", "dtmi:sdv:context;1"]
+    "@type": "dtmi:sdv:vehicle:vehicle_identification;1",
+    "vehicle_identification": [
+      {
+        "vin": "1HGCM82633A123456"
+      }
+    ]
+  }
+
+end note
 
 @enduml
