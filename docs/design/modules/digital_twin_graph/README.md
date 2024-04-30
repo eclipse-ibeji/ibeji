@@ -6,11 +6,15 @@
 
 ## <a name="introduction">Introduction</a>
 
-
-
 Ibeji today provides the foundations for constructing and interacting with a digital twin on an edge device. These are low-level abilities and do not necessarily
-provide a consumer with the best experience. They can be used as building blocks to build facades that provide a consumer with a better experience. This design
-specifies a graph-based facade, which will be named the Digital Twin Graph service.
+provide a consumer with the best interaction experience. They can be used as building blocks to build facades that provide a consumer with an abstraction that
+delivers a better interaction experience. In the future, Ibeji may support multiple facades and the user can select the one that they prefer to use.
+
+This design specifies a graph-based facade, which will be named the Digital Twin Graph service. The digital twin will be represented as a graph of digital twin
+entities whose arcs represent the relationships between those entities.
+
+Please note that Ibeji is intended for use on an edge device to satisfy IoT needs. It is not intended for use in the cloud. The data that it manages can be
+transferred to the cloud, through components like Freyja.
 
 ## <a name="architecture">Architecture</a>
 
@@ -25,7 +29,7 @@ Ibeji's existing Invehicle Digital Twin service needs some adjustments to suppor
 Digital Twin Registry service. We will introduce a modified form of the service under the name "Digital Twin Registry" and for now keep the existing functionality
 intact under the original name "Invehicle Digital Twin".
 
-The Managed Subscriber service is an optional service that provides integration with Agemo. It has been included in the component diagram for completness sake.
+The Managed Subscriber service is an optional service that provides integration with Agemo. It has been included in the component diagram for completeness sake.
 
 ![Component Diagram](diagrams/digital_twin_graph_component.svg)
 
@@ -50,5 +54,5 @@ The Digital Twin's set operation allows you to modify an instance value. You can
 
 ### Invoke
 
-The Digital Twin's invoke operation allows you to call an instance's command. You can use the member path to specify which of the instance's command is to be perfromed.
+The Digital Twin's invoke operation allows you to call an instance's command. You can use the member path to specify which of the instance's command is to be performed.
 ![Invoke Sequence Diagram](diagrams/invoke_sequence.svg)
