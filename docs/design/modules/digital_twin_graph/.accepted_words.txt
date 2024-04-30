@@ -1,6 +1,8 @@
 Agemo
 App
+Freyja
 Ibeji
 Ibeji's
+IoT
 Invehicle
 svg
