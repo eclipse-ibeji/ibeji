@@ -21,6 +21,8 @@ pub fn load_settings() -> Settings {
 }
 
 // Load the settings using the specified config filename.
+/// # Arguments
+/// * `config_filename` - The name of the configuration file to load.
 pub fn load_settings_with_config_filename(config_filename: &str) -> Settings {
     utils::load_settings(config_filename).unwrap()
 }
