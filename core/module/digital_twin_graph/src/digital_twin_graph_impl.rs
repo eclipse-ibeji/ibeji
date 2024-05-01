@@ -203,7 +203,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
 
         let mut values = vec![];
 
-        for instance_id in instance_provide_map.keys().into_iter() {
+        for instance_id in instance_provide_map.keys() {
             // We will only use the first provider. For a high availability scenario, we can try multiple providers.
             let provider_endpoint_info = &instance_provide_map[instance_id][0];
 
