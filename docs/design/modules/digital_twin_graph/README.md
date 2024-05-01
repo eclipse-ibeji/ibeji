@@ -50,6 +50,9 @@ The Digital Twin's get operation allows you to retrieve an instance value. You c
 ### Set
 
 The Digital Twin's set operation allows you to modify an instance value. You can reduce the scope of the change by specifying a specific member path within the instance.
+
+Note: This operation will not be implemented during the first phase of the Digital Twin Graph.  However, it will implemented soon after.
+
 ![Get Sequence Diagram](diagrams/set_sequence.svg)
 
 ### Invoke

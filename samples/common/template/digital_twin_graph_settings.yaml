@@ -1,0 +1,7 @@
+#
+# Digital Twin Graph Settings
+#
+
+# The IP address and port number that the Digital Twin Provider listens on for requests.
+# Example: "0.0.0.0:80"
+base_authority: <<value>>
