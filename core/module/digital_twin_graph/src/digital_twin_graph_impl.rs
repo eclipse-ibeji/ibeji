@@ -186,13 +186,27 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .await
             .map_err(tonic::Status::internal)?;
 
-        // TODO: Organize result into a map of instance id to associated endpoint infos.
-        //       This will allow us to ensure that each instance's values only appears
-        //       once in the response.  We can also try other providers when one fails to respond.
+        // Build a map of instance id to its associated endpoint infos.
+        let instance_provide_map: std::collections::HashMap<String, Vec<EndpointInfo>> =
+            provider_endpoint_info_list
+                .iter()
+                .map(|provider_endpoint_info| {
+                    (provider_endpoint_info.context.clone(), provider_endpoint_info.clone())
+                })
+                .fold(
+                    std::collections::HashMap::new(),
+                    |mut accumulator, (instance_id, endpoint_info)| {
+                        accumulator.entry(instance_id).or_insert_with(Vec::new).push(endpoint_info);
+                        accumulator
+                    },
+                );
 
         let mut values = vec![];
 
-        for provider_endpoint_info in &provider_endpoint_info_list {
+        for instance_id in instance_provide_map.keys().into_iter() {
+            // We will only use the first provider. For a high availability scenario, we can try multiple providers.
+            let provider_endpoint_info = &instance_provide_map[instance_id][0];
+
             let provider_uri = provider_endpoint_info.uri.clone();
             let instance_id = provider_endpoint_info.context.clone();
 
