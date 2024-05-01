@@ -25,7 +25,10 @@ use tokio_retry::strategy::{ExponentialBackoff, jitter};
 
 use crate::request_impl::{InstanceData, ProviderState, RequestImpl};
 
+/// The base duration in milliseconds for the exponential backoff strategy.
 const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
+
+/// The maximum number of retries.
 const MAX_RETRIES: usize = 100;
 
 /// Add an entry to the instance map.

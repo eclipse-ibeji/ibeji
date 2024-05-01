@@ -15,7 +15,10 @@ use samples_protobuf_data_access::digital_twin_graph::v1::digital_twin_graph::{F
 use tokio_retry::Retry;
 use tokio_retry::strategy::{ExponentialBackoff, jitter};
 
+// The base duration in milliseconds for the exponential backoff strategy.
 const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
+
+// The maximum number of retries for the exponential backoff strategy.
 const MAX_RETRIES: usize = 100;
 
 /// Connect to the digital twin graph service.
