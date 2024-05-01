@@ -293,97 +293,88 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .await
             .map_err(tonic::Status::internal)?;
 
-        info!("Found the provider endpoint info list: {provider_endpoint_info_list:?}");
+        if provider_endpoint_info_list.is_empty() {
+            return Err(tonic::Status::internal("No providers found"));
+        }
 
-        let mut values = vec![];
+        // We will only use the first provider.
+        let provider_endpoint_info = &provider_endpoint_info_list[0];
 
-        for provider_endpoint_info in &provider_endpoint_info_list {
-            let provider_uri = provider_endpoint_info.uri.clone();
-            let instance_id = provider_endpoint_info.context.clone();
+        let provider_uri = provider_endpoint_info.uri.clone();
+        let instance_id = provider_endpoint_info.context.clone();
 
-            let tx = Arc::clone(&self.tx);
-            let mut rx = tx.subscribe();
+        let tx = Arc::clone(&self.tx);
+        let mut rx = tx.subscribe();
 
-            let client_result = RequestClient::connect(provider_uri.clone()).await;
-            if client_result.is_err() {
-                warn!("Unable to connect. We will skip this one.");
-                continue;
-            }
-            let mut client = client_result.unwrap();
+        let client_result = RequestClient::connect(provider_uri.clone()).await;
+        if client_result.is_err() {
+            return Err(tonic::Status::internal("Unable to connect to the provider."));
+        }
+        let mut client = client_result.unwrap();
 
-            // Note: The ask id must be a universally unique value.
-            let ask_id = Uuid::new_v4().to_string();
+        // Note: The ask id must be a universally unique value.
+        let ask_id = Uuid::new_v4().to_string();
 
-            let targeted_payload = TargetedPayload {
-                instance_id: instance_id.clone(),
-                member_path: member_path.clone(),
-                operation: digital_twin_operation::GET.to_string(),
-                payload: "".to_string(),
-            };
+        let targeted_payload = TargetedPayload {
+            instance_id: instance_id.clone(),
+            member_path: member_path.clone(),
+            operation: digital_twin_operation::GET.to_string(),
+            payload: "".to_string(),
+        };
 
-            // Serialize the targeted payload.
-            let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
+        // Serialize the targeted payload.
+        let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
 
-            let request = tonic::Request::new(AskRequest {
-                respond_uri: self.respond_uri.clone(),
-                ask_id: ask_id.clone(),
-                payload: targeted_payload_json.clone(),
-            });
+        let request = tonic::Request::new(AskRequest {
+            respond_uri: self.respond_uri.clone(),
+            ask_id: ask_id.clone(),
+            payload: targeted_payload_json.clone(),
+        });
 
-            // Send the ask.
-            let response = client.ask(request).await;
-            if let Err(status) = response {
-                warn!("Unable to call ask, due to {status:?}\nWe will skip this one.");
-                continue;
-            }
+        // Send the ask.
+        let response = client.ask(request).await;
+        if let Err(status) = response {
+            return Err(tonic::Status::internal(format!("Unable to call ask, due to {status:?}")));
+        }
 
-            // Wait for the answer request.
-            let mut answer_request: AnswerRequest = Default::default();
-            let mut attempts_after_failure = 0;
-            while attempts_after_failure < Self::MAX_RETRIES {
-                match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv())
-                    .await
-                {
-                    Ok(Ok(request)) => {
-                        if ask_id == request.ask_id {
-                            // We have received the answer request that we are expecting.
-                            answer_request = request;
-                            break;
-                        } else {
-                            // Ignore this answer request, as it is not the one that we are expecting.
-                            warn!("Received an unexpected answer request with ask_id '{}'.  We will retry in a moment.", request.ask_id);
-                            // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
-                            continue;
-                        }
-                    }
-                    Ok(Err(error_message)) => {
-                        warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                        attempts_after_failure += 1;
-                        continue;
-                    }
-                    Err(error_message) => {
-                        warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
-                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                        attempts_after_failure += 1;
+        // Wait for the answer request.
+        let mut answer_request: AnswerRequest = Default::default();
+        let mut attempts_after_failure = 0;
+        while attempts_after_failure < Self::MAX_RETRIES {
+            match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv()).await {
+                Ok(Ok(request)) => {
+                    if ask_id == request.ask_id {
+                        // We have received the answer request that we are expecting.
+                        answer_request = request;
+                        break;
+                    } else {
+                        // Ignore this answer request, as it is not the one that we are expecting.
+                        warn!("Received an unexpected answer request with ask_id '{}'.  We will retry in a moment.", request.ask_id);
+                        // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
                         continue;
                     }
                 }
+                Ok(Err(error_message)) => {
+                    warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
+                    sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
+                    attempts_after_failure += 1;
+                    continue;
+                }
+                Err(error_message) => {
+                    warn!("Failed to receive the answer request.  The error message is '{}'.  We will retry in a moment.", error_message);
+                    sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
+                    attempts_after_failure += 1;
+                    continue;
+                }
             }
-
-            info!(
-                "Received an answer request.  The ask_id is '{}'. The payload is '{}",
-                answer_request.ask_id, answer_request.payload
-            );
-
-            values.push(answer_request.payload);
         }
 
-        if values.is_empty() {
-            return Err(tonic::Status::not_found("No values found"));
-        }
+        info!(
+            "Received an answer request.  The ask_id is '{}'. The payload is '{}",
+            answer_request.ask_id, answer_request.payload
+        );
 
-        Ok(tonic::Response::new(GetResponse { value: values[0].clone() }))
+        Ok(tonic::Response::new(GetResponse { value: answer_request.payload.clone() }))
     }
 
     /// Set implementation.
@@ -423,8 +414,6 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             )
             .await
             .map_err(tonic::Status::internal)?;
-
-        info!("Found the provider endpoint info list: {provider_endpoint_info_list:?}");
 
         if provider_endpoint_info_list.is_empty() {
             return Err(tonic::Status::internal("No providers found"));
