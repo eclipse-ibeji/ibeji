@@ -106,7 +106,12 @@ Once you have installed the prerequisites, go to your enlistment's root director
 
 `cargo build`
 
-This should build all of the libraries and executables.
+This will build all of the foundation libraries and executables.
+
+Ibeji also has add-on modules that rely on feature flags to include them in the build.  For example, to build Ibeji with the Digital Twin Graph
+and the Digital Twin Registry modules run:
+
+`cargo build --features "digital_twin_graph,digital_twin_registry"`
 
 ### <a name="tokio-console-support">Tokio Console Support</a>
 
