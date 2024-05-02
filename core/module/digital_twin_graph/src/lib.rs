@@ -19,7 +19,7 @@ pub struct TargetedPayload {
     pub member_path: String,
     /// The operation to be performed on the target entity's member.
     pub operation: String,
-    /// The operation's payload.
+    /// The operation's payload.  It will be empty when the operation does not require a payload.
     pub payload: String,
 }
 
@@ -42,7 +42,7 @@ pub mod digital_twin_operation {
     pub const MANAGEDSUBSCRIBE: &str = "ManagedSubscribe";
 }
 
-// Supported digital twin protocols.
+/// Supported digital twin protocols.
 pub mod digital_twin_protocol {
     pub const GRPC: &str = "grpc";
     pub const MQTT: &str = "mqtt";
