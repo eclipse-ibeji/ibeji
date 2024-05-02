@@ -13,6 +13,9 @@ use crate::digital_twin_graph_config;
 use crate::digital_twin_graph_impl::DigitalTwinGraphImpl;
 use crate::respond_impl::RespondImpl;
 
+/// The capacity of the broadcast channel.
+const BROADCAST_CHANNEL_CAPACITY: usize = 100;
+
 /// Digital Twin Graph Module.
 #[derive(Clone, Debug)]
 pub struct DigitalTwinGraphModule {}
@@ -37,7 +40,7 @@ impl GrpcModule for DigitalTwinGraphModule {
         let invehicle_digital_twin_uri = format!("http://{base_authority}"); // Devskim: ignore DS137138
         let respond_uri = format!("http://{base_authority}"); // Devskim: ignore DS137138
 
-        let (tx, _rx) = broadcast::channel(100);
+        let (tx, _rx) = broadcast::channel(BROADCAST_CHANNEL_CAPACITY);
         let tx = Arc::new(tx);
 
         // Setup the respond service.

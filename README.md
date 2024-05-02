@@ -108,7 +108,7 @@ Once you have installed the prerequisites, go to your enlistment's root director
 
 This will build all of the foundation libraries and executables.
 
-Ibeji also has add-on modules that rely on feature flags to include them in the build.  For example, to build Ibeji with the Digital Twin Graph
+Ibeji also has add-on modules that rely on feature flags to include them in the build. For example, to build Ibeji with the Digital Twin Graph
 and the Digital Twin Registry modules run:
 
 `cargo build --features "digital_twin_graph,digital_twin_registry"`
@@ -138,7 +138,7 @@ Currently, we have no integration tests or end-to-end tests.
 There are currently four samples: one that demonstrates the use of a property, one that demonstrates the use of a command, one that
 demonstrates the mixed use of properties and commands and one that demonstrates the use of get/set for a seat massager.
 
-The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
+The demos use config files and we have provided a templated version of each config file. These templates can be found in:
 
 - {repo-root-dir}/core/invehicle-digital-twin/template
 - {repo-root-dir}/samples/common/template
@@ -153,11 +153,11 @@ IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
 The above example tells `invehicle-digital-twin` to load configuration files from `/etc/ibeji` instead of using
 the current working directory.
 
-Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
+Chariott may be used to discover the in-vehicle digital twin service. We will discuss how to enable this feature.
 
 ### <a name="property-sample">Property Sample</a>
 
-The following instructions are for the demo for the use of a property.  This sample uses a MQTT Broker; please make sure that it is running.
+The following instructions are for the demo for the use of a property. This sample uses a MQTT Broker; please make sure that it is running.
 
 Steps:
 
