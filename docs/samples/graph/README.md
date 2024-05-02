@@ -8,11 +8,11 @@ Steps:
 
 1. The best way to run the demo is by using four windows: one running the In-Vehicle Digital Twin, two running the Digital Twin Providers and one running the Digital Twin Consumer.
 Orientate the four windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle two window can be used for the Digital Twin Providers. The bottom window can be used for the Digital Twin Consumer.<br>
+The middle two windows can be used for the Digital Twin Providers. The bottom window can be used for the Digital Twin Consumer.<br>
 1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the four config files with the following contents, if they are not already there:<br><br>
+Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br>
+`cd {repo-root-dir}/target/debug`<br><br>
+1. Create the four config files with the following contents, if they are not already there:<br>
 ---- invehicle_digital_twin_settings.yaml ----<br>
 `invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
 ---- digital_twin_graph_settings.yaml ----<br>
