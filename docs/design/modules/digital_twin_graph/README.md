@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
 - [Architecture](#architecture)
-- [Sequences](#sequences)
+- [Operations](#operations)
 
 ## <a name="introduction">Introduction</a>
 
@@ -26,7 +26,7 @@ We will introduce a new service named "Digital Twin Graph" that will provide a f
 providers. Ideally, the consumer will not need to directly interact with provider endpoints. Instead, the consumer will interact with a graph structure that
 represents the digital twin.
 
-Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Digital Twin Graph Service. We will introduce a modified form of the service under the name "Digital Twin Registry" and keep the existing functionality intact under the original In-vehcile Digital Twin Service.
+Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Digital Twin Graph Service. We will introduce a modified form of the service under the name "Digital Twin Registry" and keep the existing functionality intact under the original In-vehicle Digital Twin Service.
 
 The Managed Subscriber Service is an optional service that provides integration with Agemo. It has been included in the component diagram for completeness sake.
 
@@ -39,7 +39,7 @@ The Digital Twin Graph Service will support four operations:
 - Find
 - Get
 - Invoke
-- Set (this operation will be implemneted in a later phase)
+- Set (this operation will be implemented in a later phase)
 
 ### Find
 
