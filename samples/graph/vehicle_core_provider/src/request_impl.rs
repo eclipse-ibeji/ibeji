@@ -43,10 +43,10 @@ pub struct RequestImpl {
 
 /// The implementation for the Request interface, which is used to handle requests from the consumer.
 impl RequestImpl {
-    ///
+    /// Backoff base duration in milliseconds.
     const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
 
-    ///
+    /// Maximum number of retries.
     const MAX_RETRIES: usize = 100;
 
     /// Get implementation.

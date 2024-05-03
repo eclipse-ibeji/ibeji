@@ -1,6 +1,6 @@
-# Sample: Graph
+# Sample: Digital Twin Graph
 
-The graph sample demonstrates the use of the Digital Twin Graph service.
+The Digital Twin Graph sample demonstrates the use of the Digital Twin Graph Service.
 
 Follow these instructions to run the demo.
 

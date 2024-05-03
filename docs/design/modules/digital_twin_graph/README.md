@@ -14,7 +14,7 @@ This design specifies a graph-based facade, which will be named the Digital Twin
 graph of digital twin entities whose arcs represent the relationships between those entities.  Instance ids will be used to refer to entities.
 
 Please note that Ibeji is only intended for use on an IoT edge device. It is not intended for use in the cloud. The data that it manages can be
-transferred to the cloud, through components like Freyja.
+transferred to the cloud, through components like [Eclipse Freyja](https://github.com/eclipse-ibeji/freyja).
 
 ## <a name="architecture">Architecture</a>
 

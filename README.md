@@ -98,26 +98,32 @@ Instructions for installing Mosquitto can be found [here](https://github.com/ecl
 The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
 and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
-`git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
+````shell
+git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
+````
 
 ## <a name="building">Building</a>
 
 Once you have installed the prerequisites, go to your enlistment's root directory and run:
 
-`cargo build`
+````shell
+cargo build
+````
 
 This will build all of the foundation libraries and executables.
 
 Ibeji also has add-on modules that rely on feature flags to include them in the build. For example, to build Ibeji with the Digital Twin Graph
 and the Digital Twin Registry modules run:
 
-`cargo build --features "digital_twin_graph,digital_twin_registry"`
+````shell
+cargo build --features "digital_twin_graph,digital_twin_registry"
+````
 
 ### <a name="tokio-console-support">Tokio Console Support</a>
 
 Ibeji has support for using the [tokio console](https://github.com/tokio-rs/console) for advanced debugging. To enable this support, you need to build with the `tokio_console` feature enabled and with the `tokio_unstable` config flag for the rust compiler:
 
-```bash
+```shell
 RUSTFLAGS="--cfg tokio_unstable" cargo build --features tokio_console
 ```
 
@@ -129,7 +135,9 @@ Note that the tokio console will intercept trace-level logs, so these will not b
 
 After successfully building Ibeji, you can run all of the unit tests. To do this go to the enlistment's root directory and run:
 
-`cargo test`
+````shell
+cargo test
+````
 
 Currently, we have no integration tests or end-to-end tests.
 
@@ -146,7 +154,7 @@ The demos use config files and we have provided a templated version of each conf
 Configuration files will be loaded from the current working directory by default
 but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
 
-```bash
+```shell
 IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
 ```
 

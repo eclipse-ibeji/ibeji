@@ -206,7 +206,7 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
             seat_massager_json["@type"]
         ));
     }
-    // Let's make sure that we can fully serserialize the seat massager instance.  This in only a check and it is optional.
+    // Let's make sure that we can fully serialize the seat massager instance. This is only a check and it is optional.
     let _seat_massager: sdv::premium_airbag_seat_massager::TYPE =
         serde_json::from_value(seat_massager_json.clone()).unwrap();
 

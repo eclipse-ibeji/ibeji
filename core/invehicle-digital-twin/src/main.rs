@@ -121,7 +121,7 @@ where
             error
         })?;
 
-        // Create interceptor layer to be added to the app server.
+        // Create the interceptor layer to be added to the app server.
         let managed_subscribe_layer =
             GrpcInterceptorLayer::new(Box::new(managed_subscribe_module.create_interceptor()));
 
