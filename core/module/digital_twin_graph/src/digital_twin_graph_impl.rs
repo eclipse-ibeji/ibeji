@@ -187,7 +187,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .map_err(tonic::Status::internal)?;
 
         // Build a map of instance id to its associated endpoint infos.
-        let instance_provide_map: std::collections::HashMap<String, Vec<EndpointInfo>> =
+        let instance_provider_map: std::collections::HashMap<String, Vec<EndpointInfo>> =
             provider_endpoint_info_list
                 .iter()
                 .map(|provider_endpoint_info| {
@@ -203,9 +203,9 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
 
         let mut values = vec![];
 
-        for instance_id in instance_provide_map.keys() {
+        for instance_id in instance_provider_map.keys() {
             // We will only use the first provider. For a high availability scenario, we can try multiple providers.
-            let provider_endpoint_info = &instance_provide_map[instance_id][0];
+            let provider_endpoint_info = &instance_provider_map[instance_id][0];
 
             let provider_uri = provider_endpoint_info.uri.clone();
             let instance_id = provider_endpoint_info.context.clone();
@@ -317,7 +317,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .map_err(tonic::Status::internal)?;
 
         if provider_endpoint_info_list.is_empty() {
-            return Err(tonic::Status::internal("No providers found"));
+            return Err(tonic::Status::not_found("No providers found"));
         }
 
         // We will only use the first provider.
@@ -438,7 +438,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .map_err(tonic::Status::internal)?;
 
         if provider_endpoint_info_list.is_empty() {
-            return Err(tonic::Status::internal("No providers found"));
+            return Err(tonic::Status::not_found("No providers found"));
         }
 
         // We will only use the first provider.

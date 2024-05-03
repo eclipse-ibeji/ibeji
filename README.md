@@ -161,7 +161,7 @@ IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
 The above example tells `invehicle-digital-twin` to load configuration files from `/etc/ibeji` instead of using
 the current working directory.
 
-Chariott may be used to discover the in-vehicle digital twin service. We will discuss how to enable this feature.
+Chariott may be used to discover the in-vehicle digital twin service. We will discuss how to enable this feature in the section on [Using Chariott](#using-chariott).
 
 ### <a name="property-sample">Property Sample</a>
 

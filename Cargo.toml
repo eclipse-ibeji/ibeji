@@ -29,7 +29,7 @@ members = [
   "samples/common",
   "samples/protobuf_data_access",
   "samples/command",
-  "samples/graph",
+  "samples/digital_twin_graph",
   "samples/managed_subscribe",
   "samples/mixed",
   "samples/property",
