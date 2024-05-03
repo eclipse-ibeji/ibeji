@@ -1,6 +1,10 @@
 Agemo
 App
+com
+freyja
 Freyja
+github
+ibeji
 Ibeji
 Ibeji's
 IoT
