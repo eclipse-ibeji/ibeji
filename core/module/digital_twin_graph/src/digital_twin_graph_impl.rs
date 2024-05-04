@@ -210,7 +210,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             let provider_uri = provider_endpoint_info.uri.clone();
             let instance_id = provider_endpoint_info.context.clone();
 
-            let tx = Arc::clone(&self.tx);
+            let tx = self.tx.clone();
             let mut rx = tx.subscribe();
 
             let client_result = RequestClient::connect(provider_uri.clone()).await;
@@ -326,9 +326,10 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let provider_uri = provider_endpoint_info.uri.clone();
         let instance_id = provider_endpoint_info.context.clone();
 
-        let tx = Arc::clone(&self.tx);
+        let tx = self.tx.clone();
         let mut rx = tx.subscribe();
 
+        // Connect to the provider where we will send the ask to get the instance's value.
         let client_result = RequestClient::connect(provider_uri.clone()).await;
         if client_result.is_err() {
             return Err(tonic::Status::internal("Unable to connect to the provider."));
@@ -338,6 +339,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         // Note: The ask id must be a universally unique value.
         let ask_id = Uuid::new_v4().to_string();
 
+        // Create the targeted payload. Note: The member path is not used when the operation is GET.
         let targeted_payload = TargetedPayload {
             instance_id: instance_id.clone(),
             member_path: member_path.clone(),
@@ -447,7 +449,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let provider_uri = provider_endpoint_info.uri.clone();
         let instance_id = provider_endpoint_info.context.clone();
 
-        let tx = Arc::clone(&self.tx);
+        let tx = self.tx.clone();
         let mut rx = tx.subscribe();
 
         let client_result = RequestClient::connect(provider_uri.clone()).await;

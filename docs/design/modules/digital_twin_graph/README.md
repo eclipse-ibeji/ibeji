@@ -11,7 +11,7 @@ provide a consumer with the best interaction experience. They can be used as bui
 delivers a much better interaction experience. In the future, Ibeji may support multiple facades and the user can select the one that they prefer to use.
 
 This design specifies a graph-based facade, which will be named the Digital Twin Graph Service. With this facade, the digital twin will be represented as a
-graph of digital twin entities whose arcs represent the relationships between those entities.  Instance ids will be used to refer to entities.
+graph of digital twin entities whose arcs represent the relationships between those entities.  Instance IDs will be used to refer to entities.
 
 Please note that Ibeji is only intended for use on an IoT edge device. It is not intended for use in the cloud. The data that it manages can be
 transferred to the cloud, through components like [Eclipse Freyja](https://github.com/eclipse-ibeji/freyja).
@@ -28,7 +28,7 @@ represents the digital twin.
 
 Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Digital Twin Graph Service. We will introduce a modified form of the service under the name "Digital Twin Registry" and keep the existing functionality intact under the original In-vehicle Digital Twin Service.
 
-The Managed Subscriber Service is an optional service that provides integration with Agemo. It has been included in the component diagram for completeness sake.
+The Managed Subscriber Service is an optional service that provides integration with Agemo. The Managed Subscriber Service has been included in the component diagram for completeness' sake.
 
 ![Component Diagram](diagrams/digital_twin_graph_component.svg)
 
