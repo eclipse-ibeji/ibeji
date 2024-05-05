@@ -29,8 +29,6 @@ Make sure that you replace "{repo-root-dir}" with the repository root directory 
 `./command-consumer`<br>
 1. Use control-c in each of the windows when you wish to stop the demo.
 
-
-
 A templated version of each config file can be found in:
 
 - {repo-root-dir}/core/invehicle-digital-twin/template
