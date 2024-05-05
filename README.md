@@ -147,7 +147,7 @@ There are currently six samples:
 - [Streaming Sample](docs/samples/streaming/README.md) - demonstrates the use of streaming
 - [Digital Twin Graph Sample](docs/samples/digital_twin_graph/README.md) - demonstrates the use of the Digital Twin Graph Service
 
-The samples' onfiguration files will be loaded from the current working directory by default,
+The samples' configuration files will be loaded from the current working directory by default,
 but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
 
 ```shell
