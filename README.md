@@ -140,12 +140,12 @@ Currently, we have no integration tests or end-to-end tests.
 
 There are currently six samples:
 
-  - [Property Sample](docs/samples/property/README.md) - demonstrates the use of a property
-  - [Command Sample](docs/samples/command/README.md) - demonstrates the use of a command
-  - [Mixed Sample](docs/samples/mixed/README.md) - demonstrates the mixed use of properties and commands
-  - [Seat Massager Sample](docs/samples/seat_massager/README.md) - demonstrates the use of get/set for a seat massager
-  - [Streaming Sample](docs/samples/streaming/README.md) - demonstrates the use of streaming
-  - [Digital Twin Graph Sample](docs/samples/digital_twin_graph/README.md) - demonstrates the use of the Digital Twin Graph Service
+- [Property Sample](docs/samples/property/README.md) - demonstrates the use of a property
+- [Command Sample](docs/samples/command/README.md) - demonstrates the use of a command
+- [Mixed Sample](docs/samples/mixed/README.md) - demonstrates the mixed use of properties and commands
+- [Seat Massager Sample](docs/samples/seat_massager/README.md) - demonstrates the use of get/set for a seat massager
+- [Streaming Sample](docs/samples/streaming/README.md) - demonstrates the use of streaming
+- [Digital Twin Graph Sample](docs/samples/digital_twin_graph/README.md) - demonstrates the use of the Digital Twin Graph Service
 
 The samples' onfiguration files will be loaded from the current working directory by default,
 but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
