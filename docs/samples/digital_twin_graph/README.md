@@ -3,7 +3,7 @@
 The Digital Twin Graph sample demonstrates the use of the Digital Twin Graph Service.
 
 This sample has two providers. The vehicle-core provider handles the vehicle, the vehicle's cabin and the cabin's seats.
-The seat-massager provider handles all of the seat's seat massagers.
+The seat-massager provider handles all of the seats' seat massagers.
 
 Follow these instructions to run the demo.
 
