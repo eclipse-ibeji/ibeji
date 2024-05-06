@@ -193,7 +193,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
                 .map(|provider_endpoint_info| {
                     (provider_endpoint_info.context.clone(), provider_endpoint_info.clone())
                 })
-                .fold(
+                .fold( // fold is used to group the endpoint infos by instance id.
                     std::collections::HashMap::new(),
                     |mut accumulator, (instance_id, endpoint_info)| {
                         accumulator.entry(instance_id).or_insert_with(Vec::new).push(endpoint_info);
