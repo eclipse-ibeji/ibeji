@@ -98,7 +98,7 @@ impl DigitalTwinGraphImpl {
             client.find_by_model_id(request).await.map_err(|error| error.to_string())
         })
         .await
-        .map_err(|error| tonic::Status::internal(error))?
+        .map_err(tonic::Status::internal)?
         .into_inner();
 
         Ok(response
@@ -144,7 +144,7 @@ impl DigitalTwinGraphImpl {
             client.find_by_instance_id(request).await.map_err(|error| error.to_string())
         })
         .await
-        .map_err(|error| tonic::Status::internal(error))?
+        .map_err(tonic::Status::internal)?
         .into_inner();
 
         Ok(response
