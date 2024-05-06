@@ -249,26 +249,26 @@ mod tests {
         .await;
         assert!(result.is_err());
     }
-}
 
-#[test]
-fn is_subset_test() {
-    assert!(is_subset(&[], &[]));
-    assert!(is_subset(&[], &["one".to_string()]));
-    assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
-    assert!(is_subset(&["one".to_string()], &["one".to_string()]));
-    assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
-    assert!(is_subset(
-        &["one".to_string(), "two".to_string()],
-        &["one".to_string(), "two".to_string()]
-    ));
-    assert!(!is_subset(
-        &["one".to_string(), "two".to_string(), "three".to_string()],
-        &["one".to_string(), "two".to_string()]
-    ));
-    assert!(!is_subset(
-        &["one".to_string(), "two".to_string(), "three".to_string()],
-        &["one".to_string()]
-    ));
-    assert!(!is_subset(&["one".to_string(), "two".to_string(), "three".to_string()], &[]));
+    #[test]
+    fn is_subset_test() {
+        assert!(is_subset(&[], &[]));
+        assert!(is_subset(&[], &["one".to_string()]));
+        assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(
+            &["one".to_string(), "two".to_string()],
+            &["one".to_string(), "two".to_string()]
+        ));
+        assert!(!is_subset(
+            &["one".to_string(), "two".to_string(), "three".to_string()],
+            &["one".to_string(), "two".to_string()]
+        ));
+        assert!(!is_subset(
+            &["one".to_string(), "two".to_string(), "three".to_string()],
+            &["one".to_string()]
+        ));
+        assert!(!is_subset(&["one".to_string(), "two".to_string(), "three".to_string()], &[]));
+    }
 }
