@@ -3,6 +3,7 @@ cd
 config
 dir
 invehicle
+massagers
 repo
 uri
 yaml
