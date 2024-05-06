@@ -16,7 +16,7 @@ pub struct Settings {
 
 /// Load the settings.
 /// The settings are loaded from the default config file name.
-/// 
+///
 /// # Returns
 /// The settings.
 pub fn load_settings() -> Settings {
