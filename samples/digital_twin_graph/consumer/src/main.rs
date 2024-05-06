@@ -25,6 +25,8 @@ const MAX_RETRIES: usize = 100;
 ///
 /// # Arguments
 /// * `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
+/// # Returns
+/// The digital twin graph client.
 async fn connect_to_digital_twin_graph_service(
     invehicle_digital_twin_uri: String,
 ) -> Result<DigitalTwinGraphClient<tonic::transport::Channel>, String> {
@@ -50,6 +52,8 @@ async fn connect_to_digital_twin_graph_service(
 /// # Arguments
 /// * `client` - The digital twin graph client.
 /// * `model_id` - The model id.
+/// # Returns
+/// The find response.
 async fn find(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     model_id: String,
@@ -79,6 +83,8 @@ async fn find(
 /// * `client` - The digital twin graph client.
 /// * `instance_id` - The instance id.
 /// * `member_path` - The member path.
+/// # Returns
+/// The get response.
 async fn get(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     instance_id: String,
@@ -111,6 +117,8 @@ async fn get(
 /// * `instance_id` - The instance id.
 /// * `member_path` - The member path.
 /// * `request_payload` - The request payload.
+/// # Returns
+/// The invoke response.
 async fn invoke(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
     instance_id: String,
@@ -134,71 +142,127 @@ async fn invoke(
     Ok(invoke_response)
 }
 
-/// Perform a series of interactions with a vehicle digital twin.
+/// Find a vehicle instance.
 ///
 /// # Arguments
-/// * `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
-async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Result<(), String> {
-    // Connect to the digital twin graph service.
-    let client: DigitalTwinGraphClient<tonic::transport::Channel> =
-        connect_to_digital_twin_graph_service(invehicle_digital_twin_uri.clone()).await?;
-
+/// * `client` - The digital twin graph client.
+/// # Returns
+/// The vehicle instance.
+async fn find_vehicle(
+    client: DigitalTwinGraphClient<tonic::transport::Channel>,
+) -> Result<sdv::vehicle::TYPE, String> {
     // Find all vehicle instances.
-    let find_vehicle_response: FindResponse =
-        find(client.clone(), sdv::vehicle::ID.to_string()).await?;
+    let find_vehicle_response: FindResponse = find(client, sdv::vehicle::ID.to_string()).await?;
     if find_vehicle_response.values.is_empty() {
         return Err("Unable to find vehicle instances".to_string());
     }
+
     // For now, we will just use the first vehicle instance.
     let vehicle: sdv::vehicle::TYPE =
         serde_json::from_str(&find_vehicle_response.values[0]).unwrap();
+
     info!("The vehicle's instance id is: {}", vehicle.instance_id);
 
+    Ok(vehicle)
+}
+
+/// Find a cabin instance.
+///
+/// # Arguments
+/// * `client` - The digital twin graph client.
+/// * `vehicle` - The vehicle instance.
+/// # Returns
+/// The cabin instance.
+async fn find_cabin(
+    client: DigitalTwinGraphClient<tonic::transport::Channel>,
+    vehicle: &sdv::vehicle::TYPE,
+) -> Result<sdv::cabin::TYPE, String> {
     // Get the cabin instance id.
     if vehicle.cabin.is_empty() {
         return Err("The vehicle does not have a cabin".to_string());
     }
+
+    // A vehicle has at most one cabin instance. We will use the first cabin instance.
     let cabin_instance_id = vehicle.cabin[0].instance_id.clone();
+
     info!("The cabin's instance id is: {:?}", cabin_instance_id);
+
     // Get the cabin instance.
     let get_cabin_response: GetResponse =
         get(client.clone(), cabin_instance_id.clone(), "".to_string()).await?;
+
     // Deserialize the cabin instance.
     let cabin: sdv::cabin::TYPE = serde_json::from_str(&get_cabin_response.value).unwrap();
 
-    // Find the front left seat's instance id.
-    let mut front_left_seat_instance_id_option: Option<String> = None;
+    Ok(cabin)
+}
+
+/// Find a seat instance.
+///
+/// # Arguments
+/// * `client` - The digital twin graph client.
+/// * `cabin` - The cabin instance.
+/// * `seat_row` - The seat row.
+/// * `seat_posotion` - The seat position.
+/// # Returns
+/// The seat instance.
+async fn find_seat(
+    client: DigitalTwinGraphClient<tonic::transport::Channel>,
+    cabin: &sdv::cabin::TYPE,
+    seat_row: i32,
+    seat_posotion: sdv::cabin::seat::SEAT_POSITION_TYPE,
+) -> Result<sdv::seat::TYPE, String> {
+    if cabin.seat.is_empty() {
+        return Err("The cabin does not have any seats".to_string());
+    }
+
+    // Find the specified seat instance.
     for seat_relationship in cabin.seat.iter() {
-        if (seat_relationship.seat_row == 1)
-            && (seat_relationship.seat_position == sdv::cabin::seat::SEAT_POSITION_TYPE::left)
+        if (seat_relationship.seat_row == seat_row)
+            && (seat_relationship.seat_position == seat_posotion)
         {
-            info!("The front left seat's instance id is: {:?}", seat_relationship.instance_id);
-            front_left_seat_instance_id_option = Some(seat_relationship.instance_id.clone());
+            // Get the seat instance.
+            let get_seat_response: GetResponse =
+                get(client.clone(), seat_relationship.instance_id.clone(), "".to_string()).await?;
+
+            // Deserialize the seat instance.
+            let seat: sdv::seat::TYPE = serde_json::from_str(&get_seat_response.value).unwrap();
+
+            info!("The seat's instance id is: {}", seat.instance_id);
+
+            return Ok(seat);
         }
     }
-    if front_left_seat_instance_id_option.is_none() {
-        return Err("The front left seat was not found".to_string());
-    }
-    let front_left_seat_instance_id = front_left_seat_instance_id_option.unwrap();
 
-    // Get the seat instance.
-    let get_seat_response: GetResponse =
-        get(client.clone(), front_left_seat_instance_id.clone(), "".to_string()).await?;
-    // Deserialize the seat instance.
-    let seat: sdv::seat::TYPE = serde_json::from_str(&get_seat_response.value).unwrap();
+    Err("The seat was not found".to_string())
+}
 
-    // Get the seat massager instance id.
+/// Find a premium airbag seat massager instance.
+///
+/// # Arguments
+/// * `client` - The digital twin graph client.
+/// * `seat` - The seat instance.
+/// # Returns
+/// The premium airbag seat massager instance.
+async fn find_premium_airbag_seat_massager(
+    client: DigitalTwinGraphClient<tonic::transport::Channel>,
+    seat: &sdv::seat::TYPE,
+) -> Result<sdv::premium_airbag_seat_massager::TYPE, String> {
     if seat.seat_massager.is_empty() {
         return Err("The seat does not have a seat massage".to_string());
     }
+
+    // Get the seat massager instance id.
     let seat_massager_instance_id = seat.seat_massager[0].instance_id.clone();
-    info!("The seat massager's instance id is: {:?}", seat_massager_instance_id);
+
     // Get the seat massager instance.
     let get_seat_massager_response: GetResponse =
         get(client.clone(), seat_massager_instance_id.clone(), "".to_string()).await?;
+
     // Deserialize the seat massager instance to a JSON object.
     let seat_massager_json: serde_json::Value =
         serde_json::from_str(&get_seat_massager_response.value).unwrap();
+
     // Check that that the seat massager's modei_id (marked by @type) is the expected model (premium_airbag_seat_massager).
     if seat_massager_json["@type"] != sdv::premium_airbag_seat_massager::ID {
         return Err(format!(
@@ -206,15 +270,33 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
             seat_massager_json["@type"]
         ));
     }
-    // Let's make sure that we can fully serialize the seat massager instance. This is only a check and it is optional.
-    let _seat_massager: sdv::premium_airbag_seat_massager::TYPE =
-        serde_json::from_value(seat_massager_json.clone()).unwrap();
 
-    // Randomly generate the airbag adjustment field values.
-    let mut rng = StdRng::from_entropy();
-    let airbag_identifier = rng.gen_range(1..=15);
-    let inflation_level = rng.gen_range(1..=10);
-    let inflation_duration_in_seconds = rng.gen_range(1..=5);
+    // Deserialize the seat massager instance.
+    let seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+        serde_json::from_str(&get_seat_massager_response.value).unwrap();
+
+    info!("The seat massager's instance id is: {}", seat_massager.instance_id);
+
+    Ok(seat_massager)
+}
+
+/// Perform the perform_step operation.
+///
+/// # Arguments
+/// * `client` - The digital twin graph client.
+/// * `seat_massager` - The premium airbag seat massager instance.
+/// * `airbag_identifier` - The airbag identifier.
+/// * `inflation_level` - The inflation level.
+/// * `inflation_duration_in_seconds` - The inflation duration in seconds.
+/// # Returns
+/// An empty result if the operation is successful.
+async fn perform_step(
+    client: DigitalTwinGraphClient<tonic::transport::Channel>,
+    seat_massager: sdv::premium_airbag_seat_massager::TYPE,
+    airbag_identifier: i32,
+    inflation_level: i32,
+    inflation_duration_in_seconds: i32,
+) -> Result<(), String> {
     // Generate the perform_step operation's request payload.
     let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
         sdv::airbag_seat_massager::perform_step::request::TYPE {
@@ -225,17 +307,66 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
             }],
             ..Default::default()
         };
+
     // Serialize the request payload to a JSON string.
     let request_payload_json: String = serde_json::to_string_pretty(&request_payload).unwrap();
+
     // Invoke the perform_step operation.
     let perform_step_response: InvokeResponse = invoke(
         client.clone(),
-        seat_massager_instance_id.clone(),
+        seat_massager.instance_id.clone(),
         sdv::airbag_seat_massager::perform_step::NAME.to_string(),
         request_payload_json.clone(),
     )
     .await?;
+
     info!("The perform_step operation response is:\n{}", perform_step_response.response_payload);
+
+    Ok(())
+}
+
+/// Perform a series of interactions with a vehicle digital twin.
+///
+/// # Arguments
+/// * `invehicle_digital_twin_uri` - The in-vehicle digital twin uri.
+/// # Returns
+/// An empty result if the interactions are successful.
+async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Result<(), String> {
+    // Connect to the digital twin graph service.
+    let client: DigitalTwinGraphClient<tonic::transport::Channel> =
+        connect_to_digital_twin_graph_service(invehicle_digital_twin_uri.clone()).await?;
+
+    // Find the vehicle instance.
+    let vehicle: sdv::vehicle::TYPE = find_vehicle(client.clone()).await.unwrap();
+
+    // Find the cabin instance.
+    let cabin: sdv::cabin::TYPE = find_cabin(client.clone(), &vehicle).await.unwrap();
+
+    // Find the front left seat instance.
+    let front_left_seat: sdv::seat::TYPE =
+        find_seat(client.clone(), &cabin, 1, sdv::cabin::seat::SEAT_POSITION_TYPE::left)
+            .await
+            .unwrap();
+
+    // Find the premium airbag seat massager instance.
+    let seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+        find_premium_airbag_seat_massager(client.clone(), &front_left_seat).await.unwrap();
+
+    // Randomly generate the airbag adjustment field values.
+    let mut rng = StdRng::from_entropy();
+    let airbag_identifier = rng.gen_range(1..=15);
+    let inflation_level = rng.gen_range(1..=10);
+    let inflation_duration_in_seconds = rng.gen_range(1..=5);
+
+    // Perform the perform_step operation.
+    perform_step(
+        client.clone(),
+        seat_massager,
+        airbag_identifier,
+        inflation_level,
+        inflation_duration_in_seconds,
+    )
+    .await?;
 
     Ok(())
 }
