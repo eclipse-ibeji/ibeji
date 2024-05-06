@@ -6,9 +6,10 @@
 
 ## <a name="introduction">Introduction</a>
 
-Ibeji today provides the foundations for constructing and interacting with a digital twin on an edge device. These are low-level abilities and do not necessarily
-provide a consumer with the best interaction experience. They can be used as building blocks to build facades that provide a consumer with an abstraction that
-delivers a much better interaction experience. In the future, Ibeji may support multiple facades and the user can select the one that they prefer to use.
+The initial Ibeji provided the foundations for constructing and interacting with a digital twin on an edge device. These foundations are low-level abilities
+and they do not necessarily provide a consumer with the best interaction experience. However, they can be used as building blocks to build facades that
+provide a consumer with an abstraction that delivers a much better interaction experience. Ibeji may support multiple facades and the user can select the one
+that they prefer to use.
 
 This design specifies a graph-based facade, which will be named the Digital Twin Graph Service. With this facade, the digital twin will be represented as a
 graph of digital twin entities whose arcs represent the relationships between those entities.  Instance IDs will be used to refer to entities.
@@ -26,7 +27,7 @@ We will introduce a new service named "Digital Twin Graph" that will provide a f
 providers. Ideally, the consumer will not need to directly interact with provider endpoints. Instead, the consumer will interact with a graph structure that
 represents the digital twin.
 
-Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Digital Twin Graph Service. We will introduce a modified form of the service under the name "Digital Twin Registry" and keep the existing functionality intact under the original In-vehicle Digital Twin Service.
+Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Digital Twin Graph Service. We will introduce a modified form of the service under the name "Digital Twin Registry" and keep the existing functionality intact, for now, under the original In-vehicle Digital Twin Service.
 
 The Managed Subscriber Service is an optional service that provides integration with Agemo. The Managed Subscriber Service has been included in the component diagram for completeness' sake.
 

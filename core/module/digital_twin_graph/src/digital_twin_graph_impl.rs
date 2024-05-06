@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+use common::utils::is_subset;
 use core_protobuf_data_access::async_rpc::v1::request::{
     request_client::RequestClient, AskRequest,
 };
@@ -63,17 +64,6 @@ impl DigitalTwinGraphImpl {
         }
     }
 
-    /// Is the provided subset a subset of the provided superset?
-    ///
-    /// # Arguments
-    /// * `subset` - The provided subset.
-    /// * `superset` - The provided superset.
-    fn is_subset(subset: &[String], superset: &[String]) -> bool {
-        subset.iter().all(|subset_member| {
-            superset.iter().any(|supserset_member| subset_member == supserset_member)
-        })
-    }
-
     /// Use the Digital Twin Registery service to find the endpoints for digital twin providers that support
     /// the specified model id, protocol and operations.
     ///
@@ -112,7 +102,7 @@ impl DigitalTwinGraphImpl {
             .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
             .filter(|endpoint_info| {
                 endpoint_info.protocol == protocol
-                    && Self::is_subset(operations, &endpoint_info.operations)
+                    && is_subset(operations, &endpoint_info.operations)
             })
             .collect())
     }
@@ -155,7 +145,7 @@ impl DigitalTwinGraphImpl {
             .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
             .filter(|endpoint_info| {
                 endpoint_info.protocol == protocol
-                    && Self::is_subset(operations, &endpoint_info.operations)
+                    && is_subset(operations, &endpoint_info.operations)
             })
             .collect())
     }

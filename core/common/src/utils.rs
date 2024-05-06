@@ -42,6 +42,8 @@ pub enum ServiceUriSource {
 ///
 /// # Arguments
 /// * `config_filename` - Name of the config file to load settings from.
+/// # Returns
+/// * The settings.
 pub fn load_settings<T>(config_filename: &str) -> Result<T, ConfigError>
 where
     T: for<'de> serde::Deserialize<'de>,
@@ -65,6 +67,8 @@ where
 /// * `retry_interval_ms` - The retry interval between retries in milliseconds.
 /// * `function` - The function to retry.
 /// * `context` - Context field to provide additional info for logging.
+/// # Returns
+/// * The result of the function.
 pub async fn execute_with_retry<T, E, Fut, F: FnMut() -> Fut>(
     max_retries: u32,
     retry_interval_ms: Duration,
@@ -108,6 +112,8 @@ where
 /// * `version` - The service's version.
 /// # `expected_communication_kind` - The service's expected communication kind.
 /// # `expected_communication_reference` - The service's expected communication reference.
+/// # Returns
+/// * The service's URI.
 pub async fn discover_service_using_chariott(
     chariott_uri: &str,
     namespace: &str,
@@ -147,6 +153,8 @@ pub async fn discover_service_using_chariott(
 /// * `service_uri_source` - Enum providing information on how to get the service URI.
 /// # `expected_communication_kind` - The service's expected communication kind.
 /// # `expected_communication_reference` - The service's expected communication reference.
+/// # Returns
+/// * The service's URI.
 pub async fn get_service_uri(
     service_uri_source: ServiceUriSource,
     expected_communication_kind: &str,
@@ -183,6 +191,19 @@ pub async fn get_service_uri(
     };
 
     Ok(result)
+}
+
+/// Is the provided subset a subset of the provided superset?
+///
+/// # Arguments
+/// * `subset` - The provided subset.
+/// * `superset` - The provided superset.
+/// # Returns
+/// * `true` if the subset is a subset of the superset, `false` otherwise.
+pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
+    subset.iter().all(|subset_member| {
+        superset.iter().any(|supserset_member| subset_member == supserset_member)
+    })
 }
 
 #[cfg(test)]
@@ -228,4 +249,26 @@ mod tests {
         .await;
         assert!(result.is_err());
     }
+}
+
+#[test]
+fn is_subset_test() {
+    assert!(is_subset(&[], &[]));
+    assert!(is_subset(&[], &["one".to_string()]));
+    assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
+    assert!(is_subset(&["one".to_string()], &["one".to_string()]));
+    assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
+    assert!(is_subset(
+        &["one".to_string(), "two".to_string()],
+        &["one".to_string(), "two".to_string()]
+    ));
+    assert!(!is_subset(
+        &["one".to_string(), "two".to_string(), "three".to_string()],
+        &["one".to_string(), "two".to_string()]
+    ));
+    assert!(!is_subset(
+        &["one".to_string(), "two".to_string(), "three".to_string()],
+        &["one".to_string()]
+    ));
+    assert!(!is_subset(&["one".to_string(), "two".to_string(), "three".to_string()], &[]));
 }
