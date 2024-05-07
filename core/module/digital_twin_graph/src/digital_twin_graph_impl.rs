@@ -158,27 +158,14 @@ impl DigitalTwinGraphImpl {
     /// * `client` - The client to use to send the ask.
     /// * `respond_uri` - The respond uri.
     /// * `ask_id` - The ask id.
-    /// * `instance_id` - The instance id.
-    /// * `member_path` - The member path.
-    /// * `operation` - The operation.
-    /// * `payload` - The payload.
+    /// * `targeted_payload` - The targeted payload.
     pub async fn send_ask(
         &self,
         mut client: RequestClient<tonic::transport::Channel>,
         respond_uri: &str,
         ask_id: &str,
-        instance_id: &str,
-        member_path: &str,
-        operation: &str,
-        payload: &str,
+        targeted_payload: &TargetedPayload,
     ) -> Result<(), tonic::Status> {
-        let targeted_payload = TargetedPayload {
-            instance_id: instance_id.to_string(),
-            member_path: member_path.to_string(),
-            operation: operation.to_string(),
-            payload: payload.to_string(),
-        };
-
         // Serialize the targeted payload.
         let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
 
@@ -304,17 +291,16 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             // Note: The ask id must be a universally unique value.
             let ask_id = Uuid::new_v4().to_string();
 
+            // Create the targeted payload.
+            let targeted_payload = TargetedPayload {
+                instance_id: instance_id.to_string(),
+                member_path: "".to_string(),
+                operation: digital_twin_operation::GET.to_string(),
+                payload: "".to_string(),
+            };
+
             // Send the ask.
-            self.send_ask(
-                client,
-                &self.respond_uri,
-                &ask_id,
-                &instance_id,
-                "",
-                digital_twin_operation::GET,
-                "",
-            )
-            .await?;
+            self.send_ask(client, &self.respond_uri, &ask_id, &targeted_payload).await?;
 
             // Wait for the answer.
             let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
@@ -378,17 +364,16 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         // Note: The ask id must be a universally unique value.
         let ask_id = Uuid::new_v4().to_string();
 
+        // Create the targeted payload.
+        let targeted_payload = TargetedPayload {
+            instance_id: instance_id.to_string(),
+            member_path: member_path.to_string(),
+            operation: digital_twin_operation::GET.to_string(),
+            payload: "".to_string(),
+        };
+
         // Send the ask.
-        self.send_ask(
-            client,
-            &self.respond_uri,
-            &ask_id,
-            &instance_id,
-            &member_path,
-            digital_twin_operation::GET,
-            "",
-        )
-        .await?;
+        self.send_ask(client, &self.respond_uri, &ask_id, &targeted_payload).await?;
 
         // Wait for the answer.
         let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
@@ -460,17 +445,16 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         // Note: The ask id must be a universally unique value.
         let ask_id = Uuid::new_v4().to_string();
 
+        // Create the targeted payload.
+        let targeted_payload = TargetedPayload {
+            instance_id: instance_id.to_string(),
+            member_path: member_path.to_string(),
+            operation: digital_twin_operation::INVOKE.to_string(),
+            payload: request_payload.to_string(),
+        };
+
         // Send the ask.
-        self.send_ask(
-            client,
-            &self.respond_uri,
-            &ask_id,
-            &instance_id,
-            &member_path,
-            digital_twin_operation::INVOKE,
-            &request_payload,
-        )
-        .await?;
+        self.send_ask(client, &self.respond_uri, &ask_id, &targeted_payload).await?;
 
         // Wait for the answer.
         let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
