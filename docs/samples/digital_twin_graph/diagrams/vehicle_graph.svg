@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="426px" preserveAspectRatio="none" style="width:1596px;height:426px;" version="1.1" viewBox="0 0 1596 426" width="1596px" zoomAndPan="magnify"><defs><filter height="300%" id="f1j6z2h3fws6sb" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="60.8906" style="stroke: #A80036; stroke-width: 1.5;" width="289" x="631" y="8"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="45" x="753" y="21.1387">Vehicle</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="632" x2="919" y1="25.9688" y2="25.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="146" x="637" y="39.251">model_id: "dtmi:sdv:vehicle;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="277" x="637" y="50.8916">instance_id: "550e8400-e29b-41d4-a716-446655440000"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="237" x="637" y="62.5322">vehicle_identification.vin: 1M8GDM9AXKP042788</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="285" x="633" y="130"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="35" x="758" y="143.1387">Cabin</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="634" x2="917" y1="147.9688" y2="147.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="138" x="639" y="161.251">model_id: "dtmi:sdv:cabin;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="273" x="639" y="172.8916">instance_id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="278" x="10.5" y="256"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29" x="135" y="269.1387">Seat</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="11.5" x2="287.5" y1="273.9688" y2="273.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="134" x="16.5" y="287.251">model_id: "dtmi:sdv:seat;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="266" x="16.5" y="298.8916">instance_id: "7a9c5fe2-2c16-2f1f-b3c8-9a1b76b21f00"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="278" x="323.5" y="256"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29" x="448" y="269.1387">Seat</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="324.5" x2="600.5" y1="273.9688" y2="273.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="134" x="329.5" y="287.251">model_id: "dtmi:sdv:seat;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="266" x="329.5" y="298.8916">instance_id: "8b3d6eg3-3c16-3f1f-c3c8-ba1c76c31f00"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="277" x="637" y="256"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29" x="761" y="269.1387">Seat</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="638" x2="913" y1="273.9688" y2="273.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="134" x="643" y="287.251">model_id: "dtmi:sdv:seat;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="265" x="643" y="298.8916">instance_id: "9c4e7fh4-4c16-4f1f-d3c8-ca1d76d41f00"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="275" x="949" y="256"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29" x="1072" y="269.1387">Seat</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="950" x2="1223" y1="273.9688" y2="273.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="134" x="955" y="287.251">model_id: "dtmi:sdv:seat;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="263" x="955" y="298.8916">instance_id: "ad5f8ig5-5c16-5f1f-e3c8-da1e76e51f00"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="271" x="1259" y="256"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29" x="1380" y="269.1387">Seat</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="1260" x2="1529" y1="273.9688" y2="273.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="134" x="1265" y="287.251">model_id: "dtmi:sdv:seat;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="259" x="1265" y="298.8916">instance_id: "be6g9jh6-6c16-6f1f-f3c8-ea1f76f61f00"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="283" x="6" y="366"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="94" x="100.5" y="379.1387">Seat Massager</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="288" y1="383.9688" y2="383.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="271" x="12" y="397.251">model_id: "dtmi:sdv:premium_airbag_seat_massager;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="228" x="12" y="408.8916">instance_id: "front_left_airbag_seat_massager"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="283" x="324" y="366"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="94" x="418.5" y="379.1387">Seat Massager</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="325" x2="606" y1="383.9688" y2="383.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="271" x="330" y="397.251">model_id: "dtmi:sdv:premium_airbag_seat_massager;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="234" x="330" y="408.8916">instance_id: "front_right_airbag_seat_massager"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="263" x="644" y="366"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="94" x="728.5" y="379.1387">Seat Massager</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="645" x2="906" y1="383.9688" y2="383.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="251" x="650" y="397.251">model_id: "dtmi:sdv:basic_airbag_seat_massager;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="226" x="650" y="408.8916">instance_id: "back_left_airbag_seat_massager"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="263" x="955" y="366"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="94" x="1039.5" y="379.1387">Seat Massager</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="956" x2="1217" y1="383.9688" y2="383.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="251" x="961" y="397.251">model_id: "dtmi:sdv:basic_airbag_seat_massager;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="241" x="961" y="408.8916">instance_id: "back_center_airbag_seat_massager"</text><rect fill="#FEFECE" filter="url(#f1j6z2h3fws6sb)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="263" x="1263" y="366"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="94" x="1347.5" y="379.1387">Seat Massager</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="1264" x2="1525" y1="383.9688" y2="383.9688"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="251" x="1269" y="397.251">model_id: "dtmi:sdv:basic_airbag_seat_massager;1"</text><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="232" x="1269" y="408.8916">instance_id: "back_right_airbag_seat_massager"</text><!--link Vehicle to Cabin--><path d="M775.5,69.15 C775.5,81.39 775.5,95.83 775.5,109.27 " fill="none" id="Vehicle-Cabin" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="782.5,109.74,775.5,129.74,768.5,109.74,782.5,109.74" style="stroke: #A80036; stroke-width: 1.0;"/><!--link Cabin to front_left_seat--><path d="M632.74,162.49 C503.23,170.23 322.6,184.91 255.5,209 C233.27,216.98 211.13,230.58 192.88,243.72 " fill="none" id="Cabin-front_left_seat" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="196.87,249.48,176.7,255.98,188.42,238.32,196.87,249.48" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="236" x="256.5" y="222.0669">seat_row = "1"; seat_position = "left"</text><!--link Cabin to front_right_seat--><path d="M632.84,168.01 C594.39,175.9 554.16,188.61 520.5,209 C507.84,216.67 496.7,228.12 487.65,239.58 " fill="none" id="Cabin-front_right_seat" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="493.29,243.73,475.96,255.93,481.9,235.59,493.29,243.73" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="245" x="521.5" y="222.0669">seat_row = "1"; seat_position = "right"</text><!--link Cabin to back_left_seat--><path d="M775.5,179.12 C775.5,195.15 775.5,216.82 775.5,235.93 " fill="none" id="Cabin-back_left_seat" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="782.5,235.97,775.5,255.97,768.5,235.97,782.5,235.97" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="236" x="776.5" y="222.0669">seat_row = "2"; seat_position = "left"</text><!--link Cabin to back_center_seat--><path d="M918.2,171.22 C953.54,179.16 990.21,191.08 1021.5,209 C1035.15,216.82 1047.58,228.46 1057.83,240.05 " fill="none" id="Cabin-back_center_seat" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="1063.59,236.05,1070.76,255.99,1052.72,244.87,1063.59,236.05" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="257" x="1043.5" y="222.0669">seat_row = "2"; seat_position = "center"</text><!--link Cabin to back_right_seat--><path d="M918.28,160.43 C1052.02,166.72 1241.22,180.44 1309.5,209 C1327.62,216.58 1344.85,229.38 1359,242.01 " fill="none" id="Cabin-back_right_seat" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="1363.93,237.04,1373.55,255.92,1354.25,247.16,1363.93,237.04" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="245" x="1339.5" y="222.0669">seat_row = "2"; seat_position = "right"</text><!--link front_left_seat to front_left_seat_massager--><path d="M149.06,305.2 C148.84,317.02 148.57,331.7 148.32,345.48 " fill="none" id="front_left_seat-front_left_seat_massager" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="155.31,345.99,147.94,365.85,141.31,345.73,155.31,345.99" style="stroke: #A80036; stroke-width: 1.0;"/><!--link front_right_seat to front_right_seat_massager--><path d="M463.16,305.2 C463.49,317.02 463.89,331.7 464.28,345.48 " fill="none" id="front_right_seat-front_right_seat_massager" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="471.29,345.67,464.84,365.85,457.29,346.06,471.29,345.67" style="stroke: #A80036; stroke-width: 1.0;"/><!--link back_left_seat to back_left_seat_massager--><path d="M775.5,305.2 C775.5,317.02 775.5,331.7 775.5,345.48 " fill="none" id="back_left_seat-back_left_seat_massager" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="782.5,345.85,775.5,365.85,768.5,345.85,782.5,345.85" style="stroke: #A80036; stroke-width: 1.0;"/><!--link back_center_seat to back_center_seat_massager--><path d="M1086.5,305.2 C1086.5,317.02 1086.5,331.7 1086.5,345.48 " fill="none" id="back_center_seat-back_center_seat_massager" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="1093.5,345.85,1086.5,365.85,1079.5,345.85,1093.5,345.85" style="stroke: #A80036; stroke-width: 1.0;"/><!--link back_right_seat to back_right_seat_massager--><path d="M1394.5,305.2 C1394.5,317.02 1394.5,331.7 1394.5,345.48 " fill="none" id="back_right_seat-back_right_seat_massager" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="1401.5,345.85,1394.5,365.85,1387.5,345.85,1401.5,345.85" style="stroke: #A80036; stroke-width: 1.0;"/><!--
+@startuml
+
+object Vehicle {
+  model_id: "dtmi:sdv:vehicle;1"
+  instance_id: "550e8400-e29b-41d4-a716-446655440000"
+  vehicle_identification.vin: 1M8GDM9AXKP042788
+}
+
+object Cabin {
+  model_id: "dtmi:sdv:cabin;1"
+  instance_id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+}
+
+object "Seat" as front_left_seat {
+  model_id: "dtmi:sdv:seat;1"
+  instance_id: "7a9c5fe2-2c16-2f1f-b3c8-9a1b76b21f00"
+}
+
+object "Seat" as front_right_seat {
+  model_id: "dtmi:sdv:seat;1"
+  instance_id: "8b3d6eg3-3c16-3f1f-c3c8-ba1c76c31f00"
+}
+
+object "Seat" as back_left_seat {
+  model_id: "dtmi:sdv:seat;1"
+  instance_id: "9c4e7fh4-4c16-4f1f-d3c8-ca1d76d41f00"
+}
+
+object "Seat" as back_center_seat {
+  model_id: "dtmi:sdv:seat;1"
+  instance_id: "ad5f8ig5-5c16-5f1f-e3c8-da1e76e51f00"
+}
+
+object "Seat" as back_right_seat {
+  model_id: "dtmi:sdv:seat;1"
+  instance_id: "be6g9jh6-6c16-6f1f-f3c8-ea1f76f61f00"
+}
+
+object "Seat Massager" as front_left_seat_massager {
+  model_id: "dtmi:sdv:premium_airbag_seat_massager;1"
+  instance_id: "front_left_airbag_seat_massager"
+}
+
+object "Seat Massager" as front_right_seat_massager {
+  model_id: "dtmi:sdv:premium_airbag_seat_massager;1"
+  instance_id: "front_right_airbag_seat_massager"
+}
+
+object "Seat Massager" as back_left_seat_massager {
+  model_id: "dtmi:sdv:basic_airbag_seat_massager;1"
+  instance_id: "back_left_airbag_seat_massager"
+}
+
+object "Seat Massager" as back_center_seat_massager {
+  model_id: "dtmi:sdv:basic_airbag_seat_massager;1"
+  instance_id: "back_center_airbag_seat_massager"
+}
+
+object "Seat Massager" as back_right_seat_massager {
+  model_id: "dtmi:sdv:basic_airbag_seat_massager;1"
+  instance_id: "back_right_airbag_seat_massager"
+}
+
+Vehicle - -|> Cabin
+
+Cabin - -|> front_left_seat: seat_row = "1"; seat_position = "left"
+Cabin - -|> front_right_seat: seat_row = "1"; seat_position = "right"
+Cabin - -|> back_left_seat: seat_row = "2"; seat_position = "left"
+Cabin - -|> back_center_seat: seat_row = "2"; seat_position = "center"
+Cabin - -|> back_right_seat: seat_row = "2"; seat_position = "right"
+
+front_left_seat - -|> front_left_seat_massager
+front_right_seat - -|> front_right_seat_massager
+back_left_seat - -|> back_left_seat_massager
+back_center_seat - -|> back_center_seat_massager
+back_right_seat - -|> back_right_seat_massager
+
+@enduml
+
+PlantUML version 1.2018.13(Mon Nov 26 09:11:51 PST 2018)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.22+7-post-Ubuntu-0ubuntu220.04.1
+Operating System: Linux
+OS Version: 5.4.0-177-generic
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
