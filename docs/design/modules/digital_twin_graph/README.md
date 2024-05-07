@@ -12,7 +12,7 @@ provide a consumer with an abstraction that delivers a much better interaction e
 that they prefer to use.
 
 This design specifies a graph-based facade, which will be named the Digital Twin Graph Service. With this facade, the digital twin will be represented as a
-graph of digital twin entities whose arcs represent the relationships between those entities.  Instance IDs will be used to refer to entities.
+graph of digital twin entities whose edges represent the relationships between those entities.  Instance IDs will be used to refer to entities.
 
 Please note that Ibeji is only intended for use on an IoT edge device. It is not intended for use in the cloud. The data that it manages can be
 transferred to the cloud, through components like [Eclipse Freyja](https://github.com/eclipse-ibeji/freyja).

@@ -90,8 +90,7 @@ Instructions for installing Mosquitto can be found [here](https://github.com/ecl
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
-The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
-and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
+The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
 ````shell
 git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
@@ -107,8 +106,7 @@ cargo build
 
 This will build all of the foundation libraries and executables.
 
-Ibeji also has add-on modules that rely on feature flags to include them in the build. For example, to build Ibeji with the Digital Twin Graph
-and the Digital Twin Registry modules run:
+Ibeji also has add-on modules that rely on feature flags to include them in the build. For example, to build Ibeji with the Digital Twin Graph and the Digital Twin Registry modules run:
 
 ````shell
 cargo build --features "digital_twin_graph,digital_twin_registry"
