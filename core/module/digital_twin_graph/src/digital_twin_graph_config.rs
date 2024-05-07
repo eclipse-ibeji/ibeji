@@ -16,9 +16,6 @@ pub struct Settings {
 
 /// Load the settings.
 /// The settings are loaded from the default config file name.
-///
-/// # Returns
-/// The settings.
 pub fn load_settings() -> Settings {
     utils::load_settings(DEFAULT_CONFIG_FILENAME).unwrap()
 }
@@ -27,8 +24,6 @@ pub fn load_settings() -> Settings {
 ///
 /// # Arguments
 /// * `config_filename` - The name of the config file.
-/// # Returns
-/// The settings.
 pub fn load_settings_with_config_filename(config_filename: &str) -> Settings {
     utils::load_settings(config_filename).unwrap()
 }

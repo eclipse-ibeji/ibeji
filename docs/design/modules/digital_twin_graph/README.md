@@ -6,7 +6,7 @@
 
 ## <a name="introduction">Introduction</a>
 
-The initial Ibeji provided the foundations for constructing and interacting with a digital twin on an edge device. These foundations are low-level abilities
+The initial Ibeji implementation provided the foundations for constructing and interacting with a digital twin on an edge device. These foundations are low-level abilities
 and they do not necessarily provide a consumer with the best interaction experience. However, they can be used as building blocks to build facades that
 provide a consumer with an abstraction that delivers a much better interaction experience. Ibeji may support multiple facades and the user can select the one
 that they prefer to use.

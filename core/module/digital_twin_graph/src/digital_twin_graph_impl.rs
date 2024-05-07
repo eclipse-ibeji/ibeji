@@ -52,8 +52,6 @@ impl DigitalTwinGraphImpl {
     /// * `digital_twin_registry_uri` - The uri for the digital twin registry service.
     /// * `respond_uri` - The uri for the respond service.
     /// * `tx` - The sender for the asynchronous channel for AnswerRequest's.
-    /// # Returns
-    /// A new instance of a DigitalTwinGraphImpl.
     pub fn new(
         digital_twin_registry_uri: &str,
         respond_uri: &str,
@@ -73,8 +71,6 @@ impl DigitalTwinGraphImpl {
     /// * `model_id` - The matching model id.
     /// * `protocol` - The required protocol.
     /// * `operations` - The required operations.
-    /// # Returns
-    /// A list of endpoint infos.
     pub async fn find_digital_twin_providers_with_model_id(
         &self,
         model_id: &str,
@@ -118,8 +114,6 @@ impl DigitalTwinGraphImpl {
     /// * `instance_id` - The matching instance id.
     /// * `protocol` - The required protocol.
     /// * `operations` - The required operations.
-    /// # Returns
-    /// A list of endpoint infos.
     pub async fn find_digital_twin_providers_with_instance_id(
         &self,
         instance_id: &str,
@@ -165,8 +159,6 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
     ///
     /// # Arguments
     /// * `request` - Find request.
-    /// # Returns
-    /// Find response.
     async fn find(
         &self,
         request: tonic::Request<FindRequest>,
@@ -296,8 +288,6 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
     ///
     /// # Arguments
     /// * `request` - Get request.
-    /// # Returns
-    /// Get response.
     async fn get(
         &self,
         request: tonic::Request<GetRequest>,
@@ -406,8 +396,6 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
     ///
     /// # Arguments
     /// * `request` - Set request.
-    /// # Returns
-    /// Set response.
     async fn set(
         &self,
         request: tonic::Request<SetRequest>,
@@ -421,8 +409,6 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
     ///
     /// # Arguments
     /// * `request` - Invoke request.
-    /// # Returns
-    /// Invoke response.
     async fn invoke(
         &self,
         request: tonic::Request<InvokeRequest>,
