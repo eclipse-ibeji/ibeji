@@ -151,6 +151,95 @@ impl DigitalTwinGraphImpl {
             })
             .collect())
     }
+
+    /// Send an ask to the provider.
+    ///
+    /// # Arguments
+    /// * `client` - The client to use to send the ask.
+    /// * `respond_uri` - The respond uri.
+    /// * `ask_id` - The ask id.
+    /// * `instance_id` - The instance id.
+    /// * `member_path` - The member path.
+    /// * `operation` - The operation.
+    /// * `payload` - The payload.
+    pub async fn send_ask(
+        &self,
+        mut client: RequestClient<tonic::transport::Channel>,
+        respond_uri: &str,
+        ask_id: &str,
+        instance_id: &str,
+        member_path: &str,
+        operation: &str,
+        payload: &str,
+    ) -> Result<(), tonic::Status> {
+        let targeted_payload = TargetedPayload {
+            instance_id: instance_id.to_string(),
+            member_path: member_path.to_string(),
+            operation: operation.to_string(),
+            payload: payload.to_string(),
+        };
+
+        // Serialize the targeted payload.
+        let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
+
+        let request = tonic::Request::new(AskRequest {
+            respond_uri: respond_uri.to_string(),
+            ask_id: ask_id.to_string(),
+            payload: targeted_payload_json.clone(),
+        });
+
+        // Send the ask.
+        let response = client.ask(request).await;
+        if let Err(status) = response {
+            return Err(tonic::Status::internal(format!("Unable to call ask, due to {status:?}")));
+        }
+
+        Ok(())
+    }
+
+    /// Wait for the answer.
+    ///
+    /// # Arguments
+    /// * `ask_id` - The ask id.
+    /// * `rx` - The receiver for the asynchronous channel for AnswerRequest's.
+    pub async fn wait_for_answer(
+        &self,
+        ask_id: String,
+        rx: &mut broadcast::Receiver<AnswerRequest>,
+    ) -> Result<AnswerRequest, tonic::Status> {
+        let mut answer_request: AnswerRequest = Default::default();
+        let mut attempts_after_failure = 0;
+        const MAX_ATTEMPTS_AFTER_FAILURE: u8 = 10;
+        while attempts_after_failure < MAX_ATTEMPTS_AFTER_FAILURE {
+            match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv()).await {
+                Ok(Ok(request)) => {
+                    if ask_id == request.ask_id {
+                        // We have received the answer request that we are expecting.
+                        answer_request = request;
+                        break;
+                    } else {
+                        // Ignore this answer request, as it is not the one that we are expecting.
+                        // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
+                        continue;
+                    }
+                }
+                Ok(Err(error_message)) => {
+                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
+                    sleep(Duration::from_secs(1)).await;
+                    attempts_after_failure += 1;
+                    continue;
+                }
+                Err(error_message) => {
+                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
+                    sleep(Duration::from_secs(1)).await;
+                    attempts_after_failure += 1;
+                    continue;
+                }
+            }
+        }
+
+        Ok(answer_request)
+    }
 }
 
 #[tonic::async_trait]
@@ -210,66 +299,25 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
                 warn!("Unable to connect. We will skip this one.");
                 continue;
             }
-            let mut client = client_result.unwrap();
+            let client = client_result.unwrap();
 
             // Note: The ask id must be a universally unique value.
             let ask_id = Uuid::new_v4().to_string();
 
-            let targeted_payload = TargetedPayload {
-                instance_id: instance_id.clone(),
-                member_path: "".to_string(),
-                operation: digital_twin_operation::GET.to_string(),
-                payload: "".to_string(),
-            };
-
-            // Serialize the targeted payload.
-            let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
-
-            let request = tonic::Request::new(AskRequest {
-                respond_uri: self.respond_uri.clone(),
-                ask_id: ask_id.clone(),
-                payload: targeted_payload_json.clone(),
-            });
-
             // Send the ask.
-            let response = client.ask(request).await;
-            if let Err(status) = response {
-                warn!("Unable to call ask, due to {status:?}\nWe will skip this one.");
-                continue;
-            }
+            self.send_ask(
+                client,
+                &self.respond_uri,
+                &ask_id,
+                &instance_id,
+                "",
+                digital_twin_operation::GET,
+                "",
+            )
+            .await?;
 
-            // Wait for the answer request.
-            let mut answer_request: AnswerRequest = Default::default();
-            let mut attempts_after_failure = 0;
-            while attempts_after_failure < Self::MAX_RETRIES {
-                match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv())
-                    .await
-                {
-                    Ok(Ok(request)) => {
-                        if ask_id == request.ask_id {
-                            // We have received the answer request that we are expecting.
-                            answer_request = request;
-                            break;
-                        } else {
-                            // Ignore this answer request, as it is not the one that we are expecting.
-                            // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
-                            continue;
-                        }
-                    }
-                    Ok(Err(error_message)) => {
-                        warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                        attempts_after_failure += 1;
-                        continue;
-                    }
-                    Err(error_message) => {
-                        warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                        sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                        attempts_after_failure += 1;
-                        continue;
-                    }
-                }
-            }
+            // Wait for the answer.
+            let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
 
             debug!(
                 "Received an answer request.  The ask_id is '{}'. The payload is '{}'",
@@ -325,64 +373,25 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         if client_result.is_err() {
             return Err(tonic::Status::internal("Unable to connect to the provider."));
         }
-        let mut client = client_result.unwrap();
+        let client = client_result.unwrap();
 
         // Note: The ask id must be a universally unique value.
         let ask_id = Uuid::new_v4().to_string();
 
-        // Create the targeted payload. Note: The member path is not used when the operation is GET.
-        let targeted_payload = TargetedPayload {
-            instance_id: instance_id.clone(),
-            member_path: member_path.clone(),
-            operation: digital_twin_operation::GET.to_string(),
-            payload: "".to_string(),
-        };
-
-        // Serialize the targeted payload.
-        let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
-
-        let request = tonic::Request::new(AskRequest {
-            respond_uri: self.respond_uri.clone(),
-            ask_id: ask_id.clone(),
-            payload: targeted_payload_json.clone(),
-        });
-
         // Send the ask.
-        let response = client.ask(request).await;
-        if let Err(status) = response {
-            return Err(tonic::Status::internal(format!("Unable to call ask, due to {status:?}")));
-        }
+        self.send_ask(
+            client,
+            &self.respond_uri,
+            &ask_id,
+            &instance_id,
+            &member_path,
+            digital_twin_operation::GET,
+            "",
+        )
+        .await?;
 
-        // Wait for the answer request.
-        let mut answer_request: AnswerRequest = Default::default();
-        let mut attempts_after_failure = 0;
-        while attempts_after_failure < Self::MAX_RETRIES {
-            match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv()).await {
-                Ok(Ok(request)) => {
-                    if ask_id == request.ask_id {
-                        // We have received the answer request that we are expecting.
-                        answer_request = request;
-                        break;
-                    } else {
-                        // Ignore this answer request, as it is not the one that we are expecting.
-                        // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
-                        continue;
-                    }
-                }
-                Ok(Err(error_message)) => {
-                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                    sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                    attempts_after_failure += 1;
-                    continue;
-                }
-                Err(error_message) => {
-                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                    sleep(Duration::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)).await;
-                    attempts_after_failure += 1;
-                    continue;
-                }
-            }
-        }
+        // Wait for the answer.
+        let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
 
         debug!(
             "Received an answer request.  The ask_id is '{}'. The payload is '{}",
@@ -446,64 +455,25 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         if client_result.is_err() {
             return Err(tonic::Status::internal("Unable to connect to the provider."));
         }
-        let mut client = client_result.unwrap();
+        let client = client_result.unwrap();
 
         // Note: The ask id must be a universally unique value.
         let ask_id = Uuid::new_v4().to_string();
 
-        let targeted_payload = TargetedPayload {
-            instance_id: instance_id.clone(),
-            member_path: member_path.clone(),
-            operation: digital_twin_operation::INVOKE.to_string(),
-            payload: request_payload.to_string(),
-        };
-
-        // Serialize the targeted payload.
-        let targeted_payload_json = serde_json::to_string_pretty(&targeted_payload).unwrap();
-
-        let request = tonic::Request::new(AskRequest {
-            respond_uri: self.respond_uri.clone(),
-            ask_id: ask_id.clone(),
-            payload: targeted_payload_json.clone(),
-        });
-
         // Send the ask.
-        let response = client.ask(request).await;
-        if let Err(status) = response {
-            return Err(tonic::Status::internal(format!("Unable to call ask, due to {status:?}")));
-        }
+        self.send_ask(
+            client,
+            &self.respond_uri,
+            &ask_id,
+            &instance_id,
+            &member_path,
+            digital_twin_operation::INVOKE,
+            &request_payload,
+        )
+        .await?;
 
-        // Wait for the answer request.
-        let mut answer_request: AnswerRequest = Default::default();
-        let mut attempts_after_failure = 0;
-        const MAX_ATTEMPTS_AFTER_FAILURE: u8 = 10;
-        while attempts_after_failure < MAX_ATTEMPTS_AFTER_FAILURE {
-            match timeout(Duration::from_millis(Self::TIMEOUT_PERIOD_IN_MILLIS), rx.recv()).await {
-                Ok(Ok(request)) => {
-                    if ask_id == request.ask_id {
-                        // We have received the answer request that we are expecting.
-                        answer_request = request;
-                        break;
-                    } else {
-                        // Ignore this answer request, as it is not the one that we are expecting.
-                        // Immediately try again.  This was not a failure, so we do not increment attempts_after_failure or sleep.
-                        continue;
-                    }
-                }
-                Ok(Err(error_message)) => {
-                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                    sleep(Duration::from_secs(1)).await;
-                    attempts_after_failure += 1;
-                    continue;
-                }
-                Err(error_message) => {
-                    warn!("Failed to receive the answer request.  The error message is '{}'.  We may retry in a moment.", error_message);
-                    sleep(Duration::from_secs(1)).await;
-                    attempts_after_failure += 1;
-                    continue;
-                }
-            }
-        }
+        // Wait for the answer.
+        let answer_request = self.wait_for_answer(ask_id, &mut rx).await?;
 
         debug!(
             "Received an answer request.  The ask_id is '{}'. The payload is '{}",
