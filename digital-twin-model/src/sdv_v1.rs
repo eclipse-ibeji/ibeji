@@ -167,6 +167,7 @@ pub mod basic_airbag_seat_massager {
             value = "crate::sdv_v1::basic_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
+        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::TYPE,
     }
 }
 
@@ -399,6 +400,7 @@ pub mod premium_airbag_seat_massager {
             value = "crate::sdv_v1::premium_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
+        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::TYPE,
     }
 }
 
@@ -459,7 +461,7 @@ pub mod seat_massager {
                 value = "crate::sdv_v1::seat_massager::sequence_names::ID.to_string()"
             ))]
             pub model_id: String,
-            pub sequence_names: Vec<String>,
+            pub value: Vec<String>,
         }
     }
 

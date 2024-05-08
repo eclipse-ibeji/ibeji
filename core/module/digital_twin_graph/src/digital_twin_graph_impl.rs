@@ -86,15 +86,14 @@ impl DigitalTwinGraphImpl {
             let mut client =
                 DigitalTwinRegistryClient::connect(self.digital_twin_registry_uri.to_string())
                     .await
-                    .map_err(|error| format!("{error}"))?;
+                    .map_err(|error| tonic::Status::internal(format!("{error}")))?;
 
             let request =
                 tonic::Request::new(FindByModelIdRequest { model_id: model_id.to_string() });
 
-            client.find_by_model_id(request).await.map_err(|error| error.to_string())
+            client.find_by_model_id(request).await
         })
-        .await
-        .map_err(tonic::Status::internal)?
+        .await?
         .into_inner();
 
         Ok(response
@@ -129,16 +128,15 @@ impl DigitalTwinGraphImpl {
             let mut client =
                 DigitalTwinRegistryClient::connect(self.digital_twin_registry_uri.to_string())
                     .await
-                    .map_err(|error| format!("{error}"))?;
+                    .map_err(|error| tonic::Status::internal(format!("{error}")))?;
 
             let request = tonic::Request::new(FindByInstanceIdRequest {
                 instance_id: instance_id.to_string(),
             });
 
-            client.find_by_instance_id(request).await.map_err(|error| error.to_string())
+            client.find_by_instance_id(request).await
         })
-        .await
-        .map_err(tonic::Status::internal)?
+        .await?
         .into_inner();
 
         Ok(response
