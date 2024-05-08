@@ -14,7 +14,7 @@ use samples_common::utils::retrieve_invehicle_digital_twin_uri;
 use samples_protobuf_data_access::async_rpc::v1::request::request_server::RequestServer;
 use samples_protobuf_data_access::digital_twin_registry::v1::digital_twin_registry::digital_twin_registry_client::DigitalTwinRegistryClient;
 use samples_protobuf_data_access::digital_twin_registry::v1::digital_twin_registry::{
-    EndpointInfo, EntityAccessInfo, RegisterRequest, RegisterResponse,
+    EntityAccessInfo, RegisterRequest, RegisterResponse,
 };
 use std::collections::HashMap;
 use std::net::SocketAddr;
@@ -31,21 +31,22 @@ const BACKOFF_BASE_DURATION_IN_MILLIS: u64 = 100;
 /// The maximum number of retries.
 const MAX_RETRIES: usize = 100;
 
+/// The provider ID.
+const PROVIDER_ID: &str = "seat_massager_provider";
+
 /// Add an entry to the instance map.
 /// # Arguments
 /// * `instance_map` - The instance map.
 /// * `instance_id` - The instance id.
 /// * `model_id` - The model id.
-/// * `description` - The description.
 /// * `serialized_value` - The serialized value.
 fn add_entry_to_instance_map(
     instance_map: &mut HashMap<String, InstanceData>,
     instance_id: String,
     model_id: String,
-    description: String,
     serialized_value: String,
 ) {
-    instance_map.insert(instance_id, InstanceData { model_id, description, serialized_value });
+    instance_map.insert(instance_id, InstanceData { model_id, serialized_value });
 }
 
 /// Create the provider's state.
@@ -117,7 +118,6 @@ fn create_provider_state() -> ProviderState {
         &mut result.instance_map,
         front_left_airbag_seat_massager_instance_id.clone(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
-        sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
         serde_json::to_string(&front_left_airbag_seat_massager).unwrap(),
     );
 
@@ -125,7 +125,6 @@ fn create_provider_state() -> ProviderState {
         &mut result.instance_map,
         front_right_airbag_seat_massager_instance_id.clone(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
-        sdv::premium_airbag_seat_massager::DESCRIPTION.to_string(),
         serde_json::to_string(&front_right_airbag_seat_massager).unwrap(),
     );
 
@@ -133,7 +132,6 @@ fn create_provider_state() -> ProviderState {
         &mut result.instance_map,
         back_left_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
-        sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
         serde_json::to_string(&back_left_airbag_seat_massager).unwrap(),
     );
 
@@ -141,7 +139,6 @@ fn create_provider_state() -> ProviderState {
         &mut result.instance_map,
         back_center_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
-        sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
         serde_json::to_string(&back_center_airbag_seat_massager).unwrap(),
     );
 
@@ -149,7 +146,6 @@ fn create_provider_state() -> ProviderState {
         &mut result.instance_map,
         back_right_airbag_seat_massager_instance_id.clone(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
-        sdv::basic_airbag_seat_massager::DESCRIPTION.to_string(),
         serde_json::to_string(&back_right_airbag_seat_massager).unwrap(),
     );
 
@@ -159,10 +155,12 @@ fn create_provider_state() -> ProviderState {
 /// Register the seat massagers.
 ///
 /// # Arguments
+/// * `provider_id` - The provider's ID.
 /// * `invehicle_digital_twin_uri` - The In-Vehicle Digital Twin URI.
 /// * `provider_uri` - The provider's URI.
 /// * `provider_state` - The provider's state.
 async fn register_seat_massagers(
+    provider_id: &str,
     invehicle_digital_twin_uri: &str,
     provider_uri: &str,
     provider_state: Arc<Mutex<ProviderState>>,
@@ -175,21 +173,17 @@ async fn register_seat_massagers(
             instance_id, instance_data.model_id
         );
 
-        let endpoint_info = EndpointInfo {
+        let entity_access_info = EntityAccessInfo {
+            provider_id: provider_id.to_string(),
+            instance_id: instance_id.to_string(),
+            model_id: instance_data.model_id.to_string(),
             protocol: digital_twin_protocol::GRPC.to_string(),
             operations: vec![
                 digital_twin_operation::GET.to_string(),
                 digital_twin_operation::INVOKE.to_string(),
             ],
             uri: provider_uri.to_string(),
-            context: instance_id.to_string(), // the context holds te
-        };
-
-        let entity_access_info = EntityAccessInfo {
-            name: String::new(), // no name, so we will use an empty name
-            id: instance_data.model_id.to_string(),
-            description: instance_data.description.to_string(),
-            endpoint_info_list: vec![endpoint_info],
+            context: "".to_string(),
         };
 
         entity_access_info_list.push(entity_access_info);
@@ -253,7 +247,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_future = Server::builder().add_service(RequestServer::new(request_impl)).serve(addr);
     info!("The HTTP server is listening on address '{provider_authority}'");
 
-    register_seat_massagers(&invehicle_digital_twin_uri, &provider_uri, state.clone()).await?;
+    register_seat_massagers(PROVIDER_ID, &invehicle_digital_twin_uri, &provider_uri, state.clone())
+        .await?;
 
     server_future.await?;
 

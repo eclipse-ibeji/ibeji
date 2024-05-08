@@ -7,32 +7,46 @@ syntax = "proto3";
 package digital_twin_graph.v1.digital_twin_graph;
 
 service DigitalTwinGraph {
+   // Find the values of all instances that have the provided model id.
    rpc Find (FindRequest) returns (FindResponse);
+   // Get an instance or an instance's member's value.
    rpc Get (GetRequest) returns (GetResponse);
+   // Set an instance's or an instance memeber's value.
    rpc Set (SetRequest) returns (SetResponse);
+   // Invoke an instance's command.
    rpc Invoke (InvokeRequest) returns (InvokeResponse);
 }
 
 message FindRequest {
+   // The model id.
    string model_id = 1;
 }
 
 message FindResponse {
+   // The JSON-LD string for each matching value.
    repeated string values = 1;
 }
 
 message GetRequest {
+   // The instance id.
    string instance_id = 1;
+   // Scopes the request to a specific instance member located at the provided path.
+   // An empty string means the entire instance.
    string member_path = 2;
 }
 
 message GetResponse {
+   // The JSON-LD string for the retieved value.
    string value = 1;
 }
 
 message SetRequest {
+   // The instance id.
    string instance_id = 1;
+   // Scopes the request to a specific instance member located at the provided path.
+   // An empty string means the entire instance.
    string member_path = 2;
+   // The JSON-LD string for the value to be set.
    string value = 3;
 }
 
@@ -40,11 +54,15 @@ message SetResponse {
 }
 
 message InvokeRequest {
+   // The instance id.
    string instance_id = 1;
+   // The instance's command that is to be invoked.
    string member_path = 2;
+   // The JSON-LD string for the command's request payload.
    string request_payload = 3;
 }
 
 message InvokeResponse {
+   // The JSON-LD string for the command's response payload.
    string response_payload = 1;
 }

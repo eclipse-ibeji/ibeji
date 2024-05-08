@@ -13,7 +13,7 @@ use core_protobuf_data_access::module::digital_twin_graph::v1::{
 };
 use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_client::DigitalTwinRegistryClient;
 use core_protobuf_data_access::module::digital_twin_registry::v1::{
-    EndpointInfo, FindByInstanceIdRequest, FindByInstanceIdResponse, FindByModelIdRequest,
+    EntityAccessInfo, FindByInstanceIdRequest, FindByInstanceIdResponse, FindByModelIdRequest,
     FindByModelIdResponse,
 };
 use log::{debug, warn};
@@ -76,7 +76,7 @@ impl DigitalTwinGraphImpl {
         model_id: &str,
         protocol: &str,
         operations: &[String],
-    ) -> Result<Vec<EndpointInfo>, tonic::Status> {
+    ) -> Result<Vec<EntityAccessInfo>, tonic::Status> {
         // Define the retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
             .map(jitter) // add jitter to delays
@@ -99,11 +99,11 @@ impl DigitalTwinGraphImpl {
         Ok(response
             .entity_access_info_list
             .iter()
-            .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-            .filter(|endpoint_info| {
-                endpoint_info.protocol == protocol
-                    && is_subset(operations, &endpoint_info.operations)
+            .filter(|entity_access_info| {
+                entity_access_info.protocol == protocol
+                    && is_subset(operations, &entity_access_info.operations)
             })
+            .cloned()
             .collect())
     }
 
@@ -118,7 +118,7 @@ impl DigitalTwinGraphImpl {
         instance_id: &str,
         protocol: &str,
         operations: &[String],
-    ) -> Result<Vec<EndpointInfo>, tonic::Status> {
+    ) -> Result<Vec<EntityAccessInfo>, tonic::Status> {
         // Define the retry strategy.
         let retry_strategy = ExponentialBackoff::from_millis(Self::BACKOFF_BASE_DURATION_IN_MILLIS)
             .map(jitter) // add jitter to delays
@@ -142,11 +142,11 @@ impl DigitalTwinGraphImpl {
         Ok(response
             .entity_access_info_list
             .iter()
-            .flat_map(|entity_access_info| entity_access_info.endpoint_info_list.clone())
-            .filter(|endpoint_info| {
-                endpoint_info.protocol == protocol
-                    && is_subset(operations, &endpoint_info.operations)
+            .filter(|entity_access_info| {
+                entity_access_info.protocol == protocol
+                    && is_subset(operations, &entity_access_info.operations)
             })
+            .cloned()
             .collect())
     }
 
@@ -243,7 +243,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         debug!("Received a find request for model id {model_id}");
 
         // Retrieve the provider details.
-        let provider_endpoint_info_list = self
+        let provider_entity_access_info_list = self
             .find_digital_twin_providers_with_model_id(
                 model_id.as_str(),
                 digital_twin_protocol::GRPC,
@@ -252,17 +252,23 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             .await?;
 
         // Build a map of instance id to its associated endpoint infos.
-        let instance_provider_map: std::collections::HashMap<String, Vec<EndpointInfo>> =
-            provider_endpoint_info_list
+        let instance_provider_map: std::collections::HashMap<String, Vec<EntityAccessInfo>> =
+            provider_entity_access_info_list
                 .iter()
-                .map(|provider_endpoint_info| {
-                    (provider_endpoint_info.context.clone(), provider_endpoint_info.clone())
+                .map(|provider_entity_access_info| {
+                    (
+                        provider_entity_access_info.instance_id.clone(),
+                        provider_entity_access_info.clone(),
+                    )
                 })
                 .fold(
                     // fold is used to group the endpoint infos by instance id.
                     std::collections::HashMap::new(),
-                    |mut accumulator, (instance_id, endpoint_info)| {
-                        accumulator.entry(instance_id).or_insert_with(Vec::new).push(endpoint_info);
+                    |mut accumulator, (instance_id, entity_access_info)| {
+                        accumulator
+                            .entry(instance_id)
+                            .or_insert_with(Vec::new)
+                            .push(entity_access_info);
                         accumulator
                     },
                 );
@@ -271,10 +277,10 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
 
         for instance_id in instance_provider_map.keys() {
             // We will only use the first provider. For a high availability scenario, we can try multiple providers.
-            let provider_endpoint_info = &instance_provider_map[instance_id][0];
+            let provider_entity_access_info = &instance_provider_map[instance_id][0];
 
-            let provider_uri = provider_endpoint_info.uri.clone();
-            let instance_id = provider_endpoint_info.context.clone();
+            let provider_uri = provider_entity_access_info.uri.clone();
+            let instance_id = provider_entity_access_info.instance_id.clone();
 
             let tx = self.tx.clone();
             let mut rx = tx.subscribe();
@@ -347,7 +353,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let provider_endpoint_info = &provider_endpoint_info_list[0];
 
         let provider_uri = provider_endpoint_info.uri.clone();
-        let instance_id = provider_endpoint_info.context.clone();
+        let instance_id = provider_endpoint_info.instance_id.clone();
 
         let tx = self.tx.clone();
         let mut rx = tx.subscribe();
@@ -429,7 +435,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let provider_endpoint_info = &provider_endpoint_info_list[0];
 
         let provider_uri = provider_endpoint_info.uri.clone();
-        let instance_id = provider_endpoint_info.context.clone();
+        let instance_id = provider_endpoint_info.instance_id.clone();
 
         let tx = self.tx.clone();
         let mut rx = tx.subscribe();

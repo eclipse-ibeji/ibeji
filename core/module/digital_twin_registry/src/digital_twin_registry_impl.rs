@@ -6,8 +6,8 @@ extern crate iref;
 
 use core_protobuf_data_access::module::digital_twin_registry::v1::digital_twin_registry_server::DigitalTwinRegistry;
 use core_protobuf_data_access::module::digital_twin_registry::v1::{
-    EndpointInfo, EntityAccessInfo, FindByInstanceIdRequest, FindByInstanceIdResponse,
-    FindByModelIdRequest, FindByModelIdResponse, RegisterRequest, RegisterResponse,
+    EntityAccessInfo, FindByInstanceIdRequest, FindByInstanceIdResponse, FindByModelIdRequest,
+    FindByModelIdResponse, RegisterRequest, RegisterResponse,
 };
 use log::{debug, info};
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
@@ -69,7 +69,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
 
         debug!("Received a find_by_instance_id request for instance id {instance_id}");
 
-        let mut new_entity_access_info_list = Vec::<EntityAccessInfo>::new();
+        let mut matching_entity_access_info_list = Vec::<EntityAccessInfo>::new();
 
         // This block controls the lifetime of the lock.
         {
@@ -77,35 +77,21 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
                 self.entity_access_info_map.read();
             for entity_access_info_list in lock.values() {
                 for entity_access_info in entity_access_info_list {
-                    let mut instance_found: bool = false;
-                    let mut new_endpoint_info_list: Vec<EndpointInfo> = Vec::new();
-                    for endpoint_info_ in entity_access_info.endpoint_info_list.iter() {
-                        if endpoint_info_.context == instance_id {
-                            instance_found = true;
-                        }
-                        new_endpoint_info_list.push(endpoint_info_.clone());
-                    }
-                    if instance_found {
-                        let new_entity_access_info = EntityAccessInfo {
-                            name: entity_access_info.name.clone(),
-                            id: entity_access_info.id.clone(),
-                            description: entity_access_info.description.clone(),
-                            endpoint_info_list: new_endpoint_info_list,
-                        };
-                        new_entity_access_info_list.push(new_entity_access_info);
+                    if entity_access_info.instance_id == instance_id {
+                        matching_entity_access_info_list.push(entity_access_info.clone());
                     }
                 }
             }
         }
 
-        if new_entity_access_info_list.is_empty() {
+        if matching_entity_access_info_list.is_empty() {
             return Err(Status::not_found(
                 "Unable to find any entities with instance id {instance_id}",
             ));
         }
 
         let response =
-            FindByInstanceIdResponse { entity_access_info_list: new_entity_access_info_list };
+            FindByInstanceIdResponse { entity_access_info_list: matching_entity_access_info_list };
 
         debug!("Completed the find_by_instance_id request.");
 
@@ -125,11 +111,14 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         for entity_access_info in &request_inner.entity_access_info_list {
             self.register_entity(entity_access_info.clone()).map_err(|e| {
                 Status::internal(format!(
-                    "Failed to register the entity: {}, error: {}",
-                    entity_access_info.id, e
+                    "Failed to register the entity with instance id: {}, error: {}",
+                    entity_access_info.instance_id, e
                 ))
             })?;
-            info!("Registered the entity: {}", entity_access_info.id);
+            info!(
+                "Registered the entity with model id: {} and instance id: {}",
+                entity_access_info.model_id, entity_access_info.instance_id
+            );
         }
 
         let response = RegisterResponse {};
@@ -150,18 +139,23 @@ impl DigitalTwinRegistryImpl {
         {
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.write();
-            let get_result = lock.get(&entity_access_info.id);
+            let get_result = lock.get(&entity_access_info.model_id);
             match get_result {
                 Some(_) => {
                     info!(
                         "Registered another entity access info for entity {}",
-                        &entity_access_info.id
+                        &entity_access_info.model_id
                     );
-                    lock.get_mut(&entity_access_info.id).unwrap().push(entity_access_info.clone());
+                    lock.get_mut(&entity_access_info.model_id)
+                        .unwrap()
+                        .push(entity_access_info.clone());
                 }
                 None => {
-                    info!("Registered entity {}", &entity_access_info.id);
-                    lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
+                    info!("Registered entity {}", &entity_access_info.model_id);
+                    lock.insert(
+                        entity_access_info.model_id.clone(),
+                        vec![entity_access_info.clone()],
+                    );
                 }
             };
         }
@@ -178,18 +172,14 @@ mod digital_twin_registry_impl_tests {
     async fn find_by_model_id_test() {
         let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
-        let endpoint_info = EndpointInfo {
+        let entity_access_info = EntityAccessInfo {
+            provider_id: String::from("test-provider"),
+            instance_id: String::from("1234567890"),
+            model_id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-            context: String::from("1234567890"),
+            context: String::from(""),
             operations,
-        };
-
-        let entity_access_info = EntityAccessInfo {
-            name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
-            description: String::from("Ambient air temperature"),
-            endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
@@ -201,7 +191,7 @@ mod digital_twin_registry_impl_tests {
         {
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 entity_access_info_map.write();
-            lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
+            lock.insert(entity_access_info.model_id.clone(), vec![entity_access_info.clone()]);
         }
 
         let request = tonic::Request::new(FindByModelIdRequest {
@@ -216,10 +206,9 @@ mod digital_twin_registry_impl_tests {
 
         let response_entity_access_info = response_inner.entity_access_info_list[0].clone();
 
-        assert_eq!(response_entity_access_info.id, "dtmi:sdv:hvac:ambient_air_temperature;1");
-        assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
+        assert_eq!(response_entity_access_info.model_id, "dtmi:sdv:hvac:ambient_air_temperature;1");
         assert_eq!(
-            response_entity_access_info.endpoint_info_list[0].uri,
+            response_entity_access_info.uri,
             "http://[::1]:40010" // Devskim: ignore DS137138
         );
     }
@@ -228,18 +217,14 @@ mod digital_twin_registry_impl_tests {
     async fn find_by_instance_id_test() {
         let operations = vec![String::from("Subscribe"), String::from("Unsubscribe")];
 
-        let endpoint_info = EndpointInfo {
+        let entity_access_info = EntityAccessInfo {
+            provider_id: String::from("test-provider"),
+            instance_id: String::from("1234567890"),
+            model_id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-            context: String::from("1234567890"),
+            context: String::from(""),
             operations,
-        };
-
-        let entity_access_info = EntityAccessInfo {
-            name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
-            description: String::from("Ambient air temperature"),
-            endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));
@@ -251,7 +236,7 @@ mod digital_twin_registry_impl_tests {
         {
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 entity_access_info_map.write();
-            lock.insert(entity_access_info.id.clone(), vec![entity_access_info.clone()]);
+            lock.insert(entity_access_info.model_id.clone(), vec![entity_access_info.clone()]);
         }
 
         let request = tonic::Request::new(FindByInstanceIdRequest {
@@ -266,28 +251,23 @@ mod digital_twin_registry_impl_tests {
 
         let response_entity_access_info = response_inner.entity_access_info_list[0].clone();
 
-        assert_eq!(response_entity_access_info.endpoint_info_list[0].context, "1234567890");
-        assert_eq!(response_entity_access_info.endpoint_info_list.len(), 1);
+        assert_eq!(response_entity_access_info.instance_id, "1234567890");
         assert_eq!(
-            response_entity_access_info.endpoint_info_list[0].uri,
+            response_entity_access_info.uri,
             "http://[::1]:40010" // Devskim: ignore DS137138
         );
     }
 
     #[tokio::test]
     async fn register_test() {
-        let endpoint_info = EndpointInfo {
+        let entity_access_info = EntityAccessInfo {
+            provider_id: String::from("test-provider"),
+            instance_id: String::from("1234567890"),
+            model_id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
             protocol: String::from("grpc"),
             uri: String::from("http://[::1]:40010"), // Devskim: ignore DS137138
-            context: String::from("1234567890"),
+            context: String::from(""),
             operations: vec![String::from("Subscribe"), String::from("Unsubscribe")],
-        };
-
-        let entity_access_info = EntityAccessInfo {
-            name: String::from("AmbientAirTemperature"),
-            id: String::from("dtmi:sdv:hvac:ambient_air_temperature;1"),
-            description: String::from("Ambient air temperature"),
-            endpoint_info_list: vec![endpoint_info],
         };
 
         let entity_access_info_map = Arc::new(RwLock::new(HashMap::new()));

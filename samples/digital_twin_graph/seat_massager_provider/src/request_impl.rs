@@ -23,8 +23,6 @@ use tokio_retry::Retry;
 pub struct InstanceData {
     /// Model Id.
     pub model_id: String,
-    /// Description.
-    pub description: String,
     /// Serialized value (using JSON-LD as a string).
     pub serialized_value: String,
 }

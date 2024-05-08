@@ -7,42 +7,54 @@ syntax = "proto3";
 package digital_twin_registry.v1.digital_twin_registry;
 
 service DigitalTwinRegistry {
+   // Find the access details that have the provided model id.
    rpc FindByModelId (FindByModelIdRequest) returns (FindByModelIdResponse);
+   // Find the access details that have the provided instance id.
    rpc FindByInstanceId (FindByInstanceIdRequest) returns (FindByInstanceIdResponse);
+   // Register access details.
    rpc Register (RegisterRequest) returns (RegisterResponse);
 }
 
-message EndpointInfo {
-   string protocol = 1;
-   repeated string operations = 2;
-   string uri = 3;
-   string context = 4;
-}
-
 message EntityAccessInfo {
-   string name = 1;
-   string id = 2;
-   string description = 3;
-   repeated EndpointInfo endpointInfoList = 4;
+   // The id of the provider that registered these access details.
+   string provider_id = 1;
+   // The provider id.
+   string instance_id = 2;
+   // The model id.
+   string model_id = 3;
+   // The protocol that should be used to access the instance.
+   string protocol = 4;
+   // The URI speific to the protocol that should be used to access the instance.
+   string uri = 5;
+   // Additional context specific tp the protocol that should be used to acess the instance.
+   // For example, with MQTT the URI will represent the address of the MQTT provider and the context will represent the topic name.
+   string context = 6;
+   // The names of the operations that are available at this endpoint.
+   repeated string operations = 7;
 }
 
 message FindByModelIdRequest {
+   // The model id.
    string model_id = 1;
 }
 
 message FindByModelIdResponse {
+   // The matching entries.
    repeated EntityAccessInfo entityAccessInfoList = 1;
 }
 
 message FindByInstanceIdRequest {
+   // The instance id.
    string instance_id = 1;
 }
 
 message FindByInstanceIdResponse {
+   // The matching entries.
    repeated EntityAccessInfo entityAccessInfoList = 1;
 }
 
 message RegisterRequest {
+   // The entries to register.
    repeated EntityAccessInfo entityAccessInfoList = 1;
 }
 
