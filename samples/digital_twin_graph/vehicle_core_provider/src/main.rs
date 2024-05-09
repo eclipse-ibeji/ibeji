@@ -64,7 +64,7 @@ fn create_provider_state() -> ProviderState {
     // Create the seats.
 
     let front_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let front_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+    let front_left_seat: sdv::seat::ENTITY_TYPE = sdv::seat::ENTITY_TYPE {
         instance_id: front_left_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: FRONT_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
@@ -73,7 +73,7 @@ fn create_provider_state() -> ProviderState {
     };
 
     let front_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let front_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+    let front_right_seat: sdv::seat::ENTITY_TYPE = sdv::seat::ENTITY_TYPE {
         instance_id: front_right_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: FRONT_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
@@ -82,7 +82,7 @@ fn create_provider_state() -> ProviderState {
     };
 
     let back_left_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let back_left_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+    let back_left_seat: sdv::seat::ENTITY_TYPE = sdv::seat::ENTITY_TYPE {
         instance_id: back_left_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: BACK_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
@@ -91,7 +91,7 @@ fn create_provider_state() -> ProviderState {
     };
 
     let back_center_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let back_center_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+    let back_center_seat: sdv::seat::ENTITY_TYPE = sdv::seat::ENTITY_TYPE {
         instance_id: back_center_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: BACK_CENTER_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
@@ -100,7 +100,7 @@ fn create_provider_state() -> ProviderState {
     };
 
     let back_right_seat_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let back_right_seat: sdv::seat::TYPE = sdv::seat::TYPE {
+    let back_right_seat: sdv::seat::ENTITY_TYPE = sdv::seat::ENTITY_TYPE {
         instance_id: back_right_seat_instance_id.clone(),
         seat_massager: vec![sdv::seat::seat_massager::RELATIONSHIP_TYPE {
             instance_id: BACK_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
@@ -110,7 +110,7 @@ fn create_provider_state() -> ProviderState {
 
     // Create the cabin.
     let cabin_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let cabin_value: sdv::cabin::TYPE = sdv::cabin::TYPE {
+    let cabin_value: sdv::cabin::ENTITY_TYPE = sdv::cabin::ENTITY_TYPE {
         instance_id: cabin_instance_id.clone(),
         seat: vec![
             sdv::cabin::seat::RELATIONSHIP_TYPE {
@@ -147,9 +147,8 @@ fn create_provider_state() -> ProviderState {
     let vehicle_identification: sdv::vehicle::vehicle_identification::TYPE =
         sdv::vehicle::vehicle_identification::TYPE {
             vin: "1M8GDM9AXKP042788".to_string(),
-            ..Default::default()
         };
-    let vehicle_value: sdv::vehicle::TYPE = sdv::vehicle::TYPE {
+    let vehicle_value: sdv::vehicle::ENTITY_TYPE = sdv::vehicle::ENTITY_TYPE {
         instance_id: vehicle_instance_id.clone(),
         vehicle_identification,
         cabin: vec![sdv::vehicle::cabin::RELATIONSHIP_TYPE {

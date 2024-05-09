@@ -74,7 +74,7 @@ impl Request for RequestImpl {
 
             // Extract the request from the request payload.
             let perform_step_request_opt: Option<
-                sdv::airbag_seat_massager::perform_step::request::TYPE,
+                sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE,
             > = serde_json::from_value(request_payload_json)
                 .expect("Failed to deserialize the request.");
             if perform_step_request_opt.is_none() {
@@ -86,8 +86,8 @@ impl Request for RequestImpl {
             info!("Performing the step: {:?}", perform_step_request.step);
 
             // Prepare the perform_step response payload.
-            let response_payload: sdv::airbag_seat_massager::perform_step::response::TYPE =
-                sdv::airbag_seat_massager::perform_step::response::TYPE {
+            let response_payload: sdv::airbag_seat_massager::perform_step::response::PAYLOAD_TYPE =
+                sdv::airbag_seat_massager::perform_step::response::PAYLOAD_TYPE {
                     status: sdv::airbag_seat_massager::status::TYPE {
                         code: status::ok::CODE,
                         message: status::ok::MESSAGE.to_string(),

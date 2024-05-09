@@ -61,8 +61,8 @@ fn start_seat_massage_steps(
             let inflation_level = rng.gen_range(1..=10);
             let inflation_duration_in_seconds = rng.gen_range(1..=5);
 
-            let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
-                sdv::airbag_seat_massager::perform_step::request::TYPE {
+            let request_payload: sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE =
+                sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE {
                     step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
                         airbag_identifier,
                         inflation_level,

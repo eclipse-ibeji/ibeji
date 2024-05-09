@@ -150,7 +150,7 @@ async fn invoke(
 /// The vehicle instance.
 async fn find_vehicle(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
-) -> Result<sdv::vehicle::TYPE, String> {
+) -> Result<sdv::vehicle::ENTITY_TYPE, String> {
     // Find all vehicle instances.
     let find_vehicle_response: FindResponse = find(client, sdv::vehicle::ID.to_string()).await?;
     if find_vehicle_response.values.is_empty() {
@@ -158,7 +158,7 @@ async fn find_vehicle(
     }
 
     // For now, we will just use the first vehicle instance.
-    let vehicle: sdv::vehicle::TYPE =
+    let vehicle: sdv::vehicle::ENTITY_TYPE =
         serde_json::from_str(&find_vehicle_response.values[0]).unwrap();
 
     info!("The vehicle's instance id is: {}", vehicle.instance_id);
@@ -175,8 +175,8 @@ async fn find_vehicle(
 /// The cabin instance.
 async fn find_cabin(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
-    vehicle: &sdv::vehicle::TYPE,
-) -> Result<sdv::cabin::TYPE, String> {
+    vehicle: &sdv::vehicle::ENTITY_TYPE,
+) -> Result<sdv::cabin::ENTITY_TYPE, String> {
     // Get the cabin instance id.
     if vehicle.cabin.is_empty() {
         return Err("The vehicle does not have a cabin".to_string());
@@ -192,7 +192,7 @@ async fn find_cabin(
         get(client.clone(), cabin_instance_id.clone(), "".to_string()).await?;
 
     // Deserialize the cabin instance.
-    let cabin: sdv::cabin::TYPE = serde_json::from_str(&get_cabin_response.value).unwrap();
+    let cabin: sdv::cabin::ENTITY_TYPE = serde_json::from_str(&get_cabin_response.value).unwrap();
 
     Ok(cabin)
 }
@@ -208,10 +208,10 @@ async fn find_cabin(
 /// The seat instance.
 async fn find_seat(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
-    cabin: &sdv::cabin::TYPE,
+    cabin: &sdv::cabin::ENTITY_TYPE,
     seat_row: i32,
     seat_posotion: sdv::cabin::seat::SEAT_POSITION_TYPE,
-) -> Result<sdv::seat::TYPE, String> {
+) -> Result<sdv::seat::ENTITY_TYPE, String> {
     if cabin.seat.is_empty() {
         return Err("The cabin does not have any seats".to_string());
     }
@@ -226,7 +226,7 @@ async fn find_seat(
                 get(client.clone(), seat_relationship.instance_id.clone(), "".to_string()).await?;
 
             // Deserialize the seat instance.
-            let seat: sdv::seat::TYPE = serde_json::from_str(&get_seat_response.value).unwrap();
+            let seat: sdv::seat::ENTITY_TYPE = serde_json::from_str(&get_seat_response.value).unwrap();
 
             info!("The seat's instance id is: {}", seat.instance_id);
 
@@ -246,8 +246,8 @@ async fn find_seat(
 /// The premium airbag seat massager instance.
 async fn find_premium_airbag_seat_massager(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
-    seat: &sdv::seat::TYPE,
-) -> Result<sdv::premium_airbag_seat_massager::TYPE, String> {
+    seat: &sdv::seat::ENTITY_TYPE,
+) -> Result<sdv::premium_airbag_seat_massager::ENTITY_TYPE, String> {
     if seat.seat_massager.is_empty() {
         return Err("The seat does not have a seat massage".to_string());
     }
@@ -272,7 +272,7 @@ async fn find_premium_airbag_seat_massager(
     }
 
     // Deserialize the seat massager instance.
-    let seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+    let seat_massager: sdv::premium_airbag_seat_massager::ENTITY_TYPE =
         serde_json::from_str(&get_seat_massager_response.value).unwrap();
 
     info!("The seat massager's instance id is: {}", seat_massager.instance_id);
@@ -292,14 +292,14 @@ async fn find_premium_airbag_seat_massager(
 /// An empty result if the operation is successful.
 async fn perform_step(
     client: DigitalTwinGraphClient<tonic::transport::Channel>,
-    seat_massager: sdv::premium_airbag_seat_massager::TYPE,
+    seat_massager: sdv::premium_airbag_seat_massager::ENTITY_TYPE,
     airbag_identifier: i32,
     inflation_level: i32,
     inflation_duration_in_seconds: i32,
 ) -> Result<(), String> {
     // Generate the perform_step operation's request payload.
-    let request_payload: sdv::airbag_seat_massager::perform_step::request::TYPE =
-        sdv::airbag_seat_massager::perform_step::request::TYPE {
+    let request_payload: sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE =
+        sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE {
             step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
                 airbag_identifier,
                 inflation_level,
@@ -337,19 +337,19 @@ async fn interact_with_digital_twin(invehicle_digital_twin_uri: String) -> Resul
         connect_to_digital_twin_graph_service(invehicle_digital_twin_uri.clone()).await?;
 
     // Find the vehicle instance.
-    let vehicle: sdv::vehicle::TYPE = find_vehicle(client.clone()).await.unwrap();
+    let vehicle: sdv::vehicle::ENTITY_TYPE = find_vehicle(client.clone()).await.unwrap();
 
     // Find the cabin instance.
-    let cabin: sdv::cabin::TYPE = find_cabin(client.clone(), &vehicle).await.unwrap();
+    let cabin: sdv::cabin::ENTITY_TYPE = find_cabin(client.clone(), &vehicle).await.unwrap();
 
     // Find the front left seat instance.
-    let front_left_seat: sdv::seat::TYPE =
+    let front_left_seat: sdv::seat::ENTITY_TYPE =
         find_seat(client.clone(), &cabin, 1, sdv::cabin::seat::SEAT_POSITION_TYPE::left)
             .await
             .unwrap();
 
     // Find the premium airbag seat massager instance.
-    let seat_massager: sdv::premium_airbag_seat_massager::TYPE =
+    let seat_massager: sdv::premium_airbag_seat_massager::ENTITY_TYPE =
         find_premium_airbag_seat_massager(client.clone(), &front_left_seat).await.unwrap();
 
     // Randomly generate the airbag adjustment field values.

@@ -63,53 +63,38 @@ fn create_provider_state() -> ProviderState {
 
     // Create the seat massagers.
 
-    let front_left_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
-        sdv::premium_airbag_seat_massager::TYPE {
+    let front_left_airbag_seat_massager: sdv::premium_airbag_seat_massager::ENTITY_TYPE =
+        sdv::premium_airbag_seat_massager::ENTITY_TYPE {
             instance_id: FRONT_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
-            sequence_names: sdv::seat_massager::sequence_names::TYPE {
-                value: Vec::<String>::new(),
-                ..Default::default()
-            },
+            sequence_names: Vec::<String>::new(),
             ..Default::default()
         };
 
-    let front_right_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
-        sdv::premium_airbag_seat_massager::TYPE {
+    let front_right_airbag_seat_massager: sdv::premium_airbag_seat_massager::ENTITY_TYPE =
+        sdv::premium_airbag_seat_massager::ENTITY_TYPE {
             instance_id: FRONT_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
-            sequence_names: sdv::seat_massager::sequence_names::TYPE {
-                value: Vec::<String>::new(),
-                ..Default::default()
-            },
+            sequence_names: Vec::<String>::new(),
             ..Default::default()
         };
 
-    let back_left_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
-        sdv::basic_airbag_seat_massager::TYPE {
+    let back_left_airbag_seat_massager: sdv::basic_airbag_seat_massager::ENTITY_TYPE =
+        sdv::basic_airbag_seat_massager::ENTITY_TYPE {
             instance_id: BACK_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
-            sequence_names: sdv::seat_massager::sequence_names::TYPE {
-                value: Vec::<String>::new(),
-                ..Default::default()
-            },
+            sequence_names: Vec::<String>::new(),
             ..Default::default()
         };
 
-    let back_center_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
-        sdv::basic_airbag_seat_massager::TYPE {
+    let back_center_airbag_seat_massager: sdv::basic_airbag_seat_massager::ENTITY_TYPE =
+        sdv::basic_airbag_seat_massager::ENTITY_TYPE {
             instance_id: BACK_CENTER_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
-            sequence_names: sdv::seat_massager::sequence_names::TYPE {
-                value: Vec::<String>::new(),
-                ..Default::default()
-            },
+            sequence_names: Vec::<String>::new(),
             ..Default::default()
         };
 
-    let back_right_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
-        sdv::basic_airbag_seat_massager::TYPE {
+    let back_right_airbag_seat_massager: sdv::basic_airbag_seat_massager::ENTITY_TYPE =
+        sdv::basic_airbag_seat_massager::ENTITY_TYPE {
             instance_id: BACK_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
-            sequence_names: sdv::seat_massager::sequence_names::TYPE {
-                value: Vec::<String>::new(),
-                ..Default::default()
-            },
+            sequence_names: Vec::<String>::new(),
             ..Default::default()
         };
 
