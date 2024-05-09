@@ -240,6 +240,10 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let find_request = request.into_inner();
         let model_id = find_request.model_id;
 
+        if model_id.is_empty() {
+            return Err(tonic::Status::invalid_argument("Model id is required"));
+        }
+
         debug!("Received a find request for model id {model_id}");
 
         // Retrieve the provider details.
@@ -334,6 +338,12 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let instance_id = get_request.instance_id;
         let member_path = get_request.member_path;
 
+        if instance_id.is_empty() {
+            return Err(tonic::Status::invalid_argument("Model id is required"));
+        }
+
+        // Note: The member path is optional.
+
         debug!("Received a get request for instance id {instance_id}");
 
         // Retrieve the provider details.
@@ -415,6 +425,16 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
         let instance_id = invoke_request.instance_id;
         let member_path = invoke_request.member_path;
         let request_payload = invoke_request.request_payload;
+
+        if instance_id.is_empty() {
+            return Err(tonic::Status::invalid_argument("Instance id is required"));
+        }
+
+        if member_path.is_empty() {
+            return Err(tonic::Status::invalid_argument("Member path is required"));
+        }
+
+        // Note: The request payload is optional.
 
         debug!("Received an invoke request for instance id {instance_id}");
 

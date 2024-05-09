@@ -109,15 +109,13 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         let request_inner = request.into_inner();
 
         for entity_access_info in &request_inner.entity_access_info_list {
-            self.register_entity(entity_access_info.clone()).map_err(|e| {
-                Status::internal(format!(
-                    "Failed to register the entity with instance id: {}, error: {}",
-                    entity_access_info.instance_id, e
-                ))
-            })?;
+            self.register_entity(&entity_access_info)?;
+
             info!(
-                "Registered the entity with model id: {} and instance id: {}",
-                entity_access_info.model_id, entity_access_info.instance_id
+                "Registered the entity with provider id: {} instance id: {} model id: {}",
+                entity_access_info.provider_id,
+                entity_access_info.instance_id,
+                entity_access_info.model_id
             );
         }
 
@@ -134,33 +132,33 @@ impl DigitalTwinRegistryImpl {
     ///
     /// # Arguments
     /// * `entity` - The entity.
-    fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
+    fn register_entity(&self, entity_access_info: &EntityAccessInfo) -> Result<(), Status> {
+        if entity_access_info.provider_id.is_empty() {
+            return Err(Status::invalid_argument("Provider id is required"));
+        }
+
+        if entity_access_info.model_id.is_empty() {
+            return Err(Status::invalid_argument("Model id is required"));
+        }
+
+        if entity_access_info.instance_id.is_empty() {
+            return Err(Status::invalid_argument("Instance id is required"));
+        }
+
+        if entity_access_info.protocol.is_empty() {
+            return Err(Status::invalid_argument("Protocol is required"));
+        }
+
+        if entity_access_info.uri.is_empty() {
+            return Err(Status::invalid_argument("Uri is required"));
+        }
+
+        if entity_access_info.operations.is_empty() {
+            return Err(Status::invalid_argument("Operations is required"));
+        }
+
         // This block controls the lifetime of the lock.
         {
-            if entity_access_info.provider_id.is_empty() {
-                return Err("Provider id cannot be empty".to_string());
-            }
-
-            if entity_access_info.model_id.is_empty() {
-                return Err("Model id cannot be empty".to_string());
-            }
-
-            if entity_access_info.instance_id.is_empty() {
-                return Err("Instance id cannot be empty".to_string());
-            }
-
-            if entity_access_info.protocol.is_empty() {
-                return Err("Protocol cannot be empty".to_string());
-            }
-
-            if entity_access_info.uri.is_empty() {
-                return Err("Uri cannot be empty".to_string());
-            }
-
-            if entity_access_info.operations.is_empty() {
-                return Err("Operations cannot be empty".to_string());
-            }
-
             // Note: the context is optional.
 
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
