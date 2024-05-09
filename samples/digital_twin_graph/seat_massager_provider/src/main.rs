@@ -34,6 +34,14 @@ const MAX_RETRIES: usize = 100;
 /// The provider ID.
 const PROVIDER_ID: &str = "seat_massager_provider";
 
+// The seat massager ids.
+// Issue #120 have been created to move these to a config file shared by the providers.
+const FRONT_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID: &str = "front_left_airbag_seat_massager";
+const FRONT_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID: &str = "front_right_airbag_seat_massager";
+const BACK_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID: &str = "back_left_airbag_seat_massager";
+const BACK_CENTER_AIRBAG_SEAT_MASSAGER_INSTANCE_ID: &str = "back_center_airbag_seat_massager";
+const BACK_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID: &str = "back_right_airbag_seat_massager";
+
 /// Add an entry to the instance map.
 /// # Arguments
 /// * `instance_map` - The instance map.
@@ -55,10 +63,9 @@ fn create_provider_state() -> ProviderState {
 
     // Create the seat massagers.
 
-    let front_left_airbag_seat_massager_instance_id = "front_left_airbag_seat_massager".to_string();
     let front_left_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
         sdv::premium_airbag_seat_massager::TYPE {
-            instance_id: front_left_airbag_seat_massager_instance_id.clone(),
+            instance_id: FRONT_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
             sequence_names: sdv::seat_massager::sequence_names::TYPE {
                 value: Vec::<String>::new(),
                 ..Default::default()
@@ -66,11 +73,9 @@ fn create_provider_state() -> ProviderState {
             ..Default::default()
         };
 
-    let front_right_airbag_seat_massager_instance_id =
-        "front_right_airbag_seat_massager".to_string();
     let front_right_airbag_seat_massager: sdv::premium_airbag_seat_massager::TYPE =
         sdv::premium_airbag_seat_massager::TYPE {
-            instance_id: front_right_airbag_seat_massager_instance_id.clone(),
+            instance_id: FRONT_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
             sequence_names: sdv::seat_massager::sequence_names::TYPE {
                 value: Vec::<String>::new(),
                 ..Default::default()
@@ -78,10 +83,9 @@ fn create_provider_state() -> ProviderState {
             ..Default::default()
         };
 
-    let back_left_airbag_seat_massager_instance_id = "back_left_airbag_seat_massager".to_string();
     let back_left_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
         sdv::basic_airbag_seat_massager::TYPE {
-            instance_id: back_left_airbag_seat_massager_instance_id.clone(),
+            instance_id: BACK_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
             sequence_names: sdv::seat_massager::sequence_names::TYPE {
                 value: Vec::<String>::new(),
                 ..Default::default()
@@ -89,11 +93,9 @@ fn create_provider_state() -> ProviderState {
             ..Default::default()
         };
 
-    let back_center_airbag_seat_massager_instance_id =
-        "back_center_airbag_seat_massager".to_string();
     let back_center_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
         sdv::basic_airbag_seat_massager::TYPE {
-            instance_id: back_center_airbag_seat_massager_instance_id.clone(),
+            instance_id: BACK_CENTER_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
             sequence_names: sdv::seat_massager::sequence_names::TYPE {
                 value: Vec::<String>::new(),
                 ..Default::default()
@@ -101,10 +103,9 @@ fn create_provider_state() -> ProviderState {
             ..Default::default()
         };
 
-    let back_right_airbag_seat_massager_instance_id = "back_right_airbag_seat_massager".to_string();
     let back_right_airbag_seat_massager: sdv::basic_airbag_seat_massager::TYPE =
         sdv::basic_airbag_seat_massager::TYPE {
-            instance_id: back_right_airbag_seat_massager_instance_id.clone(),
+            instance_id: BACK_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
             sequence_names: sdv::seat_massager::sequence_names::TYPE {
                 value: Vec::<String>::new(),
                 ..Default::default()
@@ -116,35 +117,35 @@ fn create_provider_state() -> ProviderState {
 
     add_entry_to_instance_map(
         &mut result.instance_map,
-        front_left_airbag_seat_massager_instance_id.clone(),
+        FRONT_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
         serde_json::to_string(&front_left_airbag_seat_massager).unwrap(),
     );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
-        front_right_airbag_seat_massager_instance_id.clone(),
+        FRONT_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
         sdv::premium_airbag_seat_massager::ID.to_string(),
         serde_json::to_string(&front_right_airbag_seat_massager).unwrap(),
     );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
-        back_left_airbag_seat_massager_instance_id.clone(),
+        BACK_LEFT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         serde_json::to_string(&back_left_airbag_seat_massager).unwrap(),
     );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
-        back_center_airbag_seat_massager_instance_id.clone(),
+        BACK_CENTER_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         serde_json::to_string(&back_center_airbag_seat_massager).unwrap(),
     );
 
     add_entry_to_instance_map(
         &mut result.instance_map,
-        back_right_airbag_seat_massager_instance_id.clone(),
+        BACK_RIGHT_AIRBAG_SEAT_MASSAGER_INSTANCE_ID.to_string(),
         sdv::basic_airbag_seat_massager::ID.to_string(),
         serde_json::to_string(&back_right_airbag_seat_massager).unwrap(),
     );
