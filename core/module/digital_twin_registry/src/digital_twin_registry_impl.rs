@@ -137,6 +137,32 @@ impl DigitalTwinRegistryImpl {
     fn register_entity(&self, entity_access_info: EntityAccessInfo) -> Result<(), String> {
         // This block controls the lifetime of the lock.
         {
+            if entity_access_info.provider_id.is_empty() {
+                return Err("Provider id cannot be empty".to_string());
+            }
+
+            if entity_access_info.model_id.is_empty() {
+                return Err("Model id cannot be empty".to_string());
+            }
+
+            if entity_access_info.instance_id.is_empty() {
+                return Err("Instance id cannot be empty".to_string());
+            }
+
+            if entity_access_info.protocol.is_empty() {
+                return Err("Protocol cannot be empty".to_string());
+            }
+
+            if entity_access_info.uri.is_empty() {
+                return Err("Uri cannot be empty".to_string());
+            }
+
+            if entity_access_info.operations.is_empty() {
+                return Err("Operations cannot be empty".to_string());
+            }
+
+            // Note: the context is optional.
+
             let mut lock: RwLockWriteGuard<HashMap<String, Vec<EntityAccessInfo>>> =
                 self.entity_access_info_map.write();
             let get_result = lock.get(&entity_access_info.model_id);

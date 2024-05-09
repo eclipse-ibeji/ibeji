@@ -41,7 +41,7 @@ pub mod airbag_seat_massager {
                 ))]
                 pub model_id: String,
                 pub sequence_name: String,
-                pub sequence: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE,
+                pub sequence: crate::sdv_v1::airbag_seat_massager::massage_step::SCHEMA_TYPE,
             }
         }
 
@@ -62,7 +62,7 @@ pub mod airbag_seat_massager {
                     value = "crate::sdv_v1::airbag_seat_massager::store_sequence::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::airbag_seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -89,7 +89,7 @@ pub mod airbag_seat_massager {
                     value = "crate::sdv_v1::airbag_seat_massager::perform_step::request::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub step: crate::sdv_v1::airbag_seat_massager::massage_step::TYPE,
+                pub step: crate::sdv_v1::airbag_seat_massager::massage_step::SCHEMA_TYPE,
             }
         }
 
@@ -110,7 +110,7 @@ pub mod airbag_seat_massager {
                     value = "crate::sdv_v1::airbag_seat_massager::perform_step::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::airbag_seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::airbag_seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -121,7 +121,7 @@ pub mod airbag_seat_massager {
         pub const DESCRIPTION: &str = "An airbag adjustment.";
 
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
-        pub struct TYPE {
+        pub struct SCHEMA_TYPE {
             pub airbag_identifier: i32,
             pub inflation_level: i32,
             pub inflation_duration_in_seconds: i32,
@@ -133,7 +133,8 @@ pub mod airbag_seat_massager {
         pub const NAME: &str = "massage_step";
         pub const DESCRIPTION: &str = "The massage step.";
 
-        pub type TYPE = Vec<crate::sdv_v1::airbag_seat_massager::airbag_adjustment::TYPE>;
+        pub type SCHEMA_TYPE =
+            Vec<crate::sdv_v1::airbag_seat_massager::airbag_adjustment::SCHEMA_TYPE>;
     }
 
     pub mod status {
@@ -142,7 +143,7 @@ pub mod airbag_seat_massager {
         pub const DESCRIPTION: &str = "The status.";
 
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug, Default)]
-        pub struct TYPE {
+        pub struct SCHEMA_TYPE {
             pub code: i32,
             pub message: String,
         }
@@ -167,7 +168,7 @@ pub mod basic_airbag_seat_massager {
             value = "crate::sdv_v1::basic_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
-        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::TYPE,
+        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::SCHEMA_TYPE,
     }
 }
 
@@ -187,8 +188,6 @@ pub mod cabin {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     pub mod hvac {
@@ -203,8 +202,6 @@ pub mod cabin {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     pub mod seat {
@@ -235,8 +232,6 @@ pub mod cabin {
             pub seat_row: SEAT_ROW_TYPE,
             pub seat_position: SEAT_POSITION_TYPE,
         }
-
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
@@ -251,9 +246,9 @@ pub mod cabin {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::cabin::ID.to_string()"))]
         pub model_id: String,
-        pub infotainment: crate::sdv_v1::cabin::infotainment::TYPE,
-        pub hvac: crate::sdv_v1::cabin::hvac::TYPE,
-        pub seat: crate::sdv_v1::cabin::seat::TYPE,
+        pub infotainment: Vec<crate::sdv_v1::cabin::infotainment::RELATIONSHIP_TYPE>,
+        pub hvac: Vec<crate::sdv_v1::cabin::hvac::RELATIONSHIP_TYPE>,
+        pub seat: Vec<crate::sdv_v1::cabin::seat::RELATIONSHIP_TYPE>,
     }
 }
 
@@ -270,7 +265,7 @@ pub mod camera {
         #[derive(derivative::Derivative)]
         #[derivative(Default)]
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
-        pub struct TYPE {
+        pub struct PAYLOAD_TYPE {
             #[serde(rename = "@context")]
             #[derivative(Default(value = "crate::sdv_v1::context()"))]
             pub context: Vec<String>,
@@ -294,7 +289,7 @@ pub mod camera {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::camera::ID.to_string()"))]
         pub model_id: String,
-    }  
+    }
 }
 
 pub mod hmi {
@@ -335,7 +330,7 @@ pub mod hmi {
             #[derive(derivative::Derivative)]
             #[derivative(Default)]
             #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
-            pub struct TYPE {
+            pub struct PAYLOAD_TYPE {
                 #[serde(rename = "@context")]
                 #[derivative(Default(value = "crate::sdv_v1::context()"))]
                 pub context: Vec<String>,
@@ -344,7 +339,7 @@ pub mod hmi {
                     value = "crate::sdv_v1::hmi::show_notification::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::hmi::status::TYPE,
+                pub status: crate::sdv_v1::hmi::status::SCHEMA_TYPE,
             }
         }
     }
@@ -361,7 +356,7 @@ pub mod hmi {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::hmi::ID.to_string()"))]
         pub model_id: String,
-    }      
+    }
 
     pub mod status {
         pub const ID: &str = "dtmi:sdv:hmi:status;1";
@@ -369,7 +364,7 @@ pub mod hmi {
         pub const DESCRIPTION: &str = "The status.";
 
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug, Default)]
-        pub struct TYPE {
+        pub struct SCHEMA_TYPE {
             pub code: i32,
             pub message: String,
         }
@@ -385,7 +380,7 @@ pub mod hvac {
         pub const NAME: &str = "ambient_air_temperature";
         pub const DESCRIPTION: &str = "The immediate surroundings air temperature (in Fahrenheit).";
 
-        pub type TYPE = i32;
+        pub type SCHEMA_TYPE = i32;
     }
 
     pub mod is_air_conditioning_active {
@@ -393,7 +388,7 @@ pub mod hvac {
         pub const NAME: &str = "is_air_conditioning_active";
         pub const DESCRIPTION: &str = "Is air conditioning active?";
 
-        pub type TYPE = bool;
+        pub type SCHEMA_TYPE = bool;
     }
 
     #[derive(derivative::Derivative)]
@@ -408,7 +403,7 @@ pub mod hvac {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::hvac::ID.to_string()"))]
         pub model_id: String,
-    }  
+    }
 }
 
 pub mod obd {
@@ -420,7 +415,7 @@ pub mod obd {
         pub const NAME: &str = "hybrid_battery_remaining";
         pub const DESCRIPTION: &str = "The remaining hybrid battery life.";
 
-        pub type TYPE = i32;
+        pub type SCHEMA_TYPE = i32;
     }
 
     #[derive(derivative::Derivative)]
@@ -435,7 +430,7 @@ pub mod obd {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::obd::ID.to_string()"))]
         pub model_id: String,
-    }    
+    }
 }
 
 pub mod premium_airbag_seat_massager {
@@ -456,7 +451,7 @@ pub mod premium_airbag_seat_massager {
             value = "crate::sdv_v1::premium_airbag_seat_massager::ID.to_string()"
         ))]
         pub model_id: String,
-        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::TYPE,
+        pub sequence_names: crate::sdv_v1::seat_massager::sequence_names::SCHEMA_TYPE,
     }
 }
 
@@ -476,8 +471,6 @@ pub mod seat {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
@@ -492,7 +485,7 @@ pub mod seat {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::seat::ID.to_string()"))]
         pub model_id: String,
-        pub seat_massager: crate::sdv_v1::seat::seat_massager::TYPE,
+        pub seat_massager: Vec<crate::sdv_v1::seat::seat_massager::RELATIONSHIP_TYPE>,
     }
 }
 
@@ -505,7 +498,7 @@ pub mod seat_massager {
         pub const NAME: &str = "sequence_names";
         pub const DESCRIPTION: &str = "The name of each of the stored sequences.";
 
-        pub type TYPE = Vec<String>;
+        pub type SCHEMA_TYPE = Vec<String>;
     }
 
     pub mod load_sequence {
@@ -551,7 +544,7 @@ pub mod seat_massager {
                     value = "crate::sdv_v1::seat_massager::load_sequence::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -598,7 +591,7 @@ pub mod seat_massager {
                     value = "crate::sdv_v1::seat_massager::pause::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -645,7 +638,7 @@ pub mod seat_massager {
                     value = "crate::sdv_v1::seat_massager::play::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -692,7 +685,7 @@ pub mod seat_massager {
                     value = "crate::sdv_v1::seat_massager::reset::response::ID.to_string()"
                 ))]
                 pub model_id: String,
-                pub status: crate::sdv_v1::seat_massager::status::TYPE,
+                pub status: crate::sdv_v1::seat_massager::status::SCHEMA_TYPE,
             }
         }
     }
@@ -703,7 +696,7 @@ pub mod seat_massager {
         pub const DESCRIPTION: &str = "The status.";
 
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug, Default)]
-        pub struct TYPE {
+        pub struct SCHEMA_TYPE {
             pub code: i32,
             pub message: String,
         }
@@ -724,12 +717,12 @@ pub mod vehicle {
             pub const NAME: &str = "vin";
             pub const DESCRIPTION: &str = "Vehicle Identification Number.";
 
-            pub type TYPE = String;
+            pub type SCHEMA_TYPE = String;
         }
 
         #[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug, Default)]
-        pub struct TYPE {
-            pub vin: crate::sdv_v1::vehicle::vehicle_identification::vin::TYPE,
+        pub struct SCHEMA_TYPE {
+            pub vin: crate::sdv_v1::vehicle::vehicle_identification::vin::SCHEMA_TYPE,
         }
     }
 
@@ -745,8 +738,6 @@ pub mod vehicle {
             #[serde(rename = "@id")]
             pub instance_id: String,
         }
-
-        pub type TYPE = Vec<RELATIONSHIP_TYPE>;
     }
 
     #[derive(derivative::Derivative)]
@@ -761,7 +752,7 @@ pub mod vehicle {
         #[serde(rename = "@type")]
         #[derivative(Default(value = "crate::sdv_v1::vehicle::ID.to_string()"))]
         pub model_id: String,
-        pub vehicle_identification: crate::sdv_v1::vehicle::vehicle_identification::TYPE,
-        pub cabin: crate::sdv_v1::vehicle::cabin::TYPE,
+        pub vehicle_identification: crate::sdv_v1::vehicle::vehicle_identification::SCHEMA_TYPE,
+        pub cabin: Vec<crate::sdv_v1::vehicle::cabin::RELATIONSHIP_TYPE>,
     }
 }

@@ -144,10 +144,8 @@ fn create_provider_state() -> ProviderState {
 
     // Create the vehicle.
     let vehicle_instance_id = format!("{}", uuid::Uuid::new_v4());
-    let vehicle_identification: sdv::vehicle::vehicle_identification::TYPE =
-        sdv::vehicle::vehicle_identification::TYPE {
-            vin: "1M8GDM9AXKP042788".to_string(),
-        };
+    let vehicle_identification: sdv::vehicle::vehicle_identification::SCHEMA_TYPE =
+        sdv::vehicle::vehicle_identification::SCHEMA_TYPE { vin: "1M8GDM9AXKP042788".to_string() };
     let vehicle_value: sdv::vehicle::ENTITY_TYPE = sdv::vehicle::ENTITY_TYPE {
         instance_id: vehicle_instance_id.clone(),
         vehicle_identification,

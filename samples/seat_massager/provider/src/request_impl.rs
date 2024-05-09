@@ -88,7 +88,7 @@ impl Request for RequestImpl {
             // Prepare the perform_step response payload.
             let response_payload: sdv::airbag_seat_massager::perform_step::response::PAYLOAD_TYPE =
                 sdv::airbag_seat_massager::perform_step::response::PAYLOAD_TYPE {
-                    status: sdv::airbag_seat_massager::status::TYPE {
+                    status: sdv::airbag_seat_massager::status::SCHEMA_TYPE {
                         code: status::ok::CODE,
                         message: status::ok::MESSAGE.to_string(),
                     },

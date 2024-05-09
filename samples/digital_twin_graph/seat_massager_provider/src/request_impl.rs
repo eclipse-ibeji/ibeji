@@ -217,7 +217,7 @@ impl RequestImpl {
         );
 
         let response = sdv::airbag_seat_massager::perform_step::response::PAYLOAD_TYPE {
-            status: sdv::airbag_seat_massager::status::TYPE {
+            status: sdv::airbag_seat_massager::status::SCHEMA_TYPE {
                 code: 200,
                 message: "The step was performed successfully".to_string(),
             },

@@ -226,7 +226,8 @@ async fn find_seat(
                 get(client.clone(), seat_relationship.instance_id.clone(), "".to_string()).await?;
 
             // Deserialize the seat instance.
-            let seat: sdv::seat::ENTITY_TYPE = serde_json::from_str(&get_seat_response.value).unwrap();
+            let seat: sdv::seat::ENTITY_TYPE =
+                serde_json::from_str(&get_seat_response.value).unwrap();
 
             info!("The seat's instance id is: {}", seat.instance_id);
 
@@ -300,7 +301,7 @@ async fn perform_step(
     // Generate the perform_step operation's request payload.
     let request_payload: sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE =
         sdv::airbag_seat_massager::perform_step::request::PAYLOAD_TYPE {
-            step: vec![sdv::airbag_seat_massager::airbag_adjustment::TYPE {
+            step: vec![sdv::airbag_seat_massager::airbag_adjustment::SCHEMA_TYPE {
                 airbag_identifier,
                 inflation_level,
                 inflation_duration_in_seconds,
