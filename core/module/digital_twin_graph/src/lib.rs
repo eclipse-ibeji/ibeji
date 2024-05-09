@@ -15,11 +15,13 @@ use serde_derive::{Deserialize, Serialize};
 pub struct TargetedPayload {
     /// The instance id for the target entity.
     pub instance_id: String,
-    /// The path within the target entity to member that we are targeting.
+    /// The path within the target entity to the specific member that we are targeting.
+    /// It will be empty when we want to target the entire entity.
     pub member_path: String,
     /// The operation to be performed on the target entity's member.
     pub operation: String,
-    /// The operation's payload.  It will be empty when the operation does not require a payload.
+    /// The operation's payload.
+    /// It will be empty when the operation does not require a payload.
     pub payload: String,
 }
 
