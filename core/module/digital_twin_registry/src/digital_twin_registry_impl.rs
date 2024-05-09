@@ -109,7 +109,7 @@ impl DigitalTwinRegistry for DigitalTwinRegistryImpl {
         let request_inner = request.into_inner();
 
         for entity_access_info in &request_inner.entity_access_info_list {
-            self.register_entity(&entity_access_info)?;
+            self.register_entity(entity_access_info)?;
 
             info!(
                 "Registered the entity with provider id: {} instance id: {} model id: {}",
