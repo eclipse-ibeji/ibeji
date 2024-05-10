@@ -16,7 +16,7 @@ note left
 
   [
     {
-      provider_id: "vehicle-core"      
+      provider_id: "vehicle-core"
       model_id : "dtmi:sdv:premium_airbag_seat_massager;1"
       instance_id: "front left seat massager"
       protocol: "grpc"

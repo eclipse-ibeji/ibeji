@@ -1,6 +1,7 @@
 Agemo
 App
 com
+dtdl
 DTDL
 DTMI
 freyja
@@ -11,5 +12,6 @@ Ibeji
 Ibeji's
 IDs
 IoT
-Invehicle
+Invehiclemd
+opendigitaltwins
 svg
