@@ -21,7 +21,7 @@ note left
       model_id: "dtmi:sdv:seat;1"
       instance_id: "front left seat"
       protocol: "grpc"
-      operations: ["get", "invoke"]
+      operations: ["Get", "Invoke"]
       uri: Digital Twin Provider's uri
     },
     {
@@ -29,14 +29,14 @@ note left
       model_id: "dtmi:sdv:seat;1"
       instance_id: "front right seat"
       protocol: "grpc"
-      operations: ["get", "invoke"]
+      operations: ["Get", "Invoke"]
       uri: Digital Twin Provider's uri
     }
   ]
 end note
 
 loop Iterate over the results from the FindByModelId call
-  DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "1", payload: {instance_id: "front left seat", operation: "get" })
+  DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "1", payload: {instance_id: "front left seat", operation: "Get" })
   DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "1", payload: instance value as JSON-LD string)
 end
 

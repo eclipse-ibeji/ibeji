@@ -20,13 +20,13 @@ note left
       model_id : "dtmi:sdv:vehicle;1"
       instance_id: "the vehicle"
       protocol: "grpc"
-      operations: ["get"]
+      operations: ["Get"]
       uri: Digital Twin Provider's uri
     }
   ]
 end note
 
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "3", payload: {instance_id: "the vehicle", operation: "get", member_path: "vehicle_identification"})
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "3", payload: {instance_id: "the vehicle", operation: "Get", member_path: "vehicle_identification"})
 DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "3", payload: instance value as JSON-LD string)
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Get - response

@@ -20,14 +20,14 @@ note left
       model_id : "dtmi:sdv:premium_airbag_seat_massager;1"
       instance_id: "front left seat massager"
       protocol: "grpc"
-      operations: ["get", "invoke"]
+      operations: ["Get", "Invoke"]
       uri: Digital Twin Provider's uri
     }
   ]
 
 end note
 
-DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "5", payload: {instance_id: "front left seat massager", operation: "invoke", member_path: "perform_step", payload: the request payload as JSON-LD string})
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "5", payload: {instance_id: "front left seat massager", operation: "Invoke", member_path: "perform_step", payload: the request payload as JSON-LD string})
 DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "5", payload: response payload as JSON-LD string)
 
 CONSUMER <- DIGITAL_TWIN_GRAPH: Invoke - response
