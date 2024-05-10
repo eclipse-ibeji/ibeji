@@ -3,6 +3,7 @@
 - [Introduction](#introduction)
 - [Architecture](#architecture)
 - [Identifiers](#identifiers)
+- [Provider Contract](#provider-contract)
 - [Operations](#operations)
 
 ## <a name="introduction">Introduction</a>
@@ -43,6 +44,50 @@ The model ID is the identifier for a DTDL fragment. It is expressed as a [DTMI](
 A digital twin may be decomposed into digital twin entities. Each digital twin entity is defined by a fragment of the digital twin's model (specified in DTDL). The instance ID is the identifier for a digital twin entity. The instance ID must be universally unique.
 
 The provider ID is the identifier for a Digital Twin Provider. The provider ID must be universally unique and it is up to the provider to ensure this.  The provider id may be associated with multiple instance IDs.
+
+## <a name="provider-contract">Provider Contract</a>
+
+The provider operations that will initally be supported by the digital twin graph are: Get, Set and Invoke.
+
+Providers that want to participate in the digital twin graph, will need to do the following:
+<ul>
+  <li>Provide the async_rpc's Request interface with an ask operation that will use a targeted payload that has the following:
+  <ul>
+    <li>Get:
+    <ul>
+      <li>instance_id: set to the the target's instance ID</li?>
+      <li>member_path: is optional; if it is empty, then it means the entire entity; if it is not empty, then it targets a specific member</li?>
+      <li>operation: set to "Get"</li>
+      <li>payload: is not required</li>
+    </ul>
+    </li>
+    <li>Set:
+    <ul>
+      <li>instance_id: set to the the target's instance ID</li>
+      <li>member_path: is optional; if it is empty, then it means the entire entity; if it is not empty, then it targets a specific member</li>
+      <li>operation: set to "Set"</li>
+      <li>payload: the value</li>
+    </ul>
+    <li>Invoke:
+    <ul>
+      <li>instance_id: set to the the target's instance ID</li>
+      <li>member_path: the name of command to invoke</li>
+      <li>operation: set to "Invoke"</li>
+      <li>payload: the command's request payload</li>
+    </ul>
+    </li>
+  </ul>
+  <li>Return the result from a provider operation to the aync_rpc's Response interface using with the answer operation that has a payload that has the following:
+  <ul>
+    <li>Get: The value of the target.
+    </li>
+    <li>Set: The payload is not required.
+    </li>
+    <li>Invoke: The command's response payload.
+    </li>
+  </li>
+  </ul>
+</ul>
 
 ## <a name="operations">Operations</a>
 
