@@ -12,14 +12,15 @@ CONSUMER -> DIGITAL_TWIN_GRAPH: Set(instance_id: "the vehicle", member_path: "ve
 DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(instance_id: "the vehicle") - request
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
 note left
-  list of EndpointInfo
+  list of EntityAccessInfo
 
   [
     {
+      provider_id: "vehicle-core"      
       model_id : "dtmi:sdv:vehicle;1"
       instance_id: "the vehicle"
       protocol: "grpc"
-      operations: ["Get"]
+      operations: ["get"]
       uri: Digital Twin Provider's uri
     }
   ]

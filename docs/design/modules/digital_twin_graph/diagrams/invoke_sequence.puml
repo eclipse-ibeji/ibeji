@@ -12,10 +12,11 @@ CONSUMER -> DIGITAL_TWIN_GRAPH: Invoke(instance_id: "front left seat massager", 
 DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(id: "front left seat massager") - request
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
 note left
-  list of EndpointInfo
+  list of EntityAccessInfo
 
   [
     {
+      provider_id: "vehicle-core"      
       model_id : "dtmi:sdv:premium_airbag_seat_massager;1"
       instance_id: "front left seat massager"
       protocol: "grpc"

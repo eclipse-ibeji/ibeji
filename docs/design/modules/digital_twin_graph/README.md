@@ -2,6 +2,7 @@
 
 - [Introduction](#introduction)
 - [Architecture](#architecture)
+- [Identifiers](#identifiers)
 - [Operations](#operations)
 
 ## <a name="introduction">Introduction</a>
@@ -32,6 +33,16 @@ Ibeji's In-vehicle Digital Twin Service needs some adjustments to support the Di
 The Managed Subscriber Service is an optional service that provides integration with Agemo. The Managed Subscriber Service has been included in the component diagram for completeness' sake.
 
 ![Component Diagram](diagrams/digital_twin_graph_component.svg)
+
+## <a name="identifiers">Identifiers</a>
+
+The Digital Twin Graph will use a variety of identifiers. We will discuss the purpose of each.
+
+The provider ID is the identifier for a Digital Twin Provider.
+
+The model ID is the identifier for a DTDL fragment.  It is expressed as a [DTMI](https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v3/DTDL.v3.md#digital-twin-model-identifier).
+
+The instance ID is the identifier for a digital twin entity. A digital twin may be decomposed into digital twin entities. Each digital twin entity is defined by a fragment of the digital twin's model (specified in DTDL).
 
 ## <a name="operations">Operations</a>
 

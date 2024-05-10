@@ -13,18 +13,20 @@ DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByModeld(model_id: "dtmi:sdv:se
 
 DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByModelId - response
 note left
-  list of EndpointInfo
+  list of EntityAcessInfo
 
   [
     {
-      model_id : "dtmi:sdv:seat;1"
+      provider_id: "vehicle-core"
+      model_id: "dtmi:sdv:seat;1"
       instance_id: "front left seat"
       protocol: "grpc"
       operations: ["get", "invoke"]
       uri: Digital Twin Provider's uri
     },
     {
-      model_id : "dtmi:sdv:seat;1"
+      provider_id: "vehicle-core"
+      model_id: "dtmi:sdv:seat;1"
       instance_id: "front right seat"
       protocol: "grpc"
       operations: ["get", "invoke"]
