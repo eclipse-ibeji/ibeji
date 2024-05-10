@@ -174,10 +174,9 @@ impl DigitalTwinGraphImpl {
         });
 
         // Send the ask.
-        let _ = client
-            .ask(request)
-            .await
-            .map_err(|error| tonic::Status::internal(format!("Unable to call ask, due to {error}")))?;
+        let _ = client.ask(request).await.map_err(|error| {
+            tonic::Status::internal(format!("Unable to call ask, due to {error}"))
+        })?;
 
         Ok(())
     }
