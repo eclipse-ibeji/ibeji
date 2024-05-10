@@ -47,7 +47,7 @@ The provider ID is the identifier for a Digital Twin Provider. The provider ID m
 
 ## <a name="provider-contract">Provider Contract</a>
 
-The provider operations that will initally be supported by the digital twin graph are: Get, Set and Invoke.
+The provider operations that will initially be supported by the digital twin graph are: Get, Set and Invoke.
 
 Providers that want to participate in the digital twin graph, will need to do the following:
 <ul>
@@ -77,7 +77,7 @@ Providers that want to participate in the digital twin graph, will need to do th
     </ul>
     </li>
   </ul>
-  <li>Return the result from a provider operation to the aync_rpc's Response interface using with the answer operation that has a payload that has the following:
+  <li>Return the result from a provider operation to the async_rpc's Response interface using with the answer operation that has a payload that has the following:
   <ul>
     <li>Get: The value of the target.
     </li>
