@@ -2,6 +2,7 @@ Agemo
 App
 com
 DTDL
+DTMI
 freyja
 Freyja
 github
