@@ -174,10 +174,10 @@ impl DigitalTwinGraphImpl {
         });
 
         // Send the ask.
-        let response = client.ask(request).await;
-        if let Err(status) = response {
-            return Err(tonic::Status::internal(format!("Unable to call ask, due to {status:?}")));
-        }
+        let _ = client
+            .ask(request)
+            .await
+            .map_err(|error| tonic::Status::internal(format!("Unable to call ask, due to {error}")))?;
 
         Ok(())
     }
@@ -302,9 +302,9 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             // Create the targeted payload.
             let targeted_payload = TargetedPayload {
                 instance_id: instance_id.to_string(),
-                member_path: "".to_string(),
+                member_path: "".to_string(), // The get operation does not need a member_path for this case, as we want to get the entire entity.
                 operation: digital_twin_operation::GET.to_string(),
-                payload: "".to_string(),
+                payload: "".to_string(), // The get operation does not require a payload.
             };
 
             // Send the ask.
@@ -383,7 +383,7 @@ impl DigitalTwinGraph for DigitalTwinGraphImpl {
             instance_id: instance_id.to_string(),
             member_path: member_path.to_string(),
             operation: digital_twin_operation::GET.to_string(),
-            payload: "".to_string(),
+            payload: "".to_string(), // The get operation does not require a payload.
         };
 
         // Send the ask.

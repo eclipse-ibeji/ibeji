@@ -3,7 +3,7 @@
 object Vehicle {
   model_id: "dtmi:sdv:vehicle;1"
   instance_id: "550e8400-e29b-41d4-a716-446655440000"
-  vehicle_identification.vin: 1M8GDM9AXKP042788
+  vehicle_identification.vin: "00000000000000000"
 }
 
 object Cabin {

@@ -38,7 +38,7 @@ note left
     "@type": "dtmi:sdv:vehicle:vehicle_identification;1",
     "vehicle_identification": [
       {
-        "vin": "1HGCM82633A123456"
+        "vin": "00000000000000000"
       }
     ]
   }
