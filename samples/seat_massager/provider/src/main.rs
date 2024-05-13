@@ -81,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Construct the provider URI from the provider authority.
     let provider_uri = format!("http://{provider_authority}"); // Devskim: ignore DS137138
 
-    let instance_id = format!("pub_{}", uuid::Uuid::new_v4());
+    let instance_id = format!("{}", uuid::Uuid::new_v4());
 
     // Setup the HTTP server.
     let addr: SocketAddr = provider_authority.parse()?;

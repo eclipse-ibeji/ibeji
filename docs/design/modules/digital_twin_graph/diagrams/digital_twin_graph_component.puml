@@ -1,0 +1,36 @@
+@startuml
+
+component "Digital Twin Consumer" {
+}
+
+component "Digital Twin App Server" {
+  component "Digital Twin Graph Service" {
+    interface "Digital Twin Graph Interface"
+    interface "Respond Interface"
+  }
+  component "Digital Twin Registry Service" {
+    interface "Digital Twin Registry Interface"
+  }
+  component "Invehicle Digital Twin Service" {
+    interface "Invehicle Digital Twin Interface"
+  }
+  component "Managed Subscribe Service" {
+    interface "Managed Subscribe Interface"
+  }
+}
+
+component "Digital Twin Provider" {
+  interface "Request Interface"
+}
+
+"Digital Twin Provider" -up-> "Digital Twin Registry Interface" : Register
+
+"Digital Twin Consumer" -down-> "Digital Twin Graph Interface" : Find/Get/Set/Invoke
+
+"Digital Twin Graph Service" -left-> "Digital Twin Registry Interface": FindByModelId
+
+"Digital Twin Graph Service" -down-> "Request Interface": Ask
+
+"Digital Twin Provider" -up-> "Respond Interface": Answer
+
+@enduml

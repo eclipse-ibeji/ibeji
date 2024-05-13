@@ -1,0 +1,38 @@
+@startuml
+
+autonumber
+
+participant "Digital Twin Consumer" as CONSUMER
+participant "Digital Twin Graph" as DIGITAL_TWIN_GRAPH
+participant "Digital Twin Registry" as DIGITAL_TWIN_REGISTRY
+participant "Digital Twin Provider" as PROVIDER
+
+CONSUMER -> DIGITAL_TWIN_GRAPH: Invoke(instance_id: "front left seat massager", member_path: "perform_step", request_payload: request payload as JSON-LD string) - request
+
+DIGITAL_TWIN_GRAPH -> DIGITAL_TWIN_REGISTRY: FindByInstanceId(id: "front left seat massager") - request
+DIGITAL_TWIN_GRAPH <- DIGITAL_TWIN_REGISTRY: FindByInstanceId - response
+note left
+  list of EntityAccessInfo
+
+  [
+    {
+      provider_id: "vehicle-core"
+      model_id : "dtmi:sdv:premium_airbag_seat_massager;1"
+      instance_id: "front left seat massager"
+      protocol: "grpc"
+      operations: ["Get", "Invoke"]
+      uri: Digital Twin Provider's uri
+    }
+  ]
+
+end note
+
+DIGITAL_TWIN_GRAPH -> PROVIDER: Ask(respond_uri: respond uri for Digital Twin Graph, ask_id: "5", payload: {instance_id: "front left seat massager", operation: "Invoke", member_path: "perform_step", payload: the request payload as JSON-LD string})
+DIGITAL_TWIN_GRAPH <- PROVIDER: Answer(ask_id: "5", payload: response payload as JSON-LD string)
+
+CONSUMER <- DIGITAL_TWIN_GRAPH: Invoke - response
+note left
+  response payload as JSON-LD string
+end note
+
+@enduml

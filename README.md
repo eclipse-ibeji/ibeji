@@ -14,12 +14,7 @@
   - [Tokio Console Support](#tokio-console-support)
 - [Running the Tests](#running-the-tests)
 - [Running the Samples](#running-the-samples)
-  - [Property Sample](#property-sample)
-  - [Command Sample](#command-sample)
-  - [Mixed Sample](#mixed-sample)
-  - [Seat Massager Sample](#seat-massager-sample)
-  - [Streaming Sample](#streaming-sample)
-  - [Using Chariott](#using-chariott)
+- [Using Chariott](#using-chariott)
 - [Running in a Container](#running-in-a-container)
 - [Trademarks](#trademarks)
 
@@ -95,24 +90,33 @@ Instructions for installing Mosquitto can be found [here](https://github.com/ecl
 
 ## <a name="cloning-the-repo">Cloning the Repo</a>
 
-The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files
-and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
+The repo has two submodules [opendigitaltwins-dtdl](https://github.com/Azure/opendigitaltwins-dtdl) and [iot-plugandplay-models](https://github.com/Azure/iot-plugandplay-models) that provide DTDL context files and DTDL samples file. To ensure that these are included, please use the following command when cloning Ibeji's github repo:
 
-`git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
+````shell
+git clone --recurse-submodules https://github.com/eclipse-ibeji/ibeji`
+````
 
 ## <a name="building">Building</a>
 
 Once you have installed the prerequisites, go to your enlistment's root directory and run:
 
-`cargo build`
+````shell
+cargo build
+````
 
-This should build all of the libraries and executables.
+This will build all of the foundation libraries and executables.
+
+Ibeji also has add-on modules that rely on feature flags to include them in the build. For example, to build Ibeji with the Digital Twin Graph and the Digital Twin Registry modules run:
+
+````shell
+cargo build --features "digital_twin_graph,digital_twin_registry"
+````
 
 ### <a name="tokio-console-support">Tokio Console Support</a>
 
 Ibeji has support for using the [tokio console](https://github.com/tokio-rs/console) for advanced debugging. To enable this support, you need to build with the `tokio_console` feature enabled and with the `tokio_unstable` config flag for the rust compiler:
 
-```bash
+```shell
 RUSTFLAGS="--cfg tokio_unstable" cargo build --features tokio_console
 ```
 
@@ -124,178 +128,36 @@ Note that the tokio console will intercept trace-level logs, so these will not b
 
 After successfully building Ibeji, you can run all of the unit tests. To do this go to the enlistment's root directory and run:
 
-`cargo test`
+````shell
+cargo test
+````
 
 Currently, we have no integration tests or end-to-end tests.
 
 ## <a name="running-the-samples">Running the Samples</a>
 
-There are currently four samples: one that demonstrates the use of a property, one that demonstrates the use of a command, one that
-demonstrates the mixed use of properties and commands and one that demonstrates the use of get/set for a seat massager.
+There are currently six samples:
 
-The demos use config files and we have provided a templated version of each config file.  These templates can be found in:
+- [Property Sample](docs/samples/property/README.md) - demonstrates the use of a property
+- [Command Sample](docs/samples/command/README.md) - demonstrates the use of a command
+- [Mixed Sample](docs/samples/mixed/README.md) - demonstrates the mixed use of properties and commands
+- [Seat Massager Sample](docs/samples/seat_massager/README.md) - demonstrates the use of get/set for a seat massager
+- [Streaming Sample](docs/samples/streaming/README.md) - demonstrates the use of streaming
+- [Digital Twin Graph Sample](docs/samples/digital_twin_graph/README.md) - demonstrates the use of the Digital Twin Graph Service
 
-- {repo-root-dir}/core/invehicle-digital-twin/template
-- {repo-root-dir}/samples/common/template
-
-Configuration files will be loaded from the current working directory by default
+The samples' configuration files will be loaded from the current working directory by default,
 but an `IBEJI_HOME` environment variable can be used to change the base configuration directory to a different one:
 
-```bash
+```shell
 IBEJI_HOME=/etc/ibeji ./invehicle-digital-twin
 ```
 
 The above example tells `invehicle-digital-twin` to load configuration files from `/etc/ibeji` instead of using
 the current working directory.
 
-Chariott may be used to discover the in-vehicle digital twin service.  We will discuss how to enable this feature.
+With the samples, Chariott may be used to discover the in-vehicle digital twin service. We will discuss how to enable this feature in the section on [Using Chariott](#using-chariott).
 
-### <a name="property-sample">Property Sample</a>
-
-The following instructions are for the demo for the use of a property.  This sample uses a MQTT Broker; please make sure that it is running.
-
-Steps:
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
-Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
-1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the three config files with the following contents, if they are not already there:<br><br>
----- consumer_settings.yaml ----<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:1883"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run:<br><br>
-`./invehicle-digital-twin`<br>
-1. In the middle window, run:<br><br>
-`./property-provider`<br>
-1. In the bottom window, run:<br><br>
-`./property-consumer`<br>
-1. Use control-c in each of the windows when you wish to stop the demo.
-
-### <a name="command-sample">Command Sample</a>
-
-The following instructions are for the demo for the use of a command.
-
-Steps:
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
-Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
-1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the three config files with the following contents, if they are not already there:<br><br>
----- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run:<br><br>
-`./invehicle-digital-twin`<br>
-1. In the middle window, run:<br><br>
-`./command-provider`<br>
-1. In the bottom window, run:<br><br>
-`./command-consumer`<br>
-1. Use control-c in each of the windows when you wish to stop the demo.
-
-### <a name="mixed-sample">Mixed Sample</a>
-
-The following instructions are for the demo for the mixed use of commands and properties.
-
-Steps:
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
-Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
-1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the three config files with the following contents, if they are not already there:<br><br>
----- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run:<br><br>
-`./invehicle-digital-twin`<br>
-1. In the middle window, run:<br><br>
-`./mixed-provider`<br>
-1. In the bottom window, run:<br><br>
-`./mixed-consumer`<br>
-1. Use control-c in each of the windows when you wish to stop the demo.
-
-### <a name="seat-massager-sample">Seat Massager Sample</a>
-
-The following instructions are for the demo for a seat massager.
-
-Steps:
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
-Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
-1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the three config files with the following contents, if they are not already there:<br><br>
----- consumer_settings.yaml ----<br>
-`consumer_authority: "0.0.0.0:6010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-1. In the top window, run:<br><br>
-`./invehicle-digital-twin`<br>
-1. In the middle window, run:<br><br>
-`./seat-massager-provider`<br>
-1. In the bottom window, run:<br><br>
-`./seat-massager-consumer`<br>
-1. Use control-c in each of the windows when you wish to stop the demo.
-
-### <a name="streaming-sample">Streaming Sample</a>
-
-The following instructions are for the demo for streaming.
-
-Steps:
-
-1. The best way to run the demo is by using three windows: one running the In-Vehicle Digital Twin, one running the Digital Twin Provider and one running the Digital Twin Consumer.
-Orientate the three windows so that they are lined up in a column. The top window can be used for the In-Vehicle Digital Twin.
-The middle window can be used for the Digital Twin Provider. The bottom window can be used for the Digital Twin Consumer.<br>
-1. In each window, change directory to the directory containing the build artifacts.
-Make sure that you replace "{repo-root-dir}" with the repository root directory on the machine where you are running the demo.<br><br>
-`cd {repo-root-dir}/target/debug`<br>
-1. Create the three config files with the following contents, if they are not already there:<br><br>
----- streaming_consumer_settings.yaml ----<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-`number_of_images: 20`<br><br>
----- invehicle_digital_twin_settings.yaml ----<br>
-`invehicle_digital_twin_authority: "0.0.0.0:5010"`<br><br>
----- streaming_provider_settings.yaml ----<br>
-`provider_authority: "0.0.0.0:4010"`<br>
-`invehicle_digital_twin_uri: "http://0.0.0.0:5010"`<br><br>
-`image_directory: "<<chariott-repo-root>>/examples/applications/simulated-camera/images"`
-1. In the top window, run:<br><br>
-`./invehicle-digital-twin`<br>
-1. In the middle window, run:<br><br>
-`./streaming-provider`<br>
-1. In the bottom window, run:<br><br>
-`./streaming-consumer`<br>
-1. Use control-c in each of the windows when you wish to stop the demo.
-
-### <a name="using-chariott">Using Chariott</a>
+## <a name="using-chariott">Using Chariott</a>
 
 If you want the digital twin consumers and digital twin providers for each demo to use Chariott to discover the URI for the In-Vehicle Digital Twin Service,
 rather than having it statically provided in their respective config file, then do the following before starting each demo:

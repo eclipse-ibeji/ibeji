@@ -185,6 +185,17 @@ pub async fn get_service_uri(
     Ok(result)
 }
 
+/// Is the provided subset a subset of the provided superset?
+///
+/// # Arguments
+/// * `subset` - The provided subset.
+/// * `superset` - The provided superset.
+pub fn is_subset(subset: &[String], superset: &[String]) -> bool {
+    subset.iter().all(|subset_member| {
+        superset.iter().any(|supserset_member| subset_member == supserset_member)
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -227,5 +238,27 @@ mod tests {
         )
         .await;
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn is_subset_test() {
+        assert!(is_subset(&[], &[]));
+        assert!(is_subset(&[], &["one".to_string()]));
+        assert!(is_subset(&[], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string()]));
+        assert!(is_subset(&["one".to_string()], &["one".to_string(), "two".to_string()]));
+        assert!(is_subset(
+            &["one".to_string(), "two".to_string()],
+            &["one".to_string(), "two".to_string()]
+        ));
+        assert!(!is_subset(
+            &["one".to_string(), "two".to_string(), "three".to_string()],
+            &["one".to_string(), "two".to_string()]
+        ));
+        assert!(!is_subset(
+            &["one".to_string(), "two".to_string(), "three".to_string()],
+            &["one".to_string()]
+        ));
+        assert!(!is_subset(&["one".to_string(), "two".to_string(), "three".to_string()], &[]));
     }
 }
