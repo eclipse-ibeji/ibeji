@@ -6,7 +6,7 @@ mod streaming_consumer_config;
 
 use digital_twin_model::sdv_v0 as sdv;
 use env_logger::{Builder, Target};
-use image::{DynamicImage, io::Reader as ImageReader};
+use image::{DynamicImage, ImageReader};
 use log::{info, LevelFilter, warn};
 use samples_common::constants::{digital_twin_operation, digital_twin_protocol};
 use samples_common::image_rendering::{create_canvas, render_image_to_canvas, resize_image_to_fit_in_canvas};
